@@ -1,0 +1,49 @@
+name: Monolith
+version: 2.1.0
+author: fishb6nes
+website: http://warcraft.gg
+
+main: gg.warcraft.legends.LegendsPlugin
+depend: [EffectLib, MythicMobs]
+
+commands:
+  me:
+  menu:
+  monolith:
+  help:
+
+  return:
+  spawn:
+
+  kit:
+  gold:
+  givegold:
+  vote:
+
+  race:
+  class:
+  spec:
+  specialization:
+  kits:
+
+# staff commands
+  mspawn:
+  skirmish:
+  build:
+
+# dev commands
+  restoreall:
+  fvel:
+  fvar:
+  fish:
+
+  treb:
+  #bomb:
+
+# shortcuts
+  shop:
+  pet:
+  dec:
+
+# mythicmob commands
+  dropitems:

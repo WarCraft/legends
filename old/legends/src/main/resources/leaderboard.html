@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WarCraft Rankings</title>
+    <meta charset="utf-8" />
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <style>
+        body {
+            background: #202020;
+            font-family: 'Lato', sans-serif;
+            color: lightgray;
+        }
+
+        #main, #footer {
+            text-align: center;
+            clear: both;
+        }
+
+        #footer {
+            padding-top: 2em;
+        }
+
+        #footer a {
+            color: gray !important;
+        }
+
+        #logo {
+            width: 25%;
+            padding: 3em 0 0;
+        }
+
+        ul#leaderboard {
+            list-style-type: none;
+        }
+
+        ul#leaderboard li:first-child {
+            font-size: xx-large;
+        }
+
+        ul#leaderboard li:nth-child(2) {
+            font-size: x-large;
+        }
+
+        ul#leaderboard li:nth-child(3) {
+            font-size: large;
+        }
+
+        ul#leaderboard li {
+            line-height: 1.8em;
+        }
+
+        .playerRank, .playerName, .playerScore {
+            float: left;
+            width: 33%;
+            border-bottom: 1px solid rgba(211,211,211,0.07);
+        }
+
+        @media screen and (max-width: 900px) {
+            #logo {
+                width: 50%;
+            }
+        }
+
+        @media screen and (min-width: 1200px) {
+            #leaderboard {
+                width: 1200px;
+                margin: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="main">
+    <img id="logo" src="../image/wcgg-logo.png" />
+    <h1>Killing Blows Leaderboard</h1>
+
+    <ul id="leaderboard"></ul>
+</div>
+
+<script type="text/javascript">
+    var players = [
+//ADD_PLAYERS_HERE
+    ];
+    var leaderboard = document.getElementById("leaderboard");
+    for(var i = 0; i < players.length; i += 1) {
+        var player = players[i];
+        var li = document.createElement("li");
+        li.innerHTML = '<div class="">' +
+            '<div class="playerRank">' + (i + 1) + "</div>" +
+            '<div class="playerName">' + player.name + "</div>" +
+            '<div class="playerScore">' + player.score + "</div>" +
+            "</div>";
+        leaderboard.appendChild(li);
+    }
+</script>
+
+<div id="footer">
+    <p><a href="http://warcraft.gg">homepage</a> | <a href="http://community.warcraft.gg">community</a></p>
+</div>
+</body>
+</html>
