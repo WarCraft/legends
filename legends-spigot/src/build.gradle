@@ -1,0 +1,4 @@
+dependencies {
+    compile 'gg.warcraft:monolith-spigot:1.0.0-SNAPSHOT'
+    compile project(':legends-app')
+}
