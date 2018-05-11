@@ -1,8 +1,9 @@
-allprojects {
+subprojects {
     group = 'gg.warcraft'
     version = '1.0.0-SNAPSHOT'
 
     apply plugin: 'java'
+    apply plugin: 'maven-publish'
 
     sourceCompatibility = 1.8
 
@@ -16,5 +17,13 @@ allprojects {
         compile 'com.google.inject.extensions:guice-assistedinject:4.2.0'
 
         testCompile 'junit:junit:4.12'
+    }
+
+    publishing {
+        publications {
+            defaultJar(MavenPublication) {
+                artifact jar
+            }
+        }
     }
 }

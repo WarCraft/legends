@@ -12,8 +12,6 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/legends-spigot/legends-spigot.iml" filepath="$PROJECT_DIR$/.idea/modules/legends-spigot/legends-spigot.iml" group="legends-spigot" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/legends-spigot/legends-spigot_main.iml" filepath="$PROJECT_DIR$/.idea/modules/legends-spigot/legends-spigot_main.iml" group="legends-spigot" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/legends-spigot/legends-spigot_test.iml" filepath="$PROJECT_DIR$/.idea/modules/legends-spigot/legends-spigot_test.iml" group="legends-spigot" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/legends_main.iml" filepath="$PROJECT_DIR$/.idea/modules/legends_main.iml" group="legends" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/legends_test.iml" filepath="$PROJECT_DIR$/.idea/modules/legends_test.iml" group="legends" />
     </modules>
   </component>
 </project>
