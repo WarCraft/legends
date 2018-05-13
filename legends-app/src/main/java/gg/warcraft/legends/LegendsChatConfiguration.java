@@ -10,6 +10,7 @@ import gg.warcraft.monolith.api.core.AuthorizationService;
 import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.util.ColorCode;
 
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -19,6 +20,8 @@ public class LegendsChatConfiguration {
     private static final String DEFAULT_LOCAL_FORMATTING_STRING = "{sender.color}[{sender.rank}]{channel.color} {sender.name}: {message}";
     private static final String EMOTE_LOCAL_FORMATTING_STRING = "{sender.color}[{sender.rank}]{channel.color} {sender.name} {message}";
     private static final float DEFAULT_LOCAL_RADIUS = 30;
+    private static final float FAR_LOCAL_RADIUS = 60;
+    private static final float NEAR_LOCAL_RADIUS = 5;
 
     private final AuthorizationService authorizationService;
     private final ChannelFactory channelFactory;
@@ -86,13 +89,25 @@ public class LegendsChatConfiguration {
 
     private Channel createLocalChannel() {
         MessageFormatter formatter = formatterFactory.createMessageFormatter(DEFAULT_LOCAL_FORMATTING_STRING);
-        return channelFactory.createLocalChannel("Local", null, "((",
+        return channelFactory.createLocalChannel("Local", Arrays.asList("say", "s", "rp"), "((",
                 ColorCode.WHITE, formatter, DEFAULT_LOCAL_RADIUS);
     }
 
     private Channel createEmoteChannel() {
         MessageFormatter formatter = formatterFactory.createMessageFormatter(EMOTE_LOCAL_FORMATTING_STRING);
-        return channelFactory.createLocalChannel("Emote", null, "*",
+        return channelFactory.createLocalChannel("Emote", Arrays.asList("e", "pose"), "*",
                 ColorCode.GOLD, formatter, DEFAULT_LOCAL_RADIUS);
+    }
+
+    private Channel createYellChannel() {
+        MessageFormatter formatter = formatterFactory.createMessageFormatter(DEFAULT_LOCAL_FORMATTING_STRING);
+        return channelFactory.createLocalChannel("Yell", Arrays.asList("y", "shout"), null,
+                ColorCode.RED, formatter, FAR_LOCAL_RADIUS);
+    }
+
+    private Channel createWhisperChannel() {
+        MessageFormatter formatter = formatterFactory.createMessageFormatter(DEFAULT_LOCAL_FORMATTING_STRING);
+        return channelFactory.createLocalChannel("Whisper", Arrays.asList("w"), null,
+                ColorCode.AQUA, formatter, NEAR_LOCAL_RADIUS);
     }
 }
