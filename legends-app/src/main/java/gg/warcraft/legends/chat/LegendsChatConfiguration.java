@@ -61,10 +61,10 @@ public class LegendsChatConfiguration {
         Channel emoteChannel = createEmoteChannel();
         chatService.registerChannel(emoteChannel);
 
-        Channel yellChannel = createLocalChannel();
+        Channel yellChannel = createYellChannel();
         chatService.registerChannel(yellChannel);
 
-        Channel whisperChannel = createLocalChannel();
+        Channel whisperChannel = createWhisperChannel();
         chatService.registerChannel(whisperChannel);
 
         // Remaining setup
