@@ -1,0 +1,43 @@
+maintenance: false
+
+world: Ouros
+spawn:
+  x: 0
+  y: 0
+  z: 0
+
+shutdown-message: "The server is going down for maintenance, please check http://warcraft.gg for updates."
+tips:
+  - "Any feedback? Please let us know at discord.warcraft.gg!"
+  - "'/monolith' and '/menu' open your personal Monolith Menu!"
+  - "The splinter in the back of your '/menu' returns you to spawn!"
+  - "'/return' and '/spawn' return you to spawn!"
+
+  - "You will earn rewards every '/vote' you cast for WarCraft!"
+  #- "You can claim your rewards from voting in the '/donator' menu!"
+
+  - "Low on food? Follow the signs to a farm!"
+  - "Need gear? Follow the signs to a mob camp!"
+  - "Get a group together and capture an enemy objective!"
+  - "To read the server guides visit http://community.warcraft.gg/c/legends/guides"
+
+  #- "'/me' and '/pc' open your Player Menu!"
+  #- "Shift right-clicking someone will bring up their Player Menu!"
+  #- "'/inspect <MC or RP name>' will bring up anyone's Player Menu at any time!"
+  #- "'/help' and '/?' open the Help Menu!"
+  #- "'/manual' and '/man' open the Server Manual!"  <----
+  #- "'/command' and '/cmd' open the Command List!"  <----
+  #- "'/staff' opens the Online Staff List!"         <----
+
+  #- "You can emote while talking by enclosing the emote in *asterisks*!"
+  #- "You can emote by starting your message with an *asterisk!"
+  #- "You can talk while emoting by enclosing your speech in \"quotations\"!"
+  #- "You can silently emote by starting your message with two **asterisks!"
+  #- "You can let The Titans decide your fate using '/roll'!"
+  #- "You can roll higher than 20 using '/roll <range>'!"
+  #- "You can talk in the Help Channel via '/help <text>'!"
+  #- "You can make the Help Channel your home channel via '/h'!"
+
+  #- "You can adjust your walking speed via '/speed <1-10>'!"
+  #- "You can lie down on the floor via '/lie'!"
+  #- "You can sit with two people on the same horse!"
