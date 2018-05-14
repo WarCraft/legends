@@ -1,4 +1,4 @@
-package gg.warcraft.legends;
+package gg.warcraft.legends.chat;
 
 import com.google.inject.AbstractModule;
 import gg.warcraft.monolith.app.chat.logger.ConsoleMessageLogger;
