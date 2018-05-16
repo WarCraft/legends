@@ -1,6 +1,6 @@
 maintenance: false
 
-world: Ouros
+world: world # TODO set this back to Ouros on live
 spawn:
   x: 0
   y: 0

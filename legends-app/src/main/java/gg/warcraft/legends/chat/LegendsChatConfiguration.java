@@ -9,7 +9,7 @@ import gg.warcraft.monolith.api.chat.MessageFormatterFactory;
 import gg.warcraft.monolith.api.core.AuthorizationService;
 import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.util.ColorCode;
-import gg.warcraft.monolith.app.chat.event.PlayerHomeChannelPersister;
+import gg.warcraft.monolith.app.chat.event.HomeChannelListener;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,7 +32,7 @@ public class LegendsChatConfiguration {
     @Inject
     public LegendsChatConfiguration(ChatService chatService, EventService eventService,
                                     AuthorizationService authorizationService, ChannelFactory channelFactory,
-                                    MessageFormatterFactory formatterFactory, PlayerHomeChannelPersister homeChannelPersister) {
+                                    MessageFormatterFactory formatterFactory, HomeChannelListener homeChannelListener) {
         this.authorizationService = authorizationService;
         this.channelFactory = channelFactory;
         this.formatterFactory = formatterFactory;
@@ -68,8 +68,8 @@ public class LegendsChatConfiguration {
         chatService.registerChannel(whisperChannel);
 
         // Remaining setup
-        homeChannelPersister.setDefaultChannel(globalChannel);
-        eventService.subscribe(homeChannelPersister);
+        homeChannelListener.setDefaultChannel(globalChannel);
+        eventService.subscribe(homeChannelListener);
     }
 
     private Channel createGlobalChannel() {

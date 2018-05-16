@@ -1,6 +1,6 @@
-package gg.warcraft.legends.data;
+package gg.warcraft.legends.entity.data;
 
-import gg.warcraft.monolith.api.data.PlayerData;
+import gg.warcraft.monolith.api.entity.player.PlayerData;
 
 public interface LegendsPlayerData extends PlayerData {
 
