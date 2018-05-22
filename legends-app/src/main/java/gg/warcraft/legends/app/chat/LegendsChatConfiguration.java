@@ -1,4 +1,4 @@
-package gg.warcraft.legends.chat;
+package gg.warcraft.legends.app.chat;
 
 import com.google.inject.Inject;
 import gg.warcraft.monolith.api.chat.ChatRouter;

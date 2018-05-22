@@ -4,7 +4,7 @@ author: fishb6nes
 authors: [fishb6nes, Chau]
 website: http://warcraft.gg
 
-main: gg.warcraft.legends.LegendsPlugin
+main: gg.warcraft.legends.spigot.LegendsPlugin
 depend: [EffectLib, MythicMobs]
 
 commands:

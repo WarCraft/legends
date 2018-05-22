@@ -1,4 +1,6 @@
-package gg.warcraft.legends;
+package gg.warcraft.legends.spigot;
+
+import gg.warcraft.legends.app.AbstractLegendsModule;
 
 public class SpigotLegendsModule extends AbstractLegendsModule {
 

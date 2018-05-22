@@ -1,4 +1,4 @@
-package gg.warcraft.legends.command;
+package gg.warcraft.legends.app.command;
 
 import com.google.inject.Inject;
 import gg.warcraft.monolith.api.event.EventService;
