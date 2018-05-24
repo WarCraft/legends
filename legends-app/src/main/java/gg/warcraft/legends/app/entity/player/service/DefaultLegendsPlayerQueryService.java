@@ -6,7 +6,8 @@ import gg.warcraft.legends.api.entity.player.LegendsPlayerData;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerDataRepository;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.app.entity.player.SimpleLegendsPlayer;
-import gg.warcraft.monolith.api.entity.player.PlayerServerData;
+import gg.warcraft.monolith.api.entity.EntityData;
+import gg.warcraft.monolith.api.entity.adapter.EntityServerAdapter;
 import gg.warcraft.monolith.api.entity.player.adapter.PlayerServerAdapter;
 
 import java.util.Collection;
@@ -16,17 +17,20 @@ import java.util.stream.Collectors;
 public class DefaultLegendsPlayerQueryService implements LegendsPlayerQueryService {
     private final LegendsPlayerDataRepository repository;
     private final PlayerServerAdapter serverAdapter;
+    private final EntityServerAdapter entityServerAdapter;
 
     @Inject
-    public DefaultLegendsPlayerQueryService(LegendsPlayerDataRepository repository, PlayerServerAdapter serverAdapter) {
+    public DefaultLegendsPlayerQueryService(LegendsPlayerDataRepository repository, PlayerServerAdapter serverAdapter,
+                                            EntityServerAdapter entityServerAdapter) {
         this.repository = repository;
         this.serverAdapter = serverAdapter;
+        this.entityServerAdapter = entityServerAdapter;
     }
 
     @Override
     public LegendsPlayer getPlayer(UUID playerId) {
         LegendsPlayerData playerData = repository.get(playerId);
-        PlayerServerData playerServerData = serverAdapter.getPlayerServerData(playerId);
+        EntityData playerServerData = entityServerAdapter.getEntityData(playerId);
         return new SimpleLegendsPlayer(playerData, playerServerData);
     }
 

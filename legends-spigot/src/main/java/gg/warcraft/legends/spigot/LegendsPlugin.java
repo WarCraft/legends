@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import gg.warcraft.legends.app.chat.LegendsChatConfiguration;
 import gg.warcraft.legends.app.chat.LegendsChatModule;
 import gg.warcraft.legends.app.command.LegendsCommandConfiguration;
+import gg.warcraft.legends.app.entity.player.LegendsPlayerConfiguration;
 import gg.warcraft.monolith.api.event.EventService;
 import gg.warcraft.monolith.app.command.ConsoleCommandSender;
 import gg.warcraft.monolith.app.command.PlayerCommandSender;
@@ -41,6 +42,7 @@ public class LegendsPlugin extends JavaPlugin {
 
         injector.getInstance(LegendsChatConfiguration.class);
         injector.getInstance(LegendsCommandConfiguration.class);
+        injector.getInstance(LegendsPlayerConfiguration.class);
 
         // TODO move elsewhere
         eventService = injector.getInstance(EventService.class);
