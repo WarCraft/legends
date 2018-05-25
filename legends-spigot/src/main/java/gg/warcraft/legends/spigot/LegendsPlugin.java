@@ -12,7 +12,9 @@ import gg.warcraft.monolith.app.command.PlayerCommandSender;
 import gg.warcraft.monolith.app.command.event.SimpleCommandExecutedEvent;
 import gg.warcraft.monolith.spigot.SpigotMonolithModule;
 import gg.warcraft.monolith.spigot.event.SpigotChatEventMapper;
+import gg.warcraft.monolith.spigot.event.SpigotEntityEventMapper;
 import gg.warcraft.monolith.spigot.event.SpigotPlayerEventMapper;
+import gg.warcraft.monolith.spigot.event.SpigotWorldEventMapper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -46,8 +48,10 @@ public class LegendsPlugin extends JavaPlugin {
 
         // TODO move elsewhere
         eventService = injector.getInstance(EventService.class);
-        getServer().getPluginManager().registerEvents(new SpigotChatEventMapper(eventService), this);
-        getServer().getPluginManager().registerEvents(new SpigotPlayerEventMapper(eventService), this);
+        getServer().getPluginManager().registerEvents(injector.getInstance(SpigotChatEventMapper.class), this);
+        getServer().getPluginManager().registerEvents(injector.getInstance(SpigotEntityEventMapper.class), this);
+        getServer().getPluginManager().registerEvents(injector.getInstance(SpigotPlayerEventMapper.class), this);
+        getServer().getPluginManager().registerEvents(injector.getInstance(SpigotWorldEventMapper.class), this);
     }
 
     @Override
