@@ -48,9 +48,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         // TODO move elsewhere
         eventService = injector.getInstance(EventService.class);
-        getServer().getPluginManager().registerEvents(injector.getInstance(SpigotChatEventMapper.class), this);
+        getServer().getPluginManager().registerEvents(new SpigotChatEventMapper(eventService), this);
         getServer().getPluginManager().registerEvents(injector.getInstance(SpigotEntityEventMapper.class), this);
-        getServer().getPluginManager().registerEvents(injector.getInstance(SpigotPlayerEventMapper.class), this);
+        getServer().getPluginManager().registerEvents(new SpigotPlayerEventMapper(eventService), this);
         getServer().getPluginManager().registerEvents(injector.getInstance(SpigotWorldEventMapper.class), this);
     }
 
