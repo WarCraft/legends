@@ -57,7 +57,6 @@ public class LegendsGatheringConfiguration {
     private static final Supplier<List<ItemType>> PIG_FARM_DROPS = () ->
             Collections.singletonList(ItemType.RAW_PORKCHOP);
 
-
     private final GatheringSpotCommandService gatheringSpotCommandService;
     private final GatheringSpotFactory gatheringSpotFactory;
     private final WorldQueryService worldQueryService;
