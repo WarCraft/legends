@@ -108,9 +108,8 @@ public class LegendsGatheringConfiguration {
     }
 
     private void createLumberMill(Vector3fc minimumCorner, Vector3fc maximumCorner) {
-        // Boundaries of the lumber mill
-        BoundingBlockBox boundingBlockBox = new JomlBoundingBlockBox(minimumCorner, maximumCorner);
         // Set up and creation of the lumber mill
+        BoundingBlockBox boundingBlockBox = new JomlBoundingBlockBox(minimumCorner, maximumCorner);
         BlockGatherable blockGatherable = new SimpleBlockGatherable(LUMBER_MILL_CONTAINS, LUMBER_MILL_COOLDOWN_BLOCK,
                 LUMBER_MILL_DROPS, DEFAULT_COOLDOWN);
         BlockGatheringSpot humanLumberMill = gatheringSpotFactory.createBlockGatheringSpot(boundingBlockBox,
@@ -119,9 +118,8 @@ public class LegendsGatheringConfiguration {
     }
 
     private void createMine(Vector3fc minimumCorner, Vector3fc maximumCorner) {
-        // Boundaries of the mine
-        BoundingBlockBox boundingBlockBox = new JomlBoundingBlockBox(minimumCorner, maximumCorner);
         // Set up and creation of the mine
+        BoundingBlockBox boundingBlockBox = new JomlBoundingBlockBox(minimumCorner, maximumCorner);
         BlockGatherable blockGatherable = new SimpleBlockGatherable(MINE_CONTAINS, MINE_COOLDOWN_BLOCK, MINE_DROPS,
                 DEFAULT_COOLDOWN);
         BlockGatheringSpot humanMine = gatheringSpotFactory.createBlockGatheringSpot(boundingBlockBox,
@@ -130,9 +128,8 @@ public class LegendsGatheringConfiguration {
     }
 
     private void createWheatFarm(Vector3fc minimumCorner, Vector3fc maximumCorner) {
-        // Boundaries of the human farm
-        BoundingBlockBox boundingBlockBox = new JomlBoundingBlockBox(minimumCorner, maximumCorner);
         // Set up and creation of the human farm
+        BoundingBlockBox boundingBlockBox = new JomlBoundingBlockBox(minimumCorner, maximumCorner);
         BlockGatherable blockGatherable = new SimpleBlockGatherable(WHEAT_FARM_CONTAINS, WHEAT_FARM_COOLDOWN_BLOCK,
                 WHEAT_FARM_DROPS, DEFAULT_COOLDOWN);
         BlockGatheringSpot humanFarm = gatheringSpotFactory.createBlockGatheringSpot(boundingBlockBox,
