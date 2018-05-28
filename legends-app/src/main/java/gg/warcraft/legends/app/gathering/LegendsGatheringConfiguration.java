@@ -35,21 +35,19 @@ import java.util.function.Supplier;
 
 public class LegendsGatheringConfiguration {
     private static final Supplier<Duration> DEFAULT_COOLDOWN = () -> new SimpleDuration(Duration.Type.SECONDS, 5);
+    private static final BlockType DEFAULT_COOLDOWN_BLOCK = BlockType.BEDROCK;
     // Lumber Mill
     private static final Predicate<BlockType> LUMBER_MILL_CONTAINS = type -> BlockType.OAK_WOOD.equals(type)
             || BlockType.ACACIA_WOOD.equals(type);
-    private static final BlockType LUMBER_MILL_COOLDOWN_BLOCK = BlockType.BEDROCK;
     private static final Supplier<List<ItemType>> LUMBER_MILL_DROPS = () ->
             Arrays.asList(ItemType.OAK_WOOD, ItemType.ACACIA_WOOD);
     // Mine
     private static final Predicate<BlockType> MINE_CONTAINS = type -> BlockType.STONE.equals(type)
             || BlockType.COBBLESTONE.equals(type);
-    private static final BlockType MINE_COOLDOWN_BLOCK = BlockType.BEDROCK;
     private static final Supplier<List<ItemType>> MINE_DROPS = () ->
             Arrays.asList(ItemType.STONE, ItemType.COBBLESTONE);
     // Wheat Farm
     private static final Predicate<BlockType> WHEAT_FARM_CONTAINS = BlockType.WHEAT_CROPS::equals;
-    private static final BlockType WHEAT_FARM_COOLDOWN_BLOCK = BlockType.BEDROCK;
     private static final Supplier<List<ItemType>> WHEAT_FARM_DROPS =() ->
             Collections.singletonList(ItemType.WHEAT_CROPS);
     // Pig Farm
@@ -109,7 +107,7 @@ public class LegendsGatheringConfiguration {
     private void createLumberMill(Vector3fc minimumCorner, Vector3fc maximumCorner) {
         // Set up and creation of the lumber mill
         BoundingBlockBox boundingBlockBox = new JomlBoundingBlockBox(minimumCorner, maximumCorner);
-        BlockGatherable blockGatherable = new SimpleBlockGatherable(LUMBER_MILL_CONTAINS, LUMBER_MILL_COOLDOWN_BLOCK,
+        BlockGatherable blockGatherable = new SimpleBlockGatherable(LUMBER_MILL_CONTAINS, DEFAULT_COOLDOWN_BLOCK,
                 LUMBER_MILL_DROPS, DEFAULT_COOLDOWN);
         BlockGatheringSpot humanLumberMill = gatheringSpotFactory.createBlockGatheringSpot(boundingBlockBox,
                 Collections.singletonList(blockGatherable));
@@ -119,7 +117,7 @@ public class LegendsGatheringConfiguration {
     private void createMine(Vector3fc minimumCorner, Vector3fc maximumCorner) {
         // Set up and creation of the mine
         BoundingBlockBox boundingBlockBox = new JomlBoundingBlockBox(minimumCorner, maximumCorner);
-        BlockGatherable blockGatherable = new SimpleBlockGatherable(MINE_CONTAINS, MINE_COOLDOWN_BLOCK, MINE_DROPS,
+        BlockGatherable blockGatherable = new SimpleBlockGatherable(MINE_CONTAINS, DEFAULT_COOLDOWN_BLOCK, MINE_DROPS,
                 DEFAULT_COOLDOWN);
         BlockGatheringSpot humanMine = gatheringSpotFactory.createBlockGatheringSpot(boundingBlockBox,
                 Collections.singletonList(blockGatherable));
@@ -129,7 +127,7 @@ public class LegendsGatheringConfiguration {
     private void createWheatFarm(Vector3fc minimumCorner, Vector3fc maximumCorner) {
         // Set up and creation of the human farm
         BoundingBlockBox boundingBlockBox = new JomlBoundingBlockBox(minimumCorner, maximumCorner);
-        BlockGatherable blockGatherable = new SimpleBlockGatherable(WHEAT_FARM_CONTAINS, WHEAT_FARM_COOLDOWN_BLOCK,
+        BlockGatherable blockGatherable = new SimpleBlockGatherable(WHEAT_FARM_CONTAINS, DEFAULT_COOLDOWN_BLOCK,
                 WHEAT_FARM_DROPS, DEFAULT_COOLDOWN);
         BlockGatheringSpot humanFarm = gatheringSpotFactory.createBlockGatheringSpot(boundingBlockBox,
                 Collections.singletonList(blockGatherable));
