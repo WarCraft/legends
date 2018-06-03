@@ -7,10 +7,14 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerCommandService;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerDataRepository;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerQueryService;
+import gg.warcraft.legends.app.entity.service.DefaultLegendsEntityCommandService;
+import gg.warcraft.legends.app.entity.service.DefaultLegendsEntityQueryService;
 import gg.warcraft.monolith.api.data.DataService;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.player.service.PlayerDataRepository;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
+import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.app.chat.logger.ConsoleMessageLogger;
 import gg.warcraft.monolith.app.chat.logger.MessageLogger;
 import gg.warcraft.monolith.app.data.JedisDataService;
@@ -44,6 +48,9 @@ public abstract class AbstractLegendsModule extends AbstractModule {
     }
 
     private void configureEntity() {
+        bind(EntityCommandService.class).to(DefaultLegendsEntityCommandService.class);
+        bind(EntityQueryService.class).to(DefaultLegendsEntityQueryService.class);
+
         bind(PlayerCommandService.class).to(DefaultLegendsPlayerCommandService.class);
         bind(LegendsPlayerCommandService.class).to(DefaultLegendsPlayerCommandService.class);
         bind(PlayerQueryService.class).to(DefaultLegendsPlayerQueryService.class);
