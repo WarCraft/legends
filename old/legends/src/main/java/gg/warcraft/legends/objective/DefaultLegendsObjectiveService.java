@@ -1,4 +1,4 @@
-package gg.warcraft.legends.objective;
+package gg.warcraft.monolith.app.objective;
 
 import gg.warcraft.legends.config.LegendsConfigurationService;
 import gg.warcraft.legends.config.ObjectiveConfiguration;
@@ -10,6 +10,7 @@ import gg.warcraft.legends.player.LegendsPlayerService;
 import gg.warcraft.monolith.LoggerService;
 import gg.warcraft.monolith.Monolith;
 import gg.warcraft.monolith.MonolithPlugin;
+import gg.warcraft.monolith.app.objective.capturable.SimpleCapturableObjective;
 import gg.warcraft.monolith.event.EventService;
 import gg.warcraft.monolith.event.ServerShutdownEvent;
 import gg.warcraft.monolith.objective.Objective;
@@ -57,7 +58,7 @@ public class DefaultLegendsObjectiveService implements LegendsObjectiveService, 
         List<ObjectiveConfiguration> configurations = configurationService.getObjectiveConfigurations();
         configurations.forEach(configuration -> {
             loggerService.info("Initializing objective: " + configuration.getName());
-            AbstractCapturableObjective objective = new AbstractCapturableObjective(configuration);
+            SimpleCapturableObjective objective = new SimpleCapturableObjective(configuration);
             objectives.put(configuration.getId(), objective);
         });
 
@@ -93,7 +94,7 @@ public class DefaultLegendsObjectiveService implements LegendsObjectiveService, 
 
     private void initializeObjectives(LegendsGameItem war) {
         objectives.values().forEach(objective -> {
-            AbstractCapturableObjective capObjective = (AbstractCapturableObjective) objective;
+            SimpleCapturableObjective capObjective = (SimpleCapturableObjective) objective;
             // initialize existing data
             String currentOccupiers = war.getObjectives().get(capObjective.getId());
             if (currentOccupiers != null && !currentOccupiers.isEmpty() && !currentOccupiers.equals("NULL")) {
@@ -119,19 +120,19 @@ public class DefaultLegendsObjectiveService implements LegendsObjectiveService, 
             Listener skirmishCaptureListener = new SkirmishObjectiveCapturedListener(simpleScoreboard);
             EventService.getInstance().registerForEvents(skirmishCaptureListener);
 
-            ((AbstractCapturableObjective) objectives.get("HUMAN_FARM")).setOccupiers(LegendsRace.HUMAN);
-            ((AbstractCapturableObjective) objectives.get("HUMAN_KEEP_EAST")).setOccupiers(LegendsRace.HUMAN);
-            ((AbstractCapturableObjective) objectives.get("HUMAN_KEEP_WEST")).setOccupiers(LegendsRace.HUMAN);
-            ((AbstractCapturableObjective) objectives.get("HUMAN_LUMBER_MILL")).setOccupiers(LegendsRace.HUMAN);
-            ((AbstractCapturableObjective) objectives.get("HUMAN_MINE")).setOccupiers(LegendsRace.HUMAN);
-            ((AbstractCapturableObjective) objectives.get("HUMAN_OUTPOST_ORC")).setOccupiers(LegendsRace.HUMAN);
+            ((SimpleCapturableObjective) objectives.get("HUMAN_FARM")).setOccupiers(LegendsRace.HUMAN);
+            ((SimpleCapturableObjective) objectives.get("HUMAN_KEEP_EAST")).setOccupiers(LegendsRace.HUMAN);
+            ((SimpleCapturableObjective) objectives.get("HUMAN_KEEP_WEST")).setOccupiers(LegendsRace.HUMAN);
+            ((SimpleCapturableObjective) objectives.get("HUMAN_LUMBER_MILL")).setOccupiers(LegendsRace.HUMAN);
+            ((SimpleCapturableObjective) objectives.get("HUMAN_MINE")).setOccupiers(LegendsRace.HUMAN);
+            ((SimpleCapturableObjective) objectives.get("HUMAN_OUTPOST_ORC")).setOccupiers(LegendsRace.HUMAN);
 
-            ((AbstractCapturableObjective) objectives.get("ORC_FARM")).setOccupiers(LegendsRace.ORC);
-            ((AbstractCapturableObjective) objectives.get("ORC_KEEP_EAST")).setOccupiers(LegendsRace.ORC);
-            ((AbstractCapturableObjective) objectives.get("ORC_KEEP_WEST")).setOccupiers(LegendsRace.ORC);
-            ((AbstractCapturableObjective) objectives.get("ORC_LUMBER_MILL")).setOccupiers(LegendsRace.ORC);
-            ((AbstractCapturableObjective) objectives.get("ORC_MINE")).setOccupiers(LegendsRace.ORC);
-            ((AbstractCapturableObjective) objectives.get("ORC_OUTPOST_HUMAN")).setOccupiers(LegendsRace.ORC);
+            ((SimpleCapturableObjective) objectives.get("ORC_FARM")).setOccupiers(LegendsRace.ORC);
+            ((SimpleCapturableObjective) objectives.get("ORC_KEEP_EAST")).setOccupiers(LegendsRace.ORC);
+            ((SimpleCapturableObjective) objectives.get("ORC_KEEP_WEST")).setOccupiers(LegendsRace.ORC);
+            ((SimpleCapturableObjective) objectives.get("ORC_LUMBER_MILL")).setOccupiers(LegendsRace.ORC);
+            ((SimpleCapturableObjective) objectives.get("ORC_MINE")).setOccupiers(LegendsRace.ORC);
+            ((SimpleCapturableObjective) objectives.get("ORC_OUTPOST_HUMAN")).setOccupiers(LegendsRace.ORC);
 
             simpleScoreboard.setScore(LegendsRace.HUMAN, 0);
             simpleScoreboard.setScore(LegendsRace.ORC, 0);
@@ -225,7 +226,7 @@ public class DefaultLegendsObjectiveService implements LegendsObjectiveService, 
 
         Map<String, String> objectivesData = new HashMap<>();
         objectives.forEach((id, objective) -> {
-            AbstractCapturableObjective capturableObjective = ((AbstractCapturableObjective) objective);
+            SimpleCapturableObjective capturableObjective = ((SimpleCapturableObjective) objective);
             if (capturableObjective.getOccupiers() != null) {
                 String occupiers = ((LegendsRace) capturableObjective.getOccupiers()).name();
                 objectivesData.put(id, occupiers);
