@@ -1,10 +1,13 @@
 package gg.warcraft.legends.app.entity.player.service;
 
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.entity.LegendsFaction;
 import gg.warcraft.legends.api.entity.player.LegendsPlayerData;
+import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerDataRepository;
 import gg.warcraft.legends.app.entity.player.SimpleLegendsPlayerData;
 import gg.warcraft.monolith.api.data.DataService;
+import gg.warcraft.monolith.api.entity.Faction;
 import gg.warcraft.monolith.api.entity.player.PlayerData;
 
 import java.util.HashMap;
@@ -19,8 +22,12 @@ public class DefaultLegendsPlayerDataRepository implements LegendsPlayerDataRepo
     private static final String TIME_OF_FIRST_CONNECT = "timeoffirstconnect";
     private static final String TIME_PLAYED = "timeplayed";
     private static final String TIMES_VOTED = "timesvoted";
+    private static final String FACTION = "faction";
     private static final String GOLD_COINS = "goldcoins";
+    private static final String TOTAL_GOLD_COINS = "totalgoldcoins";
     private static final String FAVOR = "favor";
+    private static final String TOTAL_FAVOR = "totalfavor";
+    private static final String RANK = "rank"; // TODO should this be stored? data is already in totalfavor
 
     private final DataService dataService;
 
@@ -41,10 +48,14 @@ public class DefaultLegendsPlayerDataRepository implements LegendsPlayerDataRepo
         long timeOfFirstConnect = getTimeOfFirstConnectFromData(data);
         long timePlayed = getTimePlayedFromData(data);
         int timesVoted = getTimesVotedFromData(data);
+        Faction faction = getFactionFromData(data);
         int goldCoins = getGoldCoinsFromData(data);
+        int totalGoldCoins = getTotalGoldCoinsFromData(data);
         int favor = getFavorFromData(data);
+        int totalFavor = getTotalFavorFromData(data);
+        Rank rank = null; // TODO should this be stored? data is already in totalfavor
         return new SimpleLegendsPlayerData(playerId, minecraftName, displayName, timeOfConnect, timeOfFirstConnect,
-                timePlayed, timesVoted, goldCoins, favor);
+                timePlayed, timesVoted, faction, goldCoins, totalGoldCoins, favor, totalFavor, rank);
     }
 
     @Override
@@ -57,8 +68,11 @@ public class DefaultLegendsPlayerDataRepository implements LegendsPlayerDataRepo
         mapTimeOfFirstConnectToData(newData, legendsData.getTimeOfFirstConnect());
         mapTimePlayedToData(newData, legendsData.getTimePlayed());
         mapTimesVotedToData(newData, legendsData.getTimesVoted());
+        mapFactionToData(newData, legendsData.getFaction());
         mapGoldCoinsToData(newData, legendsData.getGoldCoins());
+        mapTotalGoldCoinsToData(newData, legendsData.getTotalGoldCoins());
         mapFavorToData(newData, legendsData.getFavor());
+        mapTotalFavorToData(newData, legendsData.getTotalFavor());
         dataService.setMap(getDataKey(data.getPlayerId()), newData);
     }
 
@@ -90,12 +104,24 @@ public class DefaultLegendsPlayerDataRepository implements LegendsPlayerDataRepo
         return Integer.parseInt(data.get(TIMES_VOTED));
     }
 
+    private Faction getFactionFromData(Map<String, String> data) {
+        return LegendsFaction.ofName(data.get(FACTION));
+    }
+
     private int getGoldCoinsFromData(Map<String, String> data) {
         return Integer.parseInt(data.get(GOLD_COINS));
     }
 
+    private int getTotalGoldCoinsFromData(Map<String, String> data) {
+        return Integer.parseInt(data.get(TOTAL_GOLD_COINS));
+    }
+
     private int getFavorFromData(Map<String, String> data) {
         return Integer.parseInt(data.get(FAVOR));
+    }
+
+    private int getTotalFavorFromData(Map<String, String> data) {
+        return Integer.parseInt(data.get(TOTAL_FAVOR));
     }
 
     private void mapMinecraftNameToData(Map<String, String> data, String minecraftName) {
@@ -122,11 +148,23 @@ public class DefaultLegendsPlayerDataRepository implements LegendsPlayerDataRepo
         data.put(TIMES_VOTED, "" + timesVoted);
     }
 
+    private void mapFactionToData(Map<String, String> data, Faction faction) {
+        data.put(FACTION, "" + faction.getName());
+    }
+
     private void mapGoldCoinsToData(Map<String, String> data, long goldCoins) {
         data.put(GOLD_COINS, "" + goldCoins);
     }
 
+    private void mapTotalGoldCoinsToData(Map<String, String> data, long totalGoldCoins) {
+        data.put(TOTAL_GOLD_COINS, "" + totalGoldCoins);
+    }
+
     private void mapFavorToData(Map<String, String> data, long favor) {
         data.put(FAVOR, "" + favor);
+    }
+
+    private void mapTotalFavorToData(Map<String, String> data, long totalFavor) {
+        data.put(TOTAL_FAVOR, "" + totalFavor);
     }
 }

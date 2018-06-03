@@ -2,6 +2,7 @@ package gg.warcraft.legends.app.entity.player.handler;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.entity.LegendsFaction;
 import gg.warcraft.legends.app.entity.player.SimpleLegendsPlayerData;
 import gg.warcraft.monolith.api.entity.player.PlayerData;
 import gg.warcraft.monolith.api.entity.player.event.PlayerPreConnectEvent;
@@ -25,7 +26,7 @@ public class PlayerDataInitializationHandler {
         if (data == null) {
             long timeOfConnect = System.currentTimeMillis();
             data = new SimpleLegendsPlayerData(playerId, name, name, timeOfConnect, timeOfConnect,
-                    0, 0, 0, 0);
+                    0, 0, LegendsFaction.WAYFARER, 0, 0, 0, 0, null); // TODO do something with rank
             playerDataRepository.save(data);
         } else {
             // TODO set new time of connect

@@ -7,6 +7,7 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerDataRepository
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.app.entity.player.SimpleLegendsPlayer;
 import gg.warcraft.monolith.api.entity.EntityData;
+import gg.warcraft.monolith.api.entity.EntityServerData;
 import gg.warcraft.monolith.api.entity.adapter.EntityServerAdapter;
 import gg.warcraft.monolith.api.entity.player.adapter.PlayerServerAdapter;
 
@@ -30,7 +31,7 @@ public class DefaultLegendsPlayerQueryService implements LegendsPlayerQueryServi
     @Override
     public LegendsPlayer getPlayer(UUID playerId) {
         LegendsPlayerData playerData = repository.get(playerId);
-        EntityData playerServerData = entityServerAdapter.getEntityData(playerId);
+        EntityServerData playerServerData = entityServerAdapter.getEntityServerData(playerId);
         return new SimpleLegendsPlayer(playerData, playerServerData);
     }
 

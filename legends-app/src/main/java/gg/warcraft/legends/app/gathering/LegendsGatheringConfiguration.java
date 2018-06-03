@@ -47,7 +47,8 @@ public class LegendsGatheringConfiguration {
     private static final Supplier<List<ItemType>> MINE_DROPS = () ->
             Arrays.asList(ItemType.STONE, ItemType.COBBLESTONE);
     // Wheat Farm
-    private static final Predicate<BlockType> WHEAT_FARM_CONTAINS = BlockType.WHEAT_CROPS::equals;
+    private static final Predicate<BlockType> WHEAT_FARM_CONTAINS = BlockType.RIPE_WHEAT_CROPS::equals;
+    private static final BlockType WHEAT_COOLDOWN_BLOCK = BlockType.MEDIUM_WHEAT_CROPS;
     private static final Supplier<List<ItemType>> WHEAT_FARM_DROPS =() ->
             Collections.singletonList(ItemType.WHEAT_CROPS);
     // Pig Farm
@@ -127,7 +128,7 @@ public class LegendsGatheringConfiguration {
     private void createWheatFarm(Vector3fc minimumCorner, Vector3fc maximumCorner) {
         // Set up and creation of the human farm
         BoundingBlockBox boundingBlockBox = new JomlBoundingBlockBox(minimumCorner, maximumCorner);
-        BlockGatherable blockGatherable = new SimpleBlockGatherable(WHEAT_FARM_CONTAINS, DEFAULT_COOLDOWN_BLOCK,
+        BlockGatherable blockGatherable = new SimpleBlockGatherable(WHEAT_FARM_CONTAINS, WHEAT_COOLDOWN_BLOCK,
                 WHEAT_FARM_DROPS, DEFAULT_COOLDOWN);
         BlockGatheringSpot humanFarm = gatheringSpotFactory.createBlockGatheringSpot(boundingBlockBox,
                 Collections.singletonList(blockGatherable));
