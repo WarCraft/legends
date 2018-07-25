@@ -1,10 +1,10 @@
 package gg.warcraft.legends.api.entity;
 
-import gg.warcraft.monolith.api.entity.Alliance;
+import gg.warcraft.monolith.api.entity.Team;
 import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.ColorHue;
 
-public enum LegendsAlliance implements Alliance {
+public enum LegendsTeam implements Team {
     ORC("Vorkulth", ColorHue.RED, ColorCode.RED),
     HUMAN("Humenum", ColorHue.AQUA, ColorCode.AQUA),
     DWARF("DWARF_PH", ColorHue.ORANGE, ColorCode.GOLD),
@@ -15,7 +15,7 @@ public enum LegendsAlliance implements Alliance {
     private final ColorHue color;
     private final ColorCode chatColor;
 
-    LegendsAlliance(String name, ColorHue color, ColorCode chatColor) {
+    LegendsTeam(String name, ColorHue color, ColorCode chatColor) {
         this.name = name;
         this.color = color;
         this.chatColor = chatColor;
