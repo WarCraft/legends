@@ -1,38 +1,49 @@
 package gg.warcraft.legends.app.combat.mage.tempest;
 
-import gg.warcraft.legends.combat.effect.mage.tempest.MoltenStormImpactEffect;
-import gg.warcraft.monolith.combat.SimpleMonolithAbility;
-import gg.warcraft.monolith.config.AbilityConfiguration;
-import gg.warcraft.monolith.config.ConfigurationService;
-import gg.warcraft.monolith.effect.EffectVectors;
-import gg.warcraft.monolith.effect.MonolithEffect;
-import gg.warcraft.monolith.effect.vectors.RingVectors;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.util.Duration;
-import gg.warcraft.monolith.util.RunnableUtils;
-import org.bukkit.Location;
-import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.util.Vector;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.HitboxFactory;
+import gg.warcraft.combat.api.MovementFactory;
+import gg.warcraft.combat.api.ability.AbstractAbility;
+import gg.warcraft.combat.api.ability.RangedAbility;
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.combat.api.ability.service.AbilityCommandService;
+import gg.warcraft.monolith.api.entity.Entity;
+import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.world.Location;
+import gg.warcraft.monolith.api.world.block.Block;
+import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.service.WorldQueryService;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import static gg.warcraft.monolith.util.Duration.Type.SECONDS;
-import static gg.warcraft.monolith.util.Duration.Type.TICKS;
-
-public class MoltenStorm extends SimpleMonolithAbility {
-    private static final Vector HEIGHT = new Vector(0, 20, 0);
-    private static final Vector OFFSET = new Vector(5, 0, 5);
+public class MoltenStorm extends AbstractAbility implements RangedAbility {
+    private static final Vector3fc HEIGHT = new Vector3f(0, 20, 0);
+    private static final Vector3fc OFFSET = new Vector3f(5, 0, 5);
 
     private static final Random random = new Random(System.currentTimeMillis());
 
-    private final Vector direction;
+    private final Vector3f direction;
     private final List<Location> spawnLocations;
 
     private int i = 0;
     private BukkitTask task;
+
+    @Inject
+    public Bolt(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
+                WorldQueryService worldQueryService, WorldCommandService worldCommandService,
+                HitboxFactory hitboxFactory, MovementFactory movementFactory, @Assisted AbilitySnapshot snapshot,
+                @Assisted("caster") Entity caster, @Assisted("target") Entity rangedTarget,
+                @Assisted Block blockTarget) {
+        super(caster.getId(), snapshot);
+        float spawnRadius = snapshot.getFloat("spawnRadius");
+        Duration duration = snapshot.getDuration();
+    }
 
     public MoltenStorm(MonolithEntity caster, AbilityConfiguration config, Location location) {
         super(caster, config);
@@ -60,8 +71,4 @@ public class MoltenStorm extends SimpleMonolithAbility {
         i += 1;
     }
 
-    @Override
-    public String toString() {
-        return "Molten Storm";
-    }
 }

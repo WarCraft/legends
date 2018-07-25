@@ -2,29 +2,35 @@ package gg.warcraft.legends.app.combat.mage.tempest;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.Hitbox;
+import gg.warcraft.combat.api.HitboxFactory;
+import gg.warcraft.combat.api.Movement;
+import gg.warcraft.combat.api.MovementFactory;
 import gg.warcraft.combat.api.ability.AbstractAbility;
 import gg.warcraft.combat.api.ability.RangedAbility;
 import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
-import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.world.BlockLocation;
 import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class Bolt extends AbstractAbility implements RangedAbility {
+    private final EntityCommandService entityCommandService;
 
     @Inject
-    public Bolt(EntityQueryService entityQueryService, EntityCommandService entityCommandService,
-                WorldQueryService worldQueryService, WorldCommandService worldCommandService, AbilitySnapshot snapshot,
-                @Assisted("caster") Entity caster, @Assisted("target") Entity rangedTarget, Block blockTarget) {
+    public Bolt(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
+                WorldQueryService worldQueryService, WorldCommandService worldCommandService,
+                HitboxFactory hitboxFactory, MovementFactory movementFactory, @Assisted AbilitySnapshot snapshot,
+                @Assisted("caster") Entity caster, @Assisted("target") Entity rangedTarget,
+                @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
+        this.entityCommandService = entityCommandService;
+
         Location location;
         if (rangedTarget != null) {
             location = rangedTarget.getLocation();
@@ -39,23 +45,27 @@ public class Bolt extends AbstractAbility implements RangedAbility {
         }
 
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
-        // TODO worldCommandService.strikeLightning(location);    make distinction between effect and actual strike
-        List<Entity> casualties = entityQueryService.getNearbyEntities(location, radius);
-        casualties = casualties.stream()
-                .filter(new HostileTo(caster))
-                .collect(Collectors.toList());
-        publishHitAndDamageEvents(this, casualties).forEach(damageEvent -> { // TODO abstract hit and damage events logic in command service so projectile handler can call it as well as abilities that need to?
-            entityCommandService.damage(entity.getId(), newSnapshot.getDamage());
-        });
+        Movement movement = movementFactory.createStationaryMovement(location);
+        Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
+        abilityCommandService.createProjectile(this, movement, hitbox);
+
+        worldCommandService.strikeLightning(location, true);
     }
 
     @Override
     public boolean onHit(Entity entity) {
-        return false;
+        float damage = getSnapshot().getFloat(AbilityConfigurationValue.DAMAGE);
+        entityCommandService.damage(entity.getId(), damage);
+        return true;
     }
 
     @Override
     public boolean onMiss(Entity entity) {
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean onTick() {
+        return true;
     }
 }

@@ -47,11 +47,6 @@ public class MoltenFireball extends SimpleMonolithAbility implements MonolithPro
         this.tasks.add(new FireballEffect(movement::getLocation));
     }
 
-    @Override
-    public String toString() {
-        return "Molten Fireball";
-    }
-
     private void playExplodeSound(Location location) {
         location.getWorld().playSound(location, Sound.ENTITY_ENDERDRAGON_FIREBALL_EXPLODE, SoundCategory.HOSTILE, 1, 1);
     }

@@ -2,6 +2,7 @@ package gg.warcraft.legends.app.combat.mage.effect;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.Movement;
 import gg.warcraft.monolith.api.effect.Effect;
 import gg.warcraft.monolith.api.effect.EffectFactory;
 import gg.warcraft.monolith.api.effect.EffectRenderer;
@@ -13,9 +14,6 @@ import gg.warcraft.monolith.api.effect.ParticleFactory;
 import gg.warcraft.monolith.api.effect.ParticleType;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.ColorHue;
-import gg.warcraft.monolith.api.world.Location;
-
-import java.util.function.Supplier;
 
 public class FireballEffect implements Cancellable {
     private static final float RADIUS = 0.2f;
@@ -26,8 +24,8 @@ public class FireballEffect implements Cancellable {
     @Inject
     public FireballEffect(ParticleFactory particleFactory, EffectVectorsFactory effectVectorsFactory,
                           EffectRendererFactory effectRendererFactory, EffectFactory effectFactory,
-                          @Assisted Supplier<Location> location) {
-        this.effect = effectFactory.createEffect(location);
+                          @Assisted Movement movement) {
+        this.effect = effectFactory.createEffect(movement);
 
         Particle innerParticle = particleFactory.createSimpleParticle(ParticleType.FLAME);
         EffectVectors innerVectors = effectVectorsFactory.createOriginVector();
