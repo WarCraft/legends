@@ -1,6 +1,6 @@
 package gg.warcraft.legends.api.entity.player.rank;
 
-public enum OrcRank {
+public enum OrcRank implements RankSuffix {
     TUSKLING("Tuskling"),
     GRUNT("Grunt"),
     RAIDER("Raider"),
@@ -15,6 +15,7 @@ public enum OrcRank {
         this.name = name;
     }
 
+    @Override
     public String getName() {
         return name;
     }

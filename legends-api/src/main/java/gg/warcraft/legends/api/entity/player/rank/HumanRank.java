@@ -1,6 +1,6 @@
 package gg.warcraft.legends.api.entity.player.rank;
 
-public enum HumanRank {
+public enum HumanRank implements RankSuffix {
     SQUIRE("Squire"),
     FOOTMAN("Footman"),
     KNIGHT("Knight"),
@@ -15,6 +15,7 @@ public enum HumanRank {
         this.name = name;
     }
 
+    @Override
     public String getName() {
         return name;
     }
