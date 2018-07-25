@@ -1,4 +1,4 @@
 dependencies {
-    compile 'gg.warcraft:monolith-app:1.0.0-SNAPSHOT'
-    compile project(':legends-api')
+    api 'gg.warcraft:monolith-app:1.0.0-SNAPSHOT'
+    api project(':legends-api')
 }

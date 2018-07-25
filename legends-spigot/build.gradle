@@ -1,4 +1,6 @@
 dependencies {
-    compile 'gg.warcraft:monolith-spigot:1.0.0-SNAPSHOT'
-    compile project(':legends-app')
+    api 'gg.warcraft:monolith-spigot:1.0.0-SNAPSHOT'
+    api project(':legends-app')
+
+    shadow('org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT') { exclude group: '*' }
 }

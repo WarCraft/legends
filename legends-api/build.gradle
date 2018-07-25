@@ -1,3 +1,0 @@
-dependencies {
-    compile 'gg.warcraft:monolith-api:1.0.0-SNAPSHOT'
-}

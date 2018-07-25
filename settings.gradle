@@ -1,4 +1,2 @@
 rootProject.name = 'legends'
-include 'legends-api'
-include 'legends-app'
-include 'legends-spigot'
+include 'legends-api', 'legends-app', 'legends-spigot'

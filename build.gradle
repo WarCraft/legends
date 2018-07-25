@@ -1,21 +1,19 @@
 buildscript {
     repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
 
     dependencies {
-        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.4"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
     }
 }
-
 
 subprojects {
     group = 'gg.warcraft'
     version = '1.0.0-SNAPSHOT'
 
     apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'com.github.johnrengelman.shadow'
 
@@ -27,16 +25,29 @@ subprojects {
     }
 
     dependencies {
-        compile 'com.google.inject:guice:4.2.0'
-        compile 'com.google.inject.extensions:guice-assistedinject:4.2.0'
+        implementation 'gg.warcraft:monolith-api:1.0.0-SNAPSHOT'
+        implementation 'gg.warcraft:combat-api:1.0.0-SNAPSHOT'
 
-        testCompile 'junit:junit:4.12'
+        testImplementation 'junit:junit:4.12'
+        testImplementation 'org.mockito:mockito-core:2.18.3'
+        testImplementation 'org.apache.commons:commons-lang3:3.3.1'
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << '-parameters'
     }
 
     publishing {
         publications {
-            defaultJar(MavenPublication) {
-                artifact shadowJar
+            mavenJava(MavenPublication) { from components.java }
+        }
+    }
+
+    publishing {
+        publications {
+            shadow(MavenPublication) {
+                project.shadow.component(it)
             }
         }
     }
