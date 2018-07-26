@@ -17,17 +17,15 @@ import gg.warcraft.monolith.api.world.BlockLocation;
 import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
-import gg.warcraft.monolith.api.world.service.WorldQueryService;
 
 public class Bolt extends AbstractAbility implements RangedAbility {
     private final EntityCommandService entityCommandService;
 
     @Inject
     public Bolt(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                WorldQueryService worldQueryService, WorldCommandService worldCommandService,
-                HitboxFactory hitboxFactory, MovementFactory movementFactory, @Assisted AbilitySnapshot snapshot,
-                @Assisted("caster") Entity caster, @Assisted("target") Entity rangedTarget,
-                @Assisted Block blockTarget) {
+                WorldCommandService worldCommandService, HitboxFactory hitboxFactory, MovementFactory movementFactory,
+                @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
+                @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
 
@@ -36,18 +34,15 @@ public class Bolt extends AbstractAbility implements RangedAbility {
             location = rangedTarget.getLocation();
         } else if (blockTarget != null) {
             BlockLocation blockLocation = blockTarget.getLocation();
-            location = worldQueryService.getLocation(blockLocation.getWorld().getType(),
-                    blockLocation.getX() + 0.5f,
-                    blockLocation.getY(),
-                    blockLocation.getZ() + 0.5f);
+            location = blockLocation.toLocation().add(0.5f, 1f, 0.5f);
         } else {
             throw new IllegalArgumentException("Failed to cast Bolt with null entity and block targets.");
         }
 
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
-        Movement movement = movementFactory.createStationaryMovement(location);
+        Movement movement = movementFactory.createOneOffMovement(location);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
-        abilityCommandService.createProjectile(this, movement, hitbox);
+        abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
 
         worldCommandService.strikeLightning(location, true);
     }
@@ -61,11 +56,6 @@ public class Bolt extends AbstractAbility implements RangedAbility {
 
     @Override
     public boolean onMiss(Entity entity) {
-        return true;
-    }
-
-    @Override
-    public boolean onTick() {
         return true;
     }
 }

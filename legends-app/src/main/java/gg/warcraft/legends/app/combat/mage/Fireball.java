@@ -25,7 +25,6 @@ public class Fireball extends AbstractAbility implements RangedAbility {
     private static final float MAX_DISTANCE = 30;
 
     private final EntityCommandService entityCommandService;
-    private final Cancellable effect;
 
     @Inject
     public Fireball(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
@@ -37,15 +36,16 @@ public class Fireball extends AbstractAbility implements RangedAbility {
 
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
         Location location = caster.getEyeLocation();
-        float velocity = snapshot.getFloat(AbilityConfigurationValue.VELOCITY);
+        float speed = snapshot.getFloat(AbilityConfigurationValue.SPEED);
         Vector3f direction = caster.getEyeLocation().getDirection();
-        Vector3f velocityDirection = direction.mul(velocity);
-        Movement movement = movementFactory.createLinearMovement(location, velocityDirection, MAX_DISTANCE);
+        Vector3f velocity = direction.mul(speed);
+        Movement movement = movementFactory.createLinearMovement(location, velocity, MAX_DISTANCE);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
-        abilityCommandService.createProjectile(this, movement, hitbox);
 
-        this.effect = mageEffectFactory.createFireballEffect(movement);
-        // TODO play sound at cast location and fly locations (maybe use onTick for this?
+        Cancellable effect = mageEffectFactory.createFireballEffect(movement);
+        abilityCommandService.createProjectile(this, movement, hitbox, effect::cancel);
+
+        // TODO play sound at cast location and fly locations (maybe use onTick for this or create something for sound similar to effect)
     }
 
     @Override
@@ -54,15 +54,11 @@ public class Fireball extends AbstractAbility implements RangedAbility {
         Duration burnDuration = getSnapshot().getDuration(AbilityConfigurationEffect.BURN);
         entityCommandService.damage(entity.getId(), damage);
         entityCommandService.burn(entity.getId(), burnDuration);
-
-        effect.cancel();
         return true;
     }
 
     @Override
     public boolean onMiss(Entity entity) {
-        effect.cancel(); // TODO what to do with effects? Is going to be a _lot_ of boiler plate to override every
-        // TODO function just for that. is it justified? maybe already necessary for sound?
         return true;
     }
 }

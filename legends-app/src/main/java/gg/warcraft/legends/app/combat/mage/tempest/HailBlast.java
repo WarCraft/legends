@@ -1,11 +1,19 @@
 package gg.warcraft.legends.app.combat.mage.tempest;
 
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.Hitbox;
+import gg.warcraft.combat.api.HitboxFactory;
+import gg.warcraft.combat.api.Movement;
+import gg.warcraft.combat.api.MovementFactory;
 import gg.warcraft.combat.api.ability.AbstractAbility;
 import gg.warcraft.combat.api.ability.RangedAbility;
+import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.world.Location;
+import gg.warcraft.monolith.api.world.PotionEffect;
 import gg.warcraft.monolith.api.world.PotionEffectType;
 import gg.warcraft.monolith.api.world.block.Block;
 import org.joml.Vector3f;
@@ -15,21 +23,36 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class HailBlast extends AbstractAbility implements RangedAbility {
+public class HailBlast extends AbstractAbility implements RangedAbility { // FIXME should this be a melee ability?
 
     // TODO use cone attribute from config
-    public HailBlast(AbilitySnapshot snapshot,
-                     @Assisted("caster") Entity caster, @Assisted("target") Entity rangedTarget, Block blockTarget) {
+    @Inject
+    public HailBlast(AbilityCommandService abilityCommandService, MovementFactory movementFactory,
+                     HitboxFactory hitboxFactory, AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
+                     @Assisted("target") Entity rangedTarget, Block blockTarget) {
         super(caster.getId(), snapshot);
-        PotionConfiguration slow = config.getPotionConfiguration(PotionEffectType.SLOW);
+        PotionEffect slow = snapshot.getPotionEffect(PotionEffectType.SLOW);
+
+        float range = snapshot.getFloat(AbilityConfigurationValue.RANGE);
+        float speed = snapshot.getFloat(AbilityConfigurationValue.SPEED);
+        float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
+
+        Movement movement = movementFactory.createLinearMovement();
+        Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
+
+        abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
+
+
+        ////////////////////
+
 
         Location location = caster.getLocation().add(0, 1, 0);
         Vector3f direction = caster.getLocation().getDirection();
-        Location location1 = location.clone().add(direction.clone().multiply(1));
-        Location location2 = location.clone().add(direction.clone().multiply(3.25));
-        Location location3 = location.clone().add(direction.clone().multiply(6));
-        Location location4 = location.clone().add(direction.clone().multiply(9.25));
-        Location location5 = location.clone().add(direction.clone().multiply(13));
+        Location location1 = location.add(direction.mul(1));
+        Location location2 = location.add(direction.mul(3.25f));
+        Location location3 = location.add(direction.mul(6));
+        Location location4 = location.add(direction.mul(9.25f));
+        Location location5 = location.add(direction.mul(13));
 
         Set<MonolithEntity> entities = new HashSet<>();
         entities.addAll(entityService.getNearbyMonolithEntities(location1, 1));

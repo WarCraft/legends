@@ -1,30 +1,42 @@
 package gg.warcraft.legends.app.combat.warrior.effect;
 
-import de.slikey.effectlib.util.ParticleEffect;
-import gg.warcraft.monolith.effect.EffectRenderer;
-import gg.warcraft.monolith.effect.EffectVectors;
-import gg.warcraft.monolith.effect.MonolithParticle;
-import gg.warcraft.monolith.effect.SimpleMonolithEffect;
-import gg.warcraft.monolith.effect.particle.SimpleMonolithParticle;
-import gg.warcraft.monolith.effect.renderer.IterativeEffectRenderer;
-import gg.warcraft.monolith.effect.vectors.RingVectors;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.util.Duration;
-import org.bukkit.Color;
-import org.bukkit.util.Vector;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.monolith.api.effect.Effect;
+import gg.warcraft.monolith.api.effect.EffectFactory;
+import gg.warcraft.monolith.api.effect.EffectRenderer;
+import gg.warcraft.monolith.api.effect.EffectRendererFactory;
+import gg.warcraft.monolith.api.effect.EffectVectors;
+import gg.warcraft.monolith.api.effect.EffectVectorsFactory;
+import gg.warcraft.monolith.api.effect.Particle;
+import gg.warcraft.monolith.api.effect.ParticleFactory;
+import gg.warcraft.monolith.api.effect.ParticleType;
+import gg.warcraft.monolith.api.entity.Entity;
+import gg.warcraft.monolith.api.entity.service.EntityQueryService;
+import gg.warcraft.monolith.api.util.ColorHue;
+import gg.warcraft.monolith.api.util.Duration;
+import gg.warcraft.monolith.api.world.Location;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
-public class HamstringEffect extends SimpleMonolithEffect {
-    private static final double RADIUS = 0.5;
+import java.util.function.Supplier;
+
+public class HamstringEffect {
+    private static final float RADIUS = 0.5f;
     private static final int FRAMES = 20;
-    private static final Vector OFFSET = new Vector(0.0, 0.1, 0.0);
+    private static final Vector3fc OFFSET = new Vector3f(0, 0.1f, 0);
 
-    public HamstringEffect(MonolithEntity target, Duration duration) {
-        super(() -> target.getLocation().add(OFFSET));
-        cancel(duration);
+    public HamstringEffect(EntityQueryService entityQueryService, ParticleFactory particleFactory,
+                           EffectVectorsFactory effectVectorsFactory, EffectRendererFactory effectRendererFactory,
+                           EffectFactory effectFactory, @Assisted Entity target, @Assisted Duration duration) {
+        Supplier<Location> locationSupplier = () -> {
+            Entity entity = entityQueryService.getEntity(target.getId());
+            return entity.getLocation().add(OFFSET);
+        };
+        Effect effect = effectFactory.createTimedEffect(locationSupplier, duration);
 
-        MonolithParticle particle = new SimpleMonolithParticle(ParticleEffect.SPELL_MOB, Color.WHITE);
-        EffectVectors vectors = new RingVectors(RADIUS, FRAMES);
-        EffectRenderer renderer = new IterativeEffectRenderer(particle, vectors);
-        addRenderer(renderer);
+        Particle particle = particleFactory.createColorParticle(ParticleType.SPELL_MOB, ColorHue.WHITE);
+        EffectVectors vectors = effectVectorsFactory.createRingVectors(RADIUS, FRAMES);
+        EffectRenderer renderer = effectRendererFactory.createIterativeEffectRenderer(particle, vectors);
+        effect.addRenderer(renderer);
     }
 }

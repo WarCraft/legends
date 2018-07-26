@@ -2,73 +2,128 @@ package gg.warcraft.legends.app.combat.mage.tempest;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.Hitbox;
 import gg.warcraft.combat.api.HitboxFactory;
+import gg.warcraft.combat.api.Movement;
 import gg.warcraft.combat.api.MovementFactory;
 import gg.warcraft.combat.api.ability.AbstractAbility;
 import gg.warcraft.combat.api.ability.RangedAbility;
+import gg.warcraft.combat.api.ability.config.AbilityConfigurationEffect;
+import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.combat.api.ability.service.AbilityCommandService;
+import gg.warcraft.legends.app.combat.mage.effect.MageEffectFactory;
+import gg.warcraft.monolith.api.core.Task;
+import gg.warcraft.monolith.api.core.TaskService;
+import gg.warcraft.monolith.api.effect.EffectVectors;
+import gg.warcraft.monolith.api.effect.EffectVectorsFactory;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.util.Cancellable;
+import gg.warcraft.monolith.api.util.Duration;
+import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.block.Block;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
-import gg.warcraft.monolith.api.world.service.WorldQueryService;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
-public class MoltenStorm extends AbstractAbility implements RangedAbility {
+public class MoltenStorm extends AbstractAbility implements RangedAbility, Runnable {
     private static final Vector3fc HEIGHT = new Vector3f(0, 20, 0);
     private static final Vector3fc OFFSET = new Vector3f(5, 0, 5);
 
     private static final Random random = new Random(System.currentTimeMillis());
 
-    private final Vector3f direction;
-    private final List<Location> spawnLocations;
-
-    private int i = 0;
-    private BukkitTask task;
+    private final AbilityCommandService abilityCommandService;
+    private final EntityCommandService entityCommandService;
+    private final MovementFactory movementFactory;
+    private final MageEffectFactory mageEffectFactory;
+    private final Hitbox hitbox;
+    private final Vector3f velocity;
+    private final float range;
+    private final Iterator<Location> spawnLocations;
 
     @Inject
-    public Bolt(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                WorldQueryService worldQueryService, WorldCommandService worldCommandService,
-                HitboxFactory hitboxFactory, MovementFactory movementFactory, @Assisted AbilitySnapshot snapshot,
-                @Assisted("caster") Entity caster, @Assisted("target") Entity rangedTarget,
-                @Assisted Block blockTarget) {
+    public MoltenStorm(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
+                       TaskService taskService, TimeUtils timeUtils, HitboxFactory hitboxFactory,
+                       MovementFactory movementFactory, EffectVectorsFactory effectVectorsFactory,
+                       MageEffectFactory mageEffectFactory, @Assisted AbilitySnapshot snapshot,
+                       @Assisted("caster") Entity caster, @Assisted("target") Entity rangedTarget,
+                       @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
+        this.abilityCommandService = abilityCommandService;
+        this.entityCommandService = entityCommandService;
+        this.movementFactory = movementFactory;
+        this.mageEffectFactory = mageEffectFactory;
+
         float spawnRadius = snapshot.getFloat("spawnRadius");
         Duration duration = snapshot.getDuration();
-    }
+        int fireballsPerSecond = snapshot.getInt("fireballsPerSecond");
+        int numberOfFireballs = duration.inSeconds() * fireballsPerSecond;
 
-    public MoltenStorm(MonolithEntity caster, AbilityConfiguration config, Location location) {
-        super(caster, config);
-        double spawnRadius = (double) config.get("spawnRadius");
-        Duration duration = config.getDuration();
+        Location location = rangedTarget != null
+                ? rangedTarget.getLocation()
+                : blockTarget.getLocation().toLocation().add(0.5f, 1, 0.5f);
 
-        Location origin = location.clone().add(HEIGHT).add(OFFSET);
-        this.direction = location.clone().subtract(origin).toVector().normalize();
-        EffectVectors vectors = new RingVectors(spawnRadius, (int) duration.as(SECONDS) * 4);
-        vectors.forEach(vector -> vector.multiply(random.nextDouble())); // TODO update to new CircleVectors
-        this.spawnLocations = new ArrayList<>();
-        vectors.forEach(vector -> spawnLocations.add(origin.clone().add(vector)));
+        Location origin = location.add(HEIGHT).add(OFFSET);
+        Vector3f direction = location.sub(origin.toVector()).toVector().normalize();
+        float speed = getSnapshot().getFloat(AbilityConfigurationValue.SPEED);
+        this.velocity = direction.mul(speed);
+        this.range = getSnapshot().getFloat(AbilityConfigurationValue.RANGE);
+
+        EffectVectors vectors = effectVectorsFactory.createRingVectors(spawnRadius, numberOfFireballs);
+        List<Location> spawnLocations = vectors.getVectors().stream()
+                .map(vector -> vector.mul(random.nextFloat(), new Vector3f()))
+                .map(origin::add)
+                .collect(Collectors.toList());
         Collections.shuffle(spawnLocations);
+        this.spawnLocations = spawnLocations.iterator();
 
-        task = RunnableUtils.runTask(this::spawnFireball, 1, 5);
-        RunnableUtils.runLater(task::cancel, duration.as(TICKS));
+        float radius = getSnapshot().getFloat(AbilityConfigurationValue.RADIUS);
+        this.hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
 
-        MonolithEffect groundEffect = new MoltenStormImpactEffect(location.clone());
-        RunnableUtils.runLater(groundEffect::cancel, duration.as(TICKS));
+        // Setup tasks
+        Duration fireballPeriod = timeUtils.createDurationInTicks(TimeUtils.TICKS_PER_SECOND / fireballsPerSecond);
+        Task task = taskService.runTask(this, timeUtils.oneTick(), fireballPeriod);
+        Duration cancelTimer = timeUtils.createDurationInTicks(fireballPeriod.inTicks() * numberOfFireballs);
+        taskService.runLater(task::cancel, cancelTimer);
+
+        // Play effect
+        mageEffectFactory.createMoltenStormRingEffect(location, duration);
     }
 
-    private void spawnFireball() {
-        AbilityConfiguration config = ConfigurationService.getInstance().getAbilityConfigurationFor(MoltenStorm.class); // TODO fix having to call ConfigService from within spell (add clone method to config?)
-        new MoltenFireball(getCaster(), config, spawnLocations.get(i), direction);
-        i += 1;
+    @Override
+    public void run() {
+        Location spawnLocation = spawnLocations.next();
+        Movement movement = movementFactory.createLinearMovement(spawnLocation, velocity, range);
+        Cancellable effect = mageEffectFactory.createFireballEffect(movement);
+        abilityCommandService.createProjectile(this, movement, hitbox, effect::cancel);
     }
 
+    @Override
+    public boolean onHit(Entity entity) {
+        float damage = getSnapshot().getFloat(AbilityConfigurationValue.DAMAGE);
+        Duration burnDuration = getSnapshot().getDuration(AbilityConfigurationEffect.BURN);
+        entityCommandService.damage(entity.getId(), damage);
+        entityCommandService.burn(entity.getId(), burnDuration);
+
+        // TODO play hit sound
+        return true;
+    }
+
+    @Override
+    public boolean onMiss(Entity entity) {
+        return true;
+    }
+
+    @Override
+    public boolean onGrounded(Location location) {
+        // TODO play sound?
+        return true;
+    }
 }
