@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class HailBlast extends AbstractAbility implements RangedAbility { // FIXME should this be a melee ability?
+public class HailBlast extends AbstractAbility implements RangedAbility { // NOTE this should not be a melee ability as we want to fire a projectile
 
     // TODO use cone attribute from config
     @Inject

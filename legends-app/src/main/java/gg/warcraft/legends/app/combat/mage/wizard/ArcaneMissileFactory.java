@@ -1,35 +1,14 @@
 package gg.warcraft.legends.app.combat.mage.wizard;
 
-import gg.warcraft.monolith.combat.MonolithAbilityFactory;
-import gg.warcraft.monolith.combat.event.MonolithAbilityCastEvent;
-import gg.warcraft.monolith.config.AbilityConfiguration;
-import gg.warcraft.monolith.config.ConfigurationService;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.event.EventService;
+import gg.warcraft.combat.api.ability.RangedAbilityFactory;
+import gg.warcraft.combat.api.ability.RangedAbilityFlag;
 
-public class ArcaneMissileFactory implements MonolithAbilityFactory {
+import java.util.EnumSet;
 
-    private final ConfigurationService configService;
-    private final EventService eventService;
-
-    public ArcaneMissileFactory() {
-        this(ConfigurationService.getInstance(), EventService.getInstance());
-    }
-
-    public ArcaneMissileFactory(ConfigurationService configService, EventService eventService) {
-        this.configService = configService;
-        this.eventService = eventService;
-    }
+public interface ArcaneMissileFactory extends RangedAbilityFactory {
 
     @Override
-    public ArcaneMissile create(MonolithEntity caster) {
-        AbilityConfiguration config = configService.getAbilityConfigurationFor(ArcaneMissile.class);
-        MonolithAbilityCastEvent event = new MonolithAbilityCastEvent(ArcaneMissile.class, config, caster);
-        eventService.publishEvent(event);
-        if (!event.isCancelled()) {
-            return new ArcaneMissile(caster, config);
-        } else {
-            return null;
-        }
+    default EnumSet<RangedAbilityFlag> getFlags() {
+        return EnumSet.of(RangedAbilityFlag.ENTITY_TARGET_REQUIRED);
     }
 }

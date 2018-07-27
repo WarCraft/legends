@@ -1,77 +1,68 @@
 package gg.warcraft.legends.app.combat.mage.wizard;
 
-import gg.warcraft.legends.LegendsCombatSound;
-import gg.warcraft.legends.combat.effect.mage.wizard.ArcaneMissileEffect;
-import gg.warcraft.monolith.combat.HostileTo;
-import gg.warcraft.monolith.combat.MonolithProjectile;
-import gg.warcraft.monolith.combat.SimpleMonolithAbility;
-import gg.warcraft.monolith.config.AbilityConfiguration;
-import gg.warcraft.monolith.entity.EntityService;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.sound.MonolithSound;
-import gg.warcraft.monolith.util.CancellableGroup;
-import gg.warcraft.monolith.util.RunnableUtils;
-import gg.warcraft.monolith.util.hitbox.Hitbox;
-import gg.warcraft.monolith.util.hitbox.SphericalHitbox;
-import gg.warcraft.monolith.util.movement.LinearMovement;
-import gg.warcraft.monolith.util.movement.Movement;
-import org.bukkit.Location;
-import org.bukkit.util.Vector;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.Hitbox;
+import gg.warcraft.combat.api.HitboxFactory;
+import gg.warcraft.combat.api.Movement;
+import gg.warcraft.combat.api.MovementFactory;
+import gg.warcraft.combat.api.ability.AbstractAbility;
+import gg.warcraft.combat.api.ability.RangedAbility;
+import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.combat.api.ability.service.AbilityCommandService;
+import gg.warcraft.legends.app.combat.mage.effect.MageEffectFactory;
+import gg.warcraft.monolith.api.entity.Entity;
+import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.util.Cancellable;
+import gg.warcraft.monolith.api.world.Location;
+import gg.warcraft.monolith.api.world.Sound;
+import gg.warcraft.monolith.api.world.SoundCategory;
+import gg.warcraft.monolith.api.world.block.Block;
+import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import org.joml.Vector3f;
 
-import java.util.Collection;
+public class ArcaneMissile extends AbstractAbility implements RangedAbility {
+    private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
+    private static final Sound CAST_SOUND = Sound.ENTITY_ENDERDRAGON_HURT;
+    private static final Sound HIT_SOUND = Sound.ENTITY_ENDERDRAGON_HURT;
 
-public class ArcaneMissile extends SimpleMonolithAbility implements MonolithProjectile.Observer {
-    private static final double MAX_DISTANCE = 30;
+    private final EntityCommandService entityCommandService;
+    private final WorldCommandService worldCommandService;
 
-    private final CancellableGroup tasks;
-    private final MonolithSound onHitSound;
-
-    public ArcaneMissile(MonolithEntity caster, AbilityConfiguration config) {
-        this(EntityService.getInstance(), LegendsCombatSound.ARCANEMISSILE_CAST, LegendsCombatSound.ARCANEMISSILE_HIT,
-                caster, config);
-    }
-
-    public ArcaneMissile(EntityService entityService, MonolithSound onCastSound, MonolithSound onHitSound,
-                         MonolithEntity caster, AbilityConfiguration config) {
-        super(caster, config);
-        this.tasks = new CancellableGroup();
-        this.onHitSound = onHitSound;
+    @Inject
+    public ArcaneMissile(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
+                         WorldCommandService worldCommandService, MovementFactory movementFactory,
+                         HitboxFactory hitboxFactory, MageEffectFactory mageEffectFactory,
+                         @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
+                         @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
+        super(caster.getId(), snapshot);
+        this.entityCommandService = entityCommandService;
+        this.worldCommandService = worldCommandService;
 
         Location location = caster.getEyeLocation();
-        Vector direction = caster.getEyeLocation().getDirection();
-        Movement movement = new LinearMovement(location, direction, MAX_DISTANCE);
-        double radius = config.get(AbilityConfiguration.Attribute.RADIUS);
-        Hitbox hitbox = new SphericalHitbox(entityService, radius, new HostileTo(caster));
-        MonolithProjectile projectile = new MonolithProjectile(movement, hitbox);
-        projectile.addObserver(this);
-        tasks.add(RunnableUtils.runTaskEachTick(projectile));
+        Vector3f direction = caster.getEyeLocation().getDirection();
+        Movement movement = movementFactory.createHomingMovement(location, direction, rangedTarget);
+        float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
+        Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
 
-        tasks.add(new ArcaneMissileEffect(movement::getLocation));
+        Cancellable effect = mageEffectFactory.createArcaneMissileEffect(movement);
+        abilityCommandService.createProjectile(this, movement, hitbox, effect::cancel);
 
-        onCastSound.play(location);
+        worldCommandService.playSound(location, CAST_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
     @Override
-    public String toString() {
-        return "Arcane Missile";
+    public boolean onHit(Entity entity) {
+        float damage = getSnapshot().getFloat(AbilityConfigurationValue.DAMAGE);
+        entityCommandService.damage(entity.getId(), damage);
+        worldCommandService.playSound(entity.getLocation(), HIT_SOUND, SOUND_CATEGORY, 1, 1);
+        return true;
     }
 
     @Override
-    public void onHit(MonolithProjectile projectile, Collection<MonolithEntity> casualties) {
-        onHitSound.play(casualties.iterator().next().getLocation());
-        publishHitAndDamageEvents(this, casualties).forEach(damageEvent -> {
-            damageEvent.getEntity().damage(damageEvent.getDamage());
-        });
-        tasks.cancel();
-    }
-
-    @Override
-    public void onGrounded(MonolithProjectile projectile, Location location) {
-        tasks.cancel();
-    }
-
-    @Override
-    public void onMaxDistanceReached(MonolithProjectile projectile, double distance) {
-        tasks.cancel();
+    public boolean onMiss(Entity entity) {
+        // do nothing
+        return false;
     }
 }

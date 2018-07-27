@@ -8,6 +8,9 @@ import gg.warcraft.monolith.api.world.Location;
 
 public interface MageEffectFactory {
 
+    @Named("arcaneMissile")
+    Cancellable createArcaneMissileEffect(Movement movement);
+
     @Named("fireball")
     Cancellable createFireballEffect(Movement movement);
 

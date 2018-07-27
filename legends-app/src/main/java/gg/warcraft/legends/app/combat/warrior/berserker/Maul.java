@@ -39,9 +39,10 @@ public class Maul extends AbstractAbility implements MeleeAbility {
 
     @Override
     public void onHit(Entity entity) {
+        float damage = snapshot.getFloat(AbilityConfigurationValue.DAMAGE);
         PotionEffect absorption = snapshot.getPotionEffect(PotionEffectType.ABSORPTION);
         entityCommandService.addPotionEffect(casterId, absorption);
-        entityCommandService.damage(entity.getId(), snapshot.getFloat(AbilityConfigurationValue.DAMAGE));
+        entityCommandService.damage(entity.getId(), damage);
 
         // TODO create effect
         worldCommandService.playSound(entity.getLocation(), HIT_SOUND, SOUND_CATEGORY, 1, 1);

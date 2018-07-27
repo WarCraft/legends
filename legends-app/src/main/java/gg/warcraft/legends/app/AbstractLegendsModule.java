@@ -6,6 +6,7 @@ import com.google.inject.name.Names;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerProfileRepository;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.legends.app.combat.mage.effect.ArcaneMissileEffect;
 import gg.warcraft.legends.app.combat.mage.effect.FireballEffect;
 import gg.warcraft.legends.app.combat.mage.effect.FlameTotemFireballEffect;
 import gg.warcraft.legends.app.combat.mage.effect.MageEffectFactory;
@@ -23,6 +24,7 @@ import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.player.service.PlayerProfileRepository;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 import gg.warcraft.monolith.api.entity.status.StatusEffect;
+import gg.warcraft.monolith.api.util.Cancellable;
 
 public abstract class AbstractLegendsModule extends AbstractModule {
 
@@ -34,6 +36,7 @@ public abstract class AbstractLegendsModule extends AbstractModule {
 
     private void configureCombat() {
         install(new FactoryModuleBuilder()
+                .implement(Cancellable.class, Names.named("arcaneMissile"), ArcaneMissileEffect.class)
                 .implement(Effect.class, Names.named("fireball"), FireballEffect.class)
                 .implement(Effect.class, Names.named("moltenStormRing"), MoltenStormCircleEffect.class)
                 .implement(Effect.class, Names.named("flameTotemFireball"), FlameTotemFireballEffect.class)
