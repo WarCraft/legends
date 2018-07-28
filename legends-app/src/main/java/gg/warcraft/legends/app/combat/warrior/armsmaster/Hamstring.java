@@ -7,7 +7,7 @@ import gg.warcraft.combat.api.ability.MeleeAbility;
 import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.legends.app.combat.warrior.effect.WarriorEffectFactory;
-import gg.warcraft.monolith.api.combat.CombatValue;
+import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.PotionEffect;

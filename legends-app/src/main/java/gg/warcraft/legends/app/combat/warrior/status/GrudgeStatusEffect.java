@@ -3,7 +3,7 @@ package gg.warcraft.legends.app.combat.warrior.status;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import gg.warcraft.monolith.api.combat.CombatValue;
+import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.event.EntityDamageEvent;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.entity.status.StatusEffect;
