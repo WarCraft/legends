@@ -1,4 +1,4 @@
-package gg.warcraft.legends.app.combat.ranger.marksman;
+package gg.warcraft.legends.app.combat.ranger.status;
 
 import gg.warcraft.monolith.combat.event.MonolithAbilityHitEvent;
 import gg.warcraft.monolith.config.AbilityConfiguration;

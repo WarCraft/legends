@@ -8,7 +8,6 @@ import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.legends.app.combat.warrior.effect.WarriorEffectFactory;
 import gg.warcraft.monolith.api.combat.CombatValue;
-import gg.warcraft.monolith.api.combat.CombatValueFactory;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.PotionEffect;
@@ -24,27 +23,23 @@ public class Hamstring extends AbstractAbility implements MeleeAbility {
 
     private final EntityCommandService entityCommandService;
     private final WorldCommandService worldCommandService;
-    private final CombatValueFactory combatValueFactory;
     private final WarriorEffectFactory warriorEffectFactory;
 
     @Inject
     public Hamstring(EntityCommandService entityCommandService, WorldCommandService worldCommandService,
-                     CombatValueFactory combatValueFactory, WarriorEffectFactory warriorEffectFactory,
-                     @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                     @Assisted("target") Entity meleeTarget) {
+                     WarriorEffectFactory warriorEffectFactory, @Assisted AbilitySnapshot snapshot,
+                     @Assisted("caster") Entity caster, @Assisted("target") Entity meleeTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
         this.worldCommandService = worldCommandService;
-        this.combatValueFactory = combatValueFactory;
         this.warriorEffectFactory = warriorEffectFactory;
     }
 
     @Override
     public void onHit(Entity entity) {
-        float damage = getSnapshot().getFloat(AbilityConfigurationValue.DAMAGE);
+        CombatValue damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
         PotionEffect slow = getSnapshot().getPotionEffect(PotionEffectType.SLOW);
 
-        CombatValue damage = combatValueFactory.createCombatValue(); // TODO we now need to rip apart base value and modifiers in the Combat domain
         entityCommandService.damage(entity.getId(), damage);
         entityCommandService.addPotionEffect(entity.getId(), slow);
 

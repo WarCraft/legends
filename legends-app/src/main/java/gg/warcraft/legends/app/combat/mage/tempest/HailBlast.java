@@ -28,8 +28,8 @@ public class HailBlast extends AbstractAbility implements RangedAbility { // NOT
     // TODO use cone attribute from config
     @Inject
     public HailBlast(AbilityCommandService abilityCommandService, MovementFactory movementFactory,
-                     HitboxFactory hitboxFactory, AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                     @Assisted("target") Entity rangedTarget, Block blockTarget) {
+                     HitboxFactory hitboxFactory, @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
+                     @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
         PotionEffect slow = snapshot.getPotionEffect(PotionEffectType.SLOW);
 

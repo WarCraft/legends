@@ -6,6 +6,7 @@ import gg.warcraft.combat.api.ability.AbstractAbility;
 import gg.warcraft.combat.api.ability.MeleeAbility;
 import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.monolith.api.combat.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.PotionEffect;
@@ -37,7 +38,7 @@ public class Slam extends AbstractAbility implements MeleeAbility {
 
     @Override
     public void onHit(Entity entity) {
-        float damage = getSnapshot().getFloat(AbilityConfigurationValue.DAMAGE);
+        CombatValue damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
         float knockback = getSnapshot().getFloat(AbilityConfigurationValue.KNOCKBACK);
         PotionEffect confusion = getSnapshot().getPotionEffect(PotionEffectType.CONFUSION);
         entityCommandService.damage(entity.getId(), damage);

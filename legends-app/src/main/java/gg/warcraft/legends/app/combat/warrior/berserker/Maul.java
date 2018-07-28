@@ -6,6 +6,7 @@ import gg.warcraft.combat.api.ability.AbstractAbility;
 import gg.warcraft.combat.api.ability.MeleeAbility;
 import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.monolith.api.combat.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.PotionEffect;
@@ -39,7 +40,7 @@ public class Maul extends AbstractAbility implements MeleeAbility {
 
     @Override
     public void onHit(Entity entity) {
-        float damage = snapshot.getFloat(AbilityConfigurationValue.DAMAGE);
+        CombatValue damage = snapshot.getValue(AbilityConfigurationValue.DAMAGE);
         PotionEffect absorption = snapshot.getPotionEffect(PotionEffectType.ABSORPTION);
         entityCommandService.addPotionEffect(casterId, absorption);
         entityCommandService.damage(entity.getId(), damage);

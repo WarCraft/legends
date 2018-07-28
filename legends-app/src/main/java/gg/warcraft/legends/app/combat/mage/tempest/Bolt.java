@@ -11,6 +11,7 @@ import gg.warcraft.combat.api.ability.RangedAbility;
 import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.combat.api.ability.service.AbilityCommandService;
+import gg.warcraft.monolith.api.combat.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.BlockLocation;
@@ -49,7 +50,7 @@ public class Bolt extends AbstractAbility implements RangedAbility {
 
     @Override
     public boolean onHit(Entity entity) {
-        float damage = getSnapshot().getFloat(AbilityConfigurationValue.DAMAGE);
+        CombatValue damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
         entityCommandService.damage(entity.getId(), damage);
         return true;
     }

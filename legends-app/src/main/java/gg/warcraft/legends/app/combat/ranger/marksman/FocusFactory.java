@@ -1,35 +1,14 @@
 package gg.warcraft.legends.app.combat.ranger.marksman;
 
-import gg.warcraft.monolith.combat.MonolithAbilityFactory;
-import gg.warcraft.monolith.combat.event.MonolithAbilityCastEvent;
-import gg.warcraft.monolith.config.AbilityConfiguration;
-import gg.warcraft.monolith.config.ConfigurationService;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.event.EventService;
+import gg.warcraft.combat.api.ability.MeleeAbilityFactory;
+import gg.warcraft.combat.api.ability.MeleeAbilityFlag;
 
-public class FocusFactory implements MonolithAbilityFactory {
+import java.util.EnumSet;
 
-    private final ConfigurationService configService;
-    private final EventService eventService;
-
-    public FocusFactory() {
-        this(ConfigurationService.getInstance(), EventService.getInstance());
-    }
-
-    public FocusFactory(ConfigurationService configService, EventService eventService) {
-        this.configService = configService;
-        this.eventService = eventService;
-    }
+public interface FocusFactory extends MeleeAbilityFactory {
 
     @Override
-    public Focus create(MonolithEntity caster) {
-        AbilityConfiguration config = configService.getAbilityConfigurationFor(Focus.class);
-        MonolithAbilityCastEvent event = new MonolithAbilityCastEvent(Focus.class, config, caster);
-        eventService.publishEvent(event);
-        if (!event.isCancelled()) {
-            return new Focus(caster, config);
-        } else {
-            return null;
-        }
+    default EnumSet<MeleeAbilityFlag> getFlags() {
+        return EnumSet.noneOf(MeleeAbilityFlag.class);
     }
 }

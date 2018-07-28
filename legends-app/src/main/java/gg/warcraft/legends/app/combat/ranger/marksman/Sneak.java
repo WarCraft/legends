@@ -1,66 +1,58 @@
 package gg.warcraft.legends.app.combat.ranger.marksman;
 
-import gg.warcraft.legends.LegendsCombatSound;
-import gg.warcraft.monolith.Monolith;
-import gg.warcraft.monolith.combat.SimpleMonolithAbility;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.event.EventService;
-import gg.warcraft.monolith.event.MonolithPlayerConnectEvent;
-import gg.warcraft.monolith.event.MonolithPlayerDisconnectEvent;
-import gg.warcraft.monolith.player.MonolithPlayer;
-import gg.warcraft.monolith.player.PlayerService;
-import gg.warcraft.monolith.sound.MonolithSound;
-import gg.warcraft.monolith.util.Duration;
-import gg.warcraft.monolith.util.PotionConfiguration;
-import gg.warcraft.monolith.util.RunnableUtils;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.potion.PotionEffectType;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.ability.AbstractAbility;
+import gg.warcraft.combat.api.ability.MeleeAbility;
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.monolith.api.core.TaskService;
+import gg.warcraft.monolith.api.entity.Entity;
+import gg.warcraft.monolith.api.entity.player.Player;
+import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
+import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.util.Cancellable;
+import gg.warcraft.monolith.api.world.PotionEffect;
+import gg.warcraft.monolith.api.world.PotionEffectType;
+import gg.warcraft.monolith.api.world.Sound;
+import gg.warcraft.monolith.api.world.SoundCategory;
+import gg.warcraft.monolith.api.world.service.WorldCommandService;
 
-public class Sneak extends SimpleMonolithAbility implements Listener {
-    private static final Monolith monolith = Monolith.getInstance();
+import java.util.List;
 
-    private final PlayerService playerService;
+public class Sneak extends AbstractAbility implements MeleeAbility, Cancellable {
+    private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
+    private static final Sound CAST_SOUND = Sound.ENTITY_PLAYER_BREATH;
 
-    private Player casterAsPlayer;
+    private final List<? extends Player> players;
 
-    public Sneak(MonolithEntity caster, PotionConfiguration speed) {
-        this(EventService.getInstance(), PlayerService.getInstance(), LegendsCombatSound.SNEAK_CAST, caster, speed);
-    }
+    @Inject
+    public Sneak(EntityCommandService entityCommandService, PlayerQueryService playerQueryService,
+                 WorldCommandService worldCommandService, TaskService taskService, @Assisted AbilitySnapshot snapshot,
+                 @Assisted("caster") Entity caster, @Assisted("target") Entity meleeTarget) {
+        super(caster.getId(), snapshot);
+        PotionEffect speed = snapshot.getPotionEffect(PotionEffectType.SPEED);
+        entityCommandService.addPotionEffect(caster.getId(), speed);
 
-    public Sneak(EventService eventService, PlayerService playerService, MonolithSound onCastSound,
-                 MonolithEntity caster, PotionConfiguration speed) {
-        super(caster);
-        this.playerService = playerService;
-        if (caster instanceof MonolithPlayer) {
-            casterAsPlayer = ((MonolithPlayer) caster).getPlayer();
-            playerService.getOnlineMonolithPlayers().forEach(player -> player.hidePlayer(monolith, casterAsPlayer));
-            eventService.registerForEvents(this);
-            RunnableUtils.runLater(this::reveal, speed.getDuration().as(Duration.Type.TICKS));
-        }
-        caster.addPotionEffect(PotionEffectType.SPEED, speed);
-        onCastSound.play(caster.getLocation());
-    }
+        this.players = playerQueryService.getOnlinePlayers();
+        this.players.forEach(player -> hide caster);
+        taskService.runLater(this::cancel, speed.getDuration());
 
-    private void reveal() {
-        playerService.getOnlineMonolithPlayers().forEach(player -> player.showPlayer(monolith, casterAsPlayer));
-        HandlerList.unregisterAll(this);
+        worldCommandService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
     @Override
-    public String toString() {
-        return "Sneak";
+    public void cancel() {
+        // TODO what about casting abilities? should that reveal?
+        players.forEach(player -> reveal getCasterId());
     }
 
-    @EventHandler
-    public void onMonolithPlayerConnectEvent(MonolithPlayerConnectEvent event) {
-        event.getPlayer().hidePlayer(monolith, casterAsPlayer);
+    @Override
+    public void onHit(Entity entity) {
+        // do nothing
     }
 
-    @EventHandler
-    public void onMonolithPlayerDisconnectEvent(MonolithPlayerDisconnectEvent event) {
-        event.getPlayer().showPlayer(monolith, casterAsPlayer);
+    @Override
+    public void onMiss(Entity entity) {
+        // do nothing
     }
 }

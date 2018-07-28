@@ -12,8 +12,10 @@ import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.legends.app.combat.mage.effect.MageEffectFactory;
+import gg.warcraft.monolith.api.combat.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
@@ -21,6 +23,8 @@ import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import org.joml.Vector3f;
+
+import java.util.function.Supplier;
 
 public class ArcaneMissile extends AbstractAbility implements RangedAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
@@ -32,6 +36,7 @@ public class ArcaneMissile extends AbstractAbility implements RangedAbility {
 
     @Inject
     public ArcaneMissile(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
+                         EntityQueryService entityQueryService,
                          WorldCommandService worldCommandService, MovementFactory movementFactory,
                          HitboxFactory hitboxFactory, MageEffectFactory mageEffectFactory,
                          @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
@@ -42,7 +47,11 @@ public class ArcaneMissile extends AbstractAbility implements RangedAbility {
 
         Location location = caster.getEyeLocation();
         Vector3f direction = caster.getEyeLocation().getDirection();
-        Movement movement = movementFactory.createHomingMovement(location, direction, rangedTarget);
+        Supplier<Location> targetSupplier = () -> {
+            Entity target = entityQueryService.getEntity(rangedTarget.getId());
+            return target.getLocation();
+        };
+        Movement movement = movementFactory.createHomingMovement(location, direction, targetSupplier);
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
 
@@ -54,7 +63,7 @@ public class ArcaneMissile extends AbstractAbility implements RangedAbility {
 
     @Override
     public boolean onHit(Entity entity) {
-        float damage = getSnapshot().getFloat(AbilityConfigurationValue.DAMAGE);
+        CombatValue damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
         entityCommandService.damage(entity.getId(), damage);
         worldCommandService.playSound(entity.getLocation(), HIT_SOUND, SOUND_CATEGORY, 1, 1);
         return true;

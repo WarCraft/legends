@@ -1,35 +1,14 @@
 package gg.warcraft.legends.app.combat.ranger.hunter;
 
-import gg.warcraft.monolith.combat.MonolithAbilityFactory;
-import gg.warcraft.monolith.combat.event.MonolithAbilityCastEvent;
-import gg.warcraft.monolith.config.AbilityConfiguration;
-import gg.warcraft.monolith.config.ConfigurationService;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.event.EventService;
+import gg.warcraft.combat.api.ability.RangedAbilityFactory;
+import gg.warcraft.combat.api.ability.RangedAbilityFlag;
 
-public class ToxicArrowFactory implements MonolithAbilityFactory {
+import java.util.EnumSet;
 
-    private final ConfigurationService configService;
-    private final EventService eventService;
-
-    public ToxicArrowFactory() {
-        this(ConfigurationService.getInstance(), EventService.getInstance());
-    }
-
-    public ToxicArrowFactory(ConfigurationService configService, EventService eventService) {
-        this.configService = configService;
-        this.eventService = eventService;
-    }
+public interface ToxicArrowFactory extends RangedAbilityFactory {
 
     @Override
-    public ToxicArrow create(MonolithEntity caster) {
-        AbilityConfiguration config = configService.getAbilityConfigurationFor(ToxicArrow.class);
-        MonolithAbilityCastEvent event = new MonolithAbilityCastEvent(ToxicArrow.class, config, caster);
-        eventService.publishEvent(event);
-        if (!event.isCancelled()) {
-            return new ToxicArrow(caster, config);
-        } else {
-            return null;
-        }
+    default EnumSet<RangedAbilityFlag> getFlags() {
+        return EnumSet.noneOf(RangedAbilityFlag.class);
     }
 }

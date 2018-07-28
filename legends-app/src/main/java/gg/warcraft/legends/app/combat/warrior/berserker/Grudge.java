@@ -6,6 +6,7 @@ import gg.warcraft.combat.api.ability.AbstractAbility;
 import gg.warcraft.combat.api.ability.MeleeAbility;
 import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.legends.app.combat.warrior.status.GrudgeStatusEffect;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.status.StatusEffect;
 import gg.warcraft.monolith.api.entity.status.service.StatusCommandService;

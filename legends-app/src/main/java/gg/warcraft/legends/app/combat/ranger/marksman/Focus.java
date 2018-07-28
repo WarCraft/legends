@@ -1,5 +1,6 @@
 package gg.warcraft.legends.app.combat.ranger.marksman;
 
+import gg.warcraft.legends.app.combat.ranger.status.FocusStatusEffect;
 import gg.warcraft.legends.combat.effect.ranger.marksman.FocusEffect;
 import gg.warcraft.legends.event.LegendsPlayerSpecializationChangedEvent;
 import gg.warcraft.monolith.Monolith;

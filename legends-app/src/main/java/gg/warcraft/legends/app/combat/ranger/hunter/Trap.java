@@ -1,82 +1,48 @@
 package gg.warcraft.legends.app.combat.ranger.hunter;
 
-import gg.warcraft.monolith.combat.SimpleMonolithAbility;
-import gg.warcraft.monolith.entity.EntityService;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.player.PlayerService;
-import gg.warcraft.monolith.util.Cancellable;
-import gg.warcraft.monolith.util.Duration;
-import gg.warcraft.monolith.util.PotionConfiguration;
-import gg.warcraft.monolith.util.RunnableUtils;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitTask;
 
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.ability.AbstractAbility;
+import gg.warcraft.combat.api.ability.RangedAbility;
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.monolith.api.entity.Entity;
+import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
+import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.util.Duration;
+import gg.warcraft.monolith.api.world.BlockLocation;
+import gg.warcraft.monolith.api.world.PotionEffect;
+import gg.warcraft.monolith.api.world.PotionEffectType;
+import gg.warcraft.monolith.api.world.Sound;
+import gg.warcraft.monolith.api.world.SoundCategory;
+import gg.warcraft.monolith.api.world.block.Block;
+import gg.warcraft.monolith.api.world.service.WorldCommandService;
 
-import static gg.warcraft.monolith.util.Duration.Type.TICKS;
+public class Trap extends AbstractAbility implements RangedAbility {
+    private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
+    private static final Sound PLACE_SOUND = Sound.BLOCK_IRON_TRAPDOOR_OPEN;
+    private static final Sound TRIGGER_SOUND = Sound.BLOCK_IRON_TRAPDOOR_CLOSE;
 
-public class Trap extends SimpleMonolithAbility implements Runnable, Cancellable {
+    private final EntityCommandService entityCommandService;
+    private final WorldCommandService worldCommandService;
 
-    private final EntityService entityService;
-    private final PlayerService playerService;
-    private final Location location;
-    private final Predicate<MonolithEntity> isHostile;
-    private final double radius;
-    private final PotionConfiguration poison;
-    private final Duration rootDuration;
-    private final BukkitTask tickTask;
-    private final BukkitTask cancelTask;
+    @Inject
+    public Trap(EntityCommandService entityCommandService, PlayerQueryService playerQueryService,
+                WorldCommandService worldCommandService, @Assisted AbilitySnapshot snapshot,
+                @Assisted("caster") Entity caster, @Assisted("target") Entity rangedTarget,
+                @Assisted Block blockTarget) {
+        super(caster.getId(), snapshot);
+        this.entityCommandService = entityCommandService;
+        this.worldCommandService = worldCommandService;
 
-    public Trap(MonolithEntity caster, double radius,
-                Duration trapDuration, Duration rootDuration, PotionConfiguration poison) {
-        this(EntityService.getInstance(), PlayerService.getInstance(), caster, radius, trapDuration, rootDuration, poison);
-    }
+        BlockLocation location = caster.getLocation().toBlockLocation();
+        playerQueryService.getOnlinePlayers().stream()
+                .filter(player -> player.getTeam() == caster.getTeam())
+                .forEach(player -> spoof TRAP_DOOR);
+        worldCommandService.playSound(caster.getLocation(), PLACE_SOUND, SOUND_CATEGORY, 1, 1);
 
-    public Trap(EntityService entityService, PlayerService playerService, MonolithEntity caster, double radius,
-                Duration trapDuration, Duration rootDuration, PotionConfiguration poison) {
-        super(caster);
-        this.entityService = entityService;
-        this.playerService = playerService;
-        this.location = caster.getLocation();
-        this.isHostile = entity -> entity.getRace() != caster.getRace();
-        this.radius = radius;
-        this.poison = poison;
-        this.rootDuration = rootDuration;
-        this.tickTask = RunnableUtils.runTaskEachTick(this);
-        this.cancelTask = RunnableUtils.runLater(this::cancel, trapDuration.as(TICKS));
-
-        // (or) entityService.getNearbyMonolithEntities(caster.getLocation(), 100)
-        playerService.getOnlineMonolithPlayers().stream()
-                .filter(player -> player.getRace() == caster.getRace())
-                .forEach(player -> player.sendBlockChange(this.location, Material.TRAP_DOOR, (byte) 0));
-
-        location.getWorld().playSound(location, Sound.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.HOSTILE, 1, 1);
-    }
-
-    @Override
-    public String toString() {
-        return "Trap";
-    }
-
-    @Override
-    public void run() {
-        List<MonolithEntity> casualties = entityService.getNearbyMonolithEntities(location, radius).stream()
-                .filter(isHostile)
-                .collect(Collectors.toList());
-        if (!casualties.isEmpty()) {
-            location.getWorld().playSound(location, Sound.BLOCK_IRON_TRAPDOOR_CLOSE, SoundCategory.HOSTILE, 1, 1);
-            casualties.forEach(entity -> {
-                entity.addPotionEffect(PotionEffectType.POISON, poison);
-                entity.freeze((int) rootDuration.as(TICKS));
-            });
-            cancel();
-        }
+        Duration duration = snapshot.getDuration();
+        // TODO set up cancel task if nothing happens
     }
 
     @Override
@@ -86,5 +52,24 @@ public class Trap extends SimpleMonolithAbility implements Runnable, Cancellable
         playerService.getOnlineMonolithPlayers().forEach(player -> {
             player.sendBlockChange(location, location.getBlock().getType(), location.getBlock().getData());
         });
+    }
+
+    @Override
+    public boolean onHit(Entity entity) {
+        PotionEffect poison = getSnapshot().getPotionEffect(PotionEffectType.POISON);
+        Duration rootDuration = getSnapshot().getDuration("rootDuration");
+        entityCommandService.addPotionEffect(entity.getId(), poison);
+        entityCommandService.freeze(entity.getId(), rootDuration);
+
+        worldCommandService.playSound(entity.getLocation(), TRIGGER_SOUND, SOUND_CATEGORY, 1, 1);
+        // TODO reset black change for caster
+        return true;
+    }
+
+    @Override
+    public boolean onMiss(Entity entity) {
+        worldCommandService.playSound(entity.getLocation(), TRIGGER_SOUND, SOUND_CATEGORY, 1, 1);
+        // TODO reset black change for caster
+        return true;
     }
 }
