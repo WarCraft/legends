@@ -9,12 +9,7 @@ import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.entity.service.EntityQueryService;
-import gg.warcraft.monolith.api.world.PotionEffect;
-import gg.warcraft.monolith.api.world.PotionEffectType;
 import org.joml.Vector3f;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class Shatter extends AbstractAbility implements MeleeAbility {
     private final EntityQueryService entityQueryService;
@@ -28,15 +23,16 @@ public class Shatter extends AbstractAbility implements MeleeAbility {
         this.entityQueryService = entityQueryService;
         this.entityCommandService = entityCommandService;
 
-        double distance = snapshot.getFloat(AbilityConfigurationValue.DISTANCE);
+        float distance = snapshot.getFloat(AbilityConfigurationValue.DISTANCE);
         Vector3f direction = caster.getEyeLocation().getDirection();
         entityCommandService.leap(caster.getId(), direction, distance);
 
-        this.task = RunnableUtils.runTask(this::tick, 1, 1);
+        // TODO        this.task = RunnableUtils.runTask(this::tick, 1, 1);
     }
 
     private void tick() {
         Entity caster = entityQueryService.getEntity(getCasterId());
+        /*
         if (caster.isOnGround()) {
             float radius = getSnapshot().getFloat(AbilityConfigurationValue.RADIUS);
             float launch = getSnapshot().getFloat(AbilityConfigurationValue.LAUNCH);
@@ -52,6 +48,7 @@ public class Shatter extends AbstractAbility implements MeleeAbility {
             });
             task.cancel();
         }
+        */
     }
 
     @Override

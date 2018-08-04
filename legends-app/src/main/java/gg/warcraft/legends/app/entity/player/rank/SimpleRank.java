@@ -1,29 +1,22 @@
 package gg.warcraft.legends.app.entity.player.rank;
 
 import gg.warcraft.legends.api.entity.player.rank.Rank;
-import gg.warcraft.legends.api.entity.player.rank.RankPrefix;
-import gg.warcraft.legends.api.entity.player.rank.RankSuffix;
 import gg.warcraft.monolith.api.util.ColorCode;
 
 public class SimpleRank implements Rank {
+    private final String name;
     private final int level;
-    private final int prestige;
-    private final RankPrefix prefix;
-    private final RankSuffix suffix;
-    private final String prestigeChar;
+    private final ColorCode color;
 
-    public SimpleRank(int level, int prestige, RankPrefix prefix, RankSuffix suffix, String prestigeChar) {
+    public SimpleRank(String name, int level, ColorCode color) {
+        this.name = name;
         this.level = level;
-        this.prestige = prestige;
-        this.prefix = prefix;
-        this.suffix = suffix;
-        this.prestigeChar = prestigeChar;
+        this.color = color;
     }
 
     @Override
     public String getName() {
-        String prestigePrefix = new String(new char[prestige]).replace("\0", prestigeChar);
-        return prestigePrefix + " " + prefix.getName() + " " + suffix.getName();
+        return name;
     }
 
     @Override
@@ -33,6 +26,11 @@ public class SimpleRank implements Rank {
 
     @Override
     public ColorCode getColor() {
-        return null;
+        return color;
     }
 }
+
+/*
+String prestigePrefix = new String(new char[prestige]).replace("\0", prestigeChar);
+        return prestigePrefix + " " + name;
+ */

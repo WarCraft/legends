@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public class HamstringEffect {
     private static final float RADIUS = 0.5f;
     private static final int FRAMES = 20;
-    private static final Vector3fc OFFSET = new Vector3f(0, 0.1f, 0);
+    private static final Vector3fc OFFSET = new Vector3f(0, 0.1f, 0); // TODO make VectorUtils with vectors for HEAD_OFFSET, CHEST_OFFSET, HEEL_OFFSET etc
 
     public HamstringEffect(EntityQueryService entityQueryService, ParticleFactory particleFactory,
                            EffectVectorsFactory effectVectorsFactory, EffectRendererFactory effectRendererFactory,
@@ -32,7 +32,8 @@ public class HamstringEffect {
             Entity entity = entityQueryService.getEntity(target.getId());
             return entity.getLocation().add(OFFSET);
         };
-        Effect effect = effectFactory.createTimedEffect(locationSupplier, duration);
+        Effect effect = effectFactory.createSimpleEffect(locationSupplier);
+        effect.cancel(duration);
 
         Particle particle = particleFactory.createColorParticle(ParticleType.SPELL_MOB, ColorHue.WHITE);
         EffectVectors vectors = effectVectorsFactory.createRingVectors(RADIUS, FRAMES);

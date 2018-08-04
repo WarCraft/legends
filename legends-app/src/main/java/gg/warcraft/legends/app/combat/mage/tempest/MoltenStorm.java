@@ -13,6 +13,7 @@ import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.legends.app.combat.mage.effect.MageEffectFactory;
+import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.core.Task;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.effect.EffectVectors;
@@ -23,7 +24,10 @@ import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.Location;
+import gg.warcraft.monolith.api.world.Sound;
+import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
+import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -36,11 +40,15 @@ import java.util.stream.Collectors;
 public class MoltenStorm extends AbstractAbility implements RangedAbility, Runnable {
     private static final Vector3fc HEIGHT = new Vector3f(0, 20, 0);
     private static final Vector3fc OFFSET = new Vector3f(5, 0, 5);
+    private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
+    private static final Sound CAST_SOUND = Sound.ENTITY_GHAST_SHOOT;
+    private static final Sound HIT_SOUND = Sound.ENTITY_ENDERDRAGON_FIREBALL_EXPLODE;
 
     private static final Random random = new Random(System.currentTimeMillis());
 
     private final AbilityCommandService abilityCommandService;
     private final EntityCommandService entityCommandService;
+    private final WorldCommandService worldCommandService;
     private final MovementFactory movementFactory;
     private final MageEffectFactory mageEffectFactory;
     private final Hitbox hitbox;
@@ -50,14 +58,15 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
 
     @Inject
     public MoltenStorm(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                       TaskService taskService, TimeUtils timeUtils, HitboxFactory hitboxFactory,
-                       MovementFactory movementFactory, EffectVectorsFactory effectVectorsFactory,
-                       MageEffectFactory mageEffectFactory, @Assisted AbilitySnapshot snapshot,
-                       @Assisted("caster") Entity caster, @Assisted("target") Entity rangedTarget,
-                       @Assisted Block blockTarget) {
+                       WorldCommandService worldCommandService, TaskService taskService, TimeUtils timeUtils,
+                       HitboxFactory hitboxFactory, MovementFactory movementFactory,
+                       EffectVectorsFactory effectVectorsFactory, MageEffectFactory mageEffectFactory,
+                       @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
+                       @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
         this.abilityCommandService = abilityCommandService;
         this.entityCommandService = entityCommandService;
+        this.worldCommandService = worldCommandService;
         this.movementFactory = movementFactory;
         this.mageEffectFactory = mageEffectFactory;
 
@@ -95,6 +104,9 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
 
         // Play effect
         mageEffectFactory.createMoltenStormRingEffect(location, duration);
+
+        // Play sound
+        worldCommandService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
     @Override
@@ -107,23 +119,23 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
 
     @Override
     public boolean onHit(Entity entity) {
-        float damage = getSnapshot().getFloat(AbilityConfigurationValue.DAMAGE);
+        CombatValue damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
         Duration burnDuration = getSnapshot().getDuration(AbilityConfigurationEffect.BURN);
         entityCommandService.damage(entity.getId(), damage);
         entityCommandService.burn(entity.getId(), burnDuration);
 
-        // TODO play hit sound
+        worldCommandService.playSound(entity.getLocation(), HIT_SOUND, SOUND_CATEGORY, 1, 1);
         return true;
     }
 
     @Override
     public boolean onMiss(Entity entity) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean onGrounded(Location location) {
-        // TODO play sound?
+        worldCommandService.playSound(location, HIT_SOUND, SOUND_CATEGORY, 1, 1);
         return true;
     }
 }

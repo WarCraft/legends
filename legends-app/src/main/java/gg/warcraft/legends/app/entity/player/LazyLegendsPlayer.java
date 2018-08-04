@@ -19,12 +19,12 @@ public class LazyLegendsPlayer extends LazyPlayer implements LegendsPlayer {
     }
 
     @Override
-    public int getGoldCoins() {
+    public int getGold() {
         return getCurrency("Gold");
     }
 
     @Override
-    public int getTotalGoldCoins() {
+    public int getLifetimeGold() {
         return getCurrencyTotal("Gold");
     }
 
@@ -34,7 +34,7 @@ public class LazyLegendsPlayer extends LazyPlayer implements LegendsPlayer {
     }
 
     @Override
-    public int getTotalFavor() {
+    public int getLifetimeFavor() {
         return getCurrencyTotal("Favor");
     }
 }

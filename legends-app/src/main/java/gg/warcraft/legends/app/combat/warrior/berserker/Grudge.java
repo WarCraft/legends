@@ -6,45 +6,56 @@ import gg.warcraft.combat.api.ability.AbstractAbility;
 import gg.warcraft.combat.api.ability.MeleeAbility;
 import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
-import gg.warcraft.legends.app.combat.warrior.status.GrudgeStatusEffect;
+import gg.warcraft.legends.app.combat.warrior.effect.WarriorEffectFactory;
+import gg.warcraft.legends.app.combat.warrior.status.WarriorStatusEffectFactory;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.status.StatusEffect;
 import gg.warcraft.monolith.api.entity.status.service.StatusCommandService;
 import gg.warcraft.monolith.api.util.Duration;
+import gg.warcraft.monolith.api.world.Sound;
+import gg.warcraft.monolith.api.world.SoundCategory;
+import gg.warcraft.monolith.api.world.service.WorldCommandService;
 
 import java.util.UUID;
 
 public class Grudge extends AbstractAbility implements MeleeAbility {
+    private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
+    private static final Sound HIT_SOUND = Sound.ENTITY_WITHER_SPAWN;
+    private static final Sound MISS_SOUND = Sound.ENTITY_BOBBER_THROW;
+
     private final StatusCommandService statusCommandService;
-    private final AbilitySnapshot snapshot;
-    private final UUID casterId;
+    private final WorldCommandService worldCommandService;
+    private final WarriorEffectFactory warriorEffectFactory;
+    private final WarriorStatusEffectFactory warriorStatusEffectFactory;
+    private final UUID targetId;
 
     @Inject
-    public Grudge(StatusCommandService statusCommandService, @Assisted AbilitySnapshot snapshot,
-                  @Assisted("caster") Entity caster, @Assisted("target") Entity meleeTarget) {
+    public Grudge(StatusCommandService statusCommandService, WorldCommandService worldCommandService,
+                  WarriorEffectFactory warriorEffectFactory, WarriorStatusEffectFactory warriorStatusEffectFactory,
+                  @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
+                  @Assisted("target") Entity meleeTarget) {
         super(caster.getId(), snapshot);
         this.statusCommandService = statusCommandService;
-        this.snapshot = snapshot;
-        this.casterId = caster.getId();
+        this.worldCommandService = worldCommandService;
+        this.warriorEffectFactory = warriorEffectFactory;
+        this.warriorStatusEffectFactory = warriorStatusEffectFactory;
+        this.targetId = meleeTarget.getId();
     }
 
     @Override
     public void onHit(Entity entity) {
-        double heal = snapshot.getFloat(AbilityConfigurationValue.HEAL);
-        Duration duration = snapshot.getDuration();
-
-        StatusEffect grudge = new GrudgeStatusEffect(casterId, heal);
+        float heal = getSnapshot().getFloat(AbilityConfigurationValue.HEAL);
+        Duration duration = getSnapshot().getDuration();
+        StatusEffect grudge =
+                warriorStatusEffectFactory.createGrudgeStatusEffect(targetId, getCasterId(), heal, duration);
         statusCommandService.addStatusEffect(grudge, entity.getId());
 
-        // TODO do we want to allow addStatusEffect to already take a duration? Should it be on the status effect itself?
-        RunnableUtils.runLater(() -> target.removeStatusEffect(grudge), duration.as(Duration.Type.TICKS));
-
-        // TODO new GrudgeEffect(target, duration);
-        // TODO play hit sound
+        warriorEffectFactory.createGrudgeEffect(entity, duration);
+        worldCommandService.playSound(entity.getLocation(), HIT_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
     @Override
     public void onMiss(Entity entity) {
-        // TODO play miss sound
+        worldCommandService.playSound(entity.getLocation(), MISS_SOUND, SOUND_CATEGORY, 1, 1);
     }
 }

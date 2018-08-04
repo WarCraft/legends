@@ -27,7 +27,8 @@ public class MoltenStormCircleEffect implements Cancellable {
                                    EffectRendererFactory effectRendererFactory, EffectFactory effectFactory,
                                    @Assisted Location location, @Assisted Duration duration) {
         Location adjustedLocation = location.add(0, 0.15f, 0);
-        this.effect = effectFactory.createEffect(() -> adjustedLocation, duration);
+        this.effect = effectFactory.createSimpleEffect(() -> adjustedLocation);
+        this.effect.cancel(duration);
 
         Particle particle = particleFactory.createColorParticle(ParticleType.REDSTONE, ColorHue.ORANGE);
         EffectVectors vectors = effectVectorsFactory.createRingVectors(RADIUS, PARTICLE_COUNT);

@@ -10,6 +10,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: gg.warcraft:monolith-spigot:1.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Gradle: gg.warcraft:chat-api:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: gg.warcraft:combat-api:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: gg.warcraft:monolith-app:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: gg.warcraft:monolith-api:1.0.0-SNAPSHOT" level="project" />

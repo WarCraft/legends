@@ -1,45 +1,44 @@
 package gg.warcraft.legends.app.combat.ranger.hunter;
 
-import gg.warcraft.legends.combat.LegendsCombatService;
-import gg.warcraft.monolith.combat.HostileTo;
-import gg.warcraft.monolith.combat.MonolithArrow;
-import gg.warcraft.monolith.combat.SimpleMonolithAbility;
-import gg.warcraft.monolith.config.AbilityConfiguration;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.entity.SimpleMonolithEntity;
-import gg.warcraft.monolith.player.MonolithPlayer;
-import gg.warcraft.monolith.util.PotionConfiguration;
-import org.bukkit.entity.Tameable;
-import org.bukkit.entity.Wolf;
-import org.bukkit.potion.PotionEffectType;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.ability.AbstractAbility;
+import gg.warcraft.combat.api.ability.MeleeAbility;
+import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.combat.api.ability.service.AbilityCommandService;
+import gg.warcraft.monolith.api.combat.value.CombatValue;
+import gg.warcraft.monolith.api.entity.Entity;
+import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.world.PotionEffect;
+import gg.warcraft.monolith.api.world.PotionEffectType;
 
-public class ToxicArrow extends SimpleMonolithAbility implements MonolithArrow.Observer {
+public class ToxicArrow extends AbstractAbility implements MeleeAbility {
+    private static final float SPEED = 3; // suggested speed of 0.6 by the spigot docs is way too low
+    private static final float SPREAD = 2; // suggested spread of 12 by the spigot docs is way too wide
 
-    public ToxicArrow(MonolithEntity caster, AbilityConfiguration config) {
-        super(caster, config);
-        MonolithArrow arrow = new MonolithArrow(caster, new HostileTo(caster));
-        arrow.addObserver(this);
+    private final EntityCommandService entityCommandService;
+
+    @Inject
+    public ToxicArrow(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
+                      @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
+                      @Assisted("target") Entity meleeTarget) {
+        super(caster.getId(), snapshot);
+        this.entityCommandService = entityCommandService;
+        abilityCommandService.createArrow(this, caster.getId(), caster.getEyeLocation(),
+                caster.getEyeLocation().getDirection(), SPEED, SPREAD);
     }
 
     @Override
-    public void onHit(MonolithEntity entity) {
-        PotionConfiguration poison = getConfiguration().getPotionConfiguration(PotionEffectType.POISON);
-        publishHitAndDamageEvents(this, entity).forEach(damageEvent -> {
-            entity.damage(damageEvent.getDamage());
-            entity.addPotionEffect(PotionEffectType.POISON, poison);
-
-            // TODO refactor into single place
-            if (getCaster() instanceof MonolithPlayer) {
-                Tameable pet = LegendsCombatService.getInstance().getCombatPetFor((MonolithPlayer) getCaster());
-                if (pet != null && pet instanceof Wolf) {
-                    ((Wolf) pet).setTarget(((SimpleMonolithEntity) entity).getLivingEntity());
-                }
-            }
-        });
+    public void onHit(Entity entity) {
+        CombatValue damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
+        PotionEffect poison = getSnapshot().getPotionEffect(PotionEffectType.POISON);
+        entityCommandService.damage(entity.getId(), damage);
+        entityCommandService.addPotionEffect(entity.getId(), poison);
     }
 
     @Override
-    public String toString() {
-        return "Power Shot";
+    public void onMiss(Entity entity) {
+        // do nothing
     }
 }

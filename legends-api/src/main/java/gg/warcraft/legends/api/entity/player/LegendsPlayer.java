@@ -5,13 +5,13 @@ import gg.warcraft.monolith.api.entity.player.Player;
 
 public interface LegendsPlayer extends Player {
 
-    int getGoldCoins();
+    int getGold();
 
-    int getTotalGoldCoins();
+    int getLifetimeGold();
 
     int getFavor();
 
-    int getTotalFavor();
+    int getLifetimeFavor();
 
     Rank getRank();
 }

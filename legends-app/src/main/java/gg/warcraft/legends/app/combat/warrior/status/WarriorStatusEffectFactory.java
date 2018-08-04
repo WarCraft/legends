@@ -8,6 +8,9 @@ import java.util.UUID;
 
 public interface WarriorStatusEffectFactory {
 
+    @Named("grudge")
+    StatusEffect createGrudgeStatusEffect(UUID entityId, UUID berzekerId, float heal, Duration duration);
+
     @Named("standYourGround")
     StatusEffect createStandYourGroundStatusEffect(UUID entityId, Duration duration);
 }

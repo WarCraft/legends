@@ -1,10 +1,10 @@
-package gg.warcraft.legends.app.entity.player.rank.event.handler;
+package gg.warcraft.legends.app.entity.player.rank.handler;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import gg.warcraft.chat.api.profile.service.ChatProfileCommandService;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
-import gg.warcraft.legends.api.entity.player.event.PlayerFavorEarnedEvent;
+import gg.warcraft.legends.api.entity.player.event.PlayerFavorGainedEvent;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 
@@ -20,9 +20,9 @@ public class PlayerRankEventHandler {
     }
 
     @Subscribe
-    public void onPlayerFavorEarned(PlayerFavorEarnedEvent event) {
+    public void onPlayerFavorEarned(PlayerFavorGainedEvent event) {
         LegendsPlayer player = playerQueryService.getPlayer(event.getPlayerId());
-        int totalFavor = player.getTotalFavor();
+        int newLifetimeFavor = event.getNewLifetime();
         // TODO apply totalFavor to experience table
         Rank rank = player.getRank();
         // TODO check current rank vs supposed rank from table

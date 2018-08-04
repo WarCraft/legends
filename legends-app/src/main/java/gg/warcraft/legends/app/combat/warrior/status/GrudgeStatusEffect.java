@@ -41,8 +41,8 @@ public class GrudgeStatusEffect implements StatusEffect {
 
     @Override
     public void onEntityDamageEvent(EntityDamageEvent event) {
-        UUID damagerId = event.getDamage().getSource().getEntityId(); // TODO source isn't stored in damage yet
-        if (damagerId.equals(casterId)) {
+        UUID damagerId = event.getDamage().getSource().getEntityId();
+        if (casterId.equals(damagerId)) {
             entityCommandService.heal(casterId, heal);
         }
     }

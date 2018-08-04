@@ -14,6 +14,9 @@ public interface MageEffectFactory {
     @Named("fireball")
     Cancellable createFireballEffect(Movement movement);
 
+    @Named("hailBlast")
+    Cancellable createHailBlastEffect(Movement movement);
+
     @Named("moltenStormRing")
     Cancellable createMoltenStormRingEffect(Location location, Duration duration);
 

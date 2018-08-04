@@ -1,35 +1,14 @@
 package gg.warcraft.legends.app.combat.ranger.marksman;
 
-import gg.warcraft.monolith.combat.MonolithAbilityFactory;
-import gg.warcraft.monolith.combat.event.MonolithAbilityCastEvent;
-import gg.warcraft.monolith.config.AbilityConfiguration;
-import gg.warcraft.monolith.config.ConfigurationService;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.event.EventService;
+import gg.warcraft.combat.api.ability.MeleeAbilityFactory;
+import gg.warcraft.combat.api.ability.MeleeAbilityFlag;
 
-public class PowerShotFactory implements MonolithAbilityFactory {
+import java.util.EnumSet;
 
-    private final ConfigurationService configService;
-    private final EventService eventService;
-
-    public PowerShotFactory() {
-        this(ConfigurationService.getInstance(), EventService.getInstance());
-    }
-
-    public PowerShotFactory(ConfigurationService configService, EventService eventService) {
-        this.configService = configService;
-        this.eventService = eventService;
-    }
+public interface PowerShotFactory extends MeleeAbilityFactory {
 
     @Override
-    public PowerShot create(MonolithEntity caster) {
-        AbilityConfiguration config = configService.getAbilityConfigurationFor(PowerShot.class);
-        MonolithAbilityCastEvent event = new MonolithAbilityCastEvent(PowerShot.class, config, caster);
-        eventService.publishEvent(event);
-        if (!event.isCancelled()) {
-            return new PowerShot(caster, config);
-        } else {
-            return null;
-        }
+    default EnumSet<MeleeAbilityFlag> getFlags() {
+        return EnumSet.noneOf(MeleeAbilityFlag.class);
     }
 }

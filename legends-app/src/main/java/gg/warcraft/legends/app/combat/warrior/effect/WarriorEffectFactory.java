@@ -6,6 +6,9 @@ import gg.warcraft.monolith.api.util.Duration;
 
 public interface WarriorEffectFactory {
 
+    @Named("grudge")
+    void createGrudgeEffect(Entity target, Duration duration);
+
     @Named("hamstring")
     void createHamstringEffect(Entity target, Duration duration);
 

@@ -11,73 +11,72 @@ import gg.warcraft.combat.api.ability.RangedAbility;
 import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.combat.api.ability.service.AbilityCommandService;
+import gg.warcraft.legends.app.combat.mage.effect.MageEffectFactory;
+import gg.warcraft.monolith.api.combat.value.CombatValue;
+import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.Entity;
+import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.util.Cancellable;
+import gg.warcraft.monolith.api.util.Duration;
+import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.PotionEffect;
 import gg.warcraft.monolith.api.world.PotionEffectType;
+import gg.warcraft.monolith.api.world.Sound;
+import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
+import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import org.joml.Vector3f;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+public class HailBlast extends AbstractAbility implements RangedAbility {
+    private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
+    private static final Sound CAST_SOUND = Sound.BLOCK_SNOW_BREAK;
+    private static final Sound CAST_SOUND_2 = Sound.ENTITY_SILVERFISH_HURT;
 
-public class HailBlast extends AbstractAbility implements RangedAbility { // NOTE this should not be a melee ability as we want to fire a projectile
+    private final EntityCommandService entityCommandService;
 
-    // TODO use cone attribute from config
     @Inject
-    public HailBlast(AbilityCommandService abilityCommandService, MovementFactory movementFactory,
-                     HitboxFactory hitboxFactory, @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
+    public HailBlast(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
+                     WorldCommandService worldCommandService, TaskService taskService, TimeUtils timeUtils,
+                     MovementFactory movementFactory, HitboxFactory hitboxFactory, MageEffectFactory mageEffectFactory,
+                     @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                      @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
-        PotionEffect slow = snapshot.getPotionEffect(PotionEffectType.SLOW);
+        this.entityCommandService = entityCommandService;
 
         float range = snapshot.getFloat(AbilityConfigurationValue.RANGE);
         float speed = snapshot.getFloat(AbilityConfigurationValue.SPEED);
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
 
-        Movement movement = movementFactory.createLinearMovement();
+        Location origin = caster.getEyeLocation();
+        Vector3f direction = caster.getEyeLocation().getDirection();
+        Vector3f velocity = direction.mul(speed);
+        Movement movement = movementFactory.createLinearMovement(origin, velocity, range);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
 
-        abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
 
+        Cancellable effect = mageEffectFactory.createHailBlastEffect(movement);
+        abilityCommandService.createProjectile(this, movement, hitbox, effect::cancel);
 
-        ////////////////////
+        worldCommandService.playSound(origin, CAST_SOUND, SOUND_CATEGORY, 1, 1);
+        worldCommandService.playSound(origin, CAST_SOUND_2, SOUND_CATEGORY, 1, 0.1f);
+        for (int i = 0; i <= 12; i += 2) {
+            Duration delay = timeUtils.createDurationInTicks(i);
+            taskService.runLater(() -> worldCommandService.playSound(origin, CAST_SOUND, SOUND_CATEGORY, 1, 1), delay);
+        }
+    }
 
+    @Override
+    public boolean onHit(Entity entity) {
+        CombatValue damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
+        PotionEffect slow = getSnapshot().getPotionEffect(PotionEffectType.SLOW);
+        entityCommandService.damage(entity.getId(), damage);
+        entityCommandService.addPotionEffect(entity.getId(), slow);
+        return false;
+    }
 
-        Location location = caster.getLocation().add(0, 1, 0);
-        Vector3f direction = caster.getLocation().getDirection();
-        Location location1 = location.add(direction.mul(1));
-        Location location2 = location.add(direction.mul(3.25f));
-        Location location3 = location.add(direction.mul(6));
-        Location location4 = location.add(direction.mul(9.25f));
-        Location location5 = location.add(direction.mul(13));
-
-        Set<MonolithEntity> entities = new HashSet<>();
-        entities.addAll(entityService.getNearbyMonolithEntities(location1, 1));
-        entities.addAll(entityService.getNearbyMonolithEntities(location2, 1.25));
-        entities.addAll(entityService.getNearbyMonolithEntities(location3, 1.5));
-        entities.addAll(entityService.getNearbyMonolithEntities(location4, 1.75));
-        entities.addAll(entityService.getNearbyMonolithEntities(location5, 2));
-        List<MonolithEntity> casualties = entities.stream()
-                .filter(entity -> entity.getRace() != caster.getRace())
-                .collect(Collectors.toList());
-        publishHitAndDamageEvents(this, casualties).forEach(damageEvent -> {
-            MonolithEntity entity = damageEvent.getEntity();
-            entity.damage(damageEvent.getDamage());
-            entity.addPotionEffect(PotionEffectType.SLOW, slow);
-        });
-
-        onCastSound2.play(caster.getLocation());
-        onCastSound.play(caster.getLocation());
-        RunnableUtils.runLater(() -> onCastSound.play(caster.getLocation()), 2);
-        RunnableUtils.runLater(() -> onCastSound.play(caster.getLocation()), 4);
-        RunnableUtils.runLater(() -> onCastSound.play(caster.getLocation()), 6);
-        RunnableUtils.runLater(() -> onCastSound.play(caster.getLocation()), 8);
-        RunnableUtils.runLater(() -> onCastSound.play(caster.getLocation()), 10);
-        RunnableUtils.runLater(() -> onCastSound.play(caster.getLocation()), 12);
-
-        new HailBlastEffect(caster);
+    @Override
+    public boolean onMiss(Entity entity) {
+        return false;
     }
 }

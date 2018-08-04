@@ -1,26 +1,32 @@
 package gg.warcraft.legends.app.combat.ranger;
 
-import gg.warcraft.monolith.combat.HostileTo;
-import gg.warcraft.monolith.combat.MonolithArrow;
-import gg.warcraft.monolith.combat.SimpleMonolithAbility;
-import gg.warcraft.monolith.entity.EntityService;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import org.bukkit.Location;
-import org.bukkit.World;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.ability.AbstractAbility;
+import gg.warcraft.combat.api.ability.MeleeAbility;
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.monolith.api.entity.Entity;
 
-import java.util.List;
+public class ExplosiveShot extends AbstractAbility implements MeleeAbility {
 
-public class ExplosiveShot extends SimpleMonolithAbility implements MonolithArrow.Observer {
-
-    private final EntityService entityService;
-    private final double damage;
-    private final double knockback;
-    private final double radius;
-
-    public ExplosiveShot(MonolithEntity caster, double damage, double knockback, double radius) {
-        this(EntityService.getInstance(), caster, damage, knockback, radius);
+    @Inject
+    public ExplosiveShot(@Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
+                         @Assisted("target") Entity meleeTarget) {
+        super(caster.getId(), snapshot);
     }
 
+    @Override
+    public void onHit(Entity entity) {
+
+    }
+
+    @Override
+    public void onMiss(Entity entity) {
+
+    }
+}
+
+  /*
     public ExplosiveShot(EntityService entityService, MonolithEntity caster, double damage, double knockback, double radius) {
         super(caster);
         this.entityService = entityService;
@@ -52,9 +58,4 @@ public class ExplosiveShot extends SimpleMonolithAbility implements MonolithArro
     public void onHit(MonolithEntity entity) {
         explode(entity.getLocation());
     }
-
-    @Override
-    public String toString() {
-        return "Explosive Shot";
-    }
-}
+    */

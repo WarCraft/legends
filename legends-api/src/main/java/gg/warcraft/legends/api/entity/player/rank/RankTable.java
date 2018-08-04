@@ -4,5 +4,5 @@ import gg.warcraft.monolith.api.entity.Team;
 
 public interface RankTable {
 
-    Rank getRankFor(int totalFavor, Team team);
+    Rank getRankFor(int favor, Team team);
 }

@@ -1,29 +1,31 @@
 package gg.warcraft.legends.app.combat.ranger.marksman;
 
-import gg.warcraft.legends.app.combat.ranger.status.FocusStatusEffect;
-import gg.warcraft.legends.combat.effect.ranger.marksman.FocusEffect;
-import gg.warcraft.legends.event.LegendsPlayerSpecializationChangedEvent;
-import gg.warcraft.monolith.Monolith;
-import gg.warcraft.monolith.combat.SimpleMonolithAbility;
-import gg.warcraft.monolith.config.AbilityConfiguration;
-import gg.warcraft.monolith.effect.MonolithEffect;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.entity.StatusEffect;
-import gg.warcraft.monolith.event.EventService;
-import gg.warcraft.monolith.event.PlayerDisconnectEvent;
-import gg.warcraft.monolith.util.Cancellable;
-import org.bukkit.ChatColor;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.ability.AbstractAbility;
+import gg.warcraft.combat.api.ability.MeleeAbility;
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.monolith.api.entity.Entity;
 
-import java.util.List;
+public class Focus extends AbstractAbility implements MeleeAbility {
 
-public class Focus extends SimpleMonolithAbility implements Cancellable {
-    private static final String METADATA_KEY = Focus.class.getCanonicalName();
+    @Inject
+    public Focus(@Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
+                 @Assisted("target") Entity meleeTarget) {
+        super(caster.getId(), snapshot);
+    }
 
+    @Override
+    public void onHit(Entity entity) {
+
+    }
+
+    @Override
+    public void onMiss(Entity entity) {
+
+    }
+
+    /*
     static {
         EventService eventService = EventService.getInstance();
         eventService.registerForEvents(new Listener() {
@@ -78,15 +80,11 @@ public class Focus extends SimpleMonolithAbility implements Cancellable {
     }
 
     @Override
-    public String toString() {
-        return "Focus";
-    }
-
-    @Override
     public void cancel() {
         getCaster().freeze(0);
         getCaster().removeStatusEffect(focusStatusEffect);
         focusEffect.cancel();
         getCaster().removeMetadata(METADATA_KEY, monolith);
     }
+     */
 }

@@ -1,25 +1,20 @@
 package gg.warcraft.legends.app.combat.passive;
 
-import gg.warcraft.monolith.combat.event.MonolithEntityHitEvent;
-import gg.warcraft.monolith.entity.AbstractStatusEffect;
-import gg.warcraft.monolith.entity.MonolithEntity;
+import gg.warcraft.monolith.api.entity.status.StatusEffect;
+import gg.warcraft.monolith.app.entity.status.AbstractStatusEffect;
 
-public class ElfWarriorPassive extends AbstractStatusEffect {
+import java.util.UUID;
+
+public class ElfWarriorPassive extends AbstractStatusEffect implements StatusEffect {
     private static final int MAX_COUNT = 7;
-
-    private final MonolithEntity entity;
 
     private int count;
 
-    public ElfWarriorPassive(MonolithEntity entity) {
-        this.entity = entity;
+    public ElfWarriorPassive(UUID entityid) {
+        super(entityid, null);
         this.count = 0;
     }
 
-    @Override
-    public boolean hasExpired() {
-        return false;
-    }
 
     @Override
     public void onHitEvent(MonolithEntityHitEvent event) {

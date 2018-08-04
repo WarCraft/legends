@@ -25,7 +25,7 @@ public class FlameTotemFireballEffect implements Cancellable {
     public FlameTotemFireballEffect(ParticleFactory particleFactory, EffectVectorsFactory effectVectorsFactory,
                                     EffectRendererFactory effectRendererFactory, EffectFactory effectFactory,
                                     @Assisted Movement movement) {
-        this.effect = effectFactory.createEffect(movement);
+        this.effect = effectFactory.createSimpleEffect(movement);
 
         Particle innerParticle = particleFactory.createSimpleParticle(ParticleType.FLAME);
         EffectVectors innerVectors = effectVectorsFactory.createOriginVector();

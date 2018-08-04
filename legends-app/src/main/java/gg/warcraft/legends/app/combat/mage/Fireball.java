@@ -13,22 +13,29 @@ import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.legends.app.combat.mage.effect.MageEffectFactory;
+import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.world.Location;
+import gg.warcraft.monolith.api.world.Sound;
+import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
+import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import org.joml.Vector3f;
 
 public class Fireball extends AbstractAbility implements RangedAbility {
     private static final float MAX_DISTANCE = 30;
+    private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
+    private static final Sound CAST_SOUND = Sound.ENTITY_GHAST_SHOOT;
 
     private final EntityCommandService entityCommandService;
 
     @Inject
     public Fireball(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                    MovementFactory movementFactory, HitboxFactory hitboxFactory, MageEffectFactory mageEffectFactory,
+                    WorldCommandService worldCommandService, MovementFactory movementFactory,
+                    HitboxFactory hitboxFactory, MageEffectFactory mageEffectFactory,
                     @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                     @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
@@ -45,12 +52,13 @@ public class Fireball extends AbstractAbility implements RangedAbility {
         Cancellable effect = mageEffectFactory.createFireballEffect(movement);
         abilityCommandService.createProjectile(this, movement, hitbox, effect::cancel);
 
-        // TODO play sound at cast location and fly locations (maybe use onTick for this or create something for sound similar to effect)
+        worldCommandService.playSound(location, CAST_SOUND, SOUND_CATEGORY, 1, 1);
+        // TODO play sound at fly locations (maybe use onTick for this or create something for sound similar to effect)
     }
 
     @Override
     public boolean onHit(Entity entity) {
-        float damage = getSnapshot().getFloat(AbilityConfigurationValue.DAMAGE);
+        CombatValue damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
         Duration burnDuration = getSnapshot().getDuration(AbilityConfigurationEffect.BURN);
         entityCommandService.damage(entity.getId(), damage);
         entityCommandService.burn(entity.getId(), burnDuration);
@@ -59,6 +67,6 @@ public class Fireball extends AbstractAbility implements RangedAbility {
 
     @Override
     public boolean onMiss(Entity entity) {
-        return true;
+        return false;
     }
 }
