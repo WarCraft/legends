@@ -67,7 +67,7 @@ public class LegendsCombatConfiguration {
         // Hunter
         abilityCommandService.registerMeleeAbility("Disengage", Disengage.class, DisengageFactory.class);
         abilityCommandService.registerMeleeAbility("Toxic Arrow", ToxicArrow.class, ToxicArrowFactory.class);
-        abilityCommandService.registerMeleeAbility("Trap", Trap.class, TrapFactory.class);
+        abilityCommandService.registerRangedAbility("Trap", Trap.class, TrapFactory.class);
         // Marksman
         abilityCommandService.registerMeleeAbility("Focus", Focus.class, FocusFactory.class);
         abilityCommandService.registerMeleeAbility("Power Shot", PowerShot.class, PowerShotFactory.class);
