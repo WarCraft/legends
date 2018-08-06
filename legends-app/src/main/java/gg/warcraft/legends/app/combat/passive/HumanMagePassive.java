@@ -1,41 +1,41 @@
 package gg.warcraft.legends.app.combat.passive;
 
-import gg.warcraft.monolith.combat.event.MonolithEntityHealthChangedEvent;
-import gg.warcraft.monolith.entity.AbstractStatusEffect;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.util.Duration;
-import gg.warcraft.monolith.util.PotionConfiguration;
-import gg.warcraft.monolith.util.TimeUtils;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.potion.PotionEffectType;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.monolith.api.entity.event.EntityHealthChangedEvent;
+import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.util.Duration;
+import gg.warcraft.monolith.api.util.TimeUtils;
+import gg.warcraft.monolith.api.world.PotionEffect;
+import gg.warcraft.monolith.api.world.PotionEffectType;
+import gg.warcraft.monolith.app.world.SimplePotionEffect;
 
-public class HumanMagePassive extends AbstractStatusEffect {
-    private static final int DURATION = 5 * TimeUtils.TICKS_PER_SECOND;
-    private static final int ABSORPTION = 2;
-    private static final long COOLDOWN = 300L * TimeUtils.MILLIS_PER_SECOND;
+import java.util.UUID;
 
-    private final MonolithEntity entity;
-    private final PotionConfiguration absorption;
+public class HumanMagePassive extends AbstractRacialPassive {
+    private static final int DURATION_IN_SECONDS = 5;
+    private static final int ABSORPTION_LEVEL = 2;
+    private static final long COOLDOWN_IN_MILLIS = 300 * TimeUtils.MILLIS_PER_SECOND;
+
+    private final EntityCommandService entityCommandService;
+    private final PotionEffect absorption;
 
     private long cooldown;
 
-    public HumanMagePassive(MonolithEntity entity) {
-        this.entity = entity;
-        this.absorption = new PotionConfiguration(new Duration(DURATION, Duration.Type.TICKS), ABSORPTION);
+    @Inject
+    public HumanMagePassive(EntityCommandService entityCommandService, TimeUtils timeUtils, @Assisted UUID entityId) {
+        super(entityId, null);
+        this.entityCommandService = entityCommandService;
+        Duration absorptionDuration = timeUtils.createDurationInSeconds(DURATION_IN_SECONDS);
+        this.absorption = new SimplePotionEffect(PotionEffectType.ABSORPTION, ABSORPTION_LEVEL, absorptionDuration);
     }
 
     @Override
-    public boolean hasExpired() {
-        return false;
-    }
-
-    @Override
-    public void onHealthChangedEvent(MonolithEntityHealthChangedEvent event) {
-        if (System.currentTimeMillis() > cooldown) {
-            double maxHealth = event.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-            if (event.getEntity().getHealth() <= 0.5 * maxHealth) {
-                cooldown = System.currentTimeMillis() + COOLDOWN;
-                event.getEntity().addPotionEffect(PotionEffectType.ABSORPTION, absorption);
+    public void onEntityHealthChangedEvent(EntityHealthChangedEvent event) {
+        if (System.currentTimeMillis() >= cooldown) {
+            if (event.getNewPercentHealth() <= 0.5f) {
+                cooldown = System.currentTimeMillis() + COOLDOWN_IN_MILLIS;
+                entityCommandService.addPotionEffect(event.getEntityId(), absorption);
             }
         }
     }

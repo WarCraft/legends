@@ -2,62 +2,78 @@ package gg.warcraft.legends.app.combat.warrior.berserker;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.Hitbox;
+import gg.warcraft.combat.api.HitboxFactory;
+import gg.warcraft.combat.api.Movement;
+import gg.warcraft.combat.api.MovementFactory;
 import gg.warcraft.combat.api.ability.AbstractAbility;
-import gg.warcraft.combat.api.ability.MeleeAbility;
+import gg.warcraft.combat.api.ability.RangedAbility;
 import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.combat.api.ability.service.AbilityCommandService;
+import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
+import gg.warcraft.monolith.api.entity.Team;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
-import gg.warcraft.monolith.api.entity.service.EntityQueryService;
+import gg.warcraft.monolith.api.world.Location;
+import gg.warcraft.monolith.api.world.PotionEffect;
+import gg.warcraft.monolith.api.world.PotionEffectType;
 import org.joml.Vector3f;
 
-public class Shatter extends AbstractAbility implements MeleeAbility {
-    private final EntityQueryService entityQueryService;
+public class Shatter extends AbstractAbility implements RangedAbility {
+    private final AbilityCommandService abilityCommandService;
     private final EntityCommandService entityCommandService;
+    private final MovementFactory movementFactory;
+    private final HitboxFactory hitboxFactory;
+
+    private final Team casterTeam;
+    private final CombatValue damage;
+    private final float launch;
+    private final PotionEffect confusion;
 
     @Inject
-    public Shatter(EntityQueryService entityQueryService, EntityCommandService entityCommandService,
-                   @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                   @Assisted("target") Entity meleeTarget) {
+    public Shatter(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
+                   MovementFactory movementFactory, HitboxFactory hitboxFactory, @Assisted AbilitySnapshot snapshot,
+                   @Assisted("caster") Entity caster, @Assisted("target") Entity meleeTarget) {
         super(caster.getId(), snapshot);
-        this.entityQueryService = entityQueryService;
+        this.abilityCommandService = abilityCommandService;
         this.entityCommandService = entityCommandService;
+        this.movementFactory = movementFactory;
+        this.hitboxFactory = hitboxFactory;
+
+        this.casterTeam = caster.getTeam();
+        this.damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
+        this.launch = getSnapshot().getFloat(AbilityConfigurationValue.LAUNCH);
+        this.confusion = getSnapshot().getPotionEffect(PotionEffectType.CONFUSION);
 
         float distance = snapshot.getFloat(AbilityConfigurationValue.DISTANCE);
         Vector3f direction = caster.getEyeLocation().getDirection();
         entityCommandService.leap(caster.getId(), direction, distance);
 
-        // TODO        this.task = RunnableUtils.runTask(this::tick, 1, 1);
-    }
-
-    private void tick() {
-        Entity caster = entityQueryService.getEntity(getCasterId());
-        /*
-        if (caster.isOnGround()) {
-            float radius = getSnapshot().getFloat(AbilityConfigurationValue.RADIUS);
-            float launch = getSnapshot().getFloat(AbilityConfigurationValue.LAUNCH);
-            PotionEffect confusion = getSnapshot().getPotionEffect(PotionEffectType.CONFUSION);
-
-            List<Entity> casualties = entityQueryService.getNearbyEntities(caster.getLocation(), radius).stream()
-                    .filter(new HostileTo(getCaster()))
-                    .collect(Collectors.toList());
-            publishHitAndDamageEvents(this, casualties).forEach(damageEvent -> {
-                damageEvent.getEntity().damage(damageEvent.getDamage());
-                damageEvent.getEntity().knockup(launch);
-                damageEvent.getEntity().addPotionEffect(PotionEffectType.CONFUSION, confusion);
-            });
-            task.cancel();
-        }
-        */
+        Movement movement = movementFactory.createEntityMovement(caster.getId());
+        Hitbox hitbox = hitboxFactory.createSphericalHitbox(0.1f, entity -> false);
+        abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
     }
 
     @Override
-    public void onHit(Entity entity) {
-
+    public boolean onHit(Entity entity) {
+        entityCommandService.damage(entity.getId(), damage);
+        entityCommandService.knockup(entity.getId(), launch);
+        entityCommandService.addPotionEffect(entity.getId(), confusion);
+        return false;
     }
 
     @Override
-    public void onMiss(Entity entity) {
+    public boolean onMiss(Entity entity) {
+        return false;
+    }
 
+    @Override
+    public boolean onGrounded(Location location) {
+        float radius = getSnapshot().getFloat(AbilityConfigurationValue.RADIUS);
+        Movement movement = movementFactory.createOneOffMovement(location);
+        Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != casterTeam);
+        abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
+        return true;
     }
 }

@@ -13,10 +13,14 @@ import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.legends.app.combat.mage.effect.MageEffectFactory;
+import gg.warcraft.monolith.api.combat.value.CombatValue;
+import gg.warcraft.monolith.api.core.Task;
+import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
+import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.BlockLocation;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.BlockType;
@@ -26,21 +30,28 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class FlameTotem extends AbstractAbility implements RangedAbility, Runnable { // FIXME should this be a melee ability?
-    private static final double MAX_DISTANCE = 30;
+public class FlameTotem extends AbstractAbility implements RangedAbility, Runnable {
+    private static final float MAX_DISTANCE = 30;
 
     private final AbilityCommandService abilityCommandService;
     private final EntityCommandService entityCommandService;
+    private final MovementFactory movementFactory;
+    private final HitboxFactory hitboxFactory;
+    private final MageEffectFactory mageEffectFactory;
+    private final Task task;
 
     @Inject
     public FlameTotem(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                      MovementFactory movementFactory, HitboxFactory hitboxFactory, MageEffectFactory mageEffectFactory,
-                      BlockUtils blockUtils,
+                      TaskService taskService, MovementFactory movementFactory, HitboxFactory hitboxFactory,
+                      MageEffectFactory mageEffectFactory, BlockUtils blockUtils, TimeUtils timeUtils,
                       @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                       @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
         this.abilityCommandService = abilityCommandService;
         this.entityCommandService = entityCommandService;
+        this.movementFactory = movementFactory;
+        this.hitboxFactory = hitboxFactory;
+        this.mageEffectFactory = mageEffectFactory;
 
         BlockLocation casterLocation = caster.getLocation().toBlockLocation();
         Set<Block> adjacentBlocksX = blockUtils.getAdjacentBlocksX(casterLocation);
@@ -53,19 +64,17 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
         Block totem = spawnBlockOptional.orElse(caster.getLocation().getBlock());
         totemBackup = worldService.createBackup(totem);
 
-        totem.setType(Material.REDSTONE_TORCH_ON);
+        totem.setType(BlockType.REDSTONE_TORCH_ON);
 
-        shootTask = RunnableUtils.runTask(this::shootFireball, 1, 20);
-        RunnableUtils.runLater(this::cancelTotem, DURATION);
+
+        task = taskService.runTask(this, timeUtils.oneTick(), snapshot.getPeriod());
+        taskService.runLater(() -> {
+            task.cancel();
+            totemBackup.restore();
+        }, snapshot.getDuration());
 
 
         // TODO play cast sound
-    }
-
-    // TODO do we need this?
-    private void cancelTotem() {
-        shootTask.cancel();
-        worldService.restoreBackup(totemBackup);
     }
 
     @Override
@@ -95,7 +104,7 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
 
     @Override
     public boolean onHit(Entity entity) {
-        float damage = getSnapshot().getFloat(AbilityConfigurationValue.DAMAGE);
+        CombatValue damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
         Duration burnDuration = getSnapshot().getDuration(AbilityConfigurationEffect.BURN);
         entityCommandService.damage(entity.getId(), damage);
         entityCommandService.burn(entity.getId(), burnDuration);

@@ -82,6 +82,6 @@ public class LegendsCombatConfiguration {
         // Armsmaster
         abilityCommandService.registerMeleeAbility("Grudge", Grudge.class, GrudgeFactory.class);
         abilityCommandService.registerMeleeAbility("Maul", Maul.class, MaulFactory.class);
-        abilityCommandService.registerMeleeAbility("Shatter", Shatter.class, ShatterFactory.class);
+        abilityCommandService.registerRangedAbility("Shatter", Shatter.class, ShatterFactory.class);
     }
 }

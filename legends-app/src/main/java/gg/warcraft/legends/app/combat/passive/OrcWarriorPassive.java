@@ -1,38 +1,41 @@
 package gg.warcraft.legends.app.combat.passive;
 
-import gg.warcraft.monolith.combat.event.MonolithAbilityHitEvent;
-import gg.warcraft.monolith.combat.event.MonolithEntityHealthChangedEvent;
-import gg.warcraft.monolith.config.AbilityConfiguration;
-import gg.warcraft.monolith.entity.AbstractStatusEffect;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import org.bukkit.attribute.Attribute;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.ability.event.AbilityPreCastEvent;
+import gg.warcraft.combat.api.status.CombatStatusEffect;
+import gg.warcraft.monolith.api.combat.CombatSource;
+import gg.warcraft.monolith.api.combat.value.CombatValueModifier;
+import gg.warcraft.monolith.api.combat.value.CombatValueModifierType;
+import gg.warcraft.monolith.api.entity.event.EntityHealthChangedEvent;
+import gg.warcraft.monolith.app.combat.SimpleCombatSource;
+import gg.warcraft.monolith.app.combat.value.SimpleCombatValueModifier;
 
-public class OrcWarriorPassive extends AbstractStatusEffect {
+import java.util.UUID;
 
-    private final MonolithEntity entity;
+public class OrcWarriorPassive extends AbstractRacialPassive implements CombatStatusEffect {
+    private static final String NAME = "Bloodlust";
 
-    private double damageModifier;
+    private final CombatValueModifier modifier;
 
-    public OrcWarriorPassive(MonolithEntity entity) {
-        this.entity = entity;
-        this.damageModifier = 1;
+    private boolean active;
+
+    @Inject
+    public OrcWarriorPassive(@Assisted UUID entityId) {
+        super(entityId, null);
+        CombatSource source = new SimpleCombatSource(NAME, entityId);
+        this.modifier = new SimpleCombatValueModifier(CombatValueModifierType.PERCENT, 0.15f, source);
     }
 
     @Override
-    public boolean hasExpired() {
-        return false;
+    public void onEntityHealthChangedEvent(EntityHealthChangedEvent event) {
+        active = event.getNewPercentHealth() <= 0.5f;
     }
 
     @Override
-    public void onHealthChangedEvent(MonolithEntityHealthChangedEvent event) {
-        double health = event.getEntity().getHealth();
-        double maxHealth = event.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-        damageModifier = health / maxHealth <= 0.5 ? 1.15 : 1;
-    }
-
-    @Override
-    public void onAbilityHitEvent(MonolithAbilityHitEvent event) {
-        double damage = event.getAbility().getConfiguration().get(AbilityConfiguration.Attribute.DAMAGE);
-        event.getAbility().getConfiguration().set(AbilityConfiguration.Attribute.DAMAGE, damage * damageModifier);
+    public void onAbilityPreCastEvent(AbilityPreCastEvent event) {
+        if (active) {
+            event.addDamageModifier(modifier);
+        }
     }
 }

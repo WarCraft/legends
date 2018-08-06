@@ -3,9 +3,7 @@
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
     <output-test url="file://$MODULE_DIR$/../../../legends-api/out/test/classes" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../legends-api/src/test">
-      <sourceFolder url="file://$MODULE_DIR$/../../../legends-api/src/test/java" isTestSource="true" />
-    </content>
+    <content url="file://$MODULE_DIR$/../../../legends-api/src/test" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="legends-api_main" />

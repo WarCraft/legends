@@ -1,6 +1,8 @@
 package gg.warcraft.legends.spigot;
 
 import com.google.inject.Injector;
+import gg.warcraft.legends.app.combat.passive.handler.PassiveAssignmentHandler;
+import gg.warcraft.legends.app.combat.ranger.marksman.FocusHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerCurrencyEventHandler;
 import gg.warcraft.monolith.api.Monolith;
 import gg.warcraft.monolith.api.core.EventService;
@@ -13,6 +15,12 @@ public class LegendsPlugin extends JavaPlugin {
     void initializeLegendsHandlers() {
         PlayerCurrencyEventHandler playerCurrencyEventHandler = injector.getInstance(PlayerCurrencyEventHandler.class);
         eventService.subscribe(playerCurrencyEventHandler);
+
+        PassiveAssignmentHandler passiveAssignmentHandler = injector.getInstance(PassiveAssignmentHandler.class);
+        eventService.subscribe(passiveAssignmentHandler);
+
+        FocusHandler focusHandler = injector.getInstance(FocusHandler.class);
+        eventService.subscribe(focusHandler);
     }
 
     @Override

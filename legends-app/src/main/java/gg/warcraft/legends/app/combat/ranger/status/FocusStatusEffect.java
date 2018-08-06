@@ -1,29 +1,34 @@
 package gg.warcraft.legends.app.combat.ranger.status;
 
-import gg.warcraft.monolith.combat.event.MonolithAbilityHitEvent;
-import gg.warcraft.monolith.config.AbilityConfiguration;
-import gg.warcraft.monolith.entity.AbstractStatusEffect;
-import gg.warcraft.monolith.entity.MonolithEntity;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.ability.event.AbilityPreCastEvent;
+import gg.warcraft.combat.api.status.CombatStatusEffect;
+import gg.warcraft.monolith.api.combat.CombatSource;
+import gg.warcraft.monolith.api.combat.value.CombatValueModifier;
+import gg.warcraft.monolith.api.combat.value.CombatValueModifierType;
+import gg.warcraft.monolith.app.combat.SimpleCombatSource;
+import gg.warcraft.monolith.app.combat.value.SimpleCombatValueModifier;
+import gg.warcraft.monolith.app.entity.status.AbstractStatusEffect;
 
-public class FocusStatusEffect extends AbstractStatusEffect {
+import java.util.UUID;
 
-    private final MonolithEntity entity;
+public class FocusStatusEffect extends AbstractStatusEffect implements CombatStatusEffect {
+    private static final String NAME = "Focus";
+    private final CombatValueModifier damageModifier;
 
-    private double damageModifier;
-
-    public FocusStatusEffect(MonolithEntity entity, double modifier) {
-        this.entity = entity;
-        this.damageModifier = modifier;
+    public FocusStatusEffect(@Assisted UUID entityId, @Assisted float damageModifier) {
+        super(entityId, null);
+        CombatSource source = new SimpleCombatSource(NAME, entityId);
+        this.damageModifier = new SimpleCombatValueModifier(CombatValueModifierType.PERCENT, damageModifier, source);
     }
 
     @Override
-    public boolean hasExpired() {
-        return false;
+    public String getType() {
+        return "legends.marksman.focus";
     }
 
     @Override
-    public void onAbilityHitEvent(MonolithAbilityHitEvent event) {
-        double damage = event.getAbility().getConfiguration().get(AbilityConfiguration.Attribute.DAMAGE);
-        event.getAbility().getConfiguration().set(AbilityConfiguration.Attribute.DAMAGE, damage * damageModifier);
+    public void onAbilityPreCastEvent(AbilityPreCastEvent event) {
+        event.addDamageModifier(damageModifier);
     }
 }

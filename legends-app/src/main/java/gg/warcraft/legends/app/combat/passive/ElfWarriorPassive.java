@@ -1,34 +1,27 @@
 package gg.warcraft.legends.app.combat.passive;
 
-import gg.warcraft.monolith.api.entity.status.StatusEffect;
-import gg.warcraft.monolith.app.entity.status.AbstractStatusEffect;
+import gg.warcraft.combat.api.ability.event.AbilityPreHitEvent;
+import gg.warcraft.combat.api.status.CombatStatusEffect;
 
 import java.util.UUID;
 
-public class ElfWarriorPassive extends AbstractStatusEffect implements StatusEffect {
+public class ElfWarriorPassive extends AbstractRacialPassive implements CombatStatusEffect {
     private static final int MAX_COUNT = 7;
 
     private int count;
 
-    public ElfWarriorPassive(UUID entityid) {
-        super(entityid, null);
-        this.count = 0;
+    public ElfWarriorPassive(UUID entityId) {
+        super(entityId, null);
     }
 
-
     @Override
-    public void onHitEvent(MonolithEntityHitEvent event) {
-        System.out.println("MonolithEntityHitEvent for " + this.getClass().getSimpleName());
-        count += 1;
-        if (count >= MAX_COUNT) {
-            event.setCancelled(true);
-            count = 0;
-
-            // TODO remove
-            event.getEntity().sendMessage("[ElfWarriorPassive]: dodged");
-        } else {
-            // TODO remove
-            event.getEntity().sendMessage("[ElfWarriorPassive]: current count: " + count);
+    public void onAbilityPreHitEvent(AbilityPreHitEvent event) {
+        if (event.getTargetId().equals(getEntityId())) {
+            count += 1;
+            if (count >= MAX_COUNT) {
+                event.cancel();
+                count = 0;
+            }
         }
     }
 }

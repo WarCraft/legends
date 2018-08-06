@@ -1,44 +1,56 @@
 package gg.warcraft.legends.app.combat.passive;
 
-import gg.warcraft.monolith.combat.event.MonolithEntityDeathEvent;
-import gg.warcraft.monolith.entity.AbstractStatusEffect;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.util.MonolithTask;
-import gg.warcraft.monolith.util.RunnableUtils;
-import gg.warcraft.monolith.util.TimeUtils;
-import org.bukkit.ChatColor;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.monolith.api.core.Task;
+import gg.warcraft.monolith.api.core.TaskService;
+import gg.warcraft.monolith.api.entity.event.EntityDeathEvent;
+import gg.warcraft.monolith.api.entity.event.EntityPreFatalDamageEvent;
+import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.util.Duration;
+import gg.warcraft.monolith.api.util.TimeUtils;
 
-public class HumanWarriorPassive extends AbstractStatusEffect {
-    private static final int DURATION = 2 * TimeUtils.TICKS_PER_SECOND;
-    private static final long COOLDOWN = 300L * TimeUtils.MILLIS_PER_SECOND;
+import java.util.UUID;
 
-    private final MonolithEntity entity;
+public class HumanWarriorPassive extends AbstractRacialPassive {
+    private static final int DURATION_IN_SECONDS = 2;
+    private static final long COOLDOWN_IN_MILLIS = 300 * TimeUtils.MILLIS_PER_SECOND;
 
-    private MonolithTask task;
+    private final EntityCommandService entityCommandService;
+    private final TaskService taskService;
+    private final Duration duration;
+
+    private Task task;
     private long cooldown;
 
-    public HumanWarriorPassive(MonolithEntity entity) {
-        this.entity = entity;
+    @Inject
+    public HumanWarriorPassive(EntityCommandService entityCommandService, TaskService taskService, TimeUtils timeUtils,
+                               @Assisted UUID entityId) {
+        super(entityId, null);
+        this.entityCommandService = entityCommandService;
+        this.taskService = taskService;
+        this.duration = timeUtils.createDurationInSeconds(DURATION_IN_SECONDS);
     }
 
     @Override
-    public boolean hasExpired() {
-        return false;
-    }
-
-    @Override
-    public void onDeathEvent(MonolithEntityDeathEvent event) {
+    public void onEntityPreFatalDamageEvent(EntityPreFatalDamageEvent event) {
         if (task != null) {
-            event.setCancelled(true);
+            event.cancel();
         } else if (System.currentTimeMillis() >= cooldown) {
-            entity.sendMessage(ChatColor.YELLOW + "You are performing a last stand and are invulnerable for 2 seconds!");
-            cooldown = System.currentTimeMillis() + COOLDOWN;
-            task = RunnableUtils.runLater(() -> {
-                // NOTE removed for now: event.getEntity().setHealth(0);
+            cooldown = System.currentTimeMillis() + COOLDOWN_IN_MILLIS;
+            task = taskService.runLater(() -> {
                 task = null;
-            }, DURATION);
+                entityCommandService.kill(event.getEntityId());
+            }, duration);
+            event.cancel();
+        }
+    }
 
-            event.setCancelled(true);
+    @Override
+    public void onEntityDeathEvent(EntityDeathEvent event) {
+        if (task != null) {
+            task.cancel();
+            task = null;
         }
     }
 }

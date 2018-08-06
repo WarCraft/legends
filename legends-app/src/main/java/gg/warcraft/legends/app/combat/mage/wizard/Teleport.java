@@ -14,6 +14,7 @@ import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.world.BlockLocation;
 import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.OrientedLocation;
 import gg.warcraft.monolith.api.world.PotionEffect;
@@ -31,6 +32,8 @@ public class Teleport extends AbstractAbility implements RangedAbility {
     private static final Sound HIT_SOUND = Sound.ENTITY_ENDERMEN_TELEPORT;
 
     private final EntityCommandService entityCommandService;
+    private final CombatValue damage;
+    private final PotionEffect slow;
 
     @Inject
     public Teleport(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
@@ -40,9 +43,11 @@ public class Teleport extends AbstractAbility implements RangedAbility {
                     @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
+        this.damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
+        this.slow = getSnapshot().getPotionEffect(PotionEffectType.SLOW);
+
         OrientedLocation teleportLocation = null;
 
-        /* TODO
         BlockLocation targetLocation = blockTarget.getLocation();
         BlockLocation relativeLocation = targetLocation.add(0, 1, 0);
         Block relative = worldQueryService.getBlockAt(relativeLocation);
@@ -58,7 +63,6 @@ public class Teleport extends AbstractAbility implements RangedAbility {
                 teleportLocation.setDirection(caster.getEyeLocation().getDirection());
             }
         }
-        */
 
         if (teleportLocation == null) {
             return;
@@ -77,8 +81,6 @@ public class Teleport extends AbstractAbility implements RangedAbility {
 
     @Override
     public boolean onHit(Entity entity) {
-        CombatValue damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
-        PotionEffect slow = getSnapshot().getPotionEffect(PotionEffectType.SLOW);
         entityCommandService.damage(entity.getId(), damage);
         entityCommandService.addPotionEffect(entity.getId(), slow);
         return false;

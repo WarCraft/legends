@@ -6,37 +6,29 @@ import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.event.EntityDamageEvent;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
-import gg.warcraft.monolith.api.entity.status.StatusEffect;
 import gg.warcraft.monolith.api.util.Duration;
+import gg.warcraft.monolith.app.entity.status.AbstractStatusEffect;
 
 import java.util.UUID;
 
-public class GrudgeStatusEffect implements StatusEffect {
+public class GrudgeStatusEffect extends AbstractStatusEffect {
     private final EntityCommandService entityCommandService;
-    private final UUID entityId;
     private final UUID casterId;
-    private final Duration duration;
     private final CombatValue heal;
 
     @Inject
     public GrudgeStatusEffect(EntityCommandService entityCommandService,
                               @Assisted("entity") UUID entityId, @Assisted("caster") UUID casterId,
                               @Assisted Duration duration, @Assisted CombatValue heal) {
+        super(entityId, duration);
         this.entityCommandService = entityCommandService;
-        this.entityId = entityId;
         this.casterId = casterId;
-        this.duration = duration;
         this.heal = heal;
     }
 
     @Override
-    public UUID getEntityId() {
-        return entityId;
-    }
-
-    @Override
-    public Duration getDuration() {
-        return duration;
+    public String getType() {
+        return "legends.berzerker.grudge";
     }
 
     @Override

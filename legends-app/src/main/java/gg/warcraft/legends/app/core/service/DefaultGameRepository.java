@@ -4,8 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import gg.warcraft.legends.api.core.Game;
 import gg.warcraft.legends.api.core.service.GameRepository;
-
-import javax.jnlp.PersistenceService;
+import gg.warcraft.monolith.api.core.PersistenceService;
 
 @Singleton
 public class DefaultGameRepository implements GameRepository {

@@ -3,6 +3,7 @@ package gg.warcraft.legends.app;
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Names;
+import gg.warcraft.legends.api.combat.passive.PassiveFactory;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerProfileRepository;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
@@ -11,6 +12,14 @@ import gg.warcraft.legends.app.combat.mage.effect.FireballEffect;
 import gg.warcraft.legends.app.combat.mage.effect.FlameTotemFireballEffect;
 import gg.warcraft.legends.app.combat.mage.effect.MageEffectFactory;
 import gg.warcraft.legends.app.combat.mage.effect.MoltenStormCircleEffect;
+import gg.warcraft.legends.app.combat.passive.HumanMagePassive;
+import gg.warcraft.legends.app.combat.passive.HumanWarriorPassive;
+import gg.warcraft.legends.app.combat.passive.OrcMagePassive;
+import gg.warcraft.legends.app.combat.passive.OrcWarriorPassive;
+import gg.warcraft.legends.app.combat.ranger.effect.FocusEffect;
+import gg.warcraft.legends.app.combat.ranger.effect.RangerEffectFactory;
+import gg.warcraft.legends.app.combat.ranger.status.FocusStatusEffect;
+import gg.warcraft.legends.app.combat.ranger.status.RangerStatusEffectFactory;
 import gg.warcraft.legends.app.combat.warrior.effect.HamstringEffect;
 import gg.warcraft.legends.app.combat.warrior.effect.StandYourGroundEffect;
 import gg.warcraft.legends.app.combat.warrior.effect.WarriorEffectFactory;
@@ -36,6 +45,13 @@ public abstract class AbstractLegendsModule extends AbstractModule {
 
     private void configureCombat() {
         install(new FactoryModuleBuilder()
+                .implement(StatusEffect.class, Names.named("humanMage"), HumanMagePassive.class)
+                .implement(StatusEffect.class, Names.named("humanWarrior"), HumanWarriorPassive.class)
+                .implement(StatusEffect.class, Names.named("orcMage"), OrcMagePassive.class)
+                .implement(StatusEffect.class, Names.named("orcWarrior"), OrcWarriorPassive.class)
+                .build(PassiveFactory.class));
+
+        install(new FactoryModuleBuilder()
                 .implement(Cancellable.class, Names.named("arcaneMissile"), ArcaneMissileEffect.class)
                 .implement(Effect.class, Names.named("fireball"), FireballEffect.class)
                 .implement(Effect.class, Names.named("moltenStormRing"), MoltenStormCircleEffect.class)
@@ -43,9 +59,17 @@ public abstract class AbstractLegendsModule extends AbstractModule {
                 .build(MageEffectFactory.class));
 
         install(new FactoryModuleBuilder()
+                .implement(Cancellable.class, Names.named("focus"), FocusEffect.class)
+                .build(RangerEffectFactory.class));
+
+        install(new FactoryModuleBuilder()
                 .implement(Effect.class, Names.named("hamstring"), HamstringEffect.class)
                 .implement(Effect.class, Names.named("standYourGround"), StandYourGroundEffect.class)
                 .build(WarriorEffectFactory.class));
+
+        install(new FactoryModuleBuilder()
+                .implement(StatusEffect.class, Names.named("focus"), FocusStatusEffect.class)
+                .build(RangerStatusEffectFactory.class));
 
         install(new FactoryModuleBuilder()
                 .implement(StatusEffect.class, Names.named("standYourGround"), StandYourGroundStatusEffect.class)

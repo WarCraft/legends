@@ -1,34 +1,33 @@
 package gg.warcraft.legends.app.combat.passive;
 
-import gg.warcraft.monolith.combat.event.MonolithEntityHealthChangedEvent;
-import gg.warcraft.monolith.entity.AbstractStatusEffect;
-import gg.warcraft.monolith.entity.MonolithEntity;
-import gg.warcraft.monolith.util.TimeUtils;
-import org.bukkit.attribute.Attribute;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.ability.service.AbilityCommandService;
+import gg.warcraft.monolith.api.entity.event.EntityHealthChangedEvent;
+import gg.warcraft.monolith.api.util.TimeUtils;
 
-public class OrcMagePassive extends AbstractStatusEffect {
-    private static final long COOLDOWN = 40 * TimeUtils.MILLIS_PER_SECOND;
+import java.util.UUID;
 
-    private final MonolithEntity entity;
+public class OrcMagePassive extends AbstractRacialPassive {
+    private static final String ABILITY_NAME = "Flame Totem";
+    private static final long COOLDOWN_IN_MILLIS = 40 * TimeUtils.MILLIS_PER_SECOND;
+
+    private final AbilityCommandService abilityCommandService;
 
     private long cooldown;
 
-    public OrcMagePassive(MonolithEntity entity) {
-        this.entity = entity;
+    @Inject
+    public OrcMagePassive(AbilityCommandService abilityCommandService, @Assisted UUID entityId) {
+        super(entityId, null);
+        this.abilityCommandService = abilityCommandService;
     }
 
     @Override
-    public boolean hasExpired() {
-        return false;
-    }
-
-    @Override
-    public void onHealthChangedEvent(MonolithEntityHealthChangedEvent event) {
+    public void onEntityHealthChangedEvent(EntityHealthChangedEvent event) {
         if (System.currentTimeMillis() >= cooldown) {
-            double maxHealth = event.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-            if (event.getEntity().getHealth() <= 0.75 * maxHealth) {
-                cooldown = System.currentTimeMillis() + COOLDOWN;
-                new OrcMagePassiveTotem(entity);
+            if (event.getNewPercentHealth() <= 0.75) {
+                cooldown = System.currentTimeMillis() + COOLDOWN_IN_MILLIS;
+                abilityCommandService.castAbility(ABILITY_NAME, getEntityId(), null);
             }
         }
     }
