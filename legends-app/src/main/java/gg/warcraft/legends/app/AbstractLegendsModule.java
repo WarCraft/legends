@@ -5,7 +5,6 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Names;
 import gg.warcraft.legends.api.combat.passive.PassiveFactory;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerProfileRepository;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.app.combat.mage.effect.ArcaneMissileEffect;
 import gg.warcraft.legends.app.combat.mage.effect.FireballEffect;
@@ -26,14 +25,13 @@ import gg.warcraft.legends.app.combat.warrior.effect.WarriorEffectFactory;
 import gg.warcraft.legends.app.combat.warrior.status.StandYourGroundStatusEffect;
 import gg.warcraft.legends.app.combat.warrior.status.WarriorStatusEffectFactory;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerCommandService;
-import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerProfileRepository;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerQueryService;
-import gg.warcraft.monolith.api.effect.Effect;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.player.service.PlayerProfileRepository;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 import gg.warcraft.monolith.api.entity.status.StatusEffect;
 import gg.warcraft.monolith.api.util.Cancellable;
+import gg.warcraft.monolith.app.entity.player.service.DefaultPlayerProfileRepository;
 
 public abstract class AbstractLegendsModule extends AbstractModule {
 
@@ -53,9 +51,9 @@ public abstract class AbstractLegendsModule extends AbstractModule {
 
         install(new FactoryModuleBuilder()
                 .implement(Cancellable.class, Names.named("arcaneMissile"), ArcaneMissileEffect.class)
-                .implement(Effect.class, Names.named("fireball"), FireballEffect.class)
-                .implement(Effect.class, Names.named("moltenStormRing"), MoltenStormCircleEffect.class)
-                .implement(Effect.class, Names.named("flameTotemFireball"), FlameTotemFireballEffect.class)
+                .implement(Cancellable.class, Names.named("fireball"), FireballEffect.class)
+                .implement(Cancellable.class, Names.named("moltenStormRing"), MoltenStormCircleEffect.class)
+                .implement(Cancellable.class, Names.named("flameTotemFireball"), FlameTotemFireballEffect.class)
                 .build(MageEffectFactory.class));
 
         install(new FactoryModuleBuilder()
@@ -63,8 +61,8 @@ public abstract class AbstractLegendsModule extends AbstractModule {
                 .build(RangerEffectFactory.class));
 
         install(new FactoryModuleBuilder()
-                .implement(Effect.class, Names.named("hamstring"), HamstringEffect.class)
-                .implement(Effect.class, Names.named("standYourGround"), StandYourGroundEffect.class)
+                .implement(Cancellable.class, Names.named("hamstring"), HamstringEffect.class)
+                .implement(Cancellable.class, Names.named("standYourGround"), StandYourGroundEffect.class)
                 .build(WarriorEffectFactory.class));
 
         install(new FactoryModuleBuilder()
@@ -81,7 +79,6 @@ public abstract class AbstractLegendsModule extends AbstractModule {
         bind(LegendsPlayerCommandService.class).to(DefaultLegendsPlayerCommandService.class);
         bind(PlayerQueryService.class).to(DefaultLegendsPlayerQueryService.class);
         bind(LegendsPlayerQueryService.class).to(DefaultLegendsPlayerQueryService.class);
-        bind(PlayerProfileRepository.class).to(DefaultLegendsPlayerProfileRepository.class);
-        bind(LegendsPlayerProfileRepository.class).to(DefaultLegendsPlayerProfileRepository.class);
+        bind(PlayerProfileRepository.class).to(DefaultPlayerProfileRepository.class);
     }
 }

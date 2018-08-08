@@ -1,13 +1,15 @@
 package gg.warcraft.legends.app.combat.handler;
 
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerPickupArrowEvent;
+import com.google.common.eventbus.Subscribe;
+import gg.warcraft.monolith.api.combat.ProjectileType;
+import gg.warcraft.monolith.api.combat.event.ProjectilePrePickupEvent;
 
-public class ArrowPickupHandler implements Listener {
+public class ArrowPickupHandler {
 
-    @EventHandler
-    public void onPlayerPickupArrowEvent(PlayerPickupArrowEvent event) { // TODO rework Arrow and other nonliving entities in Monolith into Doodads
-        event.setCancelled(true);
+    @Subscribe
+    public void onProjectilePrePickupEvent(ProjectilePrePickupEvent event) {
+        if (event.getProjectileType() == ProjectileType.ARROW) {
+            event.cancel();
+        }
     }
 }

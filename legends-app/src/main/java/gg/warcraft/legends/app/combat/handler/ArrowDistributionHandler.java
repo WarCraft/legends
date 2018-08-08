@@ -1,55 +1,60 @@
 package gg.warcraft.legends.app.combat.handler;
 
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import gg.warcraft.legends.api.entity.player.LegendsPlayer;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.combat.api.specialization.event.PlayerSpecializationChangedEvent;
+import gg.warcraft.monolith.api.combat.ProjectileType;
+import gg.warcraft.monolith.api.combat.event.ProjectileLaunchEvent;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.player.Player;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.inventory.ItemStack;
+import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
+import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
+import gg.warcraft.monolith.api.item.Item;
+import gg.warcraft.monolith.api.item.ItemBuilderFactory;
+import gg.warcraft.monolith.api.item.ItemType;
 
-public class ArrowDistributionHandler implements Listener {
-    private final LegendsPlayerQueryService legendsPlayerQueryService;
+import java.util.UUID;
+
+public class ArrowDistributionHandler {
+    private final PlayerQueryService playerQueryService;
+    private final PlayerCommandService playerCommandService;
+    private final ItemBuilderFactory itemBuilderFactory;
     private final TaskService taskService;
 
     @Inject
-    public ArrowDistributionHandler(LegendsPlayerQueryService legendsPlayerQueryService, TaskService taskService) {
-        this.legendsPlayerQueryService = legendsPlayerQueryService;
+    public ArrowDistributionHandler(PlayerQueryService playerQueryService, PlayerCommandService playerCommandService,
+                                    ItemBuilderFactory itemBuilderFactory, TaskService taskService) {
+        this.playerQueryService = playerQueryService;
+        this.playerCommandService = playerCommandService;
+        this.itemBuilderFactory = itemBuilderFactory;
         this.taskService = taskService;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityShootBowEvent(EntityShootBowEvent event) {
-        Player player = legendsPlayerQueryService.getPlayer(event.getEntity().getUniqueId());
-        if (player == null) {
-            return;
-        }
-
-        taskService.runNextTick(() -> {
-            if (!player.giveItem(new ItemStack(Material.ARROW), false)) {
-                System.out.println("Failed to give Ranger a new arrow, inventory was full! (Should this ever happen? Player probably has more than 1 arrow already)");
+    @Subscribe
+    public void onProjectileLaunchEvent(ProjectileLaunchEvent event) {
+        if (event.getProjectileType() == ProjectileType.ARROW) {
+            UUID playerId = event.getShooterId();
+            Player player = playerQueryService.getPlayer(playerId);
+            if (player != null) {
+                Item arrow = itemBuilderFactory.createItemBuilder(ItemType.ARROW, "Arrow").build();
+                taskService.runNextTick(() -> playerCommandService.giveItem(playerId, arrow, false));
             }
-        });
+        }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onLegendsPlayerSpecializationChangedEvent(LegendsPlayerSpecializationChangedEvent event) {
-        LegendsPlayer player = event.getPlayer();
-        switch (player.getSpecialization()) {
-            case MARKSMAN:
-            case HUNTER:
-                if (!player.getInventory().containsAtLeast(new ItemStack(Material.ARROW), 1)) {
-                    if (!player.giveItem(new ItemStack(Material.ARROW), false)) {
-                        player.sendMessage(ChatColor.YELLOW + "Whoops we could not give you an unlimited arrow as your inventory was full! Please contact a member of staff for your very own special arrow.");
-                        System.out.println("Failed to give " + player.getName() + " a new arrow AFTER CHANGING SPEC, inventory was full!");
-                    }
+    @Subscribe
+    public void onPlayerSpecializationChangedEvent(PlayerSpecializationChangedEvent event) {
+        switch (event.getNewSpecialization().getPermission()) {
+            case "legends.marksman":
+            case "legends.hunter":
+                UUID playerId = event.getPlayerId();
+                Player player = playerQueryService.getPlayer(playerId);
+                boolean playerHasArrow = player.getInventory().stream()
+                        .anyMatch(item -> item.getType() == ItemType.ARROW);
+                if (!playerHasArrow) {
+                    Item arrow = itemBuilderFactory.createItemBuilder(ItemType.ARROW, "Arrow").build();
+                    taskService.runNextTick(() -> playerCommandService.giveItem(playerId, arrow, false));
                 }
-                break;
         }
     }
 }

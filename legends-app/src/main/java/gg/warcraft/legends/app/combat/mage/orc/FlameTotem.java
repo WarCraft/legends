@@ -17,60 +17,83 @@ import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.core.Task;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.Entity;
+import gg.warcraft.monolith.api.entity.Team;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.BlockLocation;
+import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.BlockType;
 import gg.warcraft.monolith.api.world.block.BlockUtils;
+import gg.warcraft.monolith.api.world.block.backup.service.BlockBackupCommandService;
+import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.service.WorldQueryService;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class FlameTotem extends AbstractAbility implements RangedAbility, Runnable {
     private static final float MAX_DISTANCE = 30;
+    private static final Random random = new Random(System.currentTimeMillis());
 
     private final AbilityCommandService abilityCommandService;
+    private final EntityQueryService entityQueryService;
     private final EntityCommandService entityCommandService;
     private final MovementFactory movementFactory;
     private final HitboxFactory hitboxFactory;
     private final MageEffectFactory mageEffectFactory;
+
+    private final Team casterTeam;
+    private final Location totemLocation;
     private final Task task;
 
     @Inject
     public FlameTotem(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
+                      EntityQueryService entityQueryService, WorldQueryService worldQueryService,
+                      WorldCommandService worldCommandService, BlockBackupCommandService blockBackupCommandService,
                       TaskService taskService, MovementFactory movementFactory, HitboxFactory hitboxFactory,
                       MageEffectFactory mageEffectFactory, BlockUtils blockUtils, TimeUtils timeUtils,
                       @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                       @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
         this.abilityCommandService = abilityCommandService;
+        this.entityQueryService = entityQueryService;
         this.entityCommandService = entityCommandService;
         this.movementFactory = movementFactory;
         this.hitboxFactory = hitboxFactory;
         this.mageEffectFactory = mageEffectFactory;
+        this.casterTeam = caster.getTeam();
 
         BlockLocation casterLocation = caster.getLocation().toBlockLocation();
-        Set<Block> adjacentBlocksX = blockUtils.getAdjacentBlocksX(casterLocation);
+        Block casterLocationBlock = worldQueryService.getBlockAt(casterLocation);
+        Set<Block> adjacentBlocksX = blockUtils.getAdjacentBlocksX(casterLocationBlock);
         Set<Block> surroundingBlocksXZ = new HashSet<>(adjacentBlocksX);
         adjacentBlocksX.forEach(block -> surroundingBlocksXZ.addAll(blockUtils.getAdjacentBlocksZ(block)));
-        surroundingBlocksXZ.addAll(blockUtils.getAdjacentBlocksZ(casterLocation));
+        surroundingBlocksXZ.addAll(blockUtils.getAdjacentBlocksZ(casterLocationBlock));
         Optional<Block> spawnBlockOptional = surroundingBlocksXZ.stream()
                 .filter(block -> block.getType() == BlockType.AIR)
                 .findFirst();
-        Block totem = spawnBlockOptional.orElse(caster.getLocation().getBlock());
-        totemBackup = worldService.createBackup(totem);
+        Block totemBlock = spawnBlockOptional.orElse(casterLocationBlock);
+        UUID totemBlockBackupId = blockBackupCommandService.createBlockBackup(totemBlock);
+        this.totemLocation = totemBlock.getLocation()
+                .toLocation()
+                .add(0.5f, 0.5f, 0.5f);
 
-        totem.setType(BlockType.REDSTONE_TORCH_ON);
-
-
-        task = taskService.runTask(this, timeUtils.oneTick(), snapshot.getPeriod());
+        worldCommandService.setBlockType(casterLocationBlock, BlockType.REDSTONE_TORCH_ON);
+        this.task = taskService.runTask(this, timeUtils.oneTick(), snapshot.getDuration("period"));
         taskService.runLater(() -> {
             task.cancel();
-            totemBackup.restore();
+            blockBackupCommandService.restoreBlockBackup(totemBlockBackupId);
         }, snapshot.getDuration());
 
 
@@ -79,27 +102,27 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
 
     @Override
     public void run() {
+        List<Entity> nearbyEntities = entityQueryService.getNearbyEntities(totemLocation, 30).stream()
+                .filter(entity -> entity.getTeam() != casterTeam)
+                .collect(Collectors.toList());
+        if (nearbyEntities.isEmpty()) {
+            return;
+        }
+
+        int randomTargetNumber = random.nextInt(nearbyEntities.size());
+        Entity randomTarget = nearbyEntities.get(randomTargetNumber);
+
+        Location targetLocation = randomTarget.getLocation().add(0, 0.5f, 0);
+        Vector3fc castDirection = targetLocation.sub(totemLocation).toVector().normalize();
+        Vector3fc halfCastDirection = castDirection.mul(0.5f, new Vector3f());
+        Location fireballOrigin = totemLocation.add(halfCastDirection);
+
         float radius = getSnapshot().getFloat(AbilityConfigurationValue.RADIUS);
-        Movement movement = movementFactory.createLinearMovement(location, direction, MAX_DISTANCE);
-        Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
+        Movement movement = movementFactory.createLinearMovement(fireballOrigin, castDirection, MAX_DISTANCE);
+        Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != casterTeam);
 
         Cancellable effect = mageEffectFactory.createFlameTotemFireballEffect(movement);
         abilityCommandService.createProjectile(this, movement, hitbox, effect::cancel);
-
-//        List<MonolithEntity> nearbyEntities = entityService.getNearbyMonolithEntities(totem.getLocation(), 30).stream()
-//                .filter(entity -> entity.getRace() != caster.getRace())
-//                .collect(Collectors.toList());
-//        if (nearbyEntities.isEmpty()) {
-//            return;
-//        }
-//        int randomTargetNumber = random.nextInt(nearbyEntities.size());
-//        MonolithEntity randomTarget = nearbyEntities.get(randomTargetNumber);
-//
-//        Vector targetLocationVector = randomTarget.getLocation().add(0, 0.5, 0).toVector();
-//        Vector totemLocationVector = totem.getLocation().add(0.5, 0.5, 0.5).toVector();
-//        Vector castDirection = targetLocationVector.subtract(totemLocationVector).normalize();
-//        Vector halfCastDirection = castDirection.clone().multiply(0.5);
-//        totemFireballFactory.create(caster, totem.getLocation().clone().add(0.5, 0.5, 0.5).add(halfCastDirection), castDirection);
     }
 
     @Override
@@ -108,6 +131,8 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
         Duration burnDuration = getSnapshot().getDuration(AbilityConfigurationEffect.BURN);
         entityCommandService.damage(entity.getId(), damage);
         entityCommandService.burn(entity.getId(), burnDuration);
+
+        // TODO play sound
         return true;
     }
 

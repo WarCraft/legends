@@ -1,8 +1,9 @@
 package gg.warcraft.legends.app.entity.player;
 
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
-import gg.warcraft.legends.api.entity.player.LegendsPlayerProfile;
+import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.monolith.api.entity.attribute.Attributes;
+import gg.warcraft.monolith.api.entity.player.PlayerProfile;
 import gg.warcraft.monolith.api.entity.player.PlayerServerData;
 import gg.warcraft.monolith.api.entity.status.Status;
 import gg.warcraft.monolith.app.entity.player.LazyPlayer;
@@ -11,7 +12,7 @@ import java.util.function.Supplier;
 
 public class LazyLegendsPlayer extends LazyPlayer implements LegendsPlayer {
 
-    public LazyLegendsPlayer(Supplier<LegendsPlayerProfile> profileSupplier,
+    public LazyLegendsPlayer(Supplier<PlayerProfile> profileSupplier,
                              Supplier<PlayerServerData> serverDataSupplier,
                              Supplier<Attributes> attributesSupplier,
                              Supplier<Status> statusSupplier) {
@@ -20,21 +21,26 @@ public class LazyLegendsPlayer extends LazyPlayer implements LegendsPlayer {
 
     @Override
     public int getGold() {
-        return getCurrency("Gold");
+        return getCurrency(LegendsCurrency.GOLD.getName());
     }
 
     @Override
     public int getLifetimeGold() {
-        return getCurrencyTotal("Gold");
+        return getLifetimeCurrency(LegendsCurrency.GOLD.getName());
     }
 
     @Override
     public int getFavor() {
-        return getCurrency("Favor");
+        return getCurrency(LegendsCurrency.FAVOR.getName());
     }
 
     @Override
     public int getLifetimeFavor() {
-        return getCurrencyTotal("Favor");
+        return getLifetimeCurrency(LegendsCurrency.FAVOR.getName());
+    }
+
+    @Override
+    public Rank getRank() {
+        throw new IllegalStateException("Not implemented");
     }
 }

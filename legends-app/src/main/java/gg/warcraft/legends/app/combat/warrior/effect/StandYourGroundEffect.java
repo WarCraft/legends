@@ -13,12 +13,13 @@ import gg.warcraft.monolith.api.effect.ParticleFactory;
 import gg.warcraft.monolith.api.effect.ParticleType;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityQueryService;
+import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.world.Location;
 
 import java.util.function.Supplier;
 
-public class StandYourGroundEffect implements Runnable {
+public class StandYourGroundEffect implements Runnable, Cancellable {
     private static final float RADIUS = 2.5f;
     private static final int PARTICLE_COUNT = 50;
 
@@ -50,5 +51,10 @@ public class StandYourGroundEffect implements Runnable {
         EffectVectors vectors = effectVectorsFactory.createDomeVectors(RADIUS, PARTICLE_COUNT);
         EffectRenderer renderer = effectRendererFactory.createSimpleEffectRenderer(particle, vectors);
         effect.addRenderer(renderer);
+    }
+
+    @Override
+    public void cancel() {
+        effect.cancel();
     }
 }

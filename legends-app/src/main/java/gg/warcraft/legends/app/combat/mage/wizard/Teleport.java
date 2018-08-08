@@ -25,6 +25,7 @@ import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.BlockTypeUtils;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
+import org.joml.Vector3f;
 
 public class Teleport extends AbstractAbility implements RangedAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
@@ -46,29 +47,28 @@ public class Teleport extends AbstractAbility implements RangedAbility {
         this.damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
         this.slow = getSnapshot().getPotionEffect(PotionEffectType.SLOW);
 
-        OrientedLocation teleportLocation = null;
+        Location originalLocation = caster.getLocation();
+        OrientedLocation teleportLocation;
 
         BlockLocation targetLocation = blockTarget.getLocation();
         BlockLocation relativeLocation = targetLocation.add(0, 1, 0);
         Block relative = worldQueryService.getBlockAt(relativeLocation);
         if (blockTypeUtils.getNonSolids().contains(relative.getType())) {
-            teleportLocation = relativeLocation.toLocation().add(0.5f, 0, 0.5f); // TODO allow going from Location to OrientedLocation, toOrientedLocation? default 0 yaw and pitch
-            teleportLocation = teleportLocation.withDirection(caster.getEyeLocation().getDirection());
+            teleportLocation = relativeLocation.toLocation()
+                    .add(0.5f, 0, 0.5f)
+                    .withDirection(caster.getEyeLocation().getDirection());
         } else {
-            Location blockToCaster = block.getLocation(); // TODO when ray casting block/entity scanning implementation is done this skill wants to use the block iterator func
-            blockToCaster.setDirection(caster.getEyeLocation().getDirection());
-            BlockIterator iterator = new BlockIterator(blockToCaster);
-            if (iterator.hasNext()) {
-                teleportLocation = iterator.next().getLocation();
-                teleportLocation.setDirection(caster.getEyeLocation().getDirection());
-            }
+            Vector3f targetToCaster = targetLocation.toLocation().toVector().sub(originalLocation.toVector());
+            targetToCaster.normalize();
+            BlockLocation adjustedLocation = targetLocation.toLocation()
+                    .add(0.5f, 0.5f, 0.5f)
+                    .add(targetToCaster)
+                    .toBlockLocation();
+            teleportLocation = adjustedLocation.toLocation()
+                    .add(0.5f, 1, 0.5f)
+                    .withDirection(caster.getEyeLocation().getDirection());
         }
 
-        if (teleportLocation == null) {
-            return;
-        }
-
-        Location originalLocation = caster.getLocation();
         entityCommandService.teleport(caster.getId(), teleportLocation);
         worldCommandService.playSound(originalLocation, CAST_SOUND, SOUND_CATEGORY, 1, 1);
 

@@ -1,6 +1,8 @@
 package gg.warcraft.legends.spigot;
 
 import com.google.inject.Injector;
+import gg.warcraft.legends.app.combat.handler.ArrowDistributionHandler;
+import gg.warcraft.legends.app.combat.handler.ArrowPickupHandler;
 import gg.warcraft.legends.app.combat.passive.handler.PassiveAssignmentHandler;
 import gg.warcraft.legends.app.combat.ranger.marksman.FocusHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerCurrencyEventHandler;
@@ -18,6 +20,12 @@ public class LegendsPlugin extends JavaPlugin {
 
         PassiveAssignmentHandler passiveAssignmentHandler = injector.getInstance(PassiveAssignmentHandler.class);
         eventService.subscribe(passiveAssignmentHandler);
+
+        ArrowDistributionHandler arrowDistributionHandler = injector.getInstance(ArrowDistributionHandler.class);
+        eventService.subscribe(arrowDistributionHandler);
+
+        ArrowPickupHandler arrowPickupHandler = injector.getInstance(ArrowPickupHandler.class);
+        eventService.subscribe(arrowPickupHandler);
 
         FocusHandler focusHandler = injector.getInstance(FocusHandler.class);
         eventService.subscribe(focusHandler);
