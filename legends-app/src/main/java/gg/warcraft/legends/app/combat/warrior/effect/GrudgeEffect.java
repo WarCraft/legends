@@ -38,7 +38,7 @@ public class GrudgeEffect implements Cancellable {
             return entity.getLocation().add(OFFSET);
         };
         Duration period = timeUtils.createDurationInTicks(PERIOD_IN_TICKS);
-        this.effect = effectFactory.createTimedEffect(locationSupplier, period);
+        this.effect = effectFactory.createPeriodicEffect(locationSupplier, period);
         this.effect.cancel(duration);
 
         Particle particle = particleFactory.createSimpleParticle(ParticleType.VILLAGER_ANGRY);

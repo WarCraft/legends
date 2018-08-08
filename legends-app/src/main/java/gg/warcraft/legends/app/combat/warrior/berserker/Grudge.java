@@ -8,6 +8,7 @@ import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.legends.app.combat.warrior.effect.WarriorEffectFactory;
 import gg.warcraft.legends.app.combat.warrior.status.WarriorStatusEffectFactory;
+import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.status.StatusEffect;
 import gg.warcraft.monolith.api.entity.status.service.StatusCommandService;
@@ -44,10 +45,10 @@ public class Grudge extends AbstractAbility implements MeleeAbility {
 
     @Override
     public void onHit(Entity entity) {
-        float heal = getSnapshot().getFloat(AbilityConfigurationValue.HEAL);
+        CombatValue heal = getSnapshot().getValue(AbilityConfigurationValue.HEAL);
         Duration duration = getSnapshot().getDuration();
         StatusEffect grudge =
-                warriorStatusEffectFactory.createGrudgeStatusEffect(targetId, getCasterId(), heal, duration);
+                warriorStatusEffectFactory.createGrudgeStatusEffect(targetId, getCasterId(), duration, heal);
         statusCommandService.addStatusEffect(grudge, entity.getId());
 
         warriorEffectFactory.createGrudgeEffect(entity, duration);

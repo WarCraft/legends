@@ -14,7 +14,6 @@ import gg.warcraft.monolith.api.effect.ParticleType;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.util.Cancellable;
-import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.world.Location;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -31,13 +30,12 @@ public class FocusEffect implements Cancellable {
     @Inject
     public FocusEffect(EntityQueryService entityQueryService, ParticleFactory particleFactory,
                        EffectVectorsFactory effectVectorsFactory, EffectRendererFactory effectRendererFactory,
-                       EffectFactory effectFactory, @Assisted Entity target, @Assisted Duration duration) {
+                       EffectFactory effectFactory, @Assisted Entity target) {
         Supplier<Location> locationSupplier = () -> {
             Entity entity = entityQueryService.getEntity(target.getId());
             return entity.getLocation().add(OFFSET);
         };
         this.effect = effectFactory.createSimpleEffect(locationSupplier);
-        effect.cancel(duration);
 
         Particle particle = particleFactory.createSimpleParticle(ParticleType.REDSTONE);
         EffectVectors vectors = effectVectorsFactory.createRingVectors(RADIUS, FRAMES);

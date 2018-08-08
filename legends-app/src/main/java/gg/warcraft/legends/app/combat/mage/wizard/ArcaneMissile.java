@@ -51,8 +51,9 @@ public class ArcaneMissile extends AbstractAbility implements RangedAbility {
             Entity target = entityQueryService.getEntity(rangedTarget.getId());
             return target.getLocation();
         };
-        Movement movement = movementFactory.createHomingMovement(location, direction, targetSupplier);
+        float speed = snapshot.getFloat(AbilityConfigurationValue.SPEED);
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
+        Movement movement = movementFactory.createHomingMovement(location, direction, speed, targetSupplier);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
 
         Cancellable effect = mageEffectFactory.createArcaneMissileEffect(movement);
