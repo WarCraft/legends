@@ -1,5 +1,6 @@
 package gg.warcraft.legends.app.combat.ranger.effect;
 
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.monolith.api.effect.Effect;
 import gg.warcraft.monolith.api.effect.EffectFactory;
@@ -27,6 +28,7 @@ public class FocusEffect implements Cancellable {
 
     private final Effect effect;
 
+    @Inject
     public FocusEffect(EntityQueryService entityQueryService, ParticleFactory particleFactory,
                        EffectVectorsFactory effectVectorsFactory, EffectRendererFactory effectRendererFactory,
                        EffectFactory effectFactory, @Assisted Entity target, @Assisted Duration duration) {

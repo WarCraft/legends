@@ -1,5 +1,6 @@
 package gg.warcraft.legends.app.combat.ranger.status;
 
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.combat.api.ability.event.AbilityPreCastEvent;
 import gg.warcraft.combat.api.status.CombatStatusEffect;
@@ -16,6 +17,7 @@ public class FocusStatusEffect extends AbstractStatusEffect implements CombatSta
     private static final String NAME = "Focus";
     private final CombatValueModifier damageModifier;
 
+    @Inject
     public FocusStatusEffect(@Assisted UUID entityId, @Assisted float damageModifier) {
         super(entityId, null);
         CombatSource source = new SimpleCombatSource(NAME, entityId);

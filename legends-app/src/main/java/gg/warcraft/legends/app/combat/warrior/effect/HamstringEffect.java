@@ -1,5 +1,6 @@
 package gg.warcraft.legends.app.combat.warrior.effect;
 
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.monolith.api.effect.Effect;
 import gg.warcraft.monolith.api.effect.EffectFactory;
@@ -28,6 +29,7 @@ public class HamstringEffect implements Cancellable {
 
     private final Effect effect;
 
+    @Inject
     public HamstringEffect(EntityQueryService entityQueryService, ParticleFactory particleFactory,
                            EffectVectorsFactory effectVectorsFactory, EffectRendererFactory effectRendererFactory,
                            EffectFactory effectFactory, @Assisted Entity target, @Assisted Duration duration) {
