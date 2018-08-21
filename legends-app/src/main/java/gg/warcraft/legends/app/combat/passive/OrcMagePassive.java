@@ -9,6 +9,7 @@ import gg.warcraft.monolith.api.util.TimeUtils;
 import java.util.UUID;
 
 public class OrcMagePassive extends AbstractRacialPassive {
+    private static final String NAME = "Flame Totem";
     private static final String ABILITY_NAME = "Flame Totem";
     private static final long COOLDOWN_IN_MILLIS = 40 * TimeUtils.MILLIS_PER_SECOND;
 
@@ -18,7 +19,7 @@ public class OrcMagePassive extends AbstractRacialPassive {
 
     @Inject
     public OrcMagePassive(AbilityCommandService abilityCommandService, @Assisted UUID entityId) {
-        super(entityId, null);
+        super(entityId, NAME, null);
         this.abilityCommandService = abilityCommandService;
     }
 

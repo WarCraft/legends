@@ -1,11 +1,11 @@
 package gg.warcraft.legends.app.entity.player.event;
 
 import gg.warcraft.legends.api.entity.player.event.PlayerFavorGainedEvent;
-import gg.warcraft.monolith.app.entity.player.event.SimplePlayerEvent;
+import gg.warcraft.monolith.api.entity.player.event.AbstractPlayerEvent;
 
 import java.util.UUID;
 
-public class SimplePlayerFavorGainedEvent extends SimplePlayerEvent implements PlayerFavorGainedEvent {
+public class SimplePlayerFavorGainedEvent extends AbstractPlayerEvent implements PlayerFavorGainedEvent {
     private final int amount;
     private final int newCurrent;
     private final int newLifetime;

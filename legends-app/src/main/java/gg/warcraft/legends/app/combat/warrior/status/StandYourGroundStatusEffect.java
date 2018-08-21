@@ -5,15 +5,17 @@ import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.event.EntityDamageEvent;
 import gg.warcraft.monolith.api.entity.service.EntityQueryService;
+import gg.warcraft.monolith.api.entity.status.AbstractStatusEffect;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
-import gg.warcraft.monolith.app.entity.status.AbstractStatusEffect;
 
 import java.util.UUID;
 
 public class StandYourGroundStatusEffect extends AbstractStatusEffect {
+    private static final String NAME = "Stand Your Ground";
+    private static final String TYPE = "legends.armsmaster.standyourground";
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
     private static final Sound DAMAGED_SOUND = Sound.ENTITY_IRONGOLEM_HURT;
 
@@ -23,14 +25,9 @@ public class StandYourGroundStatusEffect extends AbstractStatusEffect {
     @Inject
     public StandYourGroundStatusEffect(EntityQueryService entityQueryService, WorldCommandService worldCommandService,
                                        @Assisted UUID entityId, @Assisted Duration duration) {
-        super(entityId, duration);
+        super(entityId, NAME, TYPE, duration);
         this.entityQueryService = entityQueryService;
         this.worldCommandService = worldCommandService;
-    }
-
-    @Override
-    public String getType() {
-        return "legends.armsmaster.standyourground";
     }
 
     @Override

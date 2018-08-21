@@ -1,6 +1,7 @@
 package gg.warcraft.legends.spigot;
 
 import com.google.inject.Injector;
+import gg.warcraft.legends.app.combat.LegendsCombatConfiguration;
 import gg.warcraft.legends.app.combat.handler.ArrowDistributionHandler;
 import gg.warcraft.legends.app.combat.handler.ArrowPickupHandler;
 import gg.warcraft.legends.app.combat.passive.handler.PassiveAssignmentHandler;
@@ -42,5 +43,6 @@ public class LegendsPlugin extends JavaPlugin {
         this.eventService = injector.getInstance(EventService.class);
 
         initializeLegendsHandlers();
+        injector.getInstance(LegendsCombatConfiguration.class);
     }
 }

@@ -6,12 +6,13 @@ import gg.warcraft.combat.api.status.CombatStatusEffect;
 import java.util.UUID;
 
 public class ElfWarriorPassive extends AbstractRacialPassive implements CombatStatusEffect {
+    private static final String NAME = "Evasion";
     private static final int MAX_COUNT = 7;
 
     private int count;
 
     public ElfWarriorPassive(UUID entityId) {
-        super(entityId, null);
+        super(entityId, NAME, null);
     }
 
     @Override

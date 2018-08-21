@@ -29,12 +29,8 @@ import gg.warcraft.legends.app.combat.warrior.status.StandYourGroundStatusEffect
 import gg.warcraft.legends.app.combat.warrior.status.WarriorStatusEffectFactory;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerCommandService;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerQueryService;
-import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.entity.player.service.PlayerProfileRepository;
-import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 import gg.warcraft.monolith.api.entity.status.StatusEffect;
 import gg.warcraft.monolith.api.util.Cancellable;
-import gg.warcraft.monolith.app.entity.player.service.DefaultPlayerProfileRepository;
 
 public abstract class AbstractLegendsModule extends AbstractModule {
 
@@ -81,10 +77,7 @@ public abstract class AbstractLegendsModule extends AbstractModule {
     }
 
     private void configureEntity() {
-        bind(PlayerCommandService.class).to(DefaultLegendsPlayerCommandService.class);
         bind(LegendsPlayerCommandService.class).to(DefaultLegendsPlayerCommandService.class);
-        bind(PlayerQueryService.class).to(DefaultLegendsPlayerQueryService.class);
         bind(LegendsPlayerQueryService.class).to(DefaultLegendsPlayerQueryService.class);
-        bind(PlayerProfileRepository.class).to(DefaultPlayerProfileRepository.class);
     }
 }

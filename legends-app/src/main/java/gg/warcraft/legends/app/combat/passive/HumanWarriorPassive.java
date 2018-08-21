@@ -13,6 +13,7 @@ import gg.warcraft.monolith.api.util.TimeUtils;
 import java.util.UUID;
 
 public class HumanWarriorPassive extends AbstractRacialPassive {
+    private static final String NAME = "Last Stand";
     private static final int DURATION_IN_SECONDS = 2;
     private static final long COOLDOWN_IN_MILLIS = 300 * TimeUtils.MILLIS_PER_SECOND;
 
@@ -26,7 +27,7 @@ public class HumanWarriorPassive extends AbstractRacialPassive {
     @Inject
     public HumanWarriorPassive(EntityCommandService entityCommandService, TaskService taskService, TimeUtils timeUtils,
                                @Assisted UUID entityId) {
-        super(entityId, null);
+        super(entityId, NAME, null);
         this.entityCommandService = entityCommandService;
         this.taskService = taskService;
         this.duration = timeUtils.createDurationInSeconds(DURATION_IN_SECONDS);

@@ -1,11 +1,11 @@
 package gg.warcraft.legends.app.entity.player.event;
 
 import gg.warcraft.legends.api.entity.player.event.PlayerGoldLostEvent;
-import gg.warcraft.monolith.app.entity.player.event.SimplePlayerEvent;
+import gg.warcraft.monolith.api.entity.player.event.AbstractPlayerEvent;
 
 import java.util.UUID;
 
-public class SimplePlayerGoldLostEvent extends SimplePlayerEvent implements PlayerGoldLostEvent {
+public class SimplePlayerGoldLostEvent extends AbstractPlayerEvent implements PlayerGoldLostEvent {
     private final int amount;
     private final int newCurrent;
 

@@ -7,6 +7,8 @@ import gg.warcraft.combat.api.ability.MeleeAbility;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.legends.app.combat.warrior.effect.WarriorEffectFactory;
 import gg.warcraft.legends.app.combat.warrior.status.WarriorStatusEffectFactory;
+import gg.warcraft.monolith.api.combat.PotionEffect;
+import gg.warcraft.monolith.api.combat.PotionEffectType;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.attribute.AttributeModifier;
@@ -15,8 +17,6 @@ import gg.warcraft.monolith.api.entity.attribute.service.AttributeCommandService
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.entity.status.StatusEffect;
 import gg.warcraft.monolith.api.entity.status.service.StatusCommandService;
-import gg.warcraft.monolith.api.world.PotionEffect;
-import gg.warcraft.monolith.api.world.PotionEffectType;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;

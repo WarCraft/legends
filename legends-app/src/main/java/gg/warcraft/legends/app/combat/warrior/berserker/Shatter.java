@@ -11,13 +11,13 @@ import gg.warcraft.combat.api.ability.RangedAbility;
 import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.combat.api.ability.service.AbilityCommandService;
+import gg.warcraft.monolith.api.combat.PotionEffect;
+import gg.warcraft.monolith.api.combat.PotionEffectType;
 import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.Team;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.Location;
-import gg.warcraft.monolith.api.world.PotionEffect;
-import gg.warcraft.monolith.api.world.PotionEffectType;
 import org.joml.Vector3f;
 
 public class Shatter extends AbstractAbility implements RangedAbility {
