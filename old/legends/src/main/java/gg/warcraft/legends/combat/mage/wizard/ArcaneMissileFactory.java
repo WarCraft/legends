@@ -7,9 +7,6 @@ import gg.warcraft.monolith.config.ConfigurationService;
 import gg.warcraft.monolith.entity.MonolithEntity;
 import gg.warcraft.monolith.event.EventService;
 
-import static gg.warcraft.monolith.config.AbilityConfiguration.Attribute.DAMAGE;
-import static gg.warcraft.monolith.config.AbilityConfiguration.Attribute.RADIUS;
-
 public class ArcaneMissileFactory implements MonolithAbilityFactory {
 
     private final ConfigurationService configService;

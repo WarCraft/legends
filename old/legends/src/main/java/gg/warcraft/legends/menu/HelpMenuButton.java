@@ -15,7 +15,7 @@ public class HelpMenuButton extends Button {
         this.player = player;
 
         List<String> lore = new ArrayList<>();
-        lore.add( "[Click] to open the Help Menu.");
+        lore.add("[Click] to open the Help Menu.");
         lore.add("");
         lore.add("In the Help Menu you can read");
         lore.add("the Server Manual or contact a");

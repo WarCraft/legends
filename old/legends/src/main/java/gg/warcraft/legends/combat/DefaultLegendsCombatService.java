@@ -24,7 +24,6 @@ import gg.warcraft.legends.combat.warrior.berserker.ShatterFactory;
 import gg.warcraft.legends.combat.warrior.harbinger.LifeLeechFactory;
 import gg.warcraft.legends.combat.warrior.overlord.HeroicStrikeFactory;
 import gg.warcraft.legends.data.KillingBlowListener;
-import gg.warcraft.legends.objective.DefaultLegendsObjectiveService;
 import gg.warcraft.legends.player.LegendsPlayer;
 import gg.warcraft.legends.player.LegendsPlayerService;
 import gg.warcraft.monolith.combat.DefaultCombatService;

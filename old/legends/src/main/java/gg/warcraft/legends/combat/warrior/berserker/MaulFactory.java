@@ -1,7 +1,6 @@
 package gg.warcraft.legends.combat.warrior.berserker;
 
 import gg.warcraft.monolith.combat.TargetedMonolithAbilityFactory;
-import gg.warcraft.monolith.combat.event.MonolithAbilityCastEvent;
 import gg.warcraft.monolith.combat.event.MonolithTargetedAbilityCastEvent;
 import gg.warcraft.monolith.config.AbilityConfiguration;
 import gg.warcraft.monolith.config.ConfigurationService;

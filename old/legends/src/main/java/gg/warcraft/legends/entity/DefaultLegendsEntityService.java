@@ -29,7 +29,7 @@ public class DefaultLegendsEntityService extends DefaultEntityService {
         Player substitutedPlayer = AntiCombatLogger.getInstance().getSubstitutedPlayerFor(livingEntity);
         if (substitutedPlayer != null) {
             MonolithPlayer monolithPlayer = PlayerService.getInstance().getMonolithPlayer(substitutedPlayer.getUniqueId());
-            return new CombatLoggingSubstituteMonolithEntityDecorator( livingEntity, monolithPlayer);
+            return new CombatLoggingSubstituteMonolithEntityDecorator(livingEntity, monolithPlayer);
         }
         return super.getMonolithEntityFor(livingEntity);
     }

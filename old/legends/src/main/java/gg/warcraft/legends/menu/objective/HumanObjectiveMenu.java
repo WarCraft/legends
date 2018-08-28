@@ -217,7 +217,7 @@ public class HumanObjectiveMenu extends Menu {
             if (controllers == player.getRace()) {
                 return ChatColor.GREEN + "[CLICK] to teleport to this location";
             } else {
-                if(controllers != null) {
+                if (controllers != null) {
                     return ChatColor.GRAY + "This objective is currently controlled by the " + controllers.getName();
                 } else {
                     return ChatColor.GRAY + "This objective is currently not controlled by anyone";

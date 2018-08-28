@@ -2,7 +2,6 @@ package gg.warcraft.legends.menu;
 
 import gg.warcraft.legends.RacePicker;
 import gg.warcraft.legends.player.LegendsPlayer;
-import gg.warcraft.legends.shop.ShopService;
 import gg.warcraft.monolith.menu.Button;
 import gg.warcraft.monolith.util.RunnableUtils;
 import org.bukkit.ChatColor;

@@ -1,7 +1,6 @@
 package gg.warcraft.legends.player;
 
 import gg.warcraft.monolith.LoggerService;
-import gg.warcraft.monolith.event.EventService;
 import gg.warcraft.monolith.player.DefaultPlayerService;
 import gg.warcraft.monolith.player.PlayerRepository;
 import org.bukkit.Server;

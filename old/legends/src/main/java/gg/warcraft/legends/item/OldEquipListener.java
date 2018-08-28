@@ -1,34 +1,6 @@
 package gg.warcraft.legends.item;
 
-import gg.warcraft.legends.entity.LegendsAttribute;
-import gg.warcraft.legends.player.LegendsPlayer;
-import gg.warcraft.legends.player.LegendsPlayerService;
-import gg.warcraft.monolith.Monolith;
-import gg.warcraft.monolith.entity.Attribute;
-import gg.warcraft.monolith.entity.AttributeModifier;
-import gg.warcraft.monolith.item.ItemService;
-import gg.warcraft.monolith.item.ItemStackWrapper;
-import gg.warcraft.monolith.util.RunnableUtils;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class OldEquipListener implements Listener {
 //    private static final String METADATA_KEY = OldEquipListener.class.getCanonicalName();
