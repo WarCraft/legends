@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>WarCraft Rankings</title>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
     <style>
         body {
@@ -52,7 +52,7 @@
         .playerRank, .playerName, .playerScore {
             float: left;
             width: 33%;
-            border-bottom: 1px solid rgba(211,211,211,0.07);
+            border-bottom: 1px solid rgba(211, 211, 211, 0.07);
         }
 
         @media screen and (max-width: 900px) {
@@ -71,7 +71,7 @@
 </head>
 <body>
 <div id="main">
-    <img id="logo" src="../image/wcgg-logo.png" />
+    <img id="logo" src="../image/wcgg-logo.png"/>
     <h1>Killing Blows Leaderboard</h1>
 
     <ul id="leaderboard"></ul>
@@ -82,7 +82,7 @@
 //ADD_PLAYERS_HERE
     ];
     var leaderboard = document.getElementById("leaderboard");
-    for(var i = 0; i < players.length; i += 1) {
+    for (var i = 0; i < players.length; i += 1) {
         var player = players[i];
         var li = document.createElement("li");
         li.innerHTML = '<div class="">' +
