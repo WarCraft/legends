@@ -14,15 +14,16 @@ import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
-import gg.warcraft.monolith.api.world.BlockLocation;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.BlockType;
 import gg.warcraft.monolith.api.world.block.spoofing.BlockSpoofingCommandService;
+import gg.warcraft.monolith.api.world.location.BlockLocation;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -42,7 +43,7 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
                 WorldCommandService worldCommandService, WorldQueryService worldQueryService,
                 BlockSpoofingCommandService blockSpoofingCommandService, TaskService taskService,
                 @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
+                @Assisted("target") @Nullable Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
         this.worldCommandService = worldCommandService;

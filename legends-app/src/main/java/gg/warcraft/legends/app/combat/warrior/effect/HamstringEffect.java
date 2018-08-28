@@ -16,7 +16,7 @@ import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.ColorHue;
 import gg.warcraft.monolith.api.util.Duration;
-import gg.warcraft.monolith.api.world.Location;
+import gg.warcraft.monolith.api.world.location.Location;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 

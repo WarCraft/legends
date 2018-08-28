@@ -23,14 +23,15 @@ import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
-import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
+import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -62,7 +63,7 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
                        HitboxFactory hitboxFactory, MovementFactory movementFactory,
                        EffectVectorsFactory effectVectorsFactory, MageEffectFactory mageEffectFactory,
                        @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                       @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
+                       @Assisted("target") @Nullable Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
         super(caster.getId(), snapshot);
         this.abilityCommandService = abilityCommandService;
         this.entityCommandService = entityCommandService;

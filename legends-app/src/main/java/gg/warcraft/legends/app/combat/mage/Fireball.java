@@ -18,12 +18,14 @@ import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
-import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
+import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
 
 public class Fireball extends AbstractAbility implements RangedAbility {
     private static final float MAX_DISTANCE = 30;
@@ -37,7 +39,7 @@ public class Fireball extends AbstractAbility implements RangedAbility {
                     WorldCommandService worldCommandService, MovementFactory movementFactory,
                     HitboxFactory hitboxFactory, MageEffectFactory mageEffectFactory,
                     @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                    @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
+                    @Assisted("target") @Nullable Entity rangedTarget, @Nullable @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
 

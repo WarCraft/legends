@@ -17,13 +17,14 @@ import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.util.Cancellable;
-import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
+import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 public class ArcaneMissile extends AbstractAbility implements RangedAbility {
@@ -40,7 +41,7 @@ public class ArcaneMissile extends AbstractAbility implements RangedAbility {
                          WorldCommandService worldCommandService, MovementFactory movementFactory,
                          HitboxFactory hitboxFactory, MageEffectFactory mageEffectFactory,
                          @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                         @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
+                         @Assisted("target") Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
         this.worldCommandService = worldCommandService;

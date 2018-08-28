@@ -21,6 +21,8 @@ import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 
+import javax.annotation.Nullable;
+
 public class StandYourGround extends AbstractAbility implements MeleeAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
     private static final Sound CAST_SOUND = Sound.ENTITY_IRONGOLEM_DEATH;
@@ -30,7 +32,7 @@ public class StandYourGround extends AbstractAbility implements MeleeAbility {
                            StatusCommandService statusCommandService, WorldCommandService worldCommandService,
                            TaskService taskService, WarriorEffectFactory warriorEffectFactory,
                            WarriorStatusEffectFactory warriorStatusEffectFactory, @Assisted AbilitySnapshot snapshot,
-                           @Assisted("caster") Entity caster, @Assisted("target") Entity meleeTarget) {
+                           @Assisted("caster") Entity caster, @Assisted("target") @Nullable Entity meleeTarget) {
         super(caster.getId(), snapshot);
         PotionEffect resistance = getSnapshot().getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
         PotionEffect fireResistance = getSnapshot().getPotionEffect(PotionEffectType.FIRE_RESISTANCE);

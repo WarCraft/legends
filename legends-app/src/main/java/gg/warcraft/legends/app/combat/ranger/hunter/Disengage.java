@@ -12,6 +12,8 @@ import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
+
 public class Disengage extends AbstractAbility implements MeleeAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
     private static final Sound CAST_SOUND = Sound.ENTITY_ENDERDRAGON_FLAP; // TODO use bat takeoff sound in stead?
@@ -19,7 +21,7 @@ public class Disengage extends AbstractAbility implements MeleeAbility {
     @Inject
     public Disengage(EntityCommandService entityCommandService, WorldCommandService worldCommandService,
                      @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                     @Assisted("target") Entity meleeTarget) {
+                     @Assisted("target") @Nullable Entity meleeTarget) {
         super(caster.getId(), snapshot);
         Vector3f direction = caster.getEyeLocation().getDirection();
         direction.y = 0;

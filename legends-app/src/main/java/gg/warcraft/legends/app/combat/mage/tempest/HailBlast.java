@@ -21,12 +21,14 @@ import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
-import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
+import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
 
 public class HailBlast extends AbstractAbility implements RangedAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
@@ -40,7 +42,7 @@ public class HailBlast extends AbstractAbility implements RangedAbility {
                      WorldCommandService worldCommandService, TaskService taskService, TimeUtils timeUtils,
                      MovementFactory movementFactory, HitboxFactory hitboxFactory, MageEffectFactory mageEffectFactory,
                      @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                     @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
+                     @Assisted("target") @Nullable Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
 

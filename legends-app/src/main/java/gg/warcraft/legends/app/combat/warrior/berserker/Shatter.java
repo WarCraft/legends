@@ -17,8 +17,10 @@ import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.Team;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
-import gg.warcraft.monolith.api.world.Location;
+import gg.warcraft.monolith.api.world.location.Location;
 import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
 
 public class Shatter extends AbstractAbility implements RangedAbility {
     private final AbilityCommandService abilityCommandService;
@@ -34,7 +36,7 @@ public class Shatter extends AbstractAbility implements RangedAbility {
     @Inject
     public Shatter(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
                    MovementFactory movementFactory, HitboxFactory hitboxFactory, @Assisted AbilitySnapshot snapshot,
-                   @Assisted("caster") Entity caster, @Assisted("target") Entity meleeTarget) {
+                   @Assisted("caster") Entity caster, @Assisted("target") @Nullable Entity meleeTarget) {
         super(caster.getId(), snapshot);
         this.abilityCommandService = abilityCommandService;
         this.entityCommandService = entityCommandService;

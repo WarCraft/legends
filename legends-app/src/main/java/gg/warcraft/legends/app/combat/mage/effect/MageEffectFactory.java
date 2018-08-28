@@ -4,7 +4,7 @@ import com.google.inject.name.Named;
 import gg.warcraft.combat.api.Movement;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
-import gg.warcraft.monolith.api.world.Location;
+import gg.warcraft.monolith.api.world.location.Location;
 
 public interface MageEffectFactory {
 

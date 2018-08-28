@@ -16,6 +16,7 @@ import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class Focus extends AbstractAbility implements MeleeAbility, Cancellable {
@@ -30,7 +31,7 @@ public class Focus extends AbstractAbility implements MeleeAbility, Cancellable 
                  PlayerCommandService playerCommandService, RangerStatusEffectFactory rangerStatusEffectFactory,
                  RangerEffectFactory rangerEffectFactory, FocusRepository focusRepository, TimeUtils timeUtils,
                  @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                 @Assisted("target") Entity meleeTarget) {
+                 @Assisted("target") @Nullable Entity meleeTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
         this.statusCommandService = statusCommandService;

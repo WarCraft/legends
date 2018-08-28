@@ -23,17 +23,18 @@ import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
-import gg.warcraft.monolith.api.world.BlockLocation;
-import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.BlockType;
 import gg.warcraft.monolith.api.world.block.BlockUtils;
 import gg.warcraft.monolith.api.world.block.backup.service.BlockBackupCommandService;
+import gg.warcraft.monolith.api.world.location.BlockLocation;
+import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -64,7 +65,7 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
                       TaskService taskService, MovementFactory movementFactory, HitboxFactory hitboxFactory,
                       MageEffectFactory mageEffectFactory, BlockUtils blockUtils, TimeUtils timeUtils,
                       @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                      @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
+                      @Assisted("target") @Nullable Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
         super(caster.getId(), snapshot);
         this.abilityCommandService = abilityCommandService;
         this.entityQueryService = entityQueryService;

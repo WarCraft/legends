@@ -16,16 +16,18 @@ import gg.warcraft.monolith.api.combat.PotionEffectType;
 import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
-import gg.warcraft.monolith.api.world.BlockLocation;
-import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.OrientedLocation;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.BlockTypeUtils;
+import gg.warcraft.monolith.api.world.location.BlockLocation;
+import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
 import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
 
 public class Teleport extends AbstractAbility implements RangedAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
@@ -41,7 +43,7 @@ public class Teleport extends AbstractAbility implements RangedAbility {
                     WorldQueryService worldQueryService, WorldCommandService worldCommandService,
                     MovementFactory movementFactory, HitboxFactory hitboxFactory, BlockTypeUtils blockTypeUtils,
                     @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                    @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
+                    @Assisted("target") @Nullable Entity rangedTarget, @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
         this.damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);

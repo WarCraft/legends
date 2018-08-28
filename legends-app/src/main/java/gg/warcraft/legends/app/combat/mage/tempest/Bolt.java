@@ -14,10 +14,12 @@ import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
-import gg.warcraft.monolith.api.world.BlockLocation;
-import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.block.Block;
+import gg.warcraft.monolith.api.world.location.BlockLocation;
+import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
+
+import javax.annotation.Nullable;
 
 public class Bolt extends AbstractAbility implements RangedAbility {
     private final EntityCommandService entityCommandService;
@@ -26,7 +28,7 @@ public class Bolt extends AbstractAbility implements RangedAbility {
     public Bolt(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
                 WorldCommandService worldCommandService, HitboxFactory hitboxFactory, MovementFactory movementFactory,
                 @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                @Assisted("target") Entity rangedTarget, @Assisted Block blockTarget) {
+                @Assisted("target") @Nullable Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
 

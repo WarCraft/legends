@@ -14,7 +14,7 @@ import gg.warcraft.monolith.api.effect.ParticleType;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.ColorHue;
 import gg.warcraft.monolith.api.util.Duration;
-import gg.warcraft.monolith.api.world.Location;
+import gg.warcraft.monolith.api.world.location.Location;
 
 public class MoltenStormCircleEffect implements Cancellable {
     private static final float RADIUS = 7.5f;

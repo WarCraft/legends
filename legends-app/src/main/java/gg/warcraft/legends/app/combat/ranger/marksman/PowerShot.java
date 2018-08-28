@@ -12,6 +12,8 @@ import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import org.joml.Vector3fc;
 
+import javax.annotation.Nullable;
+
 public class PowerShot extends AbstractAbility implements MeleeAbility {
     private static final float SPEED = 3; // suggested speed of 0.6 by the spigot docs is way too low
     private static final float SPREAD = 2; // suggested spread of 12 by the spigot docs is way too wide
@@ -22,7 +24,7 @@ public class PowerShot extends AbstractAbility implements MeleeAbility {
     @Inject
     public PowerShot(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
                      @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                     @Assisted("target") Entity meleeTarget) {
+                     @Assisted("target") @Nullable Entity meleeTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
         this.knockbackDirection = caster.getEyeLocation().getDirection();
