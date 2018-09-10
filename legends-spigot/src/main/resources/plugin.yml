@@ -1,18 +1,13 @@
-name: Monolith
+name: "WarCraft_Legends"
 version: 1.0.0
 author: fishb6nes
-authors: [fishb6nes, Chau]
+authors: [fishb6nes, cbngu]
 website: http://warcraft.gg
 
 main: gg.warcraft.legends.spigot.LegendsPlugin
-depend: [EffectLib, MythicMobs]
+depend: ["WarCraft_Monolith", "WarCraft_Combat", MythicMobs]
 
 commands:
-  me:
-  menu:
-  monolith:
-  help:
-
   return:
   spawn:
 
@@ -20,12 +15,6 @@ commands:
   gold:
   givegold:
   vote:
-
-  race:
-  class:
-  spec:
-  specialization:
-  kits:
 
 # staff commands
   mspawn:
@@ -43,8 +32,6 @@ commands:
 
 # shortcuts
   shop:
-  pet:
-  dec:
 
 # mythicmob commands
   dropitems:
