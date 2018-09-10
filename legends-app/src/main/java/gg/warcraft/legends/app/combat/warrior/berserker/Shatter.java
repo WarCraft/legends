@@ -15,8 +15,8 @@ import gg.warcraft.monolith.api.combat.PotionEffect;
 import gg.warcraft.monolith.api.combat.PotionEffectType;
 import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
-import gg.warcraft.monolith.api.entity.Team;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.world.location.Location;
 import org.joml.Vector3f;
 
@@ -76,6 +76,8 @@ public class Shatter extends AbstractAbility implements RangedAbility {
         Movement movement = movementFactory.createOneOffMovement(location);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != casterTeam);
         abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
+
+        // TODO play sound
         return true;
     }
 }

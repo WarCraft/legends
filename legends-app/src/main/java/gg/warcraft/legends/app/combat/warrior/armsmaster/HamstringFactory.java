@@ -9,6 +9,6 @@ public interface HamstringFactory extends MeleeAbilityFactory {
 
     @Override
     default EnumSet<MeleeAbilityFlag> getFlags() {
-        return EnumSet.noneOf(MeleeAbilityFlag.class);
+        return EnumSet.of(MeleeAbilityFlag.TARGET_REQUIRED);
     }
 }

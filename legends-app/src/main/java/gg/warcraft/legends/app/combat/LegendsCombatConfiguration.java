@@ -75,7 +75,7 @@ public class LegendsCombatConfiguration {
     }
 
     private void registerWarriorAbilities(AbilityCommandService abilityCommandService) {
-        // Berzerker
+        // Berserker
         abilityCommandService.registerMeleeAbility("Hamstring", Hamstring.class, HamstringFactory.class);
         abilityCommandService.registerMeleeAbility("Slam", Slam.class, SlamFactory.class);
         abilityCommandService.registerMeleeAbility("Stand Your Ground", StandYourGround.class, StandYourGroundFactory.class);

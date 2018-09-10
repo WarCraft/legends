@@ -16,8 +16,6 @@ import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 
-import javax.annotation.Nullable;
-
 public class Hamstring extends AbstractAbility implements MeleeAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
     private static final Sound HIT_SOUND = Sound.ENTITY_SILVERFISH_DEATH;
@@ -30,7 +28,7 @@ public class Hamstring extends AbstractAbility implements MeleeAbility {
     @Inject
     public Hamstring(EntityCommandService entityCommandService, WorldCommandService worldCommandService,
                      WarriorEffectFactory warriorEffectFactory, @Assisted AbilitySnapshot snapshot,
-                     @Assisted("caster") Entity caster, @Assisted("target") @Nullable Entity meleeTarget) {
+                     @Assisted("caster") Entity caster, @Assisted("target") Entity meleeTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
         this.worldCommandService = worldCommandService;

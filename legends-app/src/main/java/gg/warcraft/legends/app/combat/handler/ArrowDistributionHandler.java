@@ -49,9 +49,7 @@ public class ArrowDistributionHandler {
             case "legends.hunter":
                 UUID playerId = event.getPlayerId();
                 Player player = playerQueryService.getPlayer(playerId);
-                boolean playerHasArrow = player.getInventory().stream()
-                        .anyMatch(item -> item.getType() == ItemType.ARROW);
-                if (!playerHasArrow) {
+                if (!player.getInventory().contains(ItemType.ARROW)) {
                     Item arrow = itemBuilderFactory.createItemBuilder(ItemType.ARROW, "Arrow").build();
                     taskService.runNextTick(() -> playerCommandService.giveItem(playerId, arrow, false));
                 }

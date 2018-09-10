@@ -1,5 +1,6 @@
 package gg.warcraft.legends.app.combat.mage.effect;
 
+import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 import gg.warcraft.combat.api.Movement;
 import gg.warcraft.monolith.api.util.Cancellable;
@@ -15,7 +16,7 @@ public interface MageEffectFactory {
     Cancellable createFireballEffect(Movement movement);
 
     @Named("hailBlast")
-    Cancellable createHailBlastEffect(Movement movement);
+    Cancellable createHailBlastEffect(Movement movement, @Assisted("pitch") float pitch, @Assisted("yaw") float yaw);
 
     @Named("moltenStormRing")
     Cancellable createMoltenStormRingEffect(Location location, Duration duration);

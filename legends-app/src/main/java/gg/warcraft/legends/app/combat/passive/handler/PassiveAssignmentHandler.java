@@ -6,6 +6,7 @@ import gg.warcraft.combat.api.specialization.Specialization;
 import gg.warcraft.combat.api.specialization.event.PlayerSpecializationChangedEvent;
 import gg.warcraft.legends.api.combat.passive.PassiveFactory;
 import gg.warcraft.monolith.api.entity.player.Player;
+import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 import gg.warcraft.monolith.api.entity.status.Status;
 import gg.warcraft.monolith.api.entity.status.StatusEffect;
@@ -21,6 +22,7 @@ public class PassiveAssignmentHandler {
     private final PlayerQueryService playerQueryService;
     private final StatusQueryService statusQueryService;
     private final StatusCommandService statusCommandService;
+    private final PassiveFactory passiveFactory;
     private final Map<String, Function<UUID, StatusEffect>> passives;
 
     @Inject
@@ -29,18 +31,26 @@ public class PassiveAssignmentHandler {
         this.playerQueryService = playerQueryService;
         this.statusQueryService = statusQueryService;
         this.statusCommandService = statusCommandService;
+        this.passiveFactory = passiveFactory;
 
         Map<String, Function<UUID, StatusEffect>> passives = new HashMap<>();
         passives.put("Human:legends.tempest", passiveFactory::createHumanMagePassive);
         passives.put("Human:legends.wizard", passiveFactory::createHumanMagePassive);
-        passives.put("Human:legends.berzerker", passiveFactory::createHumanWarriorPassive);
+        passives.put("Human:legends.berserker", passiveFactory::createHumanWarriorPassive);
         passives.put("Human:legends.armsmaster", passiveFactory::createHumanWarriorPassive);
 
         passives.put("Orc:legends.tempest", passiveFactory::createOrcMagePassive);
         passives.put("Orc:legends.wizard", passiveFactory::createOrcMagePassive);
-        passives.put("Orc:legends.berzerker", passiveFactory::createOrcWarriorPassive);
+        passives.put("Orc:legends.berserker", passiveFactory::createOrcWarriorPassive);
         passives.put("Orc:legends.armsmaster", passiveFactory::createOrcWarriorPassive);
         this.passives = passives;
+    }
+
+    @Subscribe
+    public void onPlayerConnectEvent(PlayerConnectEvent event) {
+        UUID playerId = event.getPlayerId();
+        StatusEffect attributesPassive = passiveFactory.createAttributesPassive(playerId);
+        statusCommandService.addStatusEffect(attributesPassive, playerId);
     }
 
     private void removeOldPassives(Status status) {

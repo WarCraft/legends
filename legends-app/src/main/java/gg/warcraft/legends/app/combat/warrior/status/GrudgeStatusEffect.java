@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class GrudgeStatusEffect extends AbstractStatusEffect {
     private static final String NAME = "Grudge";
-    private static final String TYPE = "legends.berzerker.grudge";
+    private static final String TYPE = "legends.berserker.grudge";
 
     private final EntityCommandService entityCommandService;
     private final UUID casterId;

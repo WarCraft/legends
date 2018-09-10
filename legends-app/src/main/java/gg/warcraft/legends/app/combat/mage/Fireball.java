@@ -49,7 +49,11 @@ public class Fireball extends AbstractAbility implements RangedAbility {
         Vector3f direction = caster.getEyeLocation().getDirection();
         Vector3f velocity = direction.mul(speed);
         Movement movement = movementFactory.createLinearMovement(location, velocity, MAX_DISTANCE);
-        Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
+        Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> {
+            System.out.println("DEBUG Entity team was " + entity.getTeam());
+            System.out.println("DEBUG Caster team was " + caster.getTeam());
+            return entity.getTeam() != caster.getTeam();
+        });
 
         Cancellable effect = mageEffectFactory.createFireballEffect(movement);
         abilityCommandService.createProjectile(this, movement, hitbox, effect::cancel);

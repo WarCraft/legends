@@ -10,6 +10,7 @@ import gg.warcraft.monolith.api.combat.PotionEffect;
 import gg.warcraft.monolith.api.combat.PotionEffectType;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.Entity;
+import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.util.Cancellable;
@@ -54,6 +55,7 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
         Block fakeBlock = currentBlock.withType(BlockType.WOODEN_TRAPDOOR);
         this.spoofedPlayerIds = playerQueryService.getOnlinePlayers().stream()
                 .filter(player -> player.getTeam() == caster.getTeam())
+                .map(Player::getId)
                 .toArray(UUID[]::new);
         blockSpoofingCommandService.spoofBlock(fakeBlock, spoofedPlayerIds);
         worldCommandService.playSound(caster.getLocation(), PLACE_SOUND, SOUND_CATEGORY, 1, 1);

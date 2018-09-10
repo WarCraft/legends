@@ -15,14 +15,14 @@ import gg.warcraft.monolith.api.effect.ParticleType;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
-import gg.warcraft.monolith.api.world.location.Location;
 
 public class HailBlastEffect implements Runnable, Cancellable {
     private static final int ITERATIONS = 15;
 
     private final EffectVectorsFactory effectVectorsFactory;
     private final EffectRendererFactory effectRendererFactory;
-    private final Movement movement;
+    private final float pitch;
+    private final float yaw;
     private final Particle particle;
     private final Effect effect;
 
@@ -31,10 +31,12 @@ public class HailBlastEffect implements Runnable, Cancellable {
     @Inject
     public HailBlastEffect(ParticleFactory particleFactory, EffectVectorsFactory effectVectorsFactory,
                            EffectRendererFactory effectRendererFactory, EffectFactory effectFactory,
-                           TimeUtils timeUtils, @Assisted Movement movement) {
+                           TimeUtils timeUtils, @Assisted Movement movement, @Assisted("pitch") float pitch,
+                           @Assisted("yaw") float yaw) {
         this.effectVectorsFactory = effectVectorsFactory;
         this.effectRendererFactory = effectRendererFactory;
-        this.movement = movement;
+        this.pitch = pitch;
+        this.yaw = yaw;
 
         this.effect = effectFactory.createDynamicEffect(movement, this);
         Duration duration = timeUtils.createDurationInTicks(ITERATIONS);
@@ -48,36 +50,17 @@ public class HailBlastEffect implements Runnable, Cancellable {
     public void run() {
         effect.clearRenderers();
 
-        Location currentLocation = movement.get();
         EffectVectors circleVectors = effectVectorsFactory.createCircleVectors(0.4f + 0.2f * iteration, 4 * iteration);
-        // TODO add velocity to Movement and research way to grab pitch and yaw from vector3f?
-        // circleVectors.rotateAroundAxisX(Math.toRadians(90 + currentLocation.getPitch()));
-        // circleVectors.rotateAroundAxisY(Math.toRadians(-currentLocation.getYaw()));
+        circleVectors = circleVectors.rotateAroundAxisX((float) Math.toRadians(90 + pitch));
+        circleVectors = circleVectors.rotateAroundAxisY((float) Math.toRadians(-yaw));
         EffectRenderer renderer = effectRendererFactory.createSimpleEffectRenderer(particle, circleVectors);
         effect.addRenderer(renderer);
 
-        effect.run();
         iteration += 1;
     }
 
     @Override
     public void cancel() {
-        // FIXME is this necessary?
+        effect.cancel();
     }
 }
-
-/*
-@Inject
-    public MoltenStormCircleEffect(ParticleFactory particleFactory, EffectVectorsFactory effectVectorsFactory,
-                                   EffectRendererFactory effectRendererFactory, EffectFactory effectFactory,
-                                   @Assisted Location location, @Assisted Duration duration) {
-        Location adjustedLocation = location.add(0, 0.15f, 0);
-        this.effect = effectFactory.createEffect(() -> adjustedLocation, duration);
-
-        Particle particle = particleFactory.createColorParticle(ParticleType.REDSTONE, ColorHue.ORANGE);
-        EffectVectors vectors = effectVectorsFactory.createRingVectors(RADIUS, PARTICLE_COUNT);
-        EffectRenderer renderer = effectRendererFactory.createSimpleEffectRenderer(particle, vectors);
-        this.effect.addRenderer(renderer);
-    }
-
- */
