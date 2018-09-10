@@ -1,14 +1,27 @@
 package gg.warcraft.legends.app.entity.player;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.specialization.Specialization;
+import gg.warcraft.combat.api.specialization.service.SpecializationQueryService;
+import gg.warcraft.legends.api.entity.player.LegendsCurrency;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
+import gg.warcraft.legends.api.entity.player.LegendsPlayerData;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
+import gg.warcraft.legends.api.entity.player.rank.service.RankQueryService;
 import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.PlayerDecorator;
 
 public class SimpleLegendsPlayer implements LegendsPlayer, PlayerDecorator {
+    private final RankQueryService rankQueryService;
+    private final SpecializationQueryService specializationQueryService;
     private final Player player;
 
-    public SimpleLegendsPlayer(Player player) {
+    @Inject
+    public SimpleLegendsPlayer(RankQueryService rankQueryService, SpecializationQueryService specializationQueryService,
+                               @Assisted Player player) {
+        this.rankQueryService = rankQueryService;
+        this.specializationQueryService = specializationQueryService;
         this.player = player;
     }
 
@@ -38,7 +51,32 @@ public class SimpleLegendsPlayer implements LegendsPlayer, PlayerDecorator {
     }
 
     @Override
+    public int getFragments() {
+        return getCurrency(LegendsCurrency.FRAGMENTS.getName());
+    }
+
+    @Override
+    public int getLifetimeFragments() {
+        return getLifetimeCurrency(LegendsCurrency.FRAGMENTS.getName());
+    }
+
+    @Override
     public Rank getRank() {
-        throw new IllegalStateException("Not implemented");
+        return rankQueryService.getRank(getTeam(), getLifetimeFavor());
+    }
+
+    @Override
+    public Specialization getSpecialization() {
+        return specializationQueryService.getSpecialization(getId());
+    }
+
+    @Override
+    public long getSpecializationCooldown() {
+        try {
+            return Long.parseLong(getData(LegendsPlayerData.SPECIALIZATION_COOLDOWN.getName()));
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return 0;
+        }
     }
 }

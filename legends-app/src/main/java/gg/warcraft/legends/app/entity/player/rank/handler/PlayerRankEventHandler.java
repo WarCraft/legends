@@ -6,15 +6,19 @@ import gg.warcraft.chat.api.profile.service.ChatProfileCommandService;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.event.PlayerFavorGainedEvent;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
+import gg.warcraft.legends.api.entity.player.rank.service.RankQueryService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.monolith.api.entity.team.Team;
 
 public class PlayerRankEventHandler {
+    private final RankQueryService rankQueryService;
     private final LegendsPlayerQueryService playerQueryService;
     private final ChatProfileCommandService chatProfileCommandService;
 
     @Inject
-    public PlayerRankEventHandler(LegendsPlayerQueryService playerQueryService,
+    public PlayerRankEventHandler(RankQueryService rankQueryService, LegendsPlayerQueryService playerQueryService,
                                   ChatProfileCommandService chatProfileCommandService) {
+        this.rankQueryService = rankQueryService;
         this.playerQueryService = playerQueryService;
         this.chatProfileCommandService = chatProfileCommandService;
     }
@@ -22,13 +26,14 @@ public class PlayerRankEventHandler {
     @Subscribe
     public void onPlayerFavorEarned(PlayerFavorGainedEvent event) {
         LegendsPlayer player = playerQueryService.getPlayer(event.getPlayerId());
-        int newLifetimeFavor = event.getNewLifetime();
-        // TODO apply totalFavor to experience table
-        Rank rank = player.getRank();
-        // TODO check current rank vs supposed rank from table
-        // TODO update rank if required and fire event
-
-        // should this be in this handler or new handler which listens to rank up events?
-        chatProfileCommandService.setTag(player.getId(), rank.getName(), rank.getColor());
+        Team team = player.getTeam();
+        int previousLifetimeFavor = event.getNewLifetime() - event.getAmount();
+        Rank currentRank = rankQueryService.getRank(team, previousLifetimeFavor);
+        Rank newRank = rankQueryService.getRank(team, event.getNewLifetime());
+        if (!currentRank.equals(newRank)) {
+            // FIXME should this instead be saved on the player as data and then fire an event of rank changed?
+            // FIXME this way we can extract the rank without too much hassle when wanting to show it in menus etc
+            chatProfileCommandService.setTag(player.getId(), newRank.toString(), newRank.getColor());
+        }
     }
 }

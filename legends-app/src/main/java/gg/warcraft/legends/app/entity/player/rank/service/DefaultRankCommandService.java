@@ -1,19 +1,30 @@
-package gg.warcraft.legends.app.entity.player.rank;
+package gg.warcraft.legends.app.entity.player.rank.service;
 
+import com.google.inject.Inject;
 import gg.warcraft.legends.api.config.RankPrefixConfiguration;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
+import gg.warcraft.legends.api.entity.player.rank.service.RankCommandService;
+import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
+import gg.warcraft.legends.app.entity.player.rank.SimpleRank;
+import gg.warcraft.monolith.api.entity.team.Team;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-public class SimpleRankTable {
-    private final NavigableMap<Integer, Rank> ranks;
+public class DefaultRankCommandService implements RankCommandService {
+    private final RankRepository rankRepository;
 
-    public SimpleRankTable(List<Integer> rankFavorTable, List<RankPrefixConfiguration> rankPrefixes,
-                           List<String> rankSuffixes, char prestigeChar) {
-        this.ranks = new TreeMap<>();
+    @Inject
+    public DefaultRankCommandService(RankRepository rankRepository) {
+        this.rankRepository = rankRepository;
+    }
+
+    @Override
+    public void initializeRanks(Team team, List<Integer> rankFavorTable,
+                                List<RankPrefixConfiguration> rankPrefixes, List<String> rankSuffixes) {
+        NavigableMap<Integer, Rank> ranks = new TreeMap<>();
         Iterator<RankPrefixConfiguration> prefixes = rankPrefixes.iterator();
         RankPrefixConfiguration prefix = prefixes.next();
         Iterator<String> suffixes = rankSuffixes.iterator();
@@ -32,9 +43,8 @@ public class SimpleRankTable {
             totalFavor += favor;
             ranks.put(totalFavor, rank);
         }
-    }
 
-    public Rank getRank(int lifetimeFavor) {
-        return ranks.floorEntry(lifetimeFavor).getValue();
+        rankRepository.save(team, ranks);
+        rankRepository.save(totalFavor);
     }
 }

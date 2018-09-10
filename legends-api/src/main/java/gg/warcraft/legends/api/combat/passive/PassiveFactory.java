@@ -7,6 +7,9 @@ import java.util.UUID;
 
 public interface PassiveFactory {
 
+    @Named("attributes")
+    StatusEffect createAttributesPassive(UUID entityId);
+
     @Named("humanMage")
     StatusEffect createHumanMagePassive(UUID entityId);
 

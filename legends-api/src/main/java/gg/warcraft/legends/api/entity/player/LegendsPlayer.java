@@ -1,5 +1,6 @@
 package gg.warcraft.legends.api.entity.player;
 
+import gg.warcraft.combat.api.specialization.Specialization;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.monolith.api.entity.player.Player;
 
@@ -13,5 +14,13 @@ public interface LegendsPlayer extends Player {
 
     int getLifetimeFavor();
 
+    int getFragments();
+
+    int getLifetimeFragments();
+
     Rank getRank();
+
+    Specialization getSpecialization();
+
+    long getSpecializationCooldown();
 }

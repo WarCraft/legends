@@ -1,6 +1,6 @@
 package gg.warcraft.legends.api.entity;
 
-import gg.warcraft.monolith.api.entity.Team;
+import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.ColorHue;
 

@@ -6,6 +6,8 @@ import java.util.UUID;
 
 public interface LegendsPlayerCommandService extends PlayerCommandService {
 
+    void setSpecialization(UUID playerId, String specialization);
+
     void addGold(UUID playerId, int amount);
 
     void removeGold(UUID playerId, int amount);

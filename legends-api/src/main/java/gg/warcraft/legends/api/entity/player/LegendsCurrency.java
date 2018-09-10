@@ -4,7 +4,8 @@ import gg.warcraft.monolith.api.entity.player.Currency;
 
 public enum LegendsCurrency implements Currency {
     GOLD("Gold"),
-    FAVOR("Favor");
+    FAVOR("Favor"),
+    FRAGMENTS("Fragments");
 
     private final String name;
 

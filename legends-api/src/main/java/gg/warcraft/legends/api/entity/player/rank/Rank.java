@@ -6,7 +6,7 @@ public interface Rank {
 
     String getName();
 
-    int getLevel();
+    int getPrestige();
 
     ColorCode getColor();
 }

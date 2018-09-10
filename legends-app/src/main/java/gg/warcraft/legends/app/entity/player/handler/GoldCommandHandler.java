@@ -1,10 +1,10 @@
 package gg.warcraft.legends.app.entity.player.handler;
 
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.entity.player.LegendsCurrency;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.legends.app.entity.player.LegendsCurrency;
 import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;

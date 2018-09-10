@@ -6,8 +6,8 @@ public enum LegendsAttribute implements Attribute {
     STRENGTH("LEGENDS_STRENGTH", "Strength"),
     DEXTERITY("LEGENDS_DEXTERITY", "Dexterity"),
     INTELLIGENCE("LEGENDS_INTELLIGENCE", "Intelligence"),
-    CRIT("LEGENDS_CRIT", "Crit"),
-    VITALITY("LEGENDS_VITALITY", "Vitality");
+    VITALITY("LEGENDS_VITALITY", "Vitality"),
+    CRIT("LEGENDS_CRIT", "Crit");
 
     private final String id;
     private final String name;
