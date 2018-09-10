@@ -1,18 +1,23 @@
 package gg.warcraft.legends.api.shop;
 
+import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.monolith.api.item.ItemType;
 
 import java.util.List;
 
 public interface ShopItem {
 
-    int getId();
+    String getId();
 
-    ItemType getIcon();
+    ShopItemType getType();
+
+    ItemRarity getRarity();
 
     String getName();
 
-    int getCost();
+    ItemType getIcon();
+
+    String getSkull();
 
     List<String> getLore();
 }

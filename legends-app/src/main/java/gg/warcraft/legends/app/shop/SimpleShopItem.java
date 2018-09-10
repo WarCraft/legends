@@ -1,0 +1,75 @@
+package gg.warcraft.legends.app.shop;
+
+import gg.warcraft.legends.api.item.ItemRarity;
+import gg.warcraft.legends.api.shop.ShopItem;
+import gg.warcraft.legends.api.shop.ShopItemType;
+import gg.warcraft.monolith.api.item.ItemType;
+
+import java.util.List;
+
+public class SimpleShopItem implements ShopItem {
+    private final String id;
+    private final ShopItemType type;
+    private final ItemRarity rarity;
+    private final String name;
+    private final ItemType icon;
+    private final String skull;
+    private final List<String> lore;
+
+    public SimpleShopItem(String id, ShopItemType type, ItemRarity rarity, String name, ItemType icon,
+                          List<String> lore) {
+        this.id = id;
+        this.type = type;
+        this.rarity = rarity;
+        this.name = name;
+        this.icon = icon;
+        this.skull = null;
+        this.lore = lore;
+    }
+
+    public SimpleShopItem(String id, ShopItemType type, ItemRarity rarity, String name, String skull,
+                          List<String> lore) {
+        this.id = id;
+        this.type = type;
+        this.rarity = rarity;
+        this.name = name;
+        this.icon = null;
+        this.skull = skull;
+        this.lore = lore;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public ShopItemType getType() {
+        return type;
+    }
+
+    @Override
+    public ItemRarity getRarity() {
+        return rarity;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public ItemType getIcon() {
+        return icon;
+    }
+
+    @Override
+    public String getSkull() {
+        return skull;
+    }
+
+    @Override
+    public List<String> getLore() {
+        return lore;
+    }
+}
