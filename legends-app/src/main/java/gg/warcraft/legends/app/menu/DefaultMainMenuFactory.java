@@ -3,10 +3,11 @@ package gg.warcraft.legends.app.menu;
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
+import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.legends.api.menu.DecorationsMenuFactory;
+import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
-import gg.warcraft.legends.api.menu.MiniPetsMenuFactory;
+import gg.warcraft.legends.api.menu.ShopMenuFactory;
 import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
 import gg.warcraft.legends.api.menu.TeamMenuFactory;
 import gg.warcraft.monolith.api.entity.attribute.Attributes;
@@ -36,8 +37,8 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     private final ButtonBuilderFactory buttonBuilderFactory;
     private final SpecializationMenuFactory specializationMenuFactory;
     private final TeamMenuFactory teamMenuFactory;
-    private final DecorationsMenuFactory decorationsMenuFactory;
-    private final MiniPetsMenuFactory miniPetsMenuFactory;
+    private final CollectablesMenuFactory collectablesMenuFactory;
+    private final ShopMenuFactory shopMenuFactory;
     private final StringUtils stringUtils;
 
     @Inject
@@ -45,17 +46,43 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
                                   MenuCommandService menuCommandService, MenuBuilderFactory menuBuilderFactory,
                                   ButtonBuilderFactory buttonBuilderFactory,
                                   SpecializationMenuFactory specializationMenuFactory,
-                                  TeamMenuFactory teamMenuFactory, DecorationsMenuFactory decorationsMenuFactory,
-                                  MiniPetsMenuFactory miniPetsMenuFactory, StringUtils stringUtils) {
+                                  TeamMenuFactory teamMenuFactory, CollectablesMenuFactory collectablesMenuFactory,
+                                  ShopMenuFactory shopMenuFactory, StringUtils stringUtils) {
         this.legendsPlayerQueryService = legendsPlayerQueryService;
         this.menuCommandService = menuCommandService;
         this.menuBuilderFactory = menuBuilderFactory;
         this.buttonBuilderFactory = buttonBuilderFactory;
         this.specializationMenuFactory = specializationMenuFactory;
         this.teamMenuFactory = teamMenuFactory;
-        this.decorationsMenuFactory = decorationsMenuFactory;
-        this.miniPetsMenuFactory = miniPetsMenuFactory;
+        this.collectablesMenuFactory = collectablesMenuFactory;
+        this.shopMenuFactory = shopMenuFactory;
         this.stringUtils = stringUtils;
+    }
+
+    List<String> createCombatView(LegendsPlayer player) {
+        List<String> combatView = new ArrayList<>();
+        String specialization = player.getSpecialization().getName();
+        String specializationPrefix = stringUtils.isVowel(specialization.charAt(0)) ? "an " : "a ";
+        String team = player.getTeam().getName();
+        combatView.add("You are currently " + specializationPrefix + YELLOW + specialization);
+        combatView.add("fighting for the " + YELLOW + team);
+        return combatView;
+    }
+
+    List<String> createRankView(LegendsPlayer player) {
+        Rank rank = player.getRank();
+        int prestige = rank.getPrestige();
+        String name = rank.getName();
+        String formattedRank = name;
+        if (prestige > 0) {
+            String prestigePrefix = new String(new char[prestige]).replace("\0", "★");
+            formattedRank = prestigePrefix + " " + name;
+        }
+
+        List<String> rankView = new ArrayList<>();
+        rankView.add("Rank:");
+        rankView.add(rank.getColor() + formattedRank);
+        return rankView;
     }
 
     List<String> createAttributesView(LegendsPlayer player) {
@@ -98,72 +125,122 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     }
 
     Button createPlayerButton(LegendsPlayer player) {
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.ARMOR_STAND, player.getName());
+        UUID playerId = player.getId();
+        String playerName = player.getName();
+        ButtonBuilder builder = buttonBuilderFactory.createSkullButtonBuilder(playerName, playerName);
+        builder.addTooltip("This is you! If you need any help check");
+        builder.addTooltip("out the Help Menu, which is the last item");
+        builder.addTooltip("in this menu, or ask any member of staff.");
+        builder.addTooltip("");
+        createCombatView(player).forEach(builder::addTooltip);
+        builder.addTooltip("");
+        createRankView(player).forEach(builder::addTooltip);
+        builder.addTooltip("");
         createAttributesView(player).forEach(builder::addTooltip);
         builder.addTooltip("");
         createCurrenciesView(player).forEach(builder::addTooltip);
+        builder.addTooltip("");
+        builder.addTooltip("[SHIFT LEFT CLICK] To change your kit");
+        builder.addTooltip("[SHIFT RIGHT CLICK] To change your team");
+
+        builder.withAction(action -> {
+            if (action.isShiftLeftClick()) {
+                Menu menu = specializationMenuFactory.createSpecializationMenu(playerId);
+                menuCommandService.showMenu(menu, playerId);
+            } else if (action.isShiftRightClick()) {
+                Menu menu = teamMenuFactory.createTeamMenu(playerId);
+                menuCommandService.showMenu(menu, playerId);
+            }
+        });
         return builder.build();
     }
 
-    Button createSpecializationButton(LegendsPlayer player) {
+    Button createDailyLoginButton(LegendsPlayer player) {
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.CAKE, "Daily Login");
+        builder.addTooltip("Every day you can get a reward just for");
+        builder.addTooltip("logging in! The more often you log in, the");
+        builder.addTooltip("more interesting the rewards. And don't");
+        builder.addTooltip("worry; missing a day or two does not reset");
+        builder.addTooltip("your progress.");
+        builder.addTooltip("");
+        builder.addTooltip("[CLICK] To view your rewards");
+
+        builder.withAction(action -> {
+
+        });
+        return builder.build();
+    }
+
+    Button createChallengesButton(LegendsPlayer player) {
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.TNT, "Challenges");
+        builder.addTooltip("Challenges are a simple way of adding a");
+        builder.addTooltip("little bit of extra action to your day to");
+        builder.addTooltip("day activities on the server. Can you");
+        builder.addTooltip("complete them all?");
+        builder.addTooltip("");
+        builder.addTooltip("[CLICK] To view your challenges");
+
+        builder.withAction(action -> {
+
+        });
+        return builder.build();
+    }
+
+    Button createCollectablesButton(LegendsPlayer player) {
         UUID playerId = player.getId();
-        String specialization = player.getSpecialization().getName();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.IRON_SWORD, "Specialization");
-        String prefix = stringUtils.isVowel(specialization.charAt(0)) ? "an " : "a ";
-        builder.addTooltip("You are currently fighting");
-        builder.addTooltip("as " + prefix + YELLOW + specialization);
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.BOOKSHELF, "Collectables");
+        builder.addTooltip("From housing decorations to mini pets");
+        builder.addTooltip("and more. There's a lot to collect on");
+        builder.addTooltip("the server. Gotta collect 'em all!");
         builder.addTooltip("");
-        builder.addTooltip("[CLICK] To change your specialization");
+        builder.addTooltip("[CLICK] To view your collection");
 
         builder.withAction(action -> {
-            Menu menu = specializationMenuFactory.createSpecializationMenu(playerId);
+            Menu menu = collectablesMenuFactory.createCollectablesMenu(playerId);
             menuCommandService.showMenu(menu, playerId);
         });
         return builder.build();
     }
 
-    Button createTeamButton(LegendsPlayer player) {
+    Button createShopButton(LegendsPlayer player) {
         UUID playerId = player.getId();
-        String team = player.getTeam().getName();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.BANNER, "Team");
-        builder.addTooltip("You are currently fighting");
-        builder.addTooltip("for the " + YELLOW + team);
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.ENCHANTED_GOLD_APPLE, "WarCraft: Shop");
+        builder.addTooltip("To go even further beyond in supporting the");
+        builder.addTooltip("server the WarCraft: Shop has six different");
+        builder.addTooltip("items for sale every day. These items can");
+        builder.addTooltip("be bought with Fragments which are available");
+        builder.addTooltip("from the web shop at " + YELLOW + "shop.warcraft.gg");
         builder.addTooltip("");
-        builder.addTooltip("[CLICK] To change your team");
+        builder.addTooltip("[CLICK] To browse the shop");
 
         builder.withAction(action -> {
-            Menu menu = teamMenuFactory.createTeamMenu(playerId);
+            Menu menu = shopMenuFactory.createShopMenu(playerId);
             menuCommandService.showMenu(menu, playerId);
         });
         return builder.build();
     }
 
-    Button createDecorationsButton(UUID playerId) {
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.OAK_WOOD_PLANK, "Decorations");
-        builder.addTooltip("Did you know you can rent a house?");
-        builder.addTooltip("Did you know you can completely");
-        builder.addTooltip("decorate it however you want!?");
+    Button createTeleportButton(LegendsPlayer player) {
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.FLINT, "Monolith Shard");
+        builder.addTooltip("A pitch black splinter that is said to have");
+        builder.addTooltip("once been part of The Monolith. It can take");
+        builder.addTooltip("you back to where The Monolith's power was");
+        builder.addTooltip("once at its strongest.");
         builder.addTooltip("");
-        builder.addTooltip("[CLICK] To browse your decorations");
+        builder.addTooltip("[CLICK] To view teleport locations");
 
         builder.withAction(action -> {
-            Menu menu = decorationsMenuFactory.createDecorationsMenu(playerId);
-            menuCommandService.showMenu(menu, playerId);
+
         });
         return builder.build();
     }
 
-    Button createMiniPetsButton(UUID playerId) {
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.SPAWN_PIG, "Mini Pets");
-        builder.addTooltip("Mini pets are cute little creatures");
-        builder.addTooltip("that will follow and cheer you on");
-        builder.addTooltip("wherever you go.");
-        builder.addTooltip("");
-        builder.addTooltip("[CLICK] To browse your mini pets");
+    Button createHelpButton(LegendsPlayer player) {
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.BOOK, "Help Menu");
+        builder.addTooltip("hlp ples");
 
         builder.withAction(action -> {
-            Menu menu = miniPetsMenuFactory.createMiniPetsMenu(playerId);
-            menuCommandService.showMenu(menu, playerId);
+
         });
         return builder.build();
     }
@@ -171,12 +248,16 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     @Override
     public Menu createMainMenu(UUID playerId) {
         LegendsPlayer player = legendsPlayerQueryService.getPlayer(playerId);
-        MenuBuilder builder = menuBuilderFactory.createMenuBuilder("Menu", MenuSize.ONE_ROW);
+        MenuBuilder builder = menuBuilderFactory.createMenuBuilder("WarCraft: Legends", MenuSize.ONE_ROW);
         builder.addButton(0, createPlayerButton(player));
-        builder.addButton(1, createSpecializationButton(player));
-        builder.addButton(2, createTeamButton(player));
-        builder.addButton(3, createDecorationsButton(playerId));
-        builder.addButton(4, createMiniPetsButton(playerId));
+        builder.addButton(1, createDailyLoginButton(player));
+        builder.addButton(2, createChallengesButton(player));
+        builder.addButton(3, createCollectablesButton(player));
+        builder.addButton(4, createShopButton(player));
+        // empty slot 5
+        // empty slot 6
+        builder.addButton(7, createTeleportButton(player));
+        builder.addButton(8, createHelpButton(player));
         return builder.build();
     }
 }

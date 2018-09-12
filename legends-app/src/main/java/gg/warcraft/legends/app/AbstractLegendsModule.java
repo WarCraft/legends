@@ -11,12 +11,14 @@ import gg.warcraft.legends.api.entity.player.rank.service.RankQueryService;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
 import gg.warcraft.legends.api.menu.DecorationPackMenuFactory;
 import gg.warcraft.legends.api.menu.DecorationsMenuFactory;
 import gg.warcraft.legends.api.menu.LegendsMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.MiniPetsMenuFactory;
+import gg.warcraft.legends.api.menu.ShopMenuFactory;
 import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
 import gg.warcraft.legends.api.menu.TeamMenuFactory;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileCommandService;
@@ -32,6 +34,7 @@ import gg.warcraft.legends.app.combat.mage.effect.HailBlastEffect;
 import gg.warcraft.legends.app.combat.mage.effect.MageEffectFactory;
 import gg.warcraft.legends.app.combat.mage.effect.MoltenStormCircleEffect;
 import gg.warcraft.legends.app.combat.passive.AttributesPassive;
+import gg.warcraft.legends.app.combat.passive.CritPassive;
 import gg.warcraft.legends.app.combat.passive.HumanMagePassive;
 import gg.warcraft.legends.app.combat.passive.HumanWarriorPassive;
 import gg.warcraft.legends.app.combat.passive.OrcMagePassive;
@@ -53,12 +56,14 @@ import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankQueryServic
 import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankRepository;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerCommandService;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerQueryService;
+import gg.warcraft.legends.app.menu.DefaultCollectablesMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDailyLoginMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDecorationPackMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDecorationsMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultLegendsMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultMainMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultMiniPetsMenuFactory;
+import gg.warcraft.legends.app.menu.DefaultShopMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultSpecializationMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultTeamMenuFactory;
 import gg.warcraft.legends.app.shop.profile.service.DefaultShopProfileCommandService;
@@ -83,6 +88,7 @@ public abstract class AbstractLegendsModule extends PrivateModule {
     private void configureCombat() {
         install(new FactoryModuleBuilder()
                 .implement(StatusEffect.class, Names.named("attributes"), AttributesPassive.class)
+                .implement(StatusEffect.class, Names.named("crit"), CritPassive.class)
                 .implement(StatusEffect.class, Names.named("humanMage"), HumanMagePassive.class)
                 .implement(StatusEffect.class, Names.named("humanWarrior"), HumanWarriorPassive.class)
                 .implement(StatusEffect.class, Names.named("orcMage"), OrcMagePassive.class)
@@ -131,9 +137,11 @@ public abstract class AbstractLegendsModule extends PrivateModule {
         bind(TeamMenuFactory.class).to(DefaultTeamMenuFactory.class);
         bind(SpecializationMenuFactory.class).to(DefaultSpecializationMenuFactory.class);
         bind(DailyLoginMenuFactory.class).to(DefaultDailyLoginMenuFactory.class);
+        bind(CollectablesMenuFactory.class).to(DefaultCollectablesMenuFactory.class);
         bind(DecorationsMenuFactory.class).to(DefaultDecorationsMenuFactory.class);
         bind(DecorationPackMenuFactory.class).to(DefaultDecorationPackMenuFactory.class);
         bind(MiniPetsMenuFactory.class).to(DefaultMiniPetsMenuFactory.class);
+        bind(ShopMenuFactory.class).to(DefaultShopMenuFactory.class);
 
         expose(LegendsMenuFactory.class);
     }

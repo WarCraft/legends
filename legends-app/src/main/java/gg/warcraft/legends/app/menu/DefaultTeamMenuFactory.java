@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.TeamMenuFactory;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.team.Team;
@@ -15,13 +16,14 @@ import gg.warcraft.monolith.api.menu.Menu;
 import gg.warcraft.monolith.api.menu.MenuBuilder;
 import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
 import gg.warcraft.monolith.api.menu.MenuSize;
+import gg.warcraft.monolith.api.menu.service.MenuCommandService;
 import gg.warcraft.monolith.api.util.ColorCode;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DefaultTeamMenuFactory implements TeamMenuFactory {
+public class DefaultTeamMenuFactory extends AbstractMenuFactory implements TeamMenuFactory {
     private static final String YELLOW = ColorCode.YELLOW.toString();
     private static final String GREEN = ColorCode.GREEN.toString();
     private static final String ORANGE = ColorCode.GOLD.toString();
@@ -29,17 +31,17 @@ public class DefaultTeamMenuFactory implements TeamMenuFactory {
 
     private final LegendsPlayerQueryService legendsPlayerQueryService;
     private final PlayerCommandService playerCommandService;
-    private final MenuBuilderFactory menuBuilderFactory;
-    private final ButtonBuilderFactory buttonBuilderFactory;
+    private final MainMenuFactory mainMenuFactory;
 
     @Inject
     public DefaultTeamMenuFactory(LegendsPlayerQueryService legendsPlayerQueryService,
-                                  PlayerCommandService playerCommandService, MenuBuilderFactory menuBuilderFactory,
-                                  ButtonBuilderFactory buttonBuilderFactory) {
+                                  PlayerCommandService playerCommandService, MenuCommandService menuCommandService,
+                                  MenuBuilderFactory menuBuilderFactory, ButtonBuilderFactory buttonBuilderFactory,
+                                  MainMenuFactory mainMenuFactory) {
+        super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
         this.legendsPlayerQueryService = legendsPlayerQueryService;
         this.playerCommandService = playerCommandService;
-        this.menuBuilderFactory = menuBuilderFactory;
-        this.buttonBuilderFactory = buttonBuilderFactory;
+        this.mainMenuFactory = mainMenuFactory;
     }
 
     List<String> createSwitchView(Team team, boolean canSwitch, String cooldown) {
@@ -57,7 +59,7 @@ public class DefaultTeamMenuFactory implements TeamMenuFactory {
     }
 
     Button createInfoButton(LegendsPlayer player) {
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.BOOK, "Choosing a team");
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Choosing a team");
         builder.addTooltip("You are currently fighting for the");
         builder.addTooltip(YELLOW + player.getTeam().getName());
         builder.addTooltip("");
@@ -77,7 +79,7 @@ public class DefaultTeamMenuFactory implements TeamMenuFactory {
 
     Button createHumanButton(UUID playerId, boolean canSwitch) {
         Team team = LegendsTeam.HUMAN;
-        ButtonBuilder builder = buttonBuilderFactory.createSkullButtonBuilder("eijlen", team.getName());
+        ButtonBuilder builder = createSkullButtonBuilder("eijlen", team.getName());
         // TODO add some human lore
         builder.addTooltip("");
         createSwitchView(team, canSwitch, null).forEach(builder::addTooltip);
@@ -92,7 +94,7 @@ public class DefaultTeamMenuFactory implements TeamMenuFactory {
 
     Button createOrcButton(UUID playerId, boolean canSwitch) {
         Team team = LegendsTeam.ORC;
-        ButtonBuilder builder = buttonBuilderFactory.createSkullButtonBuilder("fishb6nes", team.getName());
+        ButtonBuilder builder = createSkullButtonBuilder("fishb6nes", team.getName());
         // TODO add some orc lore
         builder.addTooltip("");
         createSwitchView(team, canSwitch, null).forEach(builder::addTooltip);
@@ -109,12 +111,13 @@ public class DefaultTeamMenuFactory implements TeamMenuFactory {
     public Menu createTeamMenu(UUID playerId) {
         LegendsPlayer player = legendsPlayerQueryService.getPlayer(playerId);
         Team team = player.getTeam();
-        MenuBuilder builder = menuBuilderFactory.createMenuBuilder("Team", MenuSize.ONE_ROW);
+        MenuBuilder builder = createMenuBuilder("Team", MenuSize.ONE_ROW);
         builder.addButton(0, createInfoButton(player));
         boolean canSwitchHuman = team != LegendsTeam.HUMAN;
         builder.addButton(2, createHumanButton(playerId, canSwitchHuman));
         boolean canSwitchOrc = team != LegendsTeam.ORC;
         builder.addButton(3, createOrcButton(playerId, canSwitchOrc));
+        builder.addButton(8, createBackButton(playerId, mainMenuFactory::createMainMenu));
         return builder.build();
     }
 }

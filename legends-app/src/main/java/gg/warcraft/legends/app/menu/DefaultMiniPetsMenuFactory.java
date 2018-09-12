@@ -1,8 +1,10 @@
 package gg.warcraft.legends.app.menu;
 
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.MiniPetsMenuFactory;
 import gg.warcraft.legends.api.shop.MiniPet;
+import gg.warcraft.legends.api.shop.MiniPetFactory;
 import gg.warcraft.legends.api.shop.MiniPetId;
 import gg.warcraft.legends.api.shop.profile.ShopProfile;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
@@ -15,32 +17,37 @@ import gg.warcraft.monolith.api.menu.Menu;
 import gg.warcraft.monolith.api.menu.MenuBuilder;
 import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
 import gg.warcraft.monolith.api.menu.MenuSize;
+import gg.warcraft.monolith.api.menu.service.MenuCommandService;
 import gg.warcraft.monolith.api.util.ColorCode;
 
 import java.util.UUID;
 
-public class DefaultMiniPetsMenuFactory implements MiniPetsMenuFactory {
+public class DefaultMiniPetsMenuFactory extends AbstractMenuFactory implements MiniPetsMenuFactory {
     private static final String GREEN = ColorCode.GREEN.toString();
     private static final String ORANGE = ColorCode.GOLD.toString();
 
     private final ShopQueryService shopQueryService;
     private final ShopProfileQueryService shopProfileQueryService;
-    private final MenuBuilderFactory menuBuilderFactory;
-    private final ButtonBuilderFactory buttonBuilderFactory;
+    private final MiniPetFactory miniPetFactory;
+    private final CollectablesMenuFactory collectablesMenuFactory;
 
     @Inject
     public DefaultMiniPetsMenuFactory(ShopQueryService shopQueryService,
                                       ShopProfileQueryService shopProfileQueryService,
+                                      MenuCommandService menuCommandService,
                                       MenuBuilderFactory menuBuilderFactory,
-                                      ButtonBuilderFactory buttonBuilderFactory) {
+                                      ButtonBuilderFactory buttonBuilderFactory,
+                                      MiniPetFactory miniPetFactory,
+                                      CollectablesMenuFactory collectablesMenuFactory) {
+        super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
         this.shopQueryService = shopQueryService;
         this.shopProfileQueryService = shopProfileQueryService;
-        this.menuBuilderFactory = menuBuilderFactory;
-        this.buttonBuilderFactory = buttonBuilderFactory;
+        this.miniPetFactory = miniPetFactory;
+        this.collectablesMenuFactory = collectablesMenuFactory;
     }
 
     Button createInfoButton() {
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.BOOK, "Mini Pets");
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Mini Pets");
         builder.addTooltip("Mini pets are cute little creatures");
         builder.addTooltip("that will follow and cheer you on");
         builder.addTooltip("wherever you go.");
@@ -51,9 +58,10 @@ public class DefaultMiniPetsMenuFactory implements MiniPetsMenuFactory {
     }
 
     Button createPetButton(MiniPetId miniPetId, ShopProfile shopProfile) {
+        UUID playerId = shopProfile.getPlayerId();
         boolean hasUnlocked = shopProfile.hasMiniPet(miniPetId);
         MiniPet miniPet = shopQueryService.getMiniPet(miniPetId.toString());
-        ButtonBuilder builder = buttonBuilderFactory.createSkullButtonBuilder(miniPet.getSkull(), miniPet.getName());
+        ButtonBuilder builder = createSkullButtonBuilder(miniPet.getSkull(), miniPet.getName());
         miniPet.getLore().forEach(builder::addTooltip);
         builder.addTooltip("");
         if (hasUnlocked) {
@@ -64,8 +72,20 @@ public class DefaultMiniPetsMenuFactory implements MiniPetsMenuFactory {
 
         builder.withAction(action -> {
             if (hasUnlocked) {
-                // TODO petCommandService.summonPet(MiniPet pet, playerId);
+                miniPetFactory.spawnPet(miniPet.getEntityType(), playerId);
+                closeMenu(playerId);
             }
+        });
+        return builder.build();
+    }
+
+    Button createDismissButton(UUID playerId) {
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BARRIER, "Dismiss");
+        builder.addTooltip("[CLICK] To dismiss");
+        builder.addTooltip("your current pet");
+        builder.withAction(action -> {
+            miniPetFactory.removePet(playerId);
+            closeMenu(playerId);
         });
         return builder.build();
     }
@@ -73,12 +93,14 @@ public class DefaultMiniPetsMenuFactory implements MiniPetsMenuFactory {
     @Override
     public Menu createMiniPetsMenu(UUID playerId) {
         ShopProfile shopProfile = shopProfileQueryService.getProfile(playerId);
-        MenuBuilder builder = menuBuilderFactory.createMenuBuilder("Mini Pets", MenuSize.ONE_ROW);
+        MenuBuilder builder = createMenuBuilder("Mini Pets", MenuSize.ONE_ROW);
         builder.addButton(0, createInfoButton());
         builder.addButton(2, createPetButton(MiniPetId.COW, shopProfile));
         builder.addButton(3, createPetButton(MiniPetId.CHICKEN, shopProfile));
         builder.addButton(4, createPetButton(MiniPetId.PIG, shopProfile));
         builder.addButton(5, createPetButton(MiniPetId.SHEEP, shopProfile));
+        builder.addButton(7, createDismissButton(playerId));
+        builder.addButton(8, createBackButton(playerId, collectablesMenuFactory::createCollectablesMenu));
         return builder.build();
     }
 }
