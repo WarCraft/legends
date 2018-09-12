@@ -5,6 +5,7 @@ import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
 import gg.warcraft.monolith.api.entity.team.Team;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -23,7 +24,7 @@ public class DefaultRankRepository implements RankRepository {
     @Override
     public NavigableMap<Integer, Rank> getRanks(Team team) {
         String teamName = team.getName();
-        return new TreeMap<>(ranks.get(teamName));
+        return new TreeMap<>(ranks.getOrDefault(teamName, Collections.emptyNavigableMap()));
     }
 
     @Override

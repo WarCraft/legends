@@ -10,6 +10,9 @@ public interface PassiveFactory {
     @Named("attributes")
     StatusEffect createAttributesPassive(UUID entityId);
 
+    @Named("crit")
+    StatusEffect createCritPassive(UUID entityId);
+
     @Named("humanMage")
     StatusEffect createHumanMagePassive(UUID entityId);
 

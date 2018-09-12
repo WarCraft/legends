@@ -23,4 +23,7 @@ public interface MageEffectFactory {
 
     @Named("flameTotemFireball")
     Cancellable createFlameTotemFireballEffect(Movement movement);
+
+    @Named("massBamboozle")
+    Cancellable createMassBamboozleCountdownEffect(Location location);
 }

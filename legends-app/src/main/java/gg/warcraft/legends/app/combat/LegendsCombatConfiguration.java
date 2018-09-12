@@ -12,8 +12,6 @@ import gg.warcraft.legends.app.combat.mage.tempest.MoltenStorm;
 import gg.warcraft.legends.app.combat.mage.tempest.MoltenStormFactory;
 import gg.warcraft.legends.app.combat.mage.wizard.ArcaneMissile;
 import gg.warcraft.legends.app.combat.mage.wizard.ArcaneMissileFactory;
-import gg.warcraft.legends.app.combat.mage.wizard.MassBamboozle;
-import gg.warcraft.legends.app.combat.mage.wizard.MassBamboozleFactory;
 import gg.warcraft.legends.app.combat.mage.wizard.Teleport;
 import gg.warcraft.legends.app.combat.mage.wizard.TeleportFactory;
 import gg.warcraft.legends.app.combat.ranger.hunter.Disengage;
@@ -59,7 +57,6 @@ public class LegendsCombatConfiguration {
         abilityCommandService.registerRangedAbility("Molten Storm", MoltenStorm.class, MoltenStormFactory.class);
         // Wizard
         abilityCommandService.registerRangedAbility("Arcane Missile", ArcaneMissile.class, ArcaneMissileFactory.class);
-        abilityCommandService.registerRangedAbility("Mass Bamboozle", MassBamboozle.class, MassBamboozleFactory.class);
         abilityCommandService.registerRangedAbility("Teleport", Teleport.class, TeleportFactory.class);
     }
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface ServerConfiguration {
 
-    char getPrestigeChar();
+    String getPrestigeChar();
 
     List<RankPrefixConfiguration> getRankPrefixes();
 
@@ -12,5 +12,5 @@ public interface ServerConfiguration {
 
     List<String> getOrcRankSuffixes();
 
-    List<Integer> getRankTable();
+    List<Integer> getRankFavorTable();
 }

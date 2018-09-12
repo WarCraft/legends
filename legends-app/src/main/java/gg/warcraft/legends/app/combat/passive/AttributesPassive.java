@@ -62,9 +62,6 @@ public class AttributesPassive extends AbstractRacialPassive implements CombatSt
             modifier = intelligence * 0.1f;
         }
 
-        // TODO remove, increase by 1 for testing purposes as 0 isnt combat logged
-        modifier += 1;
-
         CombatValueModifier damageModifier =
                 combatFactory.createCombatValueModifier(CombatValueModifierType.FLAT, modifier, this);
         event.addDamageModifier(damageModifier);

@@ -52,13 +52,37 @@ public class DefaultLegendsPlayerCommandService implements LegendsPlayerCommandS
     }
 
     @Override
+    public void revokeGold(UUID playerId, int amount) {
+        revokeCurrency(playerId, LegendsCurrency.GOLD, amount);
+    }
+
+    @Override
     public void addFavor(UUID playerId, int amount) {
         addCurrency(playerId, LegendsCurrency.FAVOR, amount);
-
     }
 
     @Override
     public void removeFavor(UUID playerId, int amount) {
         removeCurrency(playerId, LegendsCurrency.FAVOR, amount);
+    }
+
+    @Override
+    public void revokeFavor(UUID playerId, int amount) {
+        revokeCurrency(playerId, LegendsCurrency.FAVOR, amount);
+    }
+
+    @Override
+    public void addFragments(UUID playerId, int amount) {
+        addCurrency(playerId, LegendsCurrency.FRAGMENTS, amount);
+    }
+
+    @Override
+    public void removeFragments(UUID playerId, int amount) {
+        removeCurrency(playerId, LegendsCurrency.FRAGMENTS, amount);
+    }
+
+    @Override
+    public void revokeFragments(UUID playerId, int amount) {
+        revokeCurrency(playerId, LegendsCurrency.FRAGMENTS, amount);
     }
 }

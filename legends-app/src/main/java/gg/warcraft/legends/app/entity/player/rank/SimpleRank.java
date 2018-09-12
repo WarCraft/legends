@@ -9,18 +9,11 @@ public class SimpleRank implements Rank {
     private final String name;
     private final int prestige;
     private final ColorCode color;
-    private final String asString;
 
     public SimpleRank(String name, int prestige, ColorCode color) {
         this.name = name;
         this.prestige = prestige;
         this.color = color;
-        if (prestige == 0) {
-            this.asString = color + name;
-        } else {
-            String prestigePrefix = new String(new char[prestige]).replace("\0", "★");
-            this.asString = color + prestigePrefix + " " + name;
-        }
     }
 
     @Override
@@ -36,11 +29,6 @@ public class SimpleRank implements Rank {
     @Override
     public ColorCode getColor() {
         return color;
-    }
-
-    @Override
-    public String toString() {
-        return asString;
     }
 
     @Override

@@ -22,15 +22,15 @@ public class PlayerCurrencyEventHandler {
     @Subscribe
     public void onPlayerCurrencyGainedEvent(PlayerCurrencyGainedEvent event) {
         switch (event.getCurrency()) {
-            case "Favor":
-                Event playerFavorGainedEvent = new SimplePlayerFavorGainedEvent(event.getPlayerId(), event.getAmount(),
-                        event.getNewCurrent(), event.getNewLifetime());
-                eventService.publish(playerFavorGainedEvent);
-                break;
             case "Gold":
                 Event playerGoldGainedEvent = new SimplePlayerGoldGainedEvent(event.getPlayerId(), event.getAmount(),
                         event.getNewCurrent(), event.getNewLifetime());
                 eventService.publish(playerGoldGainedEvent);
+                break;
+            case "Favor":
+                Event playerFavorGainedEvent = new SimplePlayerFavorGainedEvent(event.getPlayerId(), event.getAmount(),
+                        event.getNewCurrent(), event.getNewLifetime());
+                eventService.publish(playerFavorGainedEvent);
                 break;
         }
     }
@@ -38,15 +38,15 @@ public class PlayerCurrencyEventHandler {
     @Subscribe
     public void onPlayerCurrencyLostEvent(PlayerCurrencyLostEvent event) {
         switch (event.getCurrency()) {
-            case "Favor":
-                Event playerFavorLostEvent = new SimplePlayerFavorLostEvent(event.getPlayerId(), event.getAmount(),
-                        event.getNewCurrent());
-                eventService.publish(playerFavorLostEvent);
-                break;
             case "Gold":
                 Event playerGoldLostEvent = new SimplePlayerGoldLostEvent(event.getPlayerId(), event.getAmount(),
                         event.getNewCurrent());
                 eventService.publish(playerGoldLostEvent);
+                break;
+            case "Favor":
+                Event playerFavorLostEvent = new SimplePlayerFavorLostEvent(event.getPlayerId(), event.getAmount(),
+                        event.getNewCurrent());
+                eventService.publish(playerFavorLostEvent);
                 break;
         }
     }

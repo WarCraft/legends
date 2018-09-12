@@ -28,10 +28,11 @@ public class DefaultRankCommandService implements RankCommandService {
         Iterator<RankPrefixConfiguration> prefixes = rankPrefixes.iterator();
         RankPrefixConfiguration prefix = prefixes.next();
         Iterator<String> suffixes = rankSuffixes.iterator();
-        int totalFavor = 0;
         for (Integer favor : rankFavorTable) {
             if (!suffixes.hasNext()) {
-                prefix = prefixes.next();
+                if (prefixes.hasNext()) {
+                    prefix = prefixes.next();
+                }
                 suffixes = rankSuffixes.iterator();
             }
             String suffix = suffixes.next();
@@ -40,11 +41,12 @@ public class DefaultRankCommandService implements RankCommandService {
             int rankLevel = ranks.size() + 1;
             Rank rank = new SimpleRank(rankName, rankLevel, prefix.getColor());
 
-            totalFavor += favor;
-            ranks.put(totalFavor, rank);
+            ranks.put(favor, rank);
         }
 
         rankRepository.save(team, ranks);
-        rankRepository.save(totalFavor);
+
+        int maxFavor = rankFavorTable.get(rankFavorTable.size() - 1);
+        rankRepository.save(maxFavor);
     }
 }

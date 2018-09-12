@@ -51,6 +51,8 @@ public class PassiveAssignmentHandler {
         UUID playerId = event.getPlayerId();
         StatusEffect attributesPassive = passiveFactory.createAttributesPassive(playerId);
         statusCommandService.addStatusEffect(attributesPassive, playerId);
+        StatusEffect critPassive = passiveFactory.createCritPassive(playerId);
+        statusCommandService.addStatusEffect(critPassive, playerId);
     }
 
     private void removeOldPassives(Status status) {
