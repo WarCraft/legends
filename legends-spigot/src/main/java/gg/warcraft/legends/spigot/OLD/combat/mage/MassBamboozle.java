@@ -93,10 +93,14 @@ public class MassBamboozle extends AbstractAbility implements RangedAbility {
 
         massBamboozleRepository.save(entityId);
         Duration duration = getSnapshot().getDuration();
-        taskService.runLater(() -> massBamboozleRepository.delete(entityId), duration);
+        taskService.runLater(() -> {
+            massBamboozleRepository.delete(entityId);
+            DisguiseAPI.undisguiseToAll(spigotEntity);
+        }, duration);
 
         return false;
     }
+
 
     @Override
     public boolean onMiss(Entity entity) {
