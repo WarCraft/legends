@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ObjectiveCapturedAnnouncer implements Listener {
+    // FIXME this key is now compromised, cycle it
     private static final String discordWebhook = "https://discordapp.com/api/webhooks/427168926540234773/izX7BeEhd-vxfAXA2ZxfQtFCYmWFKqU5ySEsVtt_xsRpSnvox6PdcwUFJyoaNXsGfOAp";
     private static final Duration ONE_TICK = new Duration(1, Duration.Type.TICKS);
 

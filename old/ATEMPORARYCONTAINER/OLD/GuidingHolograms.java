@@ -1,4 +1,4 @@
-package gg.warcraft.legends;
+package gg.warcraft.legends.spigot.OLD;
 
 import gg.warcraft.legends.world.Hologram;
 import org.bukkit.ChatColor;
