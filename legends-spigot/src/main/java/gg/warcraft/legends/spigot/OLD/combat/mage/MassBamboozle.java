@@ -101,7 +101,6 @@ public class MassBamboozle extends AbstractAbility implements RangedAbility {
         return false;
     }
 
-
     @Override
     public boolean onMiss(Entity entity) {
         // do nothing
