@@ -1,4 +1,4 @@
-package gg.warcraft.legends.app.combat.mage.wizard;
+package gg.warcraft.legends.spigot.OLD.combat.mage;
 
 import gg.warcraft.combat.api.ability.RangedAbilityFactory;
 import gg.warcraft.combat.api.ability.RangedAbilityFlag;
