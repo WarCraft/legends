@@ -7,4 +7,6 @@ public interface GameQueryService {
     Game getGame(int id);
 
     Game getActiveGame();
+
+    Game getCurrentWar();
 }

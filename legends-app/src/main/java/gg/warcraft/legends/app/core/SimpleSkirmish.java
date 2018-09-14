@@ -1,15 +1,22 @@
 package gg.warcraft.legends.app.core;
 
+import gg.warcraft.legends.api.core.GameCopyer;
+import gg.warcraft.legends.api.core.GameType;
 import gg.warcraft.legends.api.core.Skirmish;
-import gg.warcraft.legends.api.entity.LegendsTeam;
+import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.Duration;
 
 import java.util.Map;
 
-public class SimpleSkirmish extends SimpleGame implements Skirmish {
+public class SimpleSkirmish extends AbstractGame implements Skirmish {
 
-    public SimpleSkirmish(int id, String type, Map<LegendsTeam, Integer> score, Map<String, LegendsTeam> objectives,
-                          Duration timer, String startTime, String endTime) {
-        super(id, type, score, objectives, timer, startTime, endTime);
+    public SimpleSkirmish(int id, Map<Team, Integer> points, Map<String, Team> objectives, Duration timer,
+                          String startTime, String endTime) {
+        super(id, GameType.SKIRMISH, points, objectives, timer, startTime, endTime);
+    }
+
+    @Override
+    public GameCopyer getCopyer() {
+        return new SimpleSkirmishCopyer(this);
     }
 }

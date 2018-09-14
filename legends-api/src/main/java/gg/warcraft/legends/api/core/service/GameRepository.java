@@ -4,9 +4,15 @@ import gg.warcraft.legends.api.core.Game;
 
 public interface GameRepository {
 
-    Game getGame(int id);
+    Game getGame(int gameId);
 
     Game getActiveGame();
 
+    Game getCurrentWar();
+
     void save(Game game);
+
+    void saveActiveGame(int gameId);
+
+    void saveCurrentWar(int gameId);
 }

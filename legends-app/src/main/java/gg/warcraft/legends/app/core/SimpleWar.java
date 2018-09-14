@@ -1,22 +1,39 @@
 package gg.warcraft.legends.app.core;
 
+import gg.warcraft.legends.api.core.GameCopyer;
+import gg.warcraft.legends.api.core.GameType;
 import gg.warcraft.legends.api.core.War;
-import gg.warcraft.legends.api.entity.LegendsTeam;
+import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.Duration;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 
-public class SimpleWar extends SimpleGame implements War {
-    private final Map<LegendsTeam, Integer> points;
+public class SimpleWar extends AbstractGame implements War {
+    private final Map<Team, Integer> warScore;
+    private final SortedMap<String, Map<Team, Integer>> dailyPoints;
 
-    public SimpleWar(int id, String type, Map<LegendsTeam, Integer> points, Map<LegendsTeam, Integer> score,
-                     Map<String, LegendsTeam> objectives, Duration timer, String startTime, String endTime) {
-        super(id, type, score, objectives, timer, startTime, endTime);
-        this.points = points;
+    public SimpleWar(int id, Map<Team, Integer> points, Map<Team, Integer> warScore,
+                     SortedMap<String, Map<Team, Integer>> dailyPoints, Map<String, Team> objectives, Duration timer,
+                     String startTime, String endTime) {
+        super(id, GameType.WAR, points, objectives, timer, startTime, endTime);
+        this.warScore = warScore;
+        this.dailyPoints = dailyPoints;
     }
 
     @Override
-    public Map<LegendsTeam, Integer> getPoints() {
-        return points;
+    public Map<Team, Integer> getWarScore() {
+        return new HashMap<>(warScore);
+    }
+
+    @Override
+    public SortedMap<String, Map<Team, Integer>> getDailyPoints() {
+        return dailyPoints;
+    }
+
+    @Override
+    public GameCopyer getCopyer() {
+        return new SimpleWarCopyer(this);
     }
 }

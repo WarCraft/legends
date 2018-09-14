@@ -12,6 +12,7 @@
     <orderEntry type="library" name="Gradle: gg.warcraft:monolith-api:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: gg.warcraft:chat-api:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: gg.warcraft:combat-api:1.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Gradle: gg.warcraft:siege-api:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: LibsDisguises:LibsDisguises:9.5.2" level="project" />
     <orderEntry type="library" name="Gradle: org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: de.slikey:EffectLib:5.10-SNAPSHOT" level="project" />

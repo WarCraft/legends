@@ -6,31 +6,31 @@ import gg.warcraft.legends.api.config.RankPrefixConfiguration;
 import gg.warcraft.legends.api.config.ServerConfiguration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JacksonServerConfiguration implements ServerConfiguration {
-    private final String prestigeChar;
     private final List<RankPrefixConfiguration> rankPrefixes;
     private final List<String> humanRankSuffixes;
     private final List<String> orcRankSuffixes;
     private final List<Integer> rankFavorTable;
+    private final String prestigeChar;
+    private final Map<String, Integer> objectivePoints;
 
     @JsonCreator
     public JacksonServerConfiguration(@JsonProperty("prestigeChar") String prestigeChar,
                                       @JsonProperty("rankPrefixes") List<RankPrefixConfiguration> rankPrefixes,
                                       @JsonProperty("humanRankSuffixes") List<String> humanRankSuffixes,
                                       @JsonProperty("orcRankSuffixes") List<String> orcRankSuffixes,
-                                      @JsonProperty("rankFavorTable") List<Integer> rankFavorTable) {
+                                      @JsonProperty("rankFavorTable") List<Integer> rankFavorTable,
+                                      @JsonProperty("objectivePoints") Map<String, Integer> objectivePoints) {
         this.prestigeChar = prestigeChar;
         this.rankPrefixes = rankPrefixes;
         this.humanRankSuffixes = humanRankSuffixes;
         this.orcRankSuffixes = orcRankSuffixes;
         this.rankFavorTable = rankFavorTable;
-    }
-
-    @Override
-    public String getPrestigeChar() {
-        return prestigeChar;
+        this.objectivePoints = objectivePoints;
     }
 
     @Override
@@ -51,5 +51,15 @@ public class JacksonServerConfiguration implements ServerConfiguration {
     @Override
     public List<Integer> getRankFavorTable() {
         return new ArrayList<>(rankFavorTable);
+    }
+
+    @Override
+    public String getPrestigeChar() {
+        return prestigeChar;
+    }
+
+    @Override
+    public Map<String, Integer> getObjectivePoints() {
+        return new HashMap<>(objectivePoints);
     }
 }
