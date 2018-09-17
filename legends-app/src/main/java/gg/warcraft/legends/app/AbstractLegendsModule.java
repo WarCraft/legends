@@ -32,6 +32,7 @@ import gg.warcraft.legends.app.combat.mage.effect.FireballEffect;
 import gg.warcraft.legends.app.combat.mage.effect.FlameTotemFireballEffect;
 import gg.warcraft.legends.app.combat.mage.effect.HailBlastEffect;
 import gg.warcraft.legends.app.combat.mage.effect.MageEffectFactory;
+import gg.warcraft.legends.app.combat.mage.effect.MassBamboozleCountdownEffect;
 import gg.warcraft.legends.app.combat.mage.effect.MoltenStormCircleEffect;
 import gg.warcraft.legends.app.combat.passive.AttributesPassive;
 import gg.warcraft.legends.app.combat.passive.CritPassive;
@@ -103,6 +104,7 @@ public abstract class AbstractLegendsModule extends PrivateModule {
                 .implement(Cancellable.class, Names.named("hailBlast"), HailBlastEffect.class)
                 .implement(Cancellable.class, Names.named("moltenStormRing"), MoltenStormCircleEffect.class)
                 .implement(Cancellable.class, Names.named("flameTotemFireball"), FlameTotemFireballEffect.class)
+                .implement(Cancellable.class, Names.named("massBamboozle"), MassBamboozleCountdownEffect.class)
                 .build(MageEffectFactory.class));
         expose(MageEffectFactory.class);
 

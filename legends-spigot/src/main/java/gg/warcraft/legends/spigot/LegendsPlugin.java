@@ -17,12 +17,14 @@ import gg.warcraft.legends.app.combat.passive.handler.PassiveAssignmentHandler;
 import gg.warcraft.legends.app.combat.ranger.marksman.FocusHandler;
 import gg.warcraft.legends.app.config.LegendsMapperModule;
 import gg.warcraft.legends.app.core.handler.FishCommandHandler;
+import gg.warcraft.legends.app.core.handler.ObjectiveAnnouncementHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerCurrencyEventHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerInspectionHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangeHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangedHandler;
 import gg.warcraft.legends.app.item.handler.EquipmentAttributesHandler;
 import gg.warcraft.legends.app.menu.handler.MenuCommandHandler;
+import gg.warcraft.legends.app.misc.SpydeyBot;
 import gg.warcraft.legends.app.shop.profile.handler.ShopProfileInitializationHandler;
 import gg.warcraft.legends.spigot.OLD.combat.HunterPetListener;
 import gg.warcraft.legends.spigot.OLD.combat.PersonalScoreboardHandler;
@@ -106,6 +108,10 @@ public class LegendsPlugin extends JavaPlugin {
 
         PlayerInspectionHandler playerInspectionHandler = injector.getInstance(PlayerInspectionHandler.class);
         eventService.subscribe(playerInspectionHandler);
+
+        ObjectiveAnnouncementHandler objectiveAnnouncementHandler =
+                injector.getInstance(ObjectiveAnnouncementHandler.class);
+        eventService.subscribe(objectiveAnnouncementHandler);
     }
 
     void initializeLegendsCommands() {
@@ -145,6 +151,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         RangerOnlyBowHandler rangerOnlyBowHandler = new RangerOnlyBowHandler(legendsPlayerQueryService);
         getServer().getPluginManager().registerEvents(rangerOnlyBowHandler, this);
+
+        SpydeyBot spyBot = injector.getInstance(SpydeyBot.class);
+        eventService.subscribe(spyBot);
 
         // TODO mass bamboozle is actually implemented quite cleanly, needs to be in the spigot package until
         // TODO LibsDisguises support has been added to Monolith though

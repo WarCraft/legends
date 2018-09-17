@@ -57,13 +57,13 @@ public class PersonalScoreboard implements Runnable, Cancellable {
 
     private void initializeScoreboard(Scoreboard scoreboard, Collection<LegendsPlayer> onlinePlayers) {
         Team humans = scoreboard.registerNewTeam(LegendsTeam.HUMAN.toString());
-        humans.setPrefix(LegendsTeam.HUMAN.getColor().toString());
+        humans.setPrefix(LegendsTeam.HUMAN.getChatColor().toString());
         Team orcs = scoreboard.registerNewTeam(LegendsTeam.ORC.toString());
-        orcs.setPrefix(LegendsTeam.ORC.getColor().toString());
+        orcs.setPrefix(LegendsTeam.ORC.getChatColor().toString());
         Team elves = scoreboard.registerNewTeam(LegendsTeam.ELF.toString());
-        elves.setPrefix(LegendsTeam.ELF.getColor().toString());
+        elves.setPrefix(LegendsTeam.ELF.getChatColor().toString());
         Team dwarves = scoreboard.registerNewTeam(LegendsTeam.DWARF.toString());
-        dwarves.setPrefix(LegendsTeam.DWARF.getColor().toString());
+        dwarves.setPrefix(LegendsTeam.DWARF.getChatColor().toString());
 
         onlinePlayers.forEach(player -> {
             if (player.getTeam() != null) {
@@ -109,7 +109,7 @@ public class PersonalScoreboard implements Runnable, Cancellable {
     }
 
     @Subscribe
-    public void onMonolithPlayerConnectEvent(PlayerConnectEvent event) {
+    public void onPlayerConnectEvent(PlayerConnectEvent event) {
         LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getPlayerId());
         if (player.getTeam() != null) {
             Team team = scoreboard.getTeam(player.getTeam().toString());
@@ -118,11 +118,14 @@ public class PersonalScoreboard implements Runnable, Cancellable {
     }
 
     @Subscribe
-    public void onMonolithEntityRaceChangedEvent(EntityTeamChangedEvent event) {
+    public void onEntityTeamChangedEvent(EntityTeamChangedEvent event) {
         LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getEntityId());
         if (player != null) {
-            Team team = scoreboard.getTeam(player.getTeam().toString());
-            team.addEntry(player.getName());
+            gg.warcraft.monolith.api.entity.team.Team playerTeam = player.getTeam();
+            if (playerTeam != null) {
+                Team team = scoreboard.getTeam(playerTeam.toString());
+                team.addEntry(player.getName());
+            }
         }
     }
 }

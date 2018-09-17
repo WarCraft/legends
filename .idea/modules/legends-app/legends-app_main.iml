@@ -8,10 +8,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Gradle: org.apache.httpcomponents:httpclient:4.5.5" level="project" />
     <orderEntry type="library" name="Gradle: gg.warcraft:monolith-api:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: gg.warcraft:chat-api:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: gg.warcraft:combat-api:1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: gg.warcraft:siege-api:1.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.httpcomponents:httpcore:4.4.9" level="project" />
+    <orderEntry type="library" name="Gradle: commons-logging:commons-logging:1.2" level="project" />
+    <orderEntry type="library" name="Gradle: commons-codec:commons-codec:1.10" level="project" />
     <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.9.6" level="project" />
     <orderEntry type="library" name="Gradle: com.google.inject.extensions:guice-assistedinject:4.2.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: com.google.inject:guice:4.2.1-SNAPSHOT" level="project" />
