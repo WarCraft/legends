@@ -9,6 +9,7 @@ import gg.warcraft.legends.api.menu.TeamMenuFactory;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
 import gg.warcraft.monolith.api.menu.ButtonBuilder;
 import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;

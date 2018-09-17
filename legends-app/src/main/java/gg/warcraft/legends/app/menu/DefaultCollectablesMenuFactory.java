@@ -5,7 +5,9 @@ import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.DecorationsMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.MiniPetsMenuFactory;
+import gg.warcraft.legends.api.menu.PromotionsMenuFactory;
 import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
 import gg.warcraft.monolith.api.menu.ButtonBuilder;
 import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
@@ -20,16 +22,20 @@ import java.util.UUID;
 public class DefaultCollectablesMenuFactory extends AbstractMenuFactory implements CollectablesMenuFactory {
     private final DecorationsMenuFactory decorationsMenuFactory;
     private final MiniPetsMenuFactory miniPetsMenuFactory;
+    private final PromotionsMenuFactory promotionsMenuFactory;
     private final MainMenuFactory mainMenuFactory;
 
     @Inject
     public DefaultCollectablesMenuFactory(MenuCommandService menuCommandService, MenuBuilderFactory menuBuilderFactory,
                                           ButtonBuilderFactory buttonBuilderFactory,
                                           DecorationsMenuFactory decorationsMenuFactory,
-                                          MiniPetsMenuFactory miniPetsMenuFactory, MainMenuFactory mainMenuFactory) {
+                                          MiniPetsMenuFactory miniPetsMenuFactory,
+                                          PromotionsMenuFactory promotionsMenuFactory,
+                                          MainMenuFactory mainMenuFactory) {
         super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
         this.decorationsMenuFactory = decorationsMenuFactory;
         this.miniPetsMenuFactory = miniPetsMenuFactory;
+        this.promotionsMenuFactory = promotionsMenuFactory;
         this.mainMenuFactory = mainMenuFactory;
     }
 
@@ -79,6 +85,11 @@ public class DefaultCollectablesMenuFactory extends AbstractMenuFactory implemen
         builder.addTooltip("limited amount of time.");
         builder.addTooltip("");
         builder.addTooltip("[CLICK] To browse your promotions");
+
+        builder.withAction(action -> {
+            Menu menu = promotionsMenuFactory.createPromotionsMenu(playerId);
+            showMenu(menu, playerId);
+        });
         return builder.build();
     }
 

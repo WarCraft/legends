@@ -9,4 +9,6 @@ public interface ShopConfiguration {
     List<DecorationPackConfiguration> getDecorationPacks();
 
     List<MiniPetConfiguration> getMiniPets();
+
+    List<PromotionConfiguration> getPromotions();
 }

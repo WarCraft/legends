@@ -10,6 +10,7 @@ import gg.warcraft.legends.api.shop.profile.ShopProfile;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
 import gg.warcraft.legends.api.shop.service.ShopQueryService;
 import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
 import gg.warcraft.monolith.api.menu.ButtonBuilder;
 import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;

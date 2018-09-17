@@ -3,6 +3,7 @@ package gg.warcraft.legends.app.menu;
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
+import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
 import gg.warcraft.monolith.api.menu.Menu;
 import gg.warcraft.monolith.api.menu.MenuBuilder;
