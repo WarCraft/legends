@@ -11,6 +11,8 @@ import gg.warcraft.legends.api.entity.player.rank.service.RankQueryService;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.legends.api.item.EquipmentBuilder;
+import gg.warcraft.legends.api.item.EquipmentBuilderFactory;
 import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
 import gg.warcraft.legends.api.menu.DecorationPackMenuFactory;
@@ -18,6 +20,7 @@ import gg.warcraft.legends.api.menu.DecorationsMenuFactory;
 import gg.warcraft.legends.api.menu.LegendsMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.MiniPetsMenuFactory;
+import gg.warcraft.legends.api.menu.PromotionsMenuFactory;
 import gg.warcraft.legends.api.menu.ShopMenuFactory;
 import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
 import gg.warcraft.legends.api.menu.TeamMenuFactory;
@@ -57,6 +60,7 @@ import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankQueryServic
 import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankRepository;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerCommandService;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerQueryService;
+import gg.warcraft.legends.app.item.SimpleEquipmentBuilder;
 import gg.warcraft.legends.app.menu.DefaultCollectablesMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDailyLoginMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDecorationPackMenuFactory;
@@ -64,6 +68,7 @@ import gg.warcraft.legends.app.menu.DefaultDecorationsMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultLegendsMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultMainMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultMiniPetsMenuFactory;
+import gg.warcraft.legends.app.menu.DefaultPromotionsMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultShopMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultSpecializationMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultTeamMenuFactory;
@@ -81,8 +86,9 @@ public abstract class AbstractLegendsModule extends PrivateModule {
     @Override
     protected void configure() {
         configureCombat();
-        configureMenu();
         configureEntity();
+        configureItem();
+        configureMenu();
         configureShop();
     }
 
@@ -133,21 +139,6 @@ public abstract class AbstractLegendsModule extends PrivateModule {
         expose(WarriorStatusEffectFactory.class);
     }
 
-    private void configureMenu() {
-        bind(LegendsMenuFactory.class).to(DefaultLegendsMenuFactory.class);
-        bind(MainMenuFactory.class).to(DefaultMainMenuFactory.class);
-        bind(TeamMenuFactory.class).to(DefaultTeamMenuFactory.class);
-        bind(SpecializationMenuFactory.class).to(DefaultSpecializationMenuFactory.class);
-        bind(DailyLoginMenuFactory.class).to(DefaultDailyLoginMenuFactory.class);
-        bind(CollectablesMenuFactory.class).to(DefaultCollectablesMenuFactory.class);
-        bind(DecorationsMenuFactory.class).to(DefaultDecorationsMenuFactory.class);
-        bind(DecorationPackMenuFactory.class).to(DefaultDecorationPackMenuFactory.class);
-        bind(MiniPetsMenuFactory.class).to(DefaultMiniPetsMenuFactory.class);
-        bind(ShopMenuFactory.class).to(DefaultShopMenuFactory.class);
-
-        expose(LegendsMenuFactory.class);
-    }
-
     private void configureEntity() {
         // Entity bindings
         install(new FactoryModuleBuilder()
@@ -171,6 +162,34 @@ public abstract class AbstractLegendsModule extends PrivateModule {
 
         bind(RankRepository.class).to(DefaultRankRepository.class);
         expose(RankRepository.class);
+    }
+
+    private void configureItem() {
+        install(new FactoryModuleBuilder()
+                .implement(EquipmentBuilder.class, SimpleEquipmentBuilder.class)
+                .build(EquipmentBuilderFactory.class));
+        expose(EquipmentBuilderFactory.class);
+
+//        install(new FactoryModuleBuilder()
+//                .implement(GemBuilder.class, SimpleGemBuilder.class)
+//                .build(GemBuilderFactory.class));
+//        expose(GemBuilderFactory.class);
+    }
+
+    private void configureMenu() {
+        bind(LegendsMenuFactory.class).to(DefaultLegendsMenuFactory.class);
+        bind(MainMenuFactory.class).to(DefaultMainMenuFactory.class);
+        bind(TeamMenuFactory.class).to(DefaultTeamMenuFactory.class);
+        bind(SpecializationMenuFactory.class).to(DefaultSpecializationMenuFactory.class);
+        bind(DailyLoginMenuFactory.class).to(DefaultDailyLoginMenuFactory.class);
+        bind(CollectablesMenuFactory.class).to(DefaultCollectablesMenuFactory.class);
+        bind(DecorationsMenuFactory.class).to(DefaultDecorationsMenuFactory.class);
+        bind(DecorationPackMenuFactory.class).to(DefaultDecorationPackMenuFactory.class);
+        bind(MiniPetsMenuFactory.class).to(DefaultMiniPetsMenuFactory.class);
+        bind(PromotionsMenuFactory.class).to(DefaultPromotionsMenuFactory.class);
+        bind(ShopMenuFactory.class).to(DefaultShopMenuFactory.class);
+
+        expose(LegendsMenuFactory.class);
     }
 
     private void configureShop() {
