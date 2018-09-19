@@ -40,6 +40,7 @@ public class FishCommandHandler implements CommandHandler {
     }
 
     boolean onRestoreAllCommand() {
+        // TODO this should delete any domain objects that are linked to temporary blocks like Siege Weapons
         blockBackupQueryService.getAllBlockBackups().stream()
                 .map(BlockBackup::getId)
                 .forEach(blockBackupCommandService::restoreBlockBackup);
