@@ -4,15 +4,18 @@ import com.google.inject.Inject;
 import gg.warcraft.legends.api.shop.Decoration;
 import gg.warcraft.legends.api.shop.DecorationPack;
 import gg.warcraft.legends.api.shop.MiniPet;
+import gg.warcraft.legends.api.shop.Promotion;
 import gg.warcraft.legends.api.shop.config.DecorationConfiguration;
 import gg.warcraft.legends.api.shop.config.DecorationPackConfiguration;
 import gg.warcraft.legends.api.shop.config.MiniPetConfiguration;
+import gg.warcraft.legends.api.shop.config.PromotionConfiguration;
 import gg.warcraft.legends.api.shop.config.ShopConfiguration;
 import gg.warcraft.legends.api.shop.service.ShopCommandService;
 import gg.warcraft.legends.api.shop.service.ShopRepository;
 import gg.warcraft.legends.app.shop.SimpleDecoration;
 import gg.warcraft.legends.app.shop.SimpleDecorationPack;
 import gg.warcraft.legends.app.shop.SimpleMiniPet;
+import gg.warcraft.legends.app.shop.SimplePromotion;
 
 import java.util.List;
 import java.util.Objects;
@@ -68,10 +71,25 @@ public class DefaultShopCommandService implements ShopCommandService {
         shopRepository.save(miniPet);
     }
 
+    void readPromotionConfiguration(PromotionConfiguration configuration) {
+        Promotion promotion = new SimplePromotion(
+                configuration.getId(),
+                configuration.getType(),
+                configuration.getRarity(),
+                configuration.getName(),
+                configuration.getIcon(),
+                configuration.getLore(),
+                configuration.getItemType(),
+                configuration.getEquipmentSlot(),
+                configuration.getAttributes());
+        shopRepository.save(promotion);
+    }
+
     @Override
     public void readConfiguration(ShopConfiguration shopConfiguration) {
         shopConfiguration.getDecorations().forEach(this::readDecorationConfiguration);
         shopConfiguration.getDecorationPacks().forEach(this::readDecorationPackConfiguration);
         shopConfiguration.getMiniPets().forEach(this::readMiniPetConfiguration);
+        shopConfiguration.getPromotions().forEach(this::readPromotionConfiguration);
     }
 }
