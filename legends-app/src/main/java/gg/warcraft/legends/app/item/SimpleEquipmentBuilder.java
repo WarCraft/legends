@@ -10,7 +10,6 @@ import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemBuilder;
 import gg.warcraft.monolith.api.item.ItemBuilderFactory;
 import gg.warcraft.monolith.api.item.ItemType;
-import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.FormatCode;
 
 import java.util.ArrayList;
@@ -85,7 +84,7 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
         ItemBuilder itemBuilder = itemBuilderFactory.createItemBuilder(type, rarity.getColor() + name);
 
         // set type at top of tooltip
-        itemBuilder.addLore(ColorCode.GRAY + "Equipment");
+        itemBuilder.addLore("Equipment");
 
         // add stats
         if (!attributes.keySet().isEmpty()) {
@@ -113,7 +112,7 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
         if (!flavorText.isEmpty()) {
             itemBuilder.addLore("");
             for (String text : flavorText) {
-                itemBuilder.addLore("" + FormatCode.ITALIC + ColorCode.GRAY + text);
+                itemBuilder.addLore(FormatCode.ITALIC + text);
             }
         }
 
