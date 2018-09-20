@@ -1,4 +1,6 @@
 dependencies {
     api project(':legends-api')
     implementation "org.apache.httpcomponents:httpclient:4.5.5"
+    implementation "com.amazonaws:aws-java-sdk-cloudwatch:1.11.291"
+    implementation "com.amazonaws:aws-java-sdk-s3:1.11.291"
 }

@@ -16,8 +16,11 @@ import gg.warcraft.legends.app.combat.handler.ArrowPickupHandler;
 import gg.warcraft.legends.app.combat.passive.handler.PassiveAssignmentHandler;
 import gg.warcraft.legends.app.combat.ranger.marksman.FocusHandler;
 import gg.warcraft.legends.app.config.LegendsMapperModule;
+import gg.warcraft.legends.app.core.game.handler.ObjectiveAnnouncementHandler;
+import gg.warcraft.legends.app.core.handler.CombatLoggingHandler;
 import gg.warcraft.legends.app.core.handler.FishCommandHandler;
-import gg.warcraft.legends.app.core.handler.ObjectiveAnnouncementHandler;
+import gg.warcraft.legends.app.core.handler.PlayerCountMetricHandler;
+import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerCurrencyEventHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerInspectionHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangeHandler;
@@ -48,6 +51,8 @@ import java.util.Collections;
 public class LegendsPlugin extends JavaPlugin {
     private Injector injector;
     private EventService eventService;
+    private TaskService taskService;
+    private TimeUtils timeUtils;
 
     void loadServerConfiguration() {
         MonolithPluginUtils pluginUtils = injector.getInstance(MonolithPluginUtils.class);
@@ -112,6 +117,16 @@ public class LegendsPlugin extends JavaPlugin {
         ObjectiveAnnouncementHandler objectiveAnnouncementHandler =
                 injector.getInstance(ObjectiveAnnouncementHandler.class);
         eventService.subscribe(objectiveAnnouncementHandler);
+
+        PlayerCountMetricHandler playerCountMetricHandler = injector.getInstance(PlayerCountMetricHandler.class);
+        eventService.subscribe(playerCountMetricHandler);
+        taskService.runTask(playerCountMetricHandler, timeUtils.oneTick(), timeUtils.createDurationInSeconds(300));
+
+        TotalPointsMetricHandler totalPointsMetricHandler = injector.getInstance(TotalPointsMetricHandler.class);
+        eventService.subscribe(totalPointsMetricHandler);
+
+        CombatLoggingHandler combatLoggingHandler = injector.getInstance(CombatLoggingHandler.class);
+        eventService.subscribe(combatLoggingHandler);
     }
 
     void initializeLegendsCommands() {
@@ -173,6 +188,8 @@ public class LegendsPlugin extends JavaPlugin {
     public void onEnable() {
         this.injector = Monolith.getInstance().getInjector();
         this.eventService = injector.getInstance(EventService.class);
+        this.taskService = injector.getInstance(TaskService.class);
+        this.timeUtils = injector.getInstance(TimeUtils.class);
 
         loadServerConfiguration();
         loadShopConfiguration();
