@@ -1,4 +1,4 @@
-package gg.warcraft.legends.app.core.persistence;
+package gg.warcraft.legends.app.core.game.persistence;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

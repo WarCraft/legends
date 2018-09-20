@@ -1,8 +1,8 @@
-package gg.warcraft.legends.app.core;
+package gg.warcraft.legends.app.core.game;
 
-import gg.warcraft.legends.api.core.GameCopyer;
-import gg.warcraft.legends.api.core.GameType;
-import gg.warcraft.legends.api.core.War;
+import gg.warcraft.legends.api.core.game.GameCopyer;
+import gg.warcraft.legends.api.core.game.GameType;
+import gg.warcraft.legends.api.core.game.War;
 import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.Duration;
 

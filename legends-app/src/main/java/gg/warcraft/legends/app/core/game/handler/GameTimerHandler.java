@@ -1,9 +1,9 @@
-package gg.warcraft.legends.app.core.handler;
+package gg.warcraft.legends.app.core.game.handler;
 
 import com.google.inject.Inject;
-import gg.warcraft.legends.api.core.Game;
-import gg.warcraft.legends.api.core.GameType;
-import gg.warcraft.legends.api.core.service.GameRepository;
+import gg.warcraft.legends.api.core.game.Game;
+import gg.warcraft.legends.api.core.game.GameType;
+import gg.warcraft.legends.api.core.game.service.GameRepository;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
 

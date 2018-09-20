@@ -1,7 +1,7 @@
-package gg.warcraft.legends.app.core;
+package gg.warcraft.legends.app.core.game;
 
-import gg.warcraft.legends.api.core.Game;
-import gg.warcraft.legends.api.core.GameType;
+import gg.warcraft.legends.api.core.game.Game;
+import gg.warcraft.legends.api.core.game.GameType;
 import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.Duration;
 

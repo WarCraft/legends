@@ -1,4 +1,4 @@
-package gg.warcraft.legends.api.core;
+package gg.warcraft.legends.api.core.game;
 
 import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.Duration;

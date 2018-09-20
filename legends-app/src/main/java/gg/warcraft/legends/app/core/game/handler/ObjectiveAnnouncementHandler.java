@@ -1,4 +1,4 @@
-package gg.warcraft.legends.app.core.handler;
+package gg.warcraft.legends.app.core.game.handler;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;

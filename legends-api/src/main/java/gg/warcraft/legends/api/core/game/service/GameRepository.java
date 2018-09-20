@@ -1,6 +1,6 @@
-package gg.warcraft.legends.api.core.service;
+package gg.warcraft.legends.api.core.game.service;
 
-import gg.warcraft.legends.api.core.Game;
+import gg.warcraft.legends.api.core.game.Game;
 
 public interface GameRepository {
 

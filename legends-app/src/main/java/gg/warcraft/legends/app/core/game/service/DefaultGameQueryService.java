@@ -1,9 +1,9 @@
-package gg.warcraft.legends.app.core.service;
+package gg.warcraft.legends.app.core.game.service;
 
 import com.google.inject.Inject;
-import gg.warcraft.legends.api.core.Game;
-import gg.warcraft.legends.api.core.service.GameQueryService;
-import gg.warcraft.legends.api.core.service.GameRepository;
+import gg.warcraft.legends.api.core.game.Game;
+import gg.warcraft.legends.api.core.game.service.GameQueryService;
+import gg.warcraft.legends.api.core.game.service.GameRepository;
 
 public class DefaultGameQueryService implements GameQueryService {
     private final GameRepository gameRepository;

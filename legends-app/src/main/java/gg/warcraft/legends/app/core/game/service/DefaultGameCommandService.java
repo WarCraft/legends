@@ -1,13 +1,13 @@
-package gg.warcraft.legends.app.core.service;
+package gg.warcraft.legends.app.core.game.service;
 
 import com.google.inject.Inject;
-import gg.warcraft.legends.api.core.Game;
-import gg.warcraft.legends.api.core.Skirmish;
-import gg.warcraft.legends.api.core.War;
-import gg.warcraft.legends.api.core.service.GameCommandService;
-import gg.warcraft.legends.api.core.service.GameRepository;
-import gg.warcraft.legends.app.core.SimpleSkirmish;
-import gg.warcraft.legends.app.core.SimpleWar;
+import gg.warcraft.legends.api.core.game.Game;
+import gg.warcraft.legends.api.core.game.Skirmish;
+import gg.warcraft.legends.api.core.game.War;
+import gg.warcraft.legends.api.core.game.service.GameCommandService;
+import gg.warcraft.legends.api.core.game.service.GameRepository;
+import gg.warcraft.legends.app.core.game.SimpleSkirmish;
+import gg.warcraft.legends.app.core.game.SimpleWar;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.siege.api.objective.service.ObjectiveCommandService;

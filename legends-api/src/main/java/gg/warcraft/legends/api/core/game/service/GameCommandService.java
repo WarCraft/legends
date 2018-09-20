@@ -1,4 +1,4 @@
-package gg.warcraft.legends.api.core.service;
+package gg.warcraft.legends.api.core.game.service;
 
 public interface GameCommandService {
 
