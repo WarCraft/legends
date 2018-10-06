@@ -3,6 +3,7 @@ package gg.warcraft.legends.spigot;
 import gg.warcraft.legends.api.shop.MiniPetFactory;
 import gg.warcraft.legends.app.AbstractLegendsModule;
 import gg.warcraft.legends.spigot.OLD.shop.SpigotMiniPetFactory;
+import gg.warcraft.legends.spigot.core.handler.SpigotScoreboardHandler;
 import gg.warcraft.monolith.api.core.PluginLogger;
 import org.bukkit.plugin.Plugin;
 
@@ -24,5 +25,8 @@ public class SpigotLegendsModule extends AbstractLegendsModule {
         // TODO eventually remove this hack and all classes associated with it
         bind(MiniPetFactory.class).to(SpigotMiniPetFactory.class);
         expose(MiniPetFactory.class);
+
+        bind(SpigotScoreboardHandler.class);
+        expose(SpigotScoreboardHandler.class);
     }
 }

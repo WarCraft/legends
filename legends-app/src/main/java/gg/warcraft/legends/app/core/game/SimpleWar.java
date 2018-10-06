@@ -1,8 +1,8 @@
 package gg.warcraft.legends.app.core.game;
 
-import gg.warcraft.legends.api.core.game.GameCopyer;
 import gg.warcraft.legends.api.core.game.GameType;
 import gg.warcraft.legends.api.core.game.War;
+import gg.warcraft.legends.api.core.game.WarCopyer;
 import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.Duration;
 
@@ -33,7 +33,7 @@ public class SimpleWar extends AbstractGame implements War {
     }
 
     @Override
-    public GameCopyer getCopyer() {
+    public WarCopyer getCopyer() {
         return new SimpleWarCopyer(this);
     }
 }

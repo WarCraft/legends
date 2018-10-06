@@ -6,6 +6,7 @@ import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
+import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.ShopMenuFactory;
 import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
@@ -37,6 +38,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     private final ButtonBuilderFactory buttonBuilderFactory;
     private final SpecializationMenuFactory specializationMenuFactory;
     private final TeamMenuFactory teamMenuFactory;
+    private final DailyLoginMenuFactory dailyLoginMenuFactory;
     private final CollectablesMenuFactory collectablesMenuFactory;
     private final ShopMenuFactory shopMenuFactory;
     private final StringUtils stringUtils;
@@ -46,13 +48,15 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
                                   MenuCommandService menuCommandService, MenuBuilderFactory menuBuilderFactory,
                                   ButtonBuilderFactory buttonBuilderFactory,
                                   SpecializationMenuFactory specializationMenuFactory,
-                                  TeamMenuFactory teamMenuFactory, CollectablesMenuFactory collectablesMenuFactory,
-                                  ShopMenuFactory shopMenuFactory, StringUtils stringUtils) {
+                                  DailyLoginMenuFactory dailyLoginMenuFactory, TeamMenuFactory teamMenuFactory,
+                                  CollectablesMenuFactory collectablesMenuFactory, ShopMenuFactory shopMenuFactory,
+                                  StringUtils stringUtils) {
         this.legendsPlayerQueryService = legendsPlayerQueryService;
         this.menuCommandService = menuCommandService;
         this.menuBuilderFactory = menuBuilderFactory;
         this.buttonBuilderFactory = buttonBuilderFactory;
         this.specializationMenuFactory = specializationMenuFactory;
+        this.dailyLoginMenuFactory = dailyLoginMenuFactory;
         this.teamMenuFactory = teamMenuFactory;
         this.collectablesMenuFactory = collectablesMenuFactory;
         this.shopMenuFactory = shopMenuFactory;
@@ -156,6 +160,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     }
 
     Button createDailyLoginButton(LegendsPlayer player) {
+        UUID playerId = player.getId();
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.CAKE, "Daily Login");
         builder.addTooltip("Every day you can get a reward just for");
         builder.addTooltip("logging in! The more often you log in, the");
@@ -166,7 +171,8 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         builder.addTooltip("[CLICK] To view your rewards");
 
         builder.withAction(action -> {
-
+            Menu menu = dailyLoginMenuFactory.createDailyLoginMenu(playerId);
+            menuCommandService.showMenu(menu, playerId);
         });
         return builder.build();
     }

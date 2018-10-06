@@ -2,7 +2,6 @@ package gg.warcraft.legends.app.core.game.handler;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.legends.api.core.game.Game;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
 import gg.warcraft.monolith.api.entity.team.Team;
@@ -14,13 +13,10 @@ import java.util.Map;
 
 public class GameObjectivesAndPointsHandler {
     private final GameRepository gameRepository;
-    private final Map<String, Integer> objectivePoints;
 
     @Inject
-    public GameObjectivesAndPointsHandler(GameRepository gameRepository,
-                                          @Assisted Map<String, Integer> objectivePoints) {
+    public GameObjectivesAndPointsHandler(GameRepository gameRepository) {
         this.gameRepository = gameRepository;
-        this.objectivePoints = objectivePoints;
     }
 
     @Subscribe
@@ -33,8 +29,9 @@ public class GameObjectivesAndPointsHandler {
         newObjectives.put(objective.getId(), newOccupiers);
 
         Map<Team, Integer> newPoints = activeGame.getPoints();
-        int currentTeamPoints = newPoints.get(newOccupiers);
-        int newTeamPoints = currentTeamPoints + objectivePoints.get(objective.getType());
+        int currentTeamPoints = newPoints.getOrDefault(newOccupiers, 0);
+        int capturePoints = gameRepository.getCapturePoints(objective.getType());
+        int newTeamPoints = currentTeamPoints + capturePoints;
         newPoints.put(newOccupiers, newTeamPoints);
 
         Game newGame = activeGame.getCopyer()

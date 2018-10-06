@@ -1,0 +1,82 @@
+package gg.warcraft.legends.app.menu;
+
+import com.google.inject.Inject;
+import gg.warcraft.legends.api.item.crate.LootCrate;
+import gg.warcraft.legends.api.item.crate.LootCrateBuilder;
+import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
+import gg.warcraft.legends.api.item.crate.LootCrateType;
+import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
+import gg.warcraft.legends.api.menu.AdminMenuFactory;
+import gg.warcraft.monolith.api.core.AuthorizationService;
+import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
+import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
+import gg.warcraft.monolith.api.menu.Button;
+import gg.warcraft.monolith.api.menu.ButtonBuilder;
+import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
+import gg.warcraft.monolith.api.menu.Menu;
+import gg.warcraft.monolith.api.menu.MenuBuilder;
+import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
+import gg.warcraft.monolith.api.menu.MenuSize;
+import gg.warcraft.monolith.api.menu.service.MenuCommandService;
+
+import java.util.UUID;
+
+public class DefaultAdminMenuFactory extends AbstractMenuFactory implements AdminMenuFactory {
+    private final PlayerCommandService playerCommandService;
+    private final AuthorizationService authorizationService;
+    private final LootCrateRepository lootCrateRepository;
+    private final LootCrateBuilderFactory lootCrateBuilderFactory;
+
+    @Inject
+    public DefaultAdminMenuFactory(PlayerCommandService playerCommandService,
+                                   AuthorizationService authorizationService,
+                                   LootCrateRepository lootCrateRepository,
+                                   LootCrateBuilderFactory lootCrateBuilderFactory,
+                                   MenuCommandService menuCommandService,
+                                   MenuBuilderFactory menuBuilderFactory,
+                                   ButtonBuilderFactory buttonBuilderFactory) {
+        super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
+        this.playerCommandService = playerCommandService;
+        this.authorizationService = authorizationService;
+        this.lootCrateRepository = lootCrateRepository;
+        this.lootCrateBuilderFactory = lootCrateBuilderFactory;
+    }
+
+    Button createInfoButton() {
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Admin Menu");
+        builder.addTooltip("A convenience menu for");
+        builder.addTooltip("members of staff.");
+        return builder.build();
+    }
+
+    Button createLootCrateButton(UUID playerId, LootCrateType crateType) {
+        LootCrate crate = lootCrateRepository.get(crateType);
+        ButtonBuilder buttonBuilder = createSimpleButtonBuilder(crate.getItemType(), crate.getName());
+        buttonBuilder.addTooltip("");
+        buttonBuilder.addTooltip("[CLICK] To take out a " + crate.getName());
+
+        buttonBuilder.withAction(action -> {
+            // TODO    if (authorizationService.isAdmin(playerId)) {
+            LootCrateBuilder crateBuilder = lootCrateBuilderFactory.createLootCrateBuilder(crateType);
+            playerCommandService.giveItem(playerId, crateBuilder.build(), false);
+            // TODO    }
+        });
+        return buttonBuilder.build();
+    }
+
+    @Override
+    public Menu createFishMenu(UUID playerId) {
+        MenuBuilder builder = createMenuBuilder("Admin Menu", MenuSize.ONE_ROW);
+        builder.addButton(0, createInfoButton());
+        // TODO    if (!authorizationService.isAdmin(playerId)) {
+        // TODO            return builder.build();
+        // TODO   }
+
+        builder.addButton(2, createLootCrateButton(playerId, LootCrateType.WAR_CRATE));
+        builder.addButton(3, createLootCrateButton(playerId, LootCrateType.LEGEND_CRATE));
+        builder.addButton(4, createLootCrateButton(playerId, LootCrateType.TITAN_CRATE));
+        builder.addButton(5, createLootCrateButton(playerId, LootCrateType.VOTE_CRATE));
+        return builder.build();
+    }
+}

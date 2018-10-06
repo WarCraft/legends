@@ -10,4 +10,7 @@ public interface War extends Game {
     Map<Team, Integer> getWarScore();
 
     SortedMap<String, Map<Team, Integer>> getDailyPoints();
+
+    @Override
+    WarCopyer getCopyer();
 }

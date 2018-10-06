@@ -39,6 +39,7 @@ public class DefaultGameRepository implements GameRepository {
     private final TimeUtils timeUtils;
     private final ObjectMapper jsonMapper;
     private final Logger pluginLogger;
+    private final Map<String, Integer> capturePoints;
 
     @Inject
     public DefaultGameRepository(PersistenceService persistenceService, TeamQueryService teamQueryService,
@@ -49,6 +50,7 @@ public class DefaultGameRepository implements GameRepository {
         this.timeUtils = timeUtils;
         this.jsonMapper = jsonMapper;
         this.pluginLogger = pluginLogger;
+        this.capturePoints = new HashMap<>();
     }
 
     String createGameKey(int id) {
@@ -124,7 +126,7 @@ public class DefaultGameRepository implements GameRepository {
                 throw new IllegalArgumentException("Failed to map game item to game, could not find game type.");
             }
         } catch (IOException ex) {
-            pluginLogger.severe(ex.getMessage());
+            pluginLogger.severe("Failed to get game with id " + gameId + ": " + ex.getMessage());
             return null;
         }
     }
@@ -134,8 +136,8 @@ public class DefaultGameRepository implements GameRepository {
             String gameIdString = persistenceService.get(key);
             int gameId = Integer.parseInt(gameIdString);
             return getGame(gameId);
-        } catch (Exception ex) {
-            pluginLogger.severe(ex.getMessage());
+        } catch (NumberFormatException ex) {
+            pluginLogger.severe("Failed to get game for id " + key + ": " + ex.getMessage());
             return null;
         }
     }
@@ -150,13 +152,19 @@ public class DefaultGameRepository implements GameRepository {
         return getActiveCurrentGame(CURRENT_WAR_ID_KEY);
     }
 
+    @Override
+    public int getCapturePoints(String objectiveType) {
+        return capturePoints.getOrDefault(objectiveType, 0);
+    }
+
     GameItem mapWarToItem(War war) {
         int id = war.getId();
         String type = war.getType().name();
         Map<String, Integer> points = new HashMap<>();
         war.getPoints().forEach((team, teamPoints) -> points.put(team.getName(), teamPoints));
         Map<String, String> objectives = new HashMap<>();
-        war.getObjectives().forEach((objectiveId, team) -> objectives.put(objectiveId, team.getName()));
+        war.getObjectives().forEach((objectiveId, team) ->
+                objectives.put(objectiveId, team == null ? null : team.getName()));
         int timer = war.getTimer().inSeconds();
         String startTime = war.getStartTime();
         String endTime = war.getEndTime();
@@ -201,7 +209,7 @@ public class DefaultGameRepository implements GameRepository {
             String gameJson = jsonMapper.writeValueAsString(gameItem);
             persistenceService.set(gameKey, gameJson);
         } catch (IOException ex) {
-            pluginLogger.severe(ex.getMessage());
+            pluginLogger.severe("Failed to save game with id " + game.getId() + ": " + ex.getMessage());
         }
     }
 
@@ -213,5 +221,10 @@ public class DefaultGameRepository implements GameRepository {
     @Override
     public void saveCurrentWar(int gameId) {
         persistenceService.set(CURRENT_WAR_ID_KEY, Integer.toString(gameId));
+    }
+
+    @Override
+    public void saveCapturePoints(String objectiveType, int points) {
+        capturePoints.put(objectiveType, points);
     }
 }

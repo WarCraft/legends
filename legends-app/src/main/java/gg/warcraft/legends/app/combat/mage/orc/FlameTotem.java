@@ -85,8 +85,9 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
                 .filter(block -> block.getType() == BlockType.AIR)
                 .findFirst();
         Block totemBlock = spawnBlockOptional.orElse(casterLocationBlock);
-        UUID totemBlockBackupId = blockBackupCommandService.createBlockBackup(totemBlock);
-        this.totemLocation = totemBlock.getLocation()
+        BlockLocation totemLocation = totemBlock.getLocation();
+        UUID totemBlockBackupId = blockBackupCommandService.createBlockBackup(totemLocation);
+        this.totemLocation = totemLocation
                 .toLocation()
                 .add(0.5f, 0.5f, 0.5f);
 

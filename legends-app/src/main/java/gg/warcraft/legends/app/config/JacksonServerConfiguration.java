@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gg.warcraft.legends.api.config.RankPrefixConfiguration;
 import gg.warcraft.legends.api.config.ServerConfiguration;
+import gg.warcraft.legends.api.item.crate.config.LootCrateConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ public class JacksonServerConfiguration implements ServerConfiguration {
     private final List<Integer> rankFavorTable;
     private final String prestigeChar;
     private final Map<String, Integer> objectivePoints;
+    private final List<LootCrateConfiguration> lootCrates;
 
     @JsonCreator
     public JacksonServerConfiguration(@JsonProperty("prestigeChar") String prestigeChar,
@@ -24,13 +26,15 @@ public class JacksonServerConfiguration implements ServerConfiguration {
                                       @JsonProperty("humanRankSuffixes") List<String> humanRankSuffixes,
                                       @JsonProperty("orcRankSuffixes") List<String> orcRankSuffixes,
                                       @JsonProperty("rankFavorTable") List<Integer> rankFavorTable,
-                                      @JsonProperty("objectivePoints") Map<String, Integer> objectivePoints) {
+                                      @JsonProperty("objectivePoints") Map<String, Integer> objectivePoints,
+                                      @JsonProperty("lootCrates") List<LootCrateConfiguration> lootCrates) {
         this.prestigeChar = prestigeChar;
         this.rankPrefixes = rankPrefixes;
         this.humanRankSuffixes = humanRankSuffixes;
         this.orcRankSuffixes = orcRankSuffixes;
         this.rankFavorTable = rankFavorTable;
         this.objectivePoints = objectivePoints;
+        this.lootCrates = lootCrates;
     }
 
     @Override
@@ -61,5 +65,10 @@ public class JacksonServerConfiguration implements ServerConfiguration {
     @Override
     public Map<String, Integer> getObjectivePoints() {
         return new HashMap<>(objectivePoints);
+    }
+
+    @Override
+    public List<LootCrateConfiguration> getLootCrates() {
+        return new ArrayList<>(lootCrates);
     }
 }

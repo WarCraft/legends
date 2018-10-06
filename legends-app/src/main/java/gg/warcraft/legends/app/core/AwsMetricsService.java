@@ -1,12 +1,6 @@
 package gg.warcraft.legends.app.core;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
-import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder;
-import com.amazonaws.services.cloudwatch.model.Dimension;
-import com.amazonaws.services.cloudwatch.model.MetricDatum;
-import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest;
-import com.amazonaws.services.cloudwatch.model.PutMetricDataResult;
-import com.amazonaws.services.cloudwatch.model.StandardUnit;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import gg.warcraft.legends.api.core.MetricsService;
@@ -21,27 +15,30 @@ public class AwsMetricsService implements MetricsService {
     @Inject
     public AwsMetricsService(TaskService taskService) {
         this.taskService = taskService;
-        this.cloudwatch = AmazonCloudWatchClientBuilder.defaultClient();
+        // TODO on live: this.cloudwatch = AmazonCloudWatchClientBuilder.defaultClient();
+        this.cloudwatch = null;
     }
 
     private void record(String metric, String dimensionName, String dimensionValue, int value) {
-        Dimension dimension = new Dimension()
-                .withName(dimensionName)
-                .withValue(dimensionValue);
-        MetricDatum datum = new MetricDatum()
-                .withMetricName(metric)
-                .withUnit(StandardUnit.None)
-                .withValue((double) value)
-                .withDimensions(dimension);
+        System.out.println("Recording metric: " + metric + ", " + dimensionName + ":" + dimensionValue + ", " + value);
 
-        PutMetricDataRequest request = new PutMetricDataRequest()
-                .withNamespace("Legends")
-                .withMetricData(datum);
-
-        taskService.runNextTickAsync(() -> {
-            PutMetricDataResult result = cloudwatch.putMetricData(request);
-            int statusCode = result.getSdkHttpMetadata().getHttpStatusCode();
-        });
+//        Dimension dimension = new Dimension()
+//                .withName(dimensionName)
+//                .withValue(dimensionValue);
+//        MetricDatum datum = new MetricDatum()
+//                .withMetricName(metric)
+//                .withUnit(StandardUnit.None)
+//                .withValue((double) value)
+//                .withDimensions(dimension);
+//
+//        PutMetricDataRequest request = new PutMetricDataRequest()
+//                .withNamespace("Legends")
+//                .withMetricData(datum);
+//
+//        taskService.runNextTickAsync(() -> {
+//            PutMetricDataResult result = cloudwatch.putMetricData(request);
+//            int statusCode = result.getSdkHttpMetadata().getHttpStatusCode();
+//        });
     }
 
     @Override

@@ -5,9 +5,13 @@ import com.google.inject.Injector;
 import gg.warcraft.combat.api.ability.config.service.AbilityConfigurationQueryService;
 import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.legends.api.config.ServerConfiguration;
+import gg.warcraft.legends.api.core.game.Game;
+import gg.warcraft.legends.api.core.game.service.GameCommandService;
+import gg.warcraft.legends.api.core.game.service.GameQueryService;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.rank.service.RankCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.legends.api.item.crate.service.LootCrateCommandService;
 import gg.warcraft.legends.api.shop.config.ShopConfiguration;
 import gg.warcraft.legends.api.shop.service.ShopCommandService;
 import gg.warcraft.legends.app.combat.LegendsCombatConfiguration;
@@ -16,15 +20,19 @@ import gg.warcraft.legends.app.combat.handler.ArrowPickupHandler;
 import gg.warcraft.legends.app.combat.passive.handler.PassiveAssignmentHandler;
 import gg.warcraft.legends.app.combat.ranger.marksman.FocusHandler;
 import gg.warcraft.legends.app.config.LegendsMapperModule;
+import gg.warcraft.legends.app.core.game.handler.GameObjectivesAndPointsHandler;
+import gg.warcraft.legends.app.core.game.handler.GameTimerHandler;
 import gg.warcraft.legends.app.core.game.handler.ObjectiveAnnouncementHandler;
 import gg.warcraft.legends.app.core.handler.CombatLoggingHandler;
 import gg.warcraft.legends.app.core.handler.FishCommandHandler;
 import gg.warcraft.legends.app.core.handler.PlayerCountMetricHandler;
 import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
+import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerCurrencyEventHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerInspectionHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangeHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangedHandler;
+import gg.warcraft.legends.app.item.crate.handler.LootCrateUseHandler;
 import gg.warcraft.legends.app.item.handler.EquipmentAttributesHandler;
 import gg.warcraft.legends.app.menu.handler.MenuCommandHandler;
 import gg.warcraft.legends.app.misc.SpydeyBot;
@@ -36,6 +44,7 @@ import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozle;
 import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozleFactory;
 import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozleHandler;
 import gg.warcraft.legends.spigot.OLD.shop.SpigotMiniPetFactory;
+import gg.warcraft.legends.spigot.core.handler.SpigotScoreboardHandler;
 import gg.warcraft.monolith.api.Monolith;
 import gg.warcraft.monolith.api.MonolithPluginUtils;
 import gg.warcraft.monolith.api.command.service.CommandCommandService;
@@ -60,11 +69,18 @@ public class LegendsPlugin extends JavaPlugin {
 
         ServerConfiguration serverConfiguration = pluginUtils.loadConfiguration("REMOTE", "legends/server.yml", "",
                 ServerConfiguration.class, legendsMapperModule);
+
         RankCommandService rankCommandService = injector.getInstance(RankCommandService.class);
         rankCommandService.initializeRanks(LegendsTeam.HUMAN, serverConfiguration.getRankFavorTable(),
                 serverConfiguration.getRankPrefixes(), serverConfiguration.getHumanRankSuffixes());
         rankCommandService.initializeRanks(LegendsTeam.ORC, serverConfiguration.getRankFavorTable(),
                 serverConfiguration.getRankPrefixes(), serverConfiguration.getOrcRankSuffixes());
+
+        GameCommandService gameCommandService = injector.getInstance(GameCommandService.class);
+        gameCommandService.readConfiguration(serverConfiguration);
+
+        LootCrateCommandService lootCrateCommandService = injector.getInstance(LootCrateCommandService.class);
+        lootCrateCommandService.readConfiguration(serverConfiguration);
     }
 
     void loadShopConfiguration() {
@@ -83,9 +99,14 @@ public class LegendsPlugin extends JavaPlugin {
     }
 
     void initializeLegendsHandlers() {
+        UniversalBlockBreakPlaceHandler universalBlockBreakPlaceHandler =
+                injector.getInstance(UniversalBlockBreakPlaceHandler.class);
+        eventService.subscribe(universalBlockBreakPlaceHandler);
+
         PlayerCurrencyEventHandler playerCurrencyEventHandler = injector.getInstance(PlayerCurrencyEventHandler.class);
         eventService.subscribe(playerCurrencyEventHandler);
 
+        // Combat
         EquipmentAttributesHandler equipmentAttributesHandler = injector.getInstance(EquipmentAttributesHandler.class);
         eventService.subscribe(equipmentAttributesHandler);
 
@@ -101,23 +122,41 @@ public class LegendsPlugin extends JavaPlugin {
         FocusHandler focusHandler = injector.getInstance(FocusHandler.class);
         eventService.subscribe(focusHandler);
 
+        // Shop
         ShopProfileInitializationHandler shopProfileInitializationHandler =
                 injector.getInstance(ShopProfileInitializationHandler.class);
         eventService.subscribe(shopProfileInitializationHandler);
 
+        LootCrateUseHandler lootCrateUseHandler = injector.getInstance(LootCrateUseHandler.class);
+        eventService.subscribe(lootCrateUseHandler);
+
+        // Player ranks
         PlayerRankChangeHandler playerRankChangeHandler = injector.getInstance(PlayerRankChangeHandler.class);
         eventService.subscribe(playerRankChangeHandler);
 
         PlayerRankChangedHandler playerRankChangedHandler = injector.getInstance(PlayerRankChangedHandler.class);
         eventService.subscribe(playerRankChangedHandler);
 
+        // Player inspect
         PlayerInspectionHandler playerInspectionHandler = injector.getInstance(PlayerInspectionHandler.class);
         eventService.subscribe(playerInspectionHandler);
 
+        // Game / Objectives
         ObjectiveAnnouncementHandler objectiveAnnouncementHandler =
                 injector.getInstance(ObjectiveAnnouncementHandler.class);
         eventService.subscribe(objectiveAnnouncementHandler);
 
+        GameObjectivesAndPointsHandler gameObjectivesAndPointsHandler =
+                injector.getInstance(GameObjectivesAndPointsHandler.class);
+        eventService.subscribe(gameObjectivesAndPointsHandler);
+
+        GameTimerHandler gameTimerHandler = injector.getInstance(GameTimerHandler.class);
+        taskService.runTask(gameTimerHandler, timeUtils.createDurationInTicks(5), timeUtils.createDurationInSeconds(1));
+
+        SpigotScoreboardHandler spigotScoreboardHandler = injector.getInstance(SpigotScoreboardHandler.class);
+        taskService.runTask(spigotScoreboardHandler, timeUtils.createDurationInTicks(9), timeUtils.createDurationInSeconds(1));
+
+        // Metrics
         PlayerCountMetricHandler playerCountMetricHandler = injector.getInstance(PlayerCountMetricHandler.class);
         eventService.subscribe(playerCountMetricHandler);
         taskService.runTask(playerCountMetricHandler, timeUtils.oneTick(), timeUtils.createDurationInSeconds(300));
@@ -125,6 +164,7 @@ public class LegendsPlugin extends JavaPlugin {
         TotalPointsMetricHandler totalPointsMetricHandler = injector.getInstance(TotalPointsMetricHandler.class);
         eventService.subscribe(totalPointsMetricHandler);
 
+        // Combat logging
         CombatLoggingHandler combatLoggingHandler = injector.getInstance(CombatLoggingHandler.class);
         eventService.subscribe(combatLoggingHandler);
     }
@@ -179,6 +219,21 @@ public class LegendsPlugin extends JavaPlugin {
         abilityCommandService.registerRangedAbility("Mass Bamboozle", MassBamboozle.class, MassBamboozleFactory.class);
     }
 
+    private void initializeGame() {
+        GameCommandService gameCommandService = injector.getInstance(GameCommandService.class);
+        GameQueryService gameQueryService = injector.getInstance(GameQueryService.class);
+        Game activeGame = gameQueryService.getActiveGame();
+        if (activeGame == null) {
+            Game currentWar = gameQueryService.getCurrentWar();
+            if (currentWar == null) {
+                gameCommandService.startWar();
+            } else {
+                throw new IllegalStateException("There is a current war, but no active game. This shouldn't happen.");
+            }
+        }
+        gameCommandService.initializeActiveGame();
+    }
+
     @Override
     public void onLoad() {
         Monolith.registerModule(new SpigotLegendsModule(this));
@@ -197,6 +252,7 @@ public class LegendsPlugin extends JavaPlugin {
         initializeLegendsHandlers();
         initializeLegendsCommands();
         initializeOLDHACK();
+        initializeGame();
         injector.getInstance(LegendsCombatConfiguration.class);
     }
 }

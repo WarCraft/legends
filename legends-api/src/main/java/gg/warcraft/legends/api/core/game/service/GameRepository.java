@@ -10,9 +10,13 @@ public interface GameRepository {
 
     Game getCurrentWar();
 
+    int getCapturePoints(String objectiveType);
+
     void save(Game game);
 
     void saveActiveGame(int gameId);
 
     void saveCurrentWar(int gameId);
+
+    void saveCapturePoints(String objectiveType, int points);
 }

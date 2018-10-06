@@ -1,56 +1,249 @@
 package gg.warcraft.legends.app.core.game.service;
 
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.config.ServerConfiguration;
 import gg.warcraft.legends.api.core.game.Game;
+import gg.warcraft.legends.api.core.game.GameType;
 import gg.warcraft.legends.api.core.game.Skirmish;
 import gg.warcraft.legends.api.core.game.War;
+import gg.warcraft.legends.api.core.game.event.WarTallyEvent;
 import gg.warcraft.legends.api.core.game.service.GameCommandService;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.app.core.game.SimpleSkirmish;
 import gg.warcraft.legends.app.core.game.SimpleWar;
+import gg.warcraft.legends.app.core.game.event.SimpleWarTallyEvent;
+import gg.warcraft.monolith.api.core.EventService;
+import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.siege.api.objective.service.ObjectiveCommandService;
+import gg.warcraft.siege.api.objective.service.ObjectiveQueryService;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class DefaultGameCommandService implements GameCommandService {
+    private static final int TALLY_TIMER_IN_SECONDS = 900;
+
     private final GameRepository gameRepository;
+    private final ObjectiveQueryService objectiveQueryService;
     private final ObjectiveCommandService objectiveCommandService;
+    private final EventService eventService;
     private final TimeUtils timeUtils;
 
     @Inject
     public DefaultGameCommandService(GameRepository gameRepository,
+                                     ObjectiveQueryService objectiveQueryService,
                                      ObjectiveCommandService objectiveCommandService,
-                                     TimeUtils timeUtils) {
+                                     EventService eventService, TimeUtils timeUtils) {
         this.gameRepository = gameRepository;
+        this.objectiveQueryService = objectiveQueryService;
         this.objectiveCommandService = objectiveCommandService;
+        this.eventService = eventService;
         this.timeUtils = timeUtils;
     }
 
     @Override
-    public void initializeCurrentWar() {
-        Game currentWar = gameRepository.getCurrentWar();
-        if (currentWar == null) {
-            throw new IllegalStateException("Failed to load current war, no current war seems to be present.");
-        }
-
-        currentWar.getObjectives().forEach((objectiveId, occupiers) -> {
-            if (occupiers != null) {
-                objectiveCommandService.setOccupiers(objectiveId, occupiers);
-            }
-        });
+    public void readConfiguration(ServerConfiguration configuration) {
+        configuration.getObjectivePoints().forEach(gameRepository::saveCapturePoints);
     }
 
-    int getNextGameId() {
+    private int getNextGameId() {
         Game currentWar = gameRepository.getCurrentWar();
+        if (currentWar == null) {
+            return 1;
+        }
+
         int newGameId = currentWar.getId() + 1;
         while (gameRepository.getGame(newGameId) != null) {
             newGameId += 1;
         }
         return newGameId;
+    }
+
+    @Override
+    public void initializeActiveGame() {
+        Game activeGame = gameRepository.getActiveGame();
+        if (activeGame == null) {
+            throw new IllegalStateException("Failed to initialize active game, none seems to be active.");
+        }
+
+        activeGame.getObjectives().forEach(objectiveCommandService::setOccupiers);
+    }
+
+    @Override
+    public void tickActiveGame() {
+        Game activeGame = gameRepository.getActiveGame();
+        if (activeGame == null) {
+            return;
+        }
+
+        Duration timer = activeGame.getTimer();
+        int secondsRemaining = timer.inSeconds();
+        if (secondsRemaining <= 1) {
+            GameType gameType = activeGame.getType();
+            switch (gameType) {
+                case WAR:
+                    runTally();
+
+                    War updatedWar = (War) gameRepository.getActiveGame();
+                    SortedMap<String, Map<Team, Integer>> dailyPoints = updatedWar.getDailyPoints();
+                    String lastScoreDate = dailyPoints.isEmpty()
+                            ? updatedWar.getStartTime()
+                            : updatedWar.getDailyPoints().lastKey();
+                    int lastScoreDay = LocalDateTime.parse(lastScoreDate).getDayOfMonth();
+                    int currentDay = LocalDateTime.now().getDayOfMonth();
+                    if (lastScoreDay != currentDay) {
+                        runScore();
+
+                        if (currentDay == 1) {
+                            endWar();
+                            startWar();
+                        } else {
+                            War mostUpToDateWar = (War) gameRepository.getActiveGame();
+                            Duration newTimer = timeUtils.createDurationInSeconds(TALLY_TIMER_IN_SECONDS);
+                            War newMostUpToDateWar = mostUpToDateWar.getCopyer()
+                                    .withTimer(newTimer)
+                                    .copy();
+                            gameRepository.save(newMostUpToDateWar);
+                        }
+                    } else {
+                        War mostUpToDateWar = (War) gameRepository.getActiveGame();
+                        Duration newTimer = timeUtils.createDurationInSeconds(TALLY_TIMER_IN_SECONDS);
+                        War newMostUpToDateWar = mostUpToDateWar.getCopyer()
+                                .withTimer(newTimer)
+                                .copy();
+                        gameRepository.save(newMostUpToDateWar);
+                    }
+                    break;
+                case SKIRMISH:
+                    endSkirmish();
+
+                    Game currentWar = gameRepository.getCurrentWar();
+                    gameRepository.saveActiveGame(currentWar.getId());
+
+                    initializeActiveGame();
+                    break;
+                default:
+                    throw new IllegalStateException("Failed to tick game with illegal type " + gameType);
+            }
+        } else {
+            Duration newTimer = timeUtils.createDurationInSeconds(secondsRemaining - 1);
+            Game updatedGame = activeGame.getCopyer()
+                    .withTimer(newTimer)
+                    .copy();
+            gameRepository.save(updatedGame);
+        }
+    }
+
+    @Override
+    public void startWar() {
+        int newWarId = getNextGameId();
+        Duration timer = timeUtils.createDurationInSeconds(TALLY_TIMER_IN_SECONDS);
+        String startTime = LocalDateTime.now().toString();
+        War newWar = new SimpleWar(newWarId, new HashMap<>(), new HashMap<>(), new TreeMap<>(), new HashMap<>(), timer,
+                startTime, null);
+        gameRepository.save(newWar);
+        gameRepository.saveActiveGame(newWarId);
+        gameRepository.saveCurrentWar(newWarId);
+    }
+
+    @Override
+    public void runTally() {
+        War war = (War) gameRepository.getCurrentWar();
+        Map<String, Team> newObjectives = war.getObjectives();
+        Map<Team, Integer> newPoints = war.getPoints();
+        objectiveQueryService.getObjectives().forEach(objective -> {
+            Team occupiers = objective.getOccupiers();
+            if (occupiers != null) {
+                newObjectives.put(objective.getId(), occupiers);
+
+                int currentPoints = newPoints.get(occupiers);
+                String objectiveType = objective.getType();
+                int objectiveTypePoints = gameRepository.getCapturePoints(objectiveType);
+                newPoints.put(occupiers, currentPoints + objectiveTypePoints);
+            }
+        });
+
+        Game newWar = war.getCopyer()
+                .withObjectives(newObjectives)
+                .withPoints(newPoints)
+                .copy();
+        gameRepository.save(newWar);
+
+        // TODO should this event expose the points that were just gained, or current war total points
+        WarTallyEvent tallyEvent = new SimpleWarTallyEvent(war.getId(), newPoints);
+        eventService.publish(tallyEvent);
+    }
+
+    @Override
+    public void runScore() {
+        War war = (War) gameRepository.getCurrentWar();
+        Map<Team, Integer> points = war.getPoints();
+
+        // calculate daily winner
+        int mostPoints = 0;
+        Set<Team> winners = new HashSet<>();
+        for (Map.Entry<Team, Integer> contestant : points.entrySet()) {
+            int contestantPoints = contestant.getValue();
+            if (contestantPoints > mostPoints) {
+                mostPoints = contestantPoints;
+                winners.clear();
+                winners.add(contestant.getKey());
+            } else if (contestantPoints == mostPoints) {
+                winners.add(contestant.getKey());
+            }
+        }
+
+        if (winners.isEmpty()) {
+            throw new IllegalStateException("Failed to run score with no winners. This should never happen.");
+        } else if (winners.size() != 1) {
+            // TODO what to do with multiple winners
+            System.out.println("GameCommmandService::runScore encountered multiple winners: " + winners);
+            return;
+        }
+
+        Team winner = winners.iterator().next();
+        SortedMap<String, Map<Team, Integer>> newDailyPoints = war.getDailyPoints();
+        String scoreTime = LocalDateTime.now().toString();
+        newDailyPoints.put(scoreTime, points);
+
+        Map<Team, Integer> newScore = war.getWarScore();
+        int currentScore = newScore.getOrDefault(winner, 0);
+        newScore.put(winner, currentScore + 1);
+
+        Map<String, Team> newObjectives = new HashMap<>();
+        objectiveQueryService.getObjectives().forEach(objective -> {
+            newObjectives.put(objective.getId(), null);
+            objectiveCommandService.setOccupiers(objective.getId(), null);
+        });
+        Map<Team, Integer> newPoints = new HashMap<>();
+        Arrays.stream(LegendsTeam.values()).forEach(team -> newPoints.put(team, 0));
+
+        War updatedWar = war.getCopyer()
+                .withWarScore(newScore)
+                .withDailyPoints(newDailyPoints)
+                .withObjectives(newObjectives)
+                .withPoints(newPoints)
+                .copy();
+        gameRepository.save(updatedWar);
+    }
+
+    @Override
+    public void endWar() {
+        War war = (War) gameRepository.getActiveGame();
+        String endTime = LocalDateTime.now().toString();
+        War updatedWar = war.getCopyer()
+                .withEndTime(endTime)
+                .copy();
+        gameRepository.save(updatedWar);
     }
 
     @Override
@@ -65,14 +258,12 @@ public class DefaultGameCommandService implements GameCommandService {
     }
 
     @Override
-    public void startNewWar() {
-        int newWarId = getNextGameId();
-        Duration timer = timeUtils.createDurationInSeconds(900);
-        String startTime = LocalDateTime.now().toString();
-        War newWar = new SimpleWar(newWarId, new HashMap<>(), new HashMap<>(), new TreeMap<>(), new HashMap<>(),
-                timer, startTime, null);
-        gameRepository.save(newWar);
-        gameRepository.saveActiveGame(newWarId);
-        gameRepository.saveCurrentWar(newWarId);
+    public void endSkirmish() {
+        Skirmish skirmish = (Skirmish) gameRepository.getActiveGame();
+        String endTime = LocalDateTime.now().toString();
+        Game updatedSkirmish = skirmish.getCopyer()
+                .withEndTime(endTime)
+                .copy();
+        gameRepository.save(updatedSkirmish);
     }
 }

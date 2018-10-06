@@ -4,6 +4,10 @@ import com.google.inject.PrivateModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Names;
 import gg.warcraft.legends.api.combat.passive.PassiveFactory;
+import gg.warcraft.legends.api.core.MetricsService;
+import gg.warcraft.legends.api.core.game.service.GameCommandService;
+import gg.warcraft.legends.api.core.game.service.GameQueryService;
+import gg.warcraft.legends.api.core.game.service.GameRepository;
 import gg.warcraft.legends.api.entity.LegendsEntityFactory;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.rank.service.RankCommandService;
@@ -13,6 +17,11 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.item.EquipmentBuilder;
 import gg.warcraft.legends.api.item.EquipmentBuilderFactory;
+import gg.warcraft.legends.api.item.crate.LootCrateBuilder;
+import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
+import gg.warcraft.legends.api.item.crate.service.LootCrateCommandService;
+import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
+import gg.warcraft.legends.api.menu.AdminMenuFactory;
 import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
 import gg.warcraft.legends.api.menu.DecorationPackMenuFactory;
@@ -54,6 +63,10 @@ import gg.warcraft.legends.app.combat.warrior.effect.WarriorEffectFactory;
 import gg.warcraft.legends.app.combat.warrior.status.GrudgeStatusEffect;
 import gg.warcraft.legends.app.combat.warrior.status.StandYourGroundStatusEffect;
 import gg.warcraft.legends.app.combat.warrior.status.WarriorStatusEffectFactory;
+import gg.warcraft.legends.app.core.AwsMetricsService;
+import gg.warcraft.legends.app.core.game.service.DefaultGameCommandService;
+import gg.warcraft.legends.app.core.game.service.DefaultGameQueryService;
+import gg.warcraft.legends.app.core.game.service.DefaultGameRepository;
 import gg.warcraft.legends.app.entity.player.SimpleLegendsPlayer;
 import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankCommandService;
 import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankQueryService;
@@ -61,6 +74,10 @@ import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankRepository;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerCommandService;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerQueryService;
 import gg.warcraft.legends.app.item.SimpleEquipmentBuilder;
+import gg.warcraft.legends.app.item.crate.SimpleLootCrateBuilder;
+import gg.warcraft.legends.app.item.crate.service.DefaultLootCrateCommandService;
+import gg.warcraft.legends.app.item.crate.service.DefaultLootCrateRepository;
+import gg.warcraft.legends.app.menu.DefaultAdminMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultCollectablesMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDailyLoginMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDecorationPackMenuFactory;
@@ -86,6 +103,7 @@ public abstract class AbstractLegendsModule extends PrivateModule {
     @Override
     protected void configure() {
         configureCombat();
+        configureCore();
         configureEntity();
         configureItem();
         configureMenu();
@@ -139,6 +157,21 @@ public abstract class AbstractLegendsModule extends PrivateModule {
         expose(WarriorStatusEffectFactory.class);
     }
 
+    private void configureCore() {
+        bind(MetricsService.class).to(AwsMetricsService.class);
+        expose(MetricsService.class);
+
+        // Game bindings
+        bind(GameCommandService.class).to(DefaultGameCommandService.class);
+        expose(GameCommandService.class);
+
+        bind(GameQueryService.class).to(DefaultGameQueryService.class);
+        expose(GameQueryService.class);
+
+        bind(GameRepository.class).to(DefaultGameRepository.class);
+        expose(GameRepository.class);
+    }
+
     private void configureEntity() {
         // Entity bindings
         install(new FactoryModuleBuilder()
@@ -165,6 +198,19 @@ public abstract class AbstractLegendsModule extends PrivateModule {
     }
 
     private void configureItem() {
+        // Loot crate bindings
+        bind(LootCrateCommandService.class).to(DefaultLootCrateCommandService.class);
+        expose(LootCrateCommandService.class);
+
+        bind(LootCrateRepository.class).to(DefaultLootCrateRepository.class);
+        expose(LootCrateRepository.class);
+
+        install(new FactoryModuleBuilder()
+                .implement(LootCrateBuilder.class, SimpleLootCrateBuilder.class)
+                .build(LootCrateBuilderFactory.class));
+        expose(LootCrateBuilderFactory.class);
+
+        // Other item factories
         install(new FactoryModuleBuilder()
                 .implement(EquipmentBuilder.class, SimpleEquipmentBuilder.class)
                 .build(EquipmentBuilderFactory.class));
@@ -188,8 +234,10 @@ public abstract class AbstractLegendsModule extends PrivateModule {
         bind(MiniPetsMenuFactory.class).to(DefaultMiniPetsMenuFactory.class);
         bind(PromotionsMenuFactory.class).to(DefaultPromotionsMenuFactory.class);
         bind(ShopMenuFactory.class).to(DefaultShopMenuFactory.class);
+        bind(AdminMenuFactory.class).to(DefaultAdminMenuFactory.class);
 
         expose(LegendsMenuFactory.class);
+        expose(AdminMenuFactory.class);
     }
 
     private void configureShop() {

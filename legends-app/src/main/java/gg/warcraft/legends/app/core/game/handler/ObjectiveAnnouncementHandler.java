@@ -80,7 +80,7 @@ public class ObjectiveAnnouncementHandler {
         Objective objective = event.getObjective();
         Team occupiers = objective.getOccupiers();
         String notification = "The " + occupiers.getName() + " have captured " + objective.getName() + "!";
-        String announcement = occupiers.getColor() + notification;
+        String announcement = occupiers.getChatColor() + notification;
         legendsPlayerQueryService.getOnlinePlayers().forEach(player -> {
             UUID playerId = player.getId();
             legendsPlayerCommandService.sendTitle(playerId, "", announcement);

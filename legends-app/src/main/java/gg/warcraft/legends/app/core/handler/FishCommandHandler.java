@@ -3,6 +3,7 @@ package gg.warcraft.legends.app.core.handler;
 import com.google.inject.Inject;
 import gg.warcraft.combat.api.specialization.service.SpecializationCommandService;
 import gg.warcraft.legends.api.entity.player.LegendsCurrency;
+import gg.warcraft.legends.api.menu.AdminMenuFactory;
 import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
@@ -10,6 +11,8 @@ import gg.warcraft.monolith.api.core.AuthorizationService;
 import gg.warcraft.monolith.api.entity.player.Currency;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
+import gg.warcraft.monolith.api.menu.Menu;
+import gg.warcraft.monolith.api.menu.service.MenuCommandService;
 import gg.warcraft.monolith.api.world.block.backup.BlockBackup;
 import gg.warcraft.monolith.api.world.block.backup.service.BlockBackupCommandService;
 import gg.warcraft.monolith.api.world.block.backup.service.BlockBackupQueryService;
@@ -24,19 +27,31 @@ public class FishCommandHandler implements CommandHandler {
     private final SpecializationCommandService specializationCommandService;
     private final BlockBackupQueryService blockBackupQueryService;
     private final BlockBackupCommandService blockBackupCommandService;
+    private final MenuCommandService menuCommandService;
+    private final AdminMenuFactory adminMenuFactory;
 
     @Inject
     public FishCommandHandler(AuthorizationService authorizationService, PlayerCommandService playerCommandService,
                               TeamCommandService teamCommandService,
                               SpecializationCommandService specializationCommandService,
                               BlockBackupQueryService blockBackupQueryService,
-                              BlockBackupCommandService blockBackupCommandService) {
+                              BlockBackupCommandService blockBackupCommandService,
+                              MenuCommandService menuCommandService,
+                              AdminMenuFactory adminMenuFactory) {
         this.authorizationService = authorizationService;
         this.playerCommandService = playerCommandService;
         this.teamCommandService = teamCommandService;
         this.specializationCommandService = specializationCommandService;
         this.blockBackupQueryService = blockBackupQueryService;
         this.blockBackupCommandService = blockBackupCommandService;
+        this.menuCommandService = menuCommandService;
+        this.adminMenuFactory = adminMenuFactory;
+    }
+
+    boolean onMenuCommand(UUID playerId) {
+        Menu adminMenu = adminMenuFactory.createFishMenu(playerId);
+        menuCommandService.showMenu(adminMenu, playerId);
+        return true;
     }
 
     boolean onRestoreAllCommand() {
@@ -86,6 +101,8 @@ public class FishCommandHandler implements CommandHandler {
 
         List<String> subArguments = arguments.subList(1, arguments.size());
         switch (arguments.get(0)) {
+            case "menu":
+                return onMenuCommand(sender.getPlayerId());
             case "restoreall":
                 return onRestoreAllCommand();
             case "gold":

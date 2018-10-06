@@ -1,15 +1,16 @@
 package gg.warcraft.legends.app.core.game;
 
-import gg.warcraft.legends.api.core.game.Game;
-import gg.warcraft.legends.api.core.game.GameCopyer;
 import gg.warcraft.legends.api.core.game.War;
+import gg.warcraft.legends.api.core.game.WarCopyer;
 import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.Duration;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
-public class SimpleWarCopyer implements GameCopyer {
+public class SimpleWarCopyer implements WarCopyer {
     private final War war;
 
     private Map<Team, Integer> points;
@@ -30,31 +31,43 @@ public class SimpleWarCopyer implements GameCopyer {
     }
 
     @Override
-    public GameCopyer withPoints(Map<Team, Integer> points) {
+    public WarCopyer withWarScore(Map<Team, Integer> score) {
+        this.warScore = new HashMap<>(score);
+        return this;
+    }
+
+    @Override
+    public WarCopyer withDailyPoints(SortedMap<String, Map<Team, Integer>> dailyPoints) {
+        this.dailyPoints = new TreeMap<>(dailyPoints);
+        return this;
+    }
+
+    @Override
+    public WarCopyer withPoints(Map<Team, Integer> points) {
         this.points = points;
         return this;
     }
 
     @Override
-    public GameCopyer withObjectives(Map<String, Team> objectives) {
+    public WarCopyer withObjectives(Map<String, Team> objectives) {
         this.objectives = objectives;
         return this;
     }
 
     @Override
-    public GameCopyer withTimer(Duration timer) {
+    public WarCopyer withTimer(Duration timer) {
         this.timer = timer;
         return this;
     }
 
     @Override
-    public GameCopyer withEndTime(String endTime) {
+    public WarCopyer withEndTime(String endTime) {
         this.endTime = endTime;
         return this;
     }
 
     @Override
-    public Game copy() {
+    public War copy() {
         return new SimpleWar(war.getId(), points, warScore, dailyPoints, objectives, timer, war.getStartTime(), endTime);
     }
 }
