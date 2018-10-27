@@ -9,5 +9,5 @@ public interface LootCrateCommandService {
 
     void readConfiguration(ServerConfiguration configuration);
 
-    void openCrate(UUID playerId, LootCrateType type);
+    boolean openCrate(UUID playerId, LootCrateType type);
 }

@@ -118,16 +118,23 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
     }
 
     @Override
-    public void openCrate(UUID playerId, LootCrateType type) {
+    public boolean openCrate(UUID playerId, LootCrateType type) {
         LootCrate crate = lootCrateRepository.get(type);
         if (crate == null) {
             pluginLogger.warning("Failed to open crate with type " + type + " for player "
                     + playerId + ", it doesn't exist");
-            return;
+            return false;
         }
 
         int dropTypeRoll = random.nextInt(100);
-        LootCrateDropTable dropTable = crate.viewDropTable().floorEntry(dropTypeRoll).getValue();
+        LootCrateDropTable dropTable;
+        try {
+            dropTable = crate.viewDropTable().floorEntry(dropTypeRoll).getValue();
+        } catch (Exception ex) {
+            // FIXME find out whats wrong and remove this try/catch
+            System.out.println("DEBUG failed to get drop table for type roll: " + dropTypeRoll);
+            return false;
+        }
         LootCrateDropType dropType = dropTable.getType();
 
         int dropRarityRoll = random.nextInt(100);
@@ -153,5 +160,6 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
                 awardRandomMiniPet(playerId, dropRarity);
                 break;
         }
+        return true;
     }
 }

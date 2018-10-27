@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import gg.warcraft.legends.api.config.RankPrefixConfiguration;
 import gg.warcraft.legends.api.config.ServerConfiguration;
+import gg.warcraft.legends.api.item.config.AttributeRollConfiguration;
+import gg.warcraft.legends.api.item.config.EquipmentConfiguration;
+import gg.warcraft.legends.api.item.config.EquipmentLoreConfiguration;
 import gg.warcraft.legends.api.item.crate.config.LootCrateConfiguration;
 import gg.warcraft.legends.api.item.crate.config.LootCrateDropTableConfiguration;
 import gg.warcraft.legends.api.shop.config.DecorationConfiguration;
@@ -13,6 +16,9 @@ import gg.warcraft.legends.api.shop.config.MiniPetConfiguration;
 import gg.warcraft.legends.api.shop.config.PromotionConfiguration;
 import gg.warcraft.legends.api.shop.config.ShopConfiguration;
 import gg.warcraft.legends.api.shop.config.ShopItemConfiguration;
+import gg.warcraft.legends.app.item.config.JacksonAttributeRollConfiguration;
+import gg.warcraft.legends.app.item.config.JacksonEquipmentConfiguration;
+import gg.warcraft.legends.app.item.config.JacksonEquipmentLoreConfiguration;
 import gg.warcraft.legends.app.item.crate.config.JacksonLootCrateConfiguration;
 import gg.warcraft.legends.app.item.crate.config.JacksonLootCrateDropTableConfiguration;
 import gg.warcraft.legends.app.shop.config.JacksonDecorationConfiguration;
@@ -39,6 +45,11 @@ public class LegendsMapperModule extends SimpleModule {
         resolver.addMapping(DecorationPackConfiguration.class, JacksonDecorationPackConfiguration.class);
         resolver.addMapping(MiniPetConfiguration.class, JacksonMiniPetConfiguration.class);
         resolver.addMapping(PromotionConfiguration.class, JacksonPromotionConfiguration.class);
+
+        // Equipment configuration
+        resolver.addMapping(AttributeRollConfiguration.class, JacksonAttributeRollConfiguration.class);
+        resolver.addMapping(EquipmentLoreConfiguration.class, JacksonEquipmentLoreConfiguration.class);
+        resolver.addMapping(EquipmentConfiguration.class, JacksonEquipmentConfiguration.class);
 
         // Loot crate configuration
         resolver.addMapping(LootCrateConfiguration.class, JacksonLootCrateConfiguration.class);

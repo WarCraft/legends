@@ -1,11 +1,11 @@
-package gg.warcraft.legends.app.item;
+package gg.warcraft.legends.app.item.equipment;
 
 import com.google.common.base.CharMatcher;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
-import gg.warcraft.legends.api.item.EquipmentBuilder;
 import gg.warcraft.legends.api.item.ItemRarity;
+import gg.warcraft.legends.api.item.equipment.EquipmentBuilder;
 import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemBuilder;
 import gg.warcraft.monolith.api.item.ItemBuilderFactory;

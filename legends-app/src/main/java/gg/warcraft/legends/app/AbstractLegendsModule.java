@@ -15,12 +15,16 @@ import gg.warcraft.legends.api.entity.player.rank.service.RankQueryService;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.legends.api.item.EquipmentBuilder;
-import gg.warcraft.legends.api.item.EquipmentBuilderFactory;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilder;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
+import gg.warcraft.legends.api.item.crate.LootCrateReader;
+import gg.warcraft.legends.api.item.crate.LootCrateReaderFactory;
 import gg.warcraft.legends.api.item.crate.service.LootCrateCommandService;
 import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
+import gg.warcraft.legends.api.item.equipment.EquipmentBuilder;
+import gg.warcraft.legends.api.item.equipment.EquipmentBuilderFactory;
+import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
+import gg.warcraft.legends.api.item.equipment.EquipmentGeneratorFactory;
 import gg.warcraft.legends.api.menu.AdminMenuFactory;
 import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
@@ -73,10 +77,12 @@ import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankQueryServic
 import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankRepository;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerCommandService;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerQueryService;
-import gg.warcraft.legends.app.item.SimpleEquipmentBuilder;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateBuilder;
+import gg.warcraft.legends.app.item.crate.SimpleLootCrateReader;
 import gg.warcraft.legends.app.item.crate.service.DefaultLootCrateCommandService;
 import gg.warcraft.legends.app.item.crate.service.DefaultLootCrateRepository;
+import gg.warcraft.legends.app.item.equipment.SimpleEquipmentBuilder;
+import gg.warcraft.legends.app.item.equipment.SimpleEquipmentGenerator;
 import gg.warcraft.legends.app.menu.DefaultAdminMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultCollectablesMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDailyLoginMenuFactory;
@@ -198,6 +204,22 @@ public abstract class AbstractLegendsModule extends PrivateModule {
     }
 
     private void configureItem() {
+        // Equipment bindings
+        install(new FactoryModuleBuilder()
+                .implement(EquipmentBuilder.class, SimpleEquipmentBuilder.class)
+                .build(EquipmentBuilderFactory.class));
+        expose(EquipmentBuilderFactory.class);
+
+        install(new FactoryModuleBuilder()
+                .implement(EquipmentGenerator.class, SimpleEquipmentGenerator.class)
+                .build(EquipmentGeneratorFactory.class));
+        expose(EquipmentGeneratorFactory.class);
+
+//        install(new FactoryModuleBuilder()
+//                .implement(GemBuilder.class, SimpleGemBuilder.class)
+//                .build(GemBuilderFactory.class));
+//        expose(GemBuilderFactory.class);
+
         // Loot crate bindings
         bind(LootCrateCommandService.class).to(DefaultLootCrateCommandService.class);
         expose(LootCrateCommandService.class);
@@ -210,16 +232,10 @@ public abstract class AbstractLegendsModule extends PrivateModule {
                 .build(LootCrateBuilderFactory.class));
         expose(LootCrateBuilderFactory.class);
 
-        // Other item factories
         install(new FactoryModuleBuilder()
-                .implement(EquipmentBuilder.class, SimpleEquipmentBuilder.class)
-                .build(EquipmentBuilderFactory.class));
-        expose(EquipmentBuilderFactory.class);
-
-//        install(new FactoryModuleBuilder()
-//                .implement(GemBuilder.class, SimpleGemBuilder.class)
-//                .build(GemBuilderFactory.class));
-//        expose(GemBuilderFactory.class);
+                .implement(LootCrateReader.class, SimpleLootCrateReader.class)
+                .build(LootCrateReaderFactory.class));
+        expose(LootCrateReaderFactory.class);
     }
 
     private void configureMenu() {
