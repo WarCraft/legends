@@ -8,6 +8,8 @@ import gg.warcraft.legends.api.combat.LegendsSpecializationType;
 import gg.warcraft.legends.api.config.ServerConfiguration;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.legends.api.item.ConsumableBuilder;
+import gg.warcraft.legends.api.item.ConsumableBuilderFactory;
 import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.item.crate.LootCrate;
 import gg.warcraft.legends.api.item.crate.LootCrateDropTable;
@@ -24,6 +26,8 @@ import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.util.ColorCode;
+import gg.warcraft.monolith.api.util.StringUtils;
 
 import java.util.Map;
 import java.util.Random;
@@ -39,6 +43,8 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
     private final PlayerCommandService playerCommandService;
     private final LegendsPlayerQueryService playerQueryService;
     private final EquipmentGeneratorFactory equipmentGeneratorFactory;
+    private final ConsumableBuilderFactory consumableBuilderFactory;
+    private final StringUtils stringUtils;
     private final Logger pluginLogger;
     private final Random random;
 
@@ -47,11 +53,14 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
                                           PlayerCommandService playerCommandService,
                                           LegendsPlayerQueryService playerQueryService,
                                           EquipmentGeneratorFactory equipmentGeneratorFactory,
-                                          @PluginLogger Logger pluginLogger) {
+                                          ConsumableBuilderFactory consumableBuilderFactory,
+                                          StringUtils stringUtils, @PluginLogger Logger pluginLogger) {
         this.lootCrateRepository = lootCrateRepository;
         this.playerCommandService = playerCommandService;
         this.playerQueryService = playerQueryService;
         this.equipmentGeneratorFactory = equipmentGeneratorFactory;
+        this.consumableBuilderFactory = consumableBuilderFactory;
+        this.stringUtils = stringUtils;
         this.pluginLogger = pluginLogger;
         this.random = new Random(System.currentTimeMillis());
     }
@@ -108,8 +117,40 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         });
     }
 
+    private void sendReceivedNotification(UUID playerId, String itemName) {
+        // TODO move stripColorCodes to StringUtils and strip itemName
+        String prefix = stringUtils.isVowel(itemName.charAt(0)) ? "an " : "a ";
+        playerCommandService.sendNotification(playerId, "You received " + prefix + itemName + ColorCode.YELLOW + "!");
+    }
+
     private void awardRandomConsumable(UUID playerId, ItemRarity rarity) {
-        playerCommandService.sendMessage(playerId, "You got an imaginary " + rarity + " consumable!");
+        ItemType type;
+        String name;
+        switch (rarity) {
+            case RARE:
+                type = ItemType.GOLD_CARROT;
+                name = "Golden Carrot";
+                break;
+            case EPIC:
+                type = ItemType.GOLD_APPLE;
+                name = "Golden Apple";
+                break;
+            case LEGENDARY:
+            case ANCIENT:
+                type = ItemType.ENCHANTED_GOLD_APPLE;
+                name = "Enchanted Golden Apple";
+                break;
+            case COMMON:
+            default:
+                type = ItemType.CARROT;
+                name = "Carrot";
+                break;
+        }
+
+        ConsumableBuilder builder = consumableBuilderFactory.createConsumableBuilder(type, name, rarity);
+        Item consumable = builder.build();
+        playerCommandService.giveItem(playerId, consumable, false);
+        sendReceivedNotification(playerId, consumable.getName());
     }
 
     private void awardRandomEquipment(UUID playerId, ItemRarity rarity) {
@@ -135,7 +176,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
 
         Item equipment = equipmentGenerator.generate(specializationType, rarity, player.getTeam());
         playerCommandService.giveItem(playerId, equipment, false);
-        playerCommandService.sendMessage(playerId, "You gained a " + equipment.getName());
+        sendReceivedNotification(playerId, equipment.getName());
     }
 
     private void awardRandomEquipmentUpgrade(UUID playerId, ItemRarity rarity) {

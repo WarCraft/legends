@@ -15,6 +15,8 @@ import gg.warcraft.legends.api.entity.player.rank.service.RankQueryService;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.legends.api.item.ConsumableBuilder;
+import gg.warcraft.legends.api.item.ConsumableBuilderFactory;
 import gg.warcraft.legends.api.item.config.service.EquipmentConfigurationRepository;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilder;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
@@ -78,6 +80,7 @@ import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankQueryServic
 import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankRepository;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerCommandService;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerQueryService;
+import gg.warcraft.legends.app.item.SimpleConsumableBuilder;
 import gg.warcraft.legends.app.item.config.service.DefaultEquipmentConfigurationRepository;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateBuilder;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateReader;
@@ -224,6 +227,12 @@ public abstract class AbstractLegendsModule extends PrivateModule {
 //                .implement(GemBuilder.class, SimpleGemBuilder.class)
 //                .build(GemBuilderFactory.class));
 //        expose(GemBuilderFactory.class);
+
+        // Consumable bindings
+        install(new FactoryModuleBuilder()
+                .implement(ConsumableBuilder.class, SimpleConsumableBuilder.class)
+                .build(ConsumableBuilderFactory.class));
+        expose(ConsumableBuilderFactory.class);
 
         // Loot crate bindings
         bind(LootCrateCommandService.class).to(DefaultLootCrateCommandService.class);
