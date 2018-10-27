@@ -2,7 +2,12 @@ package gg.warcraft.legends.app.item.crate.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import gg.warcraft.combat.api.specialization.Specialization;
+import gg.warcraft.legends.api.combat.LegendsSpecialization;
+import gg.warcraft.legends.api.combat.LegendsSpecializationType;
 import gg.warcraft.legends.api.config.ServerConfiguration;
+import gg.warcraft.legends.api.entity.player.LegendsPlayer;
+import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.item.crate.LootCrate;
 import gg.warcraft.legends.api.item.crate.LootCrateDropTable;
@@ -11,10 +16,13 @@ import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.legends.api.item.crate.config.LootCrateDropTableConfiguration;
 import gg.warcraft.legends.api.item.crate.service.LootCrateCommandService;
 import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
+import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
+import gg.warcraft.legends.api.item.equipment.EquipmentGeneratorFactory;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrate;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateDropTable;
 import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
+import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemType;
 
 import java.util.Map;
@@ -27,17 +35,23 @@ import java.util.logging.Logger;
 
 @Singleton
 public class DefaultLootCrateCommandService implements LootCrateCommandService {
-    private final PlayerCommandService playerCommandService;
     private final LootCrateRepository lootCrateRepository;
+    private final PlayerCommandService playerCommandService;
+    private final LegendsPlayerQueryService playerQueryService;
+    private final EquipmentGeneratorFactory equipmentGeneratorFactory;
     private final Logger pluginLogger;
     private final Random random;
 
     @Inject
-    public DefaultLootCrateCommandService(PlayerCommandService playerCommandService,
-                                          LootCrateRepository lootCrateRepository,
+    public DefaultLootCrateCommandService(LootCrateRepository lootCrateRepository,
+                                          PlayerCommandService playerCommandService,
+                                          LegendsPlayerQueryService playerQueryService,
+                                          EquipmentGeneratorFactory equipmentGeneratorFactory,
                                           @PluginLogger Logger pluginLogger) {
-        this.playerCommandService = playerCommandService;
         this.lootCrateRepository = lootCrateRepository;
+        this.playerCommandService = playerCommandService;
+        this.playerQueryService = playerQueryService;
+        this.equipmentGeneratorFactory = equipmentGeneratorFactory;
         this.pluginLogger = pluginLogger;
         this.random = new Random(System.currentTimeMillis());
     }
@@ -54,8 +68,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
                     .mapToInt(LootCrateDropTableConfiguration::getChance)
                     .sum();
             if (totalDropChance != 100) {
-                pluginLogger.warning("Skipping crate " + crateType +
-                        ", it's drop table does not add up to 100%");
+                pluginLogger.warning("Skipping crate " + crateType + ", it's drop table does not add up to 100%");
                 return;
             }
 
@@ -65,8 +78,8 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
                         .mapToInt(Map.Entry::getValue)
                         .sum();
                 if (totalDistributionChance != 100) {
-                    pluginLogger.warning("Skipping crate " + crateType + ", it's " +
-                            table.getType() + " distribution does not add up to 100%");
+                    pluginLogger.warning("Skipping crate " + crateType + ", it's " + table.getType() +
+                            " distribution does not add up to 100%");
                     return;
                 }
             }
@@ -76,6 +89,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
             ItemRarity crateRarity = crateConfiguration.getRarity();
             ItemType itemType = crateConfiguration.getItemType();
             SortedMap<Integer, LootCrateDropTable> dropTables = new TreeMap<>();
+            AtomicInteger cumulativeDropTableChance = new AtomicInteger();
             crateConfiguration.getDropTable().forEach(dropTableConfiguration -> {
                 LootCrateDropType dropType = dropTableConfiguration.getType();
                 SortedMap<Integer, ItemRarity> distribution = new TreeMap<>();
@@ -85,7 +99,8 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
                 LootCrateDropTable dropTable = new SimpleLootCrateDropTable(dropType, distribution);
 
                 int dropChance = dropTableConfiguration.getChance();
-                dropTables.put(dropChance, dropTable);
+                int dropTableChance = cumulativeDropTableChance.getAndAdd(dropChance);
+                dropTables.put(dropTableChance, dropTable);
             });
             LootCrate crate = new SimpleLootCrate(crateName, crateType, crateRarity, itemType, dropTables);
 
@@ -98,7 +113,29 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
     }
 
     private void awardRandomEquipment(UUID playerId, ItemRarity rarity) {
-        playerCommandService.sendMessage(playerId, "You got an imaginary " + rarity + " equipment!");
+        LegendsPlayer player = playerQueryService.getPlayer(playerId);
+        if (player == null) {
+            pluginLogger.warning("Failed to award random equipment to player " + playerId + ", player not found.");
+            return;
+        }
+
+        EquipmentGenerator equipmentGenerator = equipmentGeneratorFactory.createEquipmentGenerator();
+        Specialization specialization = player.getSpecialization();
+        LegendsSpecializationType specializationType = null;
+        for (LegendsSpecialization legendsSpecialization : LegendsSpecialization.values()) {
+            if (legendsSpecialization.getName().equals(specialization.getName())) {
+                specializationType = legendsSpecialization.getType();
+            }
+        }
+        if (specializationType == null) {
+            pluginLogger.warning("Failed to award random equipment to player " + playerId +
+                    ", could not determine specialization type for " + specialization.getName());
+            return;
+        }
+
+        Item equipment = equipmentGenerator.generate(specializationType, rarity, player.getTeam());
+        playerCommandService.giveItem(playerId, equipment, false);
+        playerCommandService.sendMessage(playerId, "You gained a " + equipment.getName());
     }
 
     private void awardRandomEquipmentUpgrade(UUID playerId, ItemRarity rarity) {
@@ -133,6 +170,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         } catch (Exception ex) {
             // FIXME find out whats wrong and remove this try/catch
             System.out.println("DEBUG failed to get drop table for type roll: " + dropTypeRoll);
+            System.out.println("Table was: " + crate.viewDropTable());
             return false;
         }
         LootCrateDropType dropType = dropTable.getType();
