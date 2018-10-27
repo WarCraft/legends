@@ -1,9 +1,11 @@
 package gg.warcraft.legends.app.item.config.service;
 
+import com.google.inject.Singleton;
 import gg.warcraft.legends.api.item.config.EquipmentConfiguration;
-import gg.warcraft.legends.api.item.config.service.ItemConfigurationRepository;
+import gg.warcraft.legends.api.item.config.service.EquipmentConfigurationRepository;
 
-public class DefaultItemConfigurationRepository implements ItemConfigurationRepository {
+@Singleton
+public class DefaultEquipmentConfigurationRepository implements EquipmentConfigurationRepository {
     private EquipmentConfiguration configuration;
 
     @Override

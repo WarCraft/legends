@@ -19,20 +19,23 @@ import java.util.TreeMap;
 
 public class JacksonEquipmentConfiguration implements EquipmentConfiguration {
     private final NavigableMap<Float, ItemRarity> itemRarities;
+    private final Map<LegendsSpecializationType, List<EquipmentType>> validTypes;
     private final Map<EquipmentType, Map<ItemRarity, ItemType>> itemTypes;
-    private final Map<LegendsTeam, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> attributeRolls;
-    private final Map<LegendsTeam, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> legendaryRolls;
-    private final Map<LegendsTeam, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> ancientRolls;
-    private final Map<LegendsSpecializationType, Map<LegendsTeam, Map<AttributeDistribution, Map<EquipmentType, Map<ItemRarity, EquipmentLoreConfiguration>>>>> itemLores;
+    private final Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> attributeRolls;
+    private final Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> legendaryRolls;
+    private final Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> ancientRolls;
+    private final Map<LegendsSpecializationType, Map<LegendsTeam, Map<AttributeDistribution, Map<EquipmentType, Map<ItemRarity, List<EquipmentLoreConfiguration>>>>>> itemLores;
 
     @JsonCreator
     public JacksonEquipmentConfiguration(@JsonProperty("itemRarities") TreeMap<Float, ItemRarity> itemRarities,
+                                         @JsonProperty("validTypes") Map<LegendsSpecializationType, List<EquipmentType>> validTypes,
                                          @JsonProperty("itemTypes") Map<EquipmentType, Map<ItemRarity, ItemType>> itemTypes,
-                                         @JsonProperty("attributeRolls") Map<LegendsTeam, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> attributeRolls,
-                                         @JsonProperty("legendaryRolls") Map<LegendsTeam, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> legendaryRolls,
-                                         @JsonProperty("ancientRolls") Map<LegendsTeam, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> ancientRolls,
-                                         @JsonProperty("itemLores") Map<LegendsSpecializationType, Map<LegendsTeam, Map<AttributeDistribution, Map<EquipmentType, Map<ItemRarity, EquipmentLoreConfiguration>>>>> itemLores) {
+                                         @JsonProperty("attributeRolls") Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> attributeRolls,
+                                         @JsonProperty("legendaryRolls") Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> legendaryRolls,
+                                         @JsonProperty("ancientRolls") Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> ancientRolls,
+                                         @JsonProperty("itemLores") Map<LegendsSpecializationType, Map<LegendsTeam, Map<AttributeDistribution, Map<EquipmentType, Map<ItemRarity, List<EquipmentLoreConfiguration>>>>>> itemLores) {
         this.itemRarities = itemRarities;
+        this.validTypes = validTypes;
         this.itemTypes = itemTypes;
         this.attributeRolls = attributeRolls;
         this.legendaryRolls = legendaryRolls;
@@ -46,27 +49,32 @@ public class JacksonEquipmentConfiguration implements EquipmentConfiguration {
     }
 
     @Override
+    public Map<LegendsSpecializationType, List<EquipmentType>> getValidTypes() {
+        return validTypes;
+    }
+
+    @Override
     public Map<EquipmentType, Map<ItemRarity, ItemType>> getItemTypes() {
         return itemTypes;
     }
 
     @Override
-    public Map<LegendsTeam, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getAttributeRolls() {
+    public Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getAttributeRolls() {
         return attributeRolls;
     }
 
     @Override
-    public Map<LegendsTeam, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getLegendaryRolls() {
+    public Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getLegendaryRolls() {
         return legendaryRolls;
     }
 
     @Override
-    public Map<LegendsTeam, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getAncientRolls() {
+    public Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getAncientRolls() {
         return ancientRolls;
     }
 
     @Override
-    public Map<LegendsSpecializationType, Map<LegendsTeam, Map<AttributeDistribution, Map<EquipmentType, Map<ItemRarity, EquipmentLoreConfiguration>>>>> getItemLores() {
+    public Map<LegendsSpecializationType, Map<LegendsTeam, Map<AttributeDistribution, Map<EquipmentType, Map<ItemRarity, List<EquipmentLoreConfiguration>>>>>> getItemLores() {
         return itemLores;
     }
 }

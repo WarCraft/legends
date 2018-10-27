@@ -7,7 +7,11 @@ import gg.warcraft.monolith.api.item.Item;
 
 public interface EquipmentGenerator {
 
+    Item generate(LegendsSpecializationType specialization, LegendsTeam team);
+
     Item generate(LegendsSpecializationType specialization, EquipmentType type, LegendsTeam team);
+
+    Item generate(LegendsSpecializationType specialization, ItemRarity rarity, LegendsTeam team);
 
     Item generate(LegendsSpecializationType specialization, EquipmentType type, ItemRarity rarity, LegendsTeam team);
 }

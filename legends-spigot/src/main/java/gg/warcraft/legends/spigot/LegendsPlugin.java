@@ -11,6 +11,8 @@ import gg.warcraft.legends.api.core.game.service.GameQueryService;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.rank.service.RankCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.legends.api.item.config.EquipmentConfiguration;
+import gg.warcraft.legends.api.item.config.service.EquipmentConfigurationRepository;
 import gg.warcraft.legends.api.item.crate.service.LootCrateCommandService;
 import gg.warcraft.legends.api.shop.config.ShopConfiguration;
 import gg.warcraft.legends.api.shop.service.ShopCommandService;
@@ -91,6 +93,17 @@ public class LegendsPlugin extends JavaPlugin {
                 ShopConfiguration.class, legendsMapperModule);
         ShopCommandService shopCommandService = injector.getInstance(ShopCommandService.class);
         shopCommandService.readConfiguration(shopConfiguration);
+    }
+
+    void loadEquipmentConfiguration() {
+        MonolithPluginUtils pluginUtils = injector.getInstance(MonolithPluginUtils.class);
+        LegendsMapperModule legendsMapperModule = new LegendsMapperModule();
+
+        EquipmentConfiguration equipmentConfiguration = pluginUtils.loadConfiguration("REMOTE", "legends/equipment.yml",
+                "", EquipmentConfiguration.class, legendsMapperModule);
+        EquipmentConfigurationRepository equipmentConfigurationRepository =
+                injector.getInstance(EquipmentConfigurationRepository.class);
+        equipmentConfigurationRepository.save(equipmentConfiguration);
     }
 
     void initializeLegendsTeams() {
@@ -248,6 +261,7 @@ public class LegendsPlugin extends JavaPlugin {
 
         loadServerConfiguration();
         loadShopConfiguration();
+        loadEquipmentConfiguration();
         initializeLegendsTeams();
         initializeLegendsHandlers();
         initializeLegendsCommands();

@@ -15,13 +15,15 @@ public interface EquipmentConfiguration {
 
     NavigableMap<Float, ItemRarity> getItemRarities();
 
+    Map<LegendsSpecializationType, List<EquipmentType>> getValidTypes();
+
     Map<EquipmentType, Map<ItemRarity, ItemType>> getItemTypes();
 
-    Map<LegendsTeam, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getAttributeRolls();
+    Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getAttributeRolls();
 
-    Map<LegendsTeam, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getLegendaryRolls();
+    Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getLegendaryRolls();
 
-    Map<LegendsTeam, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getAncientRolls();
+    Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getAncientRolls();
 
-    Map<LegendsSpecializationType, Map<LegendsTeam, Map<AttributeDistribution, Map<EquipmentType, Map<ItemRarity, EquipmentLoreConfiguration>>>>> getItemLores();
+    Map<LegendsSpecializationType, Map<LegendsTeam, Map<AttributeDistribution, Map<EquipmentType, Map<ItemRarity, List<EquipmentLoreConfiguration>>>>>> getItemLores();
 }

@@ -15,6 +15,7 @@ import gg.warcraft.legends.api.entity.player.rank.service.RankQueryService;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.legends.api.item.config.service.EquipmentConfigurationRepository;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilder;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
 import gg.warcraft.legends.api.item.crate.LootCrateReader;
@@ -77,6 +78,7 @@ import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankQueryServic
 import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankRepository;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerCommandService;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerQueryService;
+import gg.warcraft.legends.app.item.config.service.DefaultEquipmentConfigurationRepository;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateBuilder;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateReader;
 import gg.warcraft.legends.app.item.crate.service.DefaultLootCrateCommandService;
@@ -205,6 +207,9 @@ public abstract class AbstractLegendsModule extends PrivateModule {
 
     private void configureItem() {
         // Equipment bindings
+        bind(EquipmentConfigurationRepository.class).to(DefaultEquipmentConfigurationRepository.class);
+        expose(EquipmentConfigurationRepository.class);
+
         install(new FactoryModuleBuilder()
                 .implement(EquipmentBuilder.class, SimpleEquipmentBuilder.class)
                 .build(EquipmentBuilderFactory.class));

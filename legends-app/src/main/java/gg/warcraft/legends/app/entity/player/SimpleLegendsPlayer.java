@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.combat.api.specialization.Specialization;
 import gg.warcraft.combat.api.specialization.service.SpecializationQueryService;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.LegendsCurrency;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.LegendsPlayerData;
@@ -11,6 +12,7 @@ import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.rank.service.RankQueryService;
 import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.PlayerDecorator;
+import gg.warcraft.monolith.api.entity.team.Team;
 
 public class SimpleLegendsPlayer implements LegendsPlayer, PlayerDecorator {
     private final RankQueryService rankQueryService;
@@ -78,5 +80,14 @@ public class SimpleLegendsPlayer implements LegendsPlayer, PlayerDecorator {
             System.out.println(ex.getMessage());
             return 0;
         }
+    }
+
+    @Override
+    public LegendsTeam getTeam() {
+        Team team = player.getTeam();
+        if (team instanceof LegendsTeam) {
+            return (LegendsTeam) team;
+        }
+        return null;
     }
 }

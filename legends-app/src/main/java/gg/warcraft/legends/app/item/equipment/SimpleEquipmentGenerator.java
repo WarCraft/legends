@@ -8,7 +8,7 @@ import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.item.config.AttributeRollConfiguration;
 import gg.warcraft.legends.api.item.config.EquipmentConfiguration;
 import gg.warcraft.legends.api.item.config.EquipmentLoreConfiguration;
-import gg.warcraft.legends.api.item.config.service.ItemConfigurationRepository;
+import gg.warcraft.legends.api.item.config.service.EquipmentConfigurationRepository;
 import gg.warcraft.legends.api.item.equipment.EquipmentBuilder;
 import gg.warcraft.legends.api.item.equipment.EquipmentBuilderFactory;
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
@@ -17,6 +17,7 @@ import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class SimpleEquipmentGenerator implements EquipmentGenerator {
@@ -25,9 +26,9 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
     private final Random random;
 
     @Inject
-    public SimpleEquipmentGenerator(ItemConfigurationRepository itemConfigurationRepository,
+    public SimpleEquipmentGenerator(EquipmentConfigurationRepository equipmentConfigurationRepository,
                                     EquipmentBuilderFactory equipmentBuilderFactory, Random random) {
-        this.equipmentConfiguration = itemConfigurationRepository.getConfiguration();
+        this.equipmentConfiguration = equipmentConfigurationRepository.getConfiguration();
         this.equipmentBuilderFactory = equipmentBuilderFactory;
         this.random = random;
     }
@@ -37,11 +38,44 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
         return values[random.nextInt(values.length)];
     }
 
+    private EquipmentType getRandomEquipmentTypeFor(LegendsSpecializationType specialization) {
+        List<EquipmentType> validTypes = equipmentConfiguration.getValidTypes().get(specialization);
+        int typeRoll = random.nextInt(validTypes.size());
+        return validTypes.get(typeRoll);
+    }
+
+    private Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>>
+    getAttributeConfigurationsFor(ItemRarity rarity) {
+        switch (rarity) {
+            case LEGENDARY:
+                return equipmentConfiguration.getLegendaryRolls();
+            case ANCIENT:
+                return equipmentConfiguration.getAncientRolls();
+            case COMMON:
+            case RARE:
+            case EPIC:
+            default:
+                return equipmentConfiguration.getAttributeRolls();
+        }
+    }
+
+    @Override
+    public Item generate(LegendsSpecializationType specialization, LegendsTeam team) {
+        EquipmentType type = getRandomEquipmentTypeFor(specialization);
+        return generate(specialization, type, team);
+    }
+
     @Override
     public Item generate(LegendsSpecializationType specialization, EquipmentType type, LegendsTeam team) {
         float rarityRoll = random.nextFloat() * 100;
         ItemRarity itemRarity = equipmentConfiguration.getItemRarities().floorEntry(rarityRoll).getValue();
         return generate(specialization, type, itemRarity, team);
+    }
+
+    @Override
+    public Item generate(LegendsSpecializationType specialization, ItemRarity rarity, LegendsTeam team) {
+        EquipmentType type = getRandomEquipmentTypeFor(specialization);
+        return generate(specialization, type, rarity, team);
     }
 
     @Override
@@ -54,8 +88,12 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
 
         AttributeDistribution attributeDistribution = getRandomAttributeDistribution();
         ItemType itemType = equipmentConfiguration.getItemTypes().get(type).get(rarity);
-        EquipmentLoreConfiguration loreConfiguration = equipmentConfiguration.getItemLores().get(specialization).get(team).get(attributeDistribution)
-                .get(type).get(rarity);
+
+        List<EquipmentLoreConfiguration> loreConfigurations = equipmentConfiguration.getItemLores().get(specialization)
+                .get(team).get(attributeDistribution).get(type).get(rarity);
+        EquipmentLoreConfiguration loreConfiguration =
+                loreConfigurations.get(random.nextInt(loreConfigurations.size()));
+
         String itemName = loreConfiguration.getName();
         List<String> itemLore = loreConfiguration.getFlavorText();
         EquipmentBuilder builder = equipmentBuilderFactory.createEquipmentBuilder(itemType, rarity, itemName);
@@ -64,7 +102,7 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
         }
 
         List<List<AttributeRollConfiguration>> attributeRolls =
-                equipmentConfiguration.getLegendaryRolls().get(team).get(attributeDistribution);
+                getAttributeConfigurationsFor(rarity).get(specialization).get(attributeDistribution);
         List<AttributeRollConfiguration> attributeRoll = attributeRolls.get(random.nextInt(attributeRolls.size()));
         attributeRoll.forEach(roll -> {
             int lowRoll = roll.getLowRoll();
