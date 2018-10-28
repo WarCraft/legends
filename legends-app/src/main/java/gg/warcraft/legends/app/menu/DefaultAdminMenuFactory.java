@@ -9,6 +9,7 @@ import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
 import gg.warcraft.legends.api.menu.AdminMenuFactory;
 import gg.warcraft.monolith.api.core.AuthorizationService;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
+import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
@@ -55,11 +56,13 @@ public class DefaultAdminMenuFactory extends AbstractMenuFactory implements Admi
         ButtonBuilder buttonBuilder = createSimpleButtonBuilder(crate.getItemType(), crate.getName());
         buttonBuilder.addTooltip("");
         buttonBuilder.addTooltip("[CLICK] To take out a " + crate.getName());
+        buttonBuilder.addTooltip("[SHIFT CLICK] To take out a stack of " + crate.getName());
 
         buttonBuilder.withAction(action -> {
             // TODO    if (authorizationService.isAdmin(playerId)) {
             LootCrateBuilder crateBuilder = lootCrateBuilderFactory.createLootCrateBuilder(crateType);
-            playerCommandService.giveItem(playerId, crateBuilder.build(), false);
+            Item crateItem = crateBuilder.build().withStackSize(action.isShiftClick() ? 64 : 1);
+            playerCommandService.giveItem(playerId, crateItem, false);
             // TODO    }
         });
         return buttonBuilder.build();
