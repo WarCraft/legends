@@ -11,8 +11,8 @@ import gg.warcraft.monolith.api.util.ColorCode;
 import java.util.NavigableMap;
 
 public class DefaultRankQueryService implements RankQueryService {
-    private final String WAYFARER_NAME = "Wayfarer";
-    private final ColorCode WAYFARER_COLOR = ColorCode.DARK_GRAY;
+    private static final String WAYFARER_NAME = "Wayfarer";
+    private static final ColorCode WAYFARER_COLOR = ColorCode.DARK_GRAY;
 
     private final RankRepository rankRepository;
 
@@ -25,13 +25,13 @@ public class DefaultRankQueryService implements RankQueryService {
     public Rank getRank(Team team, int favor) {
         NavigableMap<Integer, Rank> ranks = rankRepository.getRanks(team);
         if (ranks == null || ranks.isEmpty()) {
-            return new SimpleRank(WAYFARER_NAME, 0, WAYFARER_COLOR);
+            return new SimpleRank(WAYFARER_NAME, 1, 0, WAYFARER_COLOR);
         }
 
         int maxFavor = rankRepository.getMaxFavor();
         int adjustedFavor = favor % maxFavor;
         Rank rank = ranks.floorEntry(adjustedFavor).getValue();
         int prestige = favor / maxFavor;
-        return new SimpleRank(rank.getName(), prestige, rank.getColor());
+        return new SimpleRank(rank.getName(), rank.getLevel(), prestige, rank.getColor());
     }
 }

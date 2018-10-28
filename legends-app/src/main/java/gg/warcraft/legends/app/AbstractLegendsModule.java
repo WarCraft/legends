@@ -10,6 +10,7 @@ import gg.warcraft.legends.api.core.game.service.GameQueryService;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
 import gg.warcraft.legends.api.entity.LegendsEntityFactory;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
+import gg.warcraft.legends.api.entity.player.rank.service.RankAttributeModifierRepository;
 import gg.warcraft.legends.api.entity.player.rank.service.RankCommandService;
 import gg.warcraft.legends.api.entity.player.rank.service.RankQueryService;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
@@ -75,6 +76,8 @@ import gg.warcraft.legends.app.core.game.service.DefaultGameCommandService;
 import gg.warcraft.legends.app.core.game.service.DefaultGameQueryService;
 import gg.warcraft.legends.app.core.game.service.DefaultGameRepository;
 import gg.warcraft.legends.app.entity.player.SimpleLegendsPlayer;
+import gg.warcraft.legends.app.entity.player.rank.handler.PrestigeAttributesHandler;
+import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankAttributeModifierRepository;
 import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankCommandService;
 import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankQueryService;
 import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankRepository;
@@ -207,6 +210,12 @@ public abstract class AbstractLegendsModule extends PrivateModule {
 
         bind(RankRepository.class).to(DefaultRankRepository.class);
         expose(RankRepository.class);
+
+        bind(RankAttributeModifierRepository.class).to(DefaultRankAttributeModifierRepository.class);
+        expose(RankAttributeModifierRepository.class);
+
+        bind(PrestigeAttributesHandler.class);
+        expose(PrestigeAttributesHandler.class);
     }
 
     private void configureItem() {

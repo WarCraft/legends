@@ -34,6 +34,7 @@ import gg.warcraft.legends.app.entity.player.handler.PlayerCurrencyEventHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerInspectionHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangeHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangedHandler;
+import gg.warcraft.legends.app.entity.player.rank.handler.PrestigeAttributesHandler;
 import gg.warcraft.legends.app.item.crate.handler.LootCrateUseHandler;
 import gg.warcraft.legends.app.item.handler.EquipmentAttributesHandler;
 import gg.warcraft.legends.app.menu.handler.MenuCommandHandler;
@@ -149,6 +150,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         PlayerRankChangedHandler playerRankChangedHandler = injector.getInstance(PlayerRankChangedHandler.class);
         eventService.subscribe(playerRankChangedHandler);
+
+        PrestigeAttributesHandler prestigeAttributesHandler = injector.getInstance(PrestigeAttributesHandler.class);
+        eventService.subscribe(prestigeAttributesHandler);
 
         // Player inspect
         PlayerInspectionHandler playerInspectionHandler = injector.getInstance(PlayerInspectionHandler.class);

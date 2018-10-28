@@ -7,11 +7,13 @@ import java.util.Objects;
 
 public class SimpleRank implements Rank {
     private final String name;
+    private final int level;
     private final int prestige;
     private final ColorCode color;
 
-    public SimpleRank(String name, int prestige, ColorCode color) {
+    public SimpleRank(String name, int level, int prestige, ColorCode color) {
         this.name = name;
+        this.level = level;
         this.prestige = prestige;
         this.color = color;
     }
@@ -19,6 +21,11 @@ public class SimpleRank implements Rank {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public int getLevel() {
+        return level;
     }
 
     @Override

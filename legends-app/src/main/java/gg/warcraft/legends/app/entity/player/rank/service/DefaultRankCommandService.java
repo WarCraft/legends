@@ -39,7 +39,7 @@ public class DefaultRankCommandService implements RankCommandService {
 
             String rankName = prefix.getName() + " " + suffix;
             int rankLevel = ranks.size() + 1;
-            Rank rank = new SimpleRank(rankName, rankLevel, prefix.getColor());
+            Rank rank = new SimpleRank(rankName, rankLevel, 0, prefix.getColor());
 
             ranks.put(favor, rank);
         }
