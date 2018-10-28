@@ -118,8 +118,8 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
     }
 
     private void sendReceivedNotification(UUID playerId, String itemName) {
-        // TODO move stripColorCodes to StringUtils and strip itemName
-        String prefix = stringUtils.isVowel(itemName.charAt(0)) ? "an " : "a ";
+        String strippedName = stringUtils.removeChatCodes(itemName);
+        String prefix = stringUtils.isVowel(strippedName.charAt(0)) ? "an " : "a ";
         playerCommandService.sendNotification(playerId, "You received " + prefix + itemName + ColorCode.YELLOW + "!");
     }
 
