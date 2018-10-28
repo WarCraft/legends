@@ -17,6 +17,7 @@ import java.util.UUID;
 
 public class LootCrateUseHandler {
     private static final String LOOT_CRATE_TYPE = "Loot Crate";
+    private static final int ITEMS_PER_CRATE = 3;
 
     private final LootCrateCommandService lootCrateCommandService;
     private final LegendsPlayerQueryService playerQueryService;
@@ -47,9 +48,11 @@ public class LootCrateUseHandler {
 
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
         Inventory inventory = player.getInventory();
-        if (inventory.getSpace() > 0) {
-            if (lootCrateCommandService.openCrate(playerId, crateType)) {
-                inventory.remove(itemInHand.withStackSize(1));
+        if (inventory.getSpace() >= ITEMS_PER_CRATE) {
+            for (int i = 0; i < ITEMS_PER_CRATE; i += 1) {
+                if (lootCrateCommandService.openCrate(playerId, crateType)) {
+                    inventory.remove(itemInHand.withStackSize(1));
+                }
             }
         }
         return true;
