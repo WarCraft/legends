@@ -84,6 +84,7 @@ import gg.warcraft.legends.app.item.SimpleConsumableBuilder;
 import gg.warcraft.legends.app.item.config.service.DefaultEquipmentConfigurationRepository;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateBuilder;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateReader;
+import gg.warcraft.legends.app.item.crate.handler.LootCrateUseHandler;
 import gg.warcraft.legends.app.item.crate.service.DefaultLootCrateCommandService;
 import gg.warcraft.legends.app.item.crate.service.DefaultLootCrateRepository;
 import gg.warcraft.legends.app.item.equipment.SimpleEquipmentBuilder;
@@ -212,6 +213,9 @@ public abstract class AbstractLegendsModule extends PrivateModule {
         // Equipment bindings
         bind(EquipmentConfigurationRepository.class).to(DefaultEquipmentConfigurationRepository.class);
         expose(EquipmentConfigurationRepository.class);
+
+        bind(LootCrateUseHandler.class);
+        expose(LootCrateUseHandler.class);
 
         install(new FactoryModuleBuilder()
                 .implement(EquipmentBuilder.class, SimpleEquipmentBuilder.class)

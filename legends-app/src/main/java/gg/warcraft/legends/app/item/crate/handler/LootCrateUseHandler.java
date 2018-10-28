@@ -8,6 +8,7 @@ import gg.warcraft.legends.api.item.crate.LootCrateReader;
 import gg.warcraft.legends.api.item.crate.LootCrateReaderFactory;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.legends.api.item.crate.service.LootCrateCommandService;
+import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.entity.event.EntityPreInteractEvent;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.item.Inventory;
@@ -15,6 +16,7 @@ import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.world.block.event.BlockPreInteractEvent;
 
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class LootCrateUseHandler {
     private static final String LOOT_CRATE_TYPE = "Loot Crate";
@@ -24,19 +26,26 @@ public class LootCrateUseHandler {
     private final PlayerCommandService playerCommandService;
     private final LegendsPlayerQueryService playerQueryService;
     private final LootCrateReaderFactory lootCrateReaderFactory;
+    private final Logger pluginLogger;
 
     @Inject
     public LootCrateUseHandler(LootCrateCommandService lootCrateCommandService,
                                PlayerCommandService playerCommandService,
                                LegendsPlayerQueryService playerQueryService,
-                               LootCrateReaderFactory lootCrateReaderFactory) {
+                               LootCrateReaderFactory lootCrateReaderFactory,
+                               @PluginLogger Logger pluginLogger) {
         this.lootCrateCommandService = lootCrateCommandService;
         this.playerCommandService = playerCommandService;
         this.playerQueryService = playerQueryService;
         this.lootCrateReaderFactory = lootCrateReaderFactory;
+        this.pluginLogger = pluginLogger;
     }
 
     private boolean onInteract(UUID playerId, Item itemInHand) {
+        if (itemInHand == null) {
+            return false;
+        }
+
         System.out.println("DEBUG checking LootCrate interact");
         LootCrateReader reader = lootCrateReaderFactory.createLootCrateReader(itemInHand);
         if (!LOOT_CRATE_TYPE.equals(reader.getType())) {
@@ -46,21 +55,20 @@ public class LootCrateUseHandler {
 
         LootCrateType crateType = reader.getCrateType();
         if (crateType == null) {
-            System.out.println("DEBUG LootCrate type missing");
-            return false;
+            pluginLogger.warning("Failed to open loot crate with name " + itemInHand.getName() + " for player " +
+                    playerId + ", no crate type exists for this item.");
+            return true;
         }
 
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
         Inventory inventory = player.getInventory();
-        if (inventory.getSpace() >= ITEMS_PER_CRATE) {
+        if (inventory.getSpace() >= ITEMS_PER_CRATE && inventory.remove(itemInHand.withStackSize(1))) {
             for (int i = 0; i < ITEMS_PER_CRATE; i += 1) {
-                if (lootCrateCommandService.openCrate(playerId, crateType)) {
-                    inventory.remove(itemInHand.withStackSize(1));
-                }
+                lootCrateCommandService.openCrate(playerId, crateType);
             }
         } else {
             playerCommandService.sendNotification(playerId, "Please make sure you have at least " + ITEMS_PER_CRATE +
-                    " empty slots in your inventory.");
+                    " empty slots in your inventory before opening a Loot Crate.");
         }
         return true;
     }
