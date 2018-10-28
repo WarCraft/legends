@@ -11,27 +11,30 @@ public class SimpleShopItem implements ShopItem {
     private final String id;
     private final ShopItemType type;
     private final ItemRarity rarity;
+    private final int price;
     private final String name;
     private final ItemType icon;
     private final String skull;
     private final List<String> lore;
 
-    public SimpleShopItem(String id, ShopItemType type, ItemRarity rarity, String name, ItemType icon,
+    public SimpleShopItem(String id, ShopItemType type, ItemRarity rarity, int price, String name, ItemType icon,
                           List<String> lore) {
         this.id = id;
         this.type = type;
         this.rarity = rarity;
+        this.price = price;
         this.name = name;
         this.icon = icon;
         this.skull = null;
         this.lore = lore;
     }
 
-    public SimpleShopItem(String id, ShopItemType type, ItemRarity rarity, String name, String skull,
+    public SimpleShopItem(String id, ShopItemType type, ItemRarity rarity, int price, String name, String skull,
                           List<String> lore) {
         this.id = id;
         this.type = type;
         this.rarity = rarity;
+        this.price = price;
         this.name = name;
         this.icon = null;
         this.skull = skull;
@@ -51,6 +54,11 @@ public class SimpleShopItem implements ShopItem {
     @Override
     public ItemRarity getRarity() {
         return rarity;
+    }
+
+    @Override
+    public int getPrice() {
+        return price;
     }
 
     @Override

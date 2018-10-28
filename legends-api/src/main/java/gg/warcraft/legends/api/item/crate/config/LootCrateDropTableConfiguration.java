@@ -9,7 +9,7 @@ public interface LootCrateDropTableConfiguration {
 
     LootCrateDropType getType();
 
-    int getChance();
+    float getChance();
 
-    Map<ItemRarity, Integer> getDistribution();
+    Map<ItemRarity, Float> getDistribution();
 }

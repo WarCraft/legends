@@ -11,9 +11,9 @@ public class SimpleMiniPet extends SimpleShopItem implements MiniPet {
     private final EntityType entityType;
     private final boolean rainbow;
 
-    public SimpleMiniPet(String id, ShopItemType type, ItemRarity rarity, String name, String skull, List<String> lore,
-                         EntityType entityType, boolean rainbow) {
-        super(id, type, rarity, name, skull, lore);
+    public SimpleMiniPet(String id, ShopItemType type, ItemRarity rarity, int price, String name, String skull,
+                         List<String> lore, EntityType entityType, boolean rainbow) {
+        super(id, type, rarity, price, name, skull, lore);
         this.entityType = entityType;
         this.rainbow = rainbow;
     }

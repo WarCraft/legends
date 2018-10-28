@@ -14,10 +14,10 @@ public class SimpleLootCrate implements LootCrate {
     private final LootCrateType type;
     private final ItemRarity rarity;
     private final ItemType itemType;
-    private final ImmutableSortedMap<Integer, LootCrateDropTable> dropTable;
+    private final ImmutableSortedMap<Float, LootCrateDropTable> dropTable;
 
     public SimpleLootCrate(String name, LootCrateType type, ItemRarity rarity, ItemType itemType,
-                           SortedMap<Integer, LootCrateDropTable> dropTable) {
+                           SortedMap<Float, LootCrateDropTable> dropTable) {
         this.name = name;
         this.type = type;
         this.rarity = rarity;
@@ -46,7 +46,7 @@ public class SimpleLootCrate implements LootCrate {
     }
 
     @Override
-    public ImmutableSortedMap<Integer, LootCrateDropTable> viewDropTable() {
+    public ImmutableSortedMap<Float, LootCrateDropTable> viewDropTable() {
         return dropTable;
     }
 }

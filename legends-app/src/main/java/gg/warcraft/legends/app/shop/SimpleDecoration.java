@@ -10,9 +10,9 @@ import java.util.List;
 public class SimpleDecoration extends SimpleShopItem implements Decoration {
     private final ItemType itemType;
 
-    public SimpleDecoration(String id, ShopItemType type, ItemRarity rarity, String name, ItemType icon,
+    public SimpleDecoration(String id, ShopItemType type, ItemRarity rarity, int price, String name, ItemType icon,
                             List<String> lore, ItemType itemType) {
-        super(id, type, rarity, name, icon, lore);
+        super(id, type, rarity, price, name, icon, lore);
         this.itemType = itemType;
     }
 

@@ -12,9 +12,9 @@ import java.util.List;
 public class SimpleDecorationPack extends SimpleShopItem implements DecorationPack {
     private final List<Decoration> decorations;
 
-    public SimpleDecorationPack(String id, ShopItemType type, ItemRarity rarity, String name, ItemType icon,
+    public SimpleDecorationPack(String id, ShopItemType type, ItemRarity rarity, int price, String name, ItemType icon,
                                 List<String> lore, List<Decoration> decorations) {
-        super(id, type, rarity, name, icon, lore);
+        super(id, type, rarity, price, name, icon, lore);
         this.decorations = decorations;
     }
 

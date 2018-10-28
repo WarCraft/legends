@@ -4,12 +4,12 @@ public enum ShopItemType {
     DECORATION,
     DECORATION_PACK,
     MINI_PET,
+    SPECIALIZATION,
     PROMOTION;
 
 //    WAR_PASS,
-//    MYSTIC_CRATE,
+//    TITAN_CRATE,
 //    BUNDLE,
-//    CLASS,
 //    EMOTE,
 //    ABILITY_SKIN,
 //    SIEGE_SKIN,

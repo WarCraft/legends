@@ -14,5 +14,5 @@ public interface LootCrate {
 
     ItemType getItemType();
 
-    ImmutableSortedMap<Integer, LootCrateDropTable> viewDropTable();
+    ImmutableSortedMap<Float, LootCrateDropTable> viewDropTable();
 }

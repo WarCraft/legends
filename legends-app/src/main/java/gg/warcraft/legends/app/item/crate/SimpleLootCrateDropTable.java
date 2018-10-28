@@ -9,9 +9,9 @@ import java.util.SortedMap;
 
 public class SimpleLootCrateDropTable implements LootCrateDropTable {
     private final LootCrateDropType type;
-    private final ImmutableSortedMap<Integer, ItemRarity> distribution;
+    private final ImmutableSortedMap<Float, ItemRarity> distribution;
 
-    public SimpleLootCrateDropTable(LootCrateDropType type, SortedMap<Integer, ItemRarity> distribution) {
+    public SimpleLootCrateDropTable(LootCrateDropType type, SortedMap<Float, ItemRarity> distribution) {
         this.type = type;
         this.distribution = ImmutableSortedMap.copyOf(distribution);
     }
@@ -22,7 +22,7 @@ public class SimpleLootCrateDropTable implements LootCrateDropTable {
     }
 
     @Override
-    public ImmutableSortedMap<Integer, ItemRarity> viewDistribution() {
+    public ImmutableSortedMap<Float, ItemRarity> viewDistribution() {
         return distribution;
     }
 }

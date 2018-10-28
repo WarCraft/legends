@@ -15,10 +15,10 @@ public class SimplePromotion extends SimpleShopItem implements Promotion {
     private final EquipmentSlot equipmentSlot;
     private final Map<LegendsAttribute, Integer> attributes;
 
-    public SimplePromotion(String id, ShopItemType type, ItemRarity rarity, String name, ItemType icon,
+    public SimplePromotion(String id, ShopItemType type, ItemRarity rarity, int price, String name, ItemType icon,
                            List<String> lore, ItemType itemType, EquipmentSlot equipmentSlot,
                            Map<LegendsAttribute, Integer> attributes) {
-        super(id, type, rarity, name, icon, lore);
+        super(id, type, rarity, price, name, icon, lore);
         this.itemType = itemType;
         this.equipmentSlot = equipmentSlot;
         this.attributes = attributes;

@@ -13,6 +13,8 @@ public interface ShopItem {
 
     ItemRarity getRarity();
 
+    int getPrice();
+
     String getName();
 
     ItemType getIcon();

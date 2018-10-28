@@ -7,5 +7,5 @@ public interface LootCrateDropTable {
 
     LootCrateDropType getType();
 
-    ImmutableSortedMap<Integer, ItemRarity> viewDistribution();
+    ImmutableSortedMap<Float, ItemRarity> viewDistribution();
 }

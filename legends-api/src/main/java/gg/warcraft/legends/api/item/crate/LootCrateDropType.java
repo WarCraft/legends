@@ -8,5 +8,6 @@ public enum LootCrateDropType {
     // Shop categories
     DECORATION,
     DECORATION_PACK,
-    MINI_PET
+    MINI_PET,
+    SPECIALIZATION
 }

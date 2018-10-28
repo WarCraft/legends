@@ -1,10 +1,12 @@
 package gg.warcraft.legends.app.shop.service;
 
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.shop.Decoration;
 import gg.warcraft.legends.api.shop.DecorationPack;
 import gg.warcraft.legends.api.shop.MiniPet;
 import gg.warcraft.legends.api.shop.Promotion;
+import gg.warcraft.legends.api.shop.ShopItemType;
 import gg.warcraft.legends.api.shop.config.DecorationConfiguration;
 import gg.warcraft.legends.api.shop.config.DecorationPackConfiguration;
 import gg.warcraft.legends.api.shop.config.MiniPetConfiguration;
@@ -18,6 +20,7 @@ import gg.warcraft.legends.app.shop.SimpleMiniPet;
 import gg.warcraft.legends.app.shop.SimplePromotion;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -29,11 +32,16 @@ public class DefaultShopCommandService implements ShopCommandService {
         this.shopRepository = shopRepository;
     }
 
-    void readDecorationConfiguration(DecorationConfiguration configuration) {
+    void readDecorationConfiguration(DecorationConfiguration configuration,
+                                     Map<ShopItemType, Map<ItemRarity, Integer>> prices) {
+        ShopItemType type = configuration.getType();
+        ItemRarity rarity = configuration.getRarity();
+        int price = prices.get(type).get(rarity);
         Decoration decoration = new SimpleDecoration(
                 configuration.getId(),
-                configuration.getType(),
-                configuration.getRarity(),
+                type,
+                rarity,
+                price,
                 configuration.getName(),
                 configuration.getIcon(),
                 configuration.getLore(),
@@ -41,7 +49,11 @@ public class DefaultShopCommandService implements ShopCommandService {
         shopRepository.save(decoration);
     }
 
-    void readDecorationPackConfiguration(DecorationPackConfiguration configuration) {
+    void readDecorationPackConfiguration(DecorationPackConfiguration configuration,
+                                         Map<ShopItemType, Map<ItemRarity, Integer>> prices) {
+        ShopItemType type = configuration.getType();
+        ItemRarity rarity = configuration.getRarity();
+        int price = prices.get(type).get(rarity);
         List<Decoration> decorations = configuration.getDecorations().stream()
                 .map(shopRepository::getItem)
                 .filter(Objects::nonNull)
@@ -49,8 +61,9 @@ public class DefaultShopCommandService implements ShopCommandService {
                 .collect(Collectors.toList());
         DecorationPack decorationPack = new SimpleDecorationPack(
                 configuration.getId(),
-                configuration.getType(),
-                configuration.getRarity(),
+                type,
+                rarity,
+                price,
                 configuration.getName(),
                 configuration.getIcon(),
                 configuration.getLore(),
@@ -58,11 +71,16 @@ public class DefaultShopCommandService implements ShopCommandService {
         shopRepository.save(decorationPack);
     }
 
-    void readMiniPetConfiguration(MiniPetConfiguration configuration) {
+    void readMiniPetConfiguration(MiniPetConfiguration configuration,
+                                  Map<ShopItemType, Map<ItemRarity, Integer>> prices) {
+        ShopItemType type = configuration.getType();
+        ItemRarity rarity = configuration.getRarity();
+        int price = prices.get(type).get(rarity);
         MiniPet miniPet = new SimpleMiniPet(
                 configuration.getId(),
-                configuration.getType(),
-                configuration.getRarity(),
+                type,
+                rarity,
+                price,
                 configuration.getName(),
                 configuration.getSkull(),
                 configuration.getLore(),
@@ -71,11 +89,16 @@ public class DefaultShopCommandService implements ShopCommandService {
         shopRepository.save(miniPet);
     }
 
-    void readPromotionConfiguration(PromotionConfiguration configuration) {
+    void readPromotionConfiguration(PromotionConfiguration configuration,
+                                    Map<ShopItemType, Map<ItemRarity, Integer>> prices) {
+        ShopItemType type = configuration.getType();
+        ItemRarity rarity = configuration.getRarity();
+        int price = prices.get(type).get(rarity);
         Promotion promotion = new SimplePromotion(
                 configuration.getId(),
-                configuration.getType(),
-                configuration.getRarity(),
+                type,
+                rarity,
+                price,
                 configuration.getName(),
                 configuration.getIcon(),
                 configuration.getLore(),
@@ -87,9 +110,10 @@ public class DefaultShopCommandService implements ShopCommandService {
 
     @Override
     public void readConfiguration(ShopConfiguration shopConfiguration) {
-        shopConfiguration.getDecorations().forEach(this::readDecorationConfiguration);
-        shopConfiguration.getDecorationPacks().forEach(this::readDecorationPackConfiguration);
-        shopConfiguration.getMiniPets().forEach(this::readMiniPetConfiguration);
-        shopConfiguration.getPromotions().forEach(this::readPromotionConfiguration);
+        Map<ShopItemType, Map<ItemRarity, Integer>> prices = shopConfiguration.getPrices();
+        shopConfiguration.getDecorations().forEach(config -> readDecorationConfiguration(config, prices));
+        shopConfiguration.getDecorationPacks().forEach(config -> readDecorationPackConfiguration(config, prices));
+        shopConfiguration.getMiniPets().forEach(config -> readMiniPetConfiguration(config, prices));
+        shopConfiguration.getPromotions().forEach(config -> readPromotionConfiguration(config, prices));
     }
 }

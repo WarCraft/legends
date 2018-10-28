@@ -11,13 +11,13 @@ import java.util.Map;
 
 public class JacksonLootCrateDropTableConfiguration implements LootCrateDropTableConfiguration {
     private final LootCrateDropType type;
-    private final int chance;
-    private final Map<ItemRarity, Integer> distribution;
+    private final float chance;
+    private final Map<ItemRarity, Float> distribution;
 
     @JsonCreator
     public JacksonLootCrateDropTableConfiguration(@JsonProperty("type") LootCrateDropType type,
-                                                  @JsonProperty("chance") int chance,
-                                                  @JsonProperty("distribution") Map<ItemRarity, Integer> distribution) {
+                                                  @JsonProperty("chance") float chance,
+                                                  @JsonProperty("distribution") Map<ItemRarity, Float> distribution) {
         this.type = type;
         this.chance = chance;
         this.distribution = distribution;
@@ -29,12 +29,12 @@ public class JacksonLootCrateDropTableConfiguration implements LootCrateDropTabl
     }
 
     @Override
-    public int getChance() {
+    public float getChance() {
         return chance;
     }
 
     @Override
-    public Map<ItemRarity, Integer> getDistribution() {
+    public Map<ItemRarity, Float> getDistribution() {
         return new HashMap<>(distribution);
     }
 }
