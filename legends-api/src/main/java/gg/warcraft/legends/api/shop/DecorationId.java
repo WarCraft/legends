@@ -1,6 +1,7 @@
 package gg.warcraft.legends.api.shop;
 
 public enum DecorationId {
+    // Basic decoration pack
     BED,
     BOOKSHELF,
     CHEST,
