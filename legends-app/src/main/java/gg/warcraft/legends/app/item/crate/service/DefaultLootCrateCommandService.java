@@ -1,7 +1,6 @@
 package gg.warcraft.legends.app.item.crate.service;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import gg.warcraft.combat.api.specialization.Specialization;
 import gg.warcraft.legends.api.combat.LegendsSpecialization;
 import gg.warcraft.legends.api.combat.LegendsSpecializationType;
@@ -37,7 +36,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-@Singleton
 public class DefaultLootCrateCommandService implements LootCrateCommandService {
     private final LootCrateRepository lootCrateRepository;
     private final PlayerCommandService playerCommandService;
@@ -54,7 +52,8 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
                                           LegendsPlayerQueryService playerQueryService,
                                           EquipmentGeneratorFactory equipmentGeneratorFactory,
                                           ConsumableBuilderFactory consumableBuilderFactory,
-                                          StringUtils stringUtils, @PluginLogger Logger pluginLogger) {
+                                          StringUtils stringUtils, Random random,
+                                          @PluginLogger Logger pluginLogger) {
         this.lootCrateRepository = lootCrateRepository;
         this.playerCommandService = playerCommandService;
         this.playerQueryService = playerQueryService;
@@ -62,7 +61,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         this.consumableBuilderFactory = consumableBuilderFactory;
         this.stringUtils = stringUtils;
         this.pluginLogger = pluginLogger;
-        this.random = new Random(System.currentTimeMillis());
+        this.random = random;
     }
 
     @Override
@@ -123,7 +122,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         playerCommandService.sendNotification(playerId, "You received " + prefix + itemName + ColorCode.YELLOW + "!");
     }
 
-    private void awardRandomConsumable(UUID playerId, ItemRarity rarity) {
+    private boolean awardRandomConsumable(UUID playerId, ItemRarity rarity) {
         ItemType type;
         String name;
         switch (rarity) {
@@ -151,13 +150,14 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         Item consumable = builder.build();
         playerCommandService.giveItem(playerId, consumable, false);
         sendReceivedNotification(playerId, consumable.getName());
+        return true;
     }
 
-    private void awardRandomEquipment(UUID playerId, ItemRarity rarity) {
+    private boolean awardRandomEquipment(UUID playerId, ItemRarity rarity) {
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
         if (player == null) {
             pluginLogger.warning("Failed to award random equipment to player " + playerId + ", player not found.");
-            return;
+            return false;
         }
 
         EquipmentGenerator equipmentGenerator = equipmentGeneratorFactory.createEquipmentGenerator();
@@ -171,28 +171,33 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         if (specializationType == null) {
             pluginLogger.warning("Failed to award random equipment to player " + playerId +
                     ", could not determine specialization type for " + specialization.getName());
-            return;
+            return false;
         }
 
         Item equipment = equipmentGenerator.generate(specializationType, rarity, player.getTeam());
         playerCommandService.giveItem(playerId, equipment, false);
         sendReceivedNotification(playerId, equipment.getName());
+        return true;
     }
 
-    private void awardRandomEquipmentUpgrade(UUID playerId, ItemRarity rarity) {
+    private boolean awardRandomEquipmentUpgrade(UUID playerId, ItemRarity rarity) {
         playerCommandService.sendMessage(playerId, "You got an imaginary " + rarity + " equipment upgrade!");
+        return true;
     }
 
-    private void awardRandomDecoration(UUID playerId, ItemRarity rarity) {
+    private boolean awardRandomDecoration(UUID playerId, ItemRarity rarity) {
         playerCommandService.sendMessage(playerId, "You got an imaginary " + rarity + " decoration!");
+        return true;
     }
 
-    private void awardRandomDecorationPack(UUID playerId, ItemRarity rarity) {
+    private boolean awardRandomDecorationPack(UUID playerId, ItemRarity rarity) {
         playerCommandService.sendMessage(playerId, "You got an imaginary " + rarity + " decoration pack!");
+        return true;
     }
 
-    private void awardRandomMiniPet(UUID playerId, ItemRarity rarity) {
+    private boolean awardRandomMiniPet(UUID playerId, ItemRarity rarity) {
         playerCommandService.sendMessage(playerId, "You got an imaginary " + rarity + " mini pet!");
+        return true;
     }
 
     @Override
@@ -213,24 +218,19 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
 
         switch (dropType) {
             case CONSUMABLE:
-                awardRandomConsumable(playerId, dropRarity);
-                break;
+                return awardRandomConsumable(playerId, dropRarity);
             case EQUIPMENT:
-                awardRandomEquipment(playerId, dropRarity);
-                break;
+                return awardRandomEquipment(playerId, dropRarity);
             case EQUIPMENT_UPGRADE:
-                awardRandomEquipmentUpgrade(playerId, dropRarity);
-                break;
+                return awardRandomEquipmentUpgrade(playerId, dropRarity);
             case DECORATION:
-                awardRandomDecoration(playerId, dropRarity);
-                break;
+                return awardRandomDecoration(playerId, dropRarity);
             case DECORATION_PACK:
-                awardRandomDecorationPack(playerId, dropRarity);
-                break;
+                return awardRandomDecorationPack(playerId, dropRarity);
             case MINI_PET:
-                awardRandomMiniPet(playerId, dropRarity);
-                break;
+                return awardRandomMiniPet(playerId, dropRarity);
+            default:
+                return false;
         }
-        return true;
     }
 }
