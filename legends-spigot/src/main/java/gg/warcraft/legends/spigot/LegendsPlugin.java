@@ -112,7 +112,7 @@ public class LegendsPlugin extends JavaPlugin {
         Arrays.stream(LegendsTeam.values()).forEach(teamCommandService::registerTeam);
     }
 
-    void initializeLegendsHandlers() {
+    void initializeLegendsHandlers(boolean isProduction) {
         UniversalBlockBreakPlaceHandler universalBlockBreakPlaceHandler =
                 injector.getInstance(UniversalBlockBreakPlaceHandler.class);
         eventService.subscribe(universalBlockBreakPlaceHandler);
@@ -174,12 +174,14 @@ public class LegendsPlugin extends JavaPlugin {
         taskService.runTask(spigotScoreboardHandler, timeUtils.createDurationInTicks(9), timeUtils.createDurationInSeconds(1));
 
         // Metrics
-        PlayerCountMetricHandler playerCountMetricHandler = injector.getInstance(PlayerCountMetricHandler.class);
-        eventService.subscribe(playerCountMetricHandler);
-        taskService.runTask(playerCountMetricHandler, timeUtils.oneTick(), timeUtils.createDurationInSeconds(300));
+        if (isProduction) {
+            PlayerCountMetricHandler playerCountMetricHandler = injector.getInstance(PlayerCountMetricHandler.class);
+            eventService.subscribe(playerCountMetricHandler);
+            taskService.runTask(playerCountMetricHandler, timeUtils.oneTick(), timeUtils.createDurationInSeconds(300));
 
-        TotalPointsMetricHandler totalPointsMetricHandler = injector.getInstance(TotalPointsMetricHandler.class);
-        eventService.subscribe(totalPointsMetricHandler);
+            TotalPointsMetricHandler totalPointsMetricHandler = injector.getInstance(TotalPointsMetricHandler.class);
+            eventService.subscribe(totalPointsMetricHandler);
+        }
 
         // Combat logging
         CombatLoggingHandler combatLoggingHandler = injector.getInstance(CombatLoggingHandler.class);
@@ -253,6 +255,7 @@ public class LegendsPlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        saveDefaultConfig();
         Monolith.registerModule(new SpigotLegendsModule(this));
     }
 
@@ -263,11 +266,13 @@ public class LegendsPlugin extends JavaPlugin {
         this.taskService = injector.getInstance(TaskService.class);
         this.timeUtils = injector.getInstance(TimeUtils.class);
 
+        boolean isProduction = getConfig().getBoolean("isProduction");
+
         loadServerConfiguration();
         loadShopConfiguration();
         loadEquipmentConfiguration();
         initializeLegendsTeams();
-        initializeLegendsHandlers();
+        initializeLegendsHandlers(isProduction);
         initializeLegendsCommands();
         initializeOLDHACK();
         initializeGame();
