@@ -205,15 +205,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         }
 
         int dropTypeRoll = random.nextInt(100);
-        LootCrateDropTable dropTable;
-        try {
-            dropTable = crate.viewDropTable().floorEntry(dropTypeRoll).getValue();
-        } catch (Exception ex) {
-            // FIXME find out whats wrong and remove this try/catch
-            System.out.println("DEBUG failed to get drop table for type roll: " + dropTypeRoll);
-            System.out.println("Table was: " + crate.viewDropTable());
-            return false;
-        }
+        LootCrateDropTable dropTable = crate.viewDropTable().floorEntry(dropTypeRoll).getValue();
         LootCrateDropType dropType = dropTable.getType();
 
         int dropRarityRoll = random.nextInt(100);
