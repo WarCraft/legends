@@ -9,6 +9,7 @@ import gg.warcraft.legends.api.item.crate.LootCrateReaderFactory;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.legends.api.item.crate.service.LootCrateCommandService;
 import gg.warcraft.monolith.api.entity.event.EntityPreInteractEvent;
+import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.item.Inventory;
 import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.world.block.event.BlockPreInteractEvent;
@@ -20,14 +21,17 @@ public class LootCrateUseHandler {
     private static final int ITEMS_PER_CRATE = 3;
 
     private final LootCrateCommandService lootCrateCommandService;
+    private final PlayerCommandService playerCommandService;
     private final LegendsPlayerQueryService playerQueryService;
     private final LootCrateReaderFactory lootCrateReaderFactory;
 
     @Inject
     public LootCrateUseHandler(LootCrateCommandService lootCrateCommandService,
+                               PlayerCommandService playerCommandService,
                                LegendsPlayerQueryService playerQueryService,
                                LootCrateReaderFactory lootCrateReaderFactory) {
         this.lootCrateCommandService = lootCrateCommandService;
+        this.playerCommandService = playerCommandService;
         this.playerQueryService = playerQueryService;
         this.lootCrateReaderFactory = lootCrateReaderFactory;
     }
@@ -54,6 +58,9 @@ public class LootCrateUseHandler {
                     inventory.remove(itemInHand.withStackSize(1));
                 }
             }
+        } else {
+            playerCommandService.sendNotification(playerId, "Please make sure you have at least " + ITEMS_PER_CRATE +
+                    " empty slots in your inventory.");
         }
         return true;
     }
