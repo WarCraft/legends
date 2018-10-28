@@ -199,8 +199,8 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
     public boolean openCrate(UUID playerId, LootCrateType type) {
         LootCrate crate = lootCrateRepository.get(type);
         if (crate == null) {
-            pluginLogger.warning("Failed to open crate with type " + type + " for player "
-                    + playerId + ", it doesn't exist");
+            pluginLogger.warning("Failed to open crate with type " + type + " for player " + playerId +
+                    ", crate doesn't exist");
             return false;
         }
 
