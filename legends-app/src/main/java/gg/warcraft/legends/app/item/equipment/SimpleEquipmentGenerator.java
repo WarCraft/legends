@@ -2,6 +2,7 @@ package gg.warcraft.legends.app.item.equipment;
 
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.combat.LegendsSpecializationType;
+import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.item.AttributeDistribution;
 import gg.warcraft.legends.api.item.ItemRarity;
@@ -16,6 +17,8 @@ import gg.warcraft.legends.api.item.equipment.EquipmentType;
 import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemType;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -57,6 +60,51 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
             default:
                 return equipmentConfiguration.getAttributeRolls();
         }
+    }
+
+    private int getRandomRollFor(List<AttributeRollConfiguration> attributeRolls, ItemRarity rarity) {
+        int totalLowRoll = 0;
+        int totalHighRoll = 0;
+        for (AttributeRollConfiguration roll : attributeRolls) {
+            totalLowRoll += roll.getLowRoll();
+            totalHighRoll += roll.getHighRoll();
+        }
+
+        int deltaRoll = totalHighRoll - totalLowRoll;
+        int halfDeltaRoll = (int) (0.5f * deltaRoll);
+        switch (rarity) {
+            case COMMON:
+            default:
+                return totalLowRoll + random.nextInt(halfDeltaRoll + 1);
+            case RARE:
+                return totalHighRoll - 1 - random.nextInt(halfDeltaRoll - 1);
+            case EPIC:
+                return totalHighRoll;
+        }
+    }
+
+    private Map<LegendsAttribute, Integer> getRandomAttributesFor(List<AttributeRollConfiguration> attributeRolls,
+                                                                  int roll) {
+        Map<LegendsAttribute, Integer> randomAttributeRolls = new LinkedHashMap<>();
+        Map<LegendsAttribute, Integer> highRolls = new HashMap<>();
+        int remainingRoll = roll;
+        for (int i = attributeRolls.size() - 1; i >= 0; i -= 1) {
+            AttributeRollConfiguration attr = attributeRolls.get(i);
+            randomAttributeRolls.put(attr.getAttribute(), attr.getLowRoll());
+            highRolls.put(attr.getAttribute(), attr.getHighRoll());
+            remainingRoll -= attr.getLowRoll();
+        }
+        while (remainingRoll > 0) {
+            LegendsAttribute randomAttribute = attributeRolls.get(random.nextInt(attributeRolls.size())).getAttribute();
+            int currentRoll = randomAttributeRolls.get(randomAttribute);
+            int maxRoll = highRolls.get(randomAttribute);
+            if (currentRoll < maxRoll) {
+                int newRoll = currentRoll + 1;
+                randomAttributeRolls.put(randomAttribute, newRoll);
+                remainingRoll -= 1;
+            }
+        }
+        return randomAttributeRolls;
     }
 
     @Override
@@ -104,14 +152,9 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
         List<List<AttributeRollConfiguration>> attributeRolls =
                 getAttributeConfigurationsFor(rarity).get(specialization).get(attributeDistribution);
         List<AttributeRollConfiguration> attributeRoll = attributeRolls.get(random.nextInt(attributeRolls.size()));
-        attributeRoll.forEach(roll -> {
-            int lowRoll = roll.getLowRoll();
-            int highRoll = roll.getHighRoll();
-            int rollDelta = highRoll - lowRoll + 1;
-            int rollRoll = random.nextInt(rollDelta);
-            builder.withAttribute(roll.getAttribute(), lowRoll + rollRoll);
-        });
-
+        int randomRoll = getRandomRollFor(attributeRoll, rarity);
+        Map<LegendsAttribute, Integer> randomAttributeRoll = getRandomAttributesFor(attributeRoll, randomRoll);
+        randomAttributeRoll.forEach(builder::withAttribute);
         return builder.build();
     }
 }
