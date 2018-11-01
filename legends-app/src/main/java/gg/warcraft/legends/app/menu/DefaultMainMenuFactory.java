@@ -67,7 +67,9 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         List<String> combatView = new ArrayList<>();
         String specialization = player.getSpecialization().getName();
         String specializationPrefix = stringUtils.isVowel(specialization.charAt(0)) ? "an " : "a ";
-        String team = player.getTeam().getName();
+        String team = player.getTeam() == null
+                ? "Wayfarers"
+                : player.getTeam().getName();
         combatView.add("You are currently " + specializationPrefix + YELLOW + specialization);
         combatView.add("fighting for the " + YELLOW + team);
         return combatView;
