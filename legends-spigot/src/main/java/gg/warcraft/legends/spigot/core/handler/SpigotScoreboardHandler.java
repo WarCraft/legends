@@ -36,7 +36,7 @@ public class SpigotScoreboardHandler implements Runnable {
                 HUMAN.getChatColor() + HUMAN.getName() + RESET + " | " +
                 ORC.getChatColor() + ORC.getName() + RESET + "\\n" +
                 "\\n" +
-                "War Score\\n" +
+                "Monthly Score\\n" +
                 "%s\\n" + RESET +
                 "\\n" +
                 "Daily Points\\n" +
