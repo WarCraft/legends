@@ -12,6 +12,7 @@ import gg.warcraft.monolith.api.entity.status.Status;
 import gg.warcraft.monolith.api.entity.status.StatusEffect;
 import gg.warcraft.monolith.api.entity.status.service.StatusCommandService;
 import gg.warcraft.monolith.api.entity.status.service.StatusQueryService;
+import gg.warcraft.monolith.api.entity.team.Team;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,12 +69,15 @@ public class PassiveAssignmentHandler {
         Status status = statusQueryService.getStatus(playerId);
         removeOldPassives(status);
 
-        Specialization newSpecialization = event.getNewSpecialization();
-        String newPassiveKey = player.getTeam().getName() + ":" + newSpecialization.getPermission();
-        Function<UUID, StatusEffect> newPassiveFactory = passives.get(newPassiveKey);
-        if (newPassiveFactory != null) {
-            StatusEffect newPassive = newPassiveFactory.apply(playerId);
-            statusCommandService.addStatusEffect(newPassive, playerId);
+        Team team = player.getTeam();
+        if (team != null) {
+            Specialization newSpecialization = event.getNewSpecialization();
+            String newPassiveKey = team.getName() + ":" + newSpecialization.getPermission();
+            Function<UUID, StatusEffect> newPassiveFactory = passives.get(newPassiveKey);
+            if (newPassiveFactory != null) {
+                StatusEffect newPassive = newPassiveFactory.apply(playerId);
+                statusCommandService.addStatusEffect(newPassive, playerId);
+            }
         }
     }
 }

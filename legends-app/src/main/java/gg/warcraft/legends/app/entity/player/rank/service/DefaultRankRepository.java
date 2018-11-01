@@ -23,8 +23,12 @@ public class DefaultRankRepository implements RankRepository {
 
     @Override
     public NavigableMap<Integer, Rank> getRanks(Team team) {
-        String teamName = team.getName();
-        return new TreeMap<>(ranks.getOrDefault(teamName, Collections.emptyNavigableMap()));
+        if (team != null) {
+            String teamName = team.getName();
+            return new TreeMap<>(ranks.getOrDefault(teamName, Collections.emptyNavigableMap()));
+        } else {
+            return Collections.emptyNavigableMap();
+        }
     }
 
     @Override

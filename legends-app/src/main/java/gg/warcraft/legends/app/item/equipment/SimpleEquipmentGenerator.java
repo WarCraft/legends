@@ -74,11 +74,10 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
         int halfDeltaRoll = (int) (0.5f * deltaRoll);
         switch (rarity) {
             case COMMON:
-            default:
                 return totalLowRoll + random.nextInt(halfDeltaRoll + 1);
             case RARE:
                 return totalHighRoll - 1 - random.nextInt(halfDeltaRoll - 1);
-            case EPIC:
+            default:
                 return totalHighRoll;
         }
     }
