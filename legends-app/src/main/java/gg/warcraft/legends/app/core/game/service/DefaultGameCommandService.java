@@ -202,11 +202,8 @@ public class DefaultGameCommandService implements GameCommandService {
             }
         }
 
-        if (winners.isEmpty()) {
-            throw new IllegalStateException("Failed to run score with no winners. This should never happen.");
-        } else if (winners.size() != 1) {
-            // TODO what to do with multiple winners
-            System.out.println("GameCommmandService::runScore encountered multiple winners: " + winners);
+        if (winners.size() != 1) {
+            // wait with running score until 1 team gets ahead in points
             return;
         }
 
