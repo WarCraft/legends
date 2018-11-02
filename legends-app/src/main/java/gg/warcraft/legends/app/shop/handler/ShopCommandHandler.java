@@ -1,21 +1,73 @@
 package gg.warcraft.legends.app.shop.handler;
 
 import com.google.inject.Inject;
-import gg.warcraft.legends.api.shop.MiniPetId;
+import gg.warcraft.legends.api.entity.player.LegendsCurrency;
+import gg.warcraft.legends.api.item.crate.LootCrateBuilder;
+import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
+import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileCommandService;
 import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
+import gg.warcraft.monolith.api.core.PluginLogger;
+import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
+import gg.warcraft.monolith.api.item.Item;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class ShopCommandHandler implements CommandHandler {
     private final ShopProfileCommandService shopProfileCommandService;
+    private final PlayerCommandService playerCommandService;
+    private final LootCrateBuilderFactory lootCrateBuilderFactory;
+    private final Logger pluginLogger;
 
     @Inject
-    public ShopCommandHandler(ShopProfileCommandService shopProfileCommandService) {
+    public ShopCommandHandler(ShopProfileCommandService shopProfileCommandService,
+                              PlayerCommandService playerCommandService,
+                              LootCrateBuilderFactory lootCrateBuilderFactory,
+                              @PluginLogger Logger pluginLogger) {
         this.shopProfileCommandService = shopProfileCommandService;
+        this.playerCommandService = playerCommandService;
+        this.lootCrateBuilderFactory = lootCrateBuilderFactory;
+        this.pluginLogger = pluginLogger;
+    }
+
+    private boolean handleFragments(String amount, String playerId) {
+        try {
+            int actualAmount = Integer.parseInt(amount);
+            UUID actualPlayerId = UUID.fromString(playerId);
+            if (actualAmount < 0) {
+                pluginLogger.warning("Fragments purchase of " + -actualAmount + " got removed from " + playerId);
+                playerCommandService.revokeCurrency(actualPlayerId, LegendsCurrency.FRAGMENTS, -actualAmount);
+            } else {
+                playerCommandService.addCurrency(actualPlayerId, LegendsCurrency.FRAGMENTS, actualAmount);
+            }
+            return true;
+        } catch (Exception ex) {
+            pluginLogger.severe("Failed to handle fragments purchase of " + amount + " for " + playerId);
+            return false;
+        }
+    }
+
+    private boolean handleCrates(String amount, String playerId) {
+        try {
+            int actualAmount = Integer.parseInt(amount);
+            UUID actualPlayerId = UUID.fromString(playerId);
+            if (actualAmount < 0) {
+                pluginLogger.warning("Crates purchase of " + -actualAmount + " got removed from " + playerId);
+                // TODO how to revoke?
+            } else {
+                LootCrateBuilder crateBuilder = lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.TITAN_CRATE);
+                Item crate = crateBuilder.build().withStackSize(actualAmount);
+                playerCommandService.giveItem(actualPlayerId, crate, false);
+            }
+            return true;
+        } catch (Exception ex) {
+            pluginLogger.severe("Failed to handle crates purchase of " + amount + " for " + playerId);
+            return false;
+        }
     }
 
     @Override
@@ -24,23 +76,22 @@ public class ShopCommandHandler implements CommandHandler {
             return false;
         }
 
-        if (arguments.size() != 4) {
+        if (arguments.isEmpty()) {
             return false;
         }
 
-        // FIXME
         switch (arguments.get(0)) {
-            case "UNLOCK":
-                switch (arguments.get(1)) {
-                    case "MINI_PET":
-                        MiniPetId id = MiniPetId.valueOf(arguments.get(2));
-                        shopProfileCommandService.unlockMiniPet(id, UUID.fromString(arguments.get(3)), false);
+            case "fragments":
+                if (arguments.size() != 3) {
+                    return false;
                 }
-                break;
-            case "LOCK":
-                // TODO
-                break;
+                return handleFragments(arguments.get(1), arguments.get(2));
+            case "create":
+                if (arguments.size() != 3) {
+                    return false;
+                }
+                return handleCrates(arguments.get(1), arguments.get(2));
         }
-        return true;
+        return false;
     }
 }
