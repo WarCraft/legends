@@ -62,6 +62,21 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
         }
     }
 
+    private Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>>
+    getOffhandAttributeConfigurationsFor(ItemRarity rarity) {
+        switch (rarity) {
+            case LEGENDARY:
+                return equipmentConfiguration.getOffhandLegendaryRolls();
+            case ANCIENT:
+                return equipmentConfiguration.getOffhandAncientRolls();
+            case COMMON:
+            case RARE:
+            case EPIC:
+            default:
+                return equipmentConfiguration.getOffhandAttributeRolls();
+        }
+    }
+
     private int getRandomRollFor(List<AttributeRollConfiguration> attributeRolls, ItemRarity rarity) {
         int totalLowRoll = 0;
         int totalHighRoll = 0;
@@ -76,7 +91,10 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
             case COMMON:
                 return totalLowRoll + random.nextInt(halfDeltaRoll + 1);
             case RARE:
-                return totalHighRoll - 1 - random.nextInt(halfDeltaRoll - 1);
+                int randomHalfDeltaRoll = halfDeltaRoll > 1
+                        ? random.nextInt(halfDeltaRoll - 1)
+                        : 0;
+                return totalHighRoll - 1 - randomHalfDeltaRoll;
             default:
                 return totalHighRoll;
         }
@@ -87,8 +105,7 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
         Map<LegendsAttribute, Integer> randomAttributeRolls = new LinkedHashMap<>();
         Map<LegendsAttribute, Integer> highRolls = new HashMap<>();
         int remainingRoll = roll;
-        for (int i = attributeRolls.size() - 1; i >= 0; i -= 1) {
-            AttributeRollConfiguration attr = attributeRolls.get(i);
+        for (AttributeRollConfiguration attr : attributeRolls) {
             randomAttributeRolls.put(attr.getAttribute(), attr.getLowRoll());
             highRolls.put(attr.getAttribute(), attr.getHighRoll());
             remainingRoll -= attr.getLowRoll();
@@ -148,12 +165,16 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
             builder.withFlavorText(itemLore);
         }
 
-        List<List<AttributeRollConfiguration>> attributeRolls =
-                getAttributeConfigurationsFor(rarity).get(specialization).get(attributeDistribution);
+        List<List<AttributeRollConfiguration>> attributeRolls;
+        if (equipmentConfiguration.getOffhandTypes().contains(type)) {
+            attributeRolls = getOffhandAttributeConfigurationsFor(rarity).get(specialization).get(attributeDistribution);
+        } else {
+            attributeRolls = getAttributeConfigurationsFor(rarity).get(specialization).get(attributeDistribution);
+        }
         List<AttributeRollConfiguration> attributeRoll = attributeRolls.get(random.nextInt(attributeRolls.size()));
         int randomRoll = getRandomRollFor(attributeRoll, rarity);
         Map<LegendsAttribute, Integer> randomAttributeRoll = getRandomAttributesFor(attributeRoll, randomRoll);
-        randomAttributeRoll.forEach(builder::withAttribute);
+        builder.withAttributes(randomAttributeRoll);
         return builder.build();
     }
 }

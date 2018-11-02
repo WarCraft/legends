@@ -17,6 +17,8 @@ public interface EquipmentConfiguration {
 
     Map<LegendsSpecializationType, List<EquipmentType>> getValidTypes();
 
+    List<EquipmentType> getOffhandTypes();
+
     Map<EquipmentType, Map<ItemRarity, ItemType>> getItemTypes();
 
     Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getAttributeRolls();
@@ -24,6 +26,12 @@ public interface EquipmentConfiguration {
     Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getLegendaryRolls();
 
     Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getAncientRolls();
+
+    Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getOffhandAttributeRolls();
+
+    Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getOffhandLegendaryRolls();
+
+    Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getOffhandAncientRolls();
 
     Map<LegendsSpecializationType, Map<LegendsTeam, Map<AttributeDistribution, Map<EquipmentType, Map<ItemRarity, List<EquipmentLoreConfiguration>>>>>> getItemLores();
 }
