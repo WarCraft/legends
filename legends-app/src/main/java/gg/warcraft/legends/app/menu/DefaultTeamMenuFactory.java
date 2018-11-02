@@ -62,7 +62,10 @@ public class DefaultTeamMenuFactory extends AbstractMenuFactory implements TeamM
     Button createInfoButton(LegendsPlayer player) {
         ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Choosing a team");
         builder.addTooltip("You are currently fighting for the");
-        builder.addTooltip(YELLOW + player.getTeam().getName());
+        String currentTeam = player.getTeam() != null
+                ? player.getTeam().getName()
+                : LegendsTeam.WAYFARER.getName();
+        builder.addTooltip(YELLOW + currentTeam);
         builder.addTooltip("");
 //        builder.addTooltip("You can switch teams freely the first");
 //        builder.addTooltip("3 days of a war (start of the month).");
