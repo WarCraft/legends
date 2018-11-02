@@ -1,12 +1,15 @@
 package gg.warcraft.legends.app.menu;
 
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
+import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
+import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
@@ -32,6 +35,7 @@ public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements
     private final PlayerCommandService playerCommandService;
     private final MenuCommandService menuCommandService;
     private final MainMenuFactory mainMenuFactory;
+    private final LootCrateBuilderFactory lootCrateBuilderFactory;
     private final Logger pluginLogger;
 
     @Inject
@@ -41,12 +45,14 @@ public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements
                                         MenuBuilderFactory menuBuilderFactory,
                                         ButtonBuilderFactory buttonBuilderFactory,
                                         MainMenuFactory mainMenuFactory,
+                                        LootCrateBuilderFactory lootCrateBuilderFactory,
                                         @PluginLogger Logger pluginLogger) {
         super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.menuCommandService = menuCommandService;
         this.mainMenuFactory = mainMenuFactory;
+        this.lootCrateBuilderFactory = lootCrateBuilderFactory;
         this.pluginLogger = pluginLogger;
     }
 
@@ -103,8 +109,57 @@ public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements
             icon = dayClaimed ? ItemType.BROWN_STAINED_GLASS : ItemType.CHEST;
         }
 
+        LootCrateType lootCrateType;
         ButtonBuilder builder = createSimpleButtonBuilder(icon, "Day " + day);
-        builder.addTooltip("TODO list rewards");
+        switch (day) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+                builder.addTooltip("1x War Crate");
+                lootCrateType = LootCrateType.WAR_CRATE;
+                break;
+            case 7:
+            case 14:
+                builder.addTooltip("1x Legend Crate");
+                lootCrateType = LootCrateType.LEGEND_CRATE;
+                break;
+            case 15:
+            case 16:
+            case 17:
+            case 18:
+            case 19:
+            case 20:
+            case 22:
+            case 23:
+            case 24:
+            case 25:
+            case 26:
+            case 27:
+                builder.addTooltip("2x War Crate");
+                lootCrateType = LootCrateType.WAR_CRATE;
+                break;
+            case 21:
+                builder.addTooltip("2x Legend Crate");
+                lootCrateType = LootCrateType.LEGEND_CRATE;
+                break;
+            case 28:
+                builder.addTooltip("1x Titan Crate");
+                lootCrateType = LootCrateType.TITAN_CRATE;
+                break;
+            default:
+                builder.addTooltip("Unknown");
+                lootCrateType = LootCrateType.WAR_CRATE;
+                break;
+        }
         builder.addTooltip("");
 
         if (canClaim) {
@@ -116,9 +171,16 @@ public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements
                 LocalDate lastClaimed = getLastClaimed(player);
                 LocalDate now = LocalDate.now();
                 if (lastClaimed.isBefore(now)) {
-                    int newClaimCounter = claimCounter + 1;
-                    playerCommandService.setData(playerId, DAILY_LOGIN_COUNTER_DATA, "" + newClaimCounter);
-                    playerCommandService.setData(playerId, DAILY_LOGIN_LAST_CLAIMED_DATA, now.toString());
+                    if (player.getInventory().getSpace() > 0) {
+                        int newClaimCounter = claimCounter + 1;
+                        playerCommandService.setData(playerId, DAILY_LOGIN_COUNTER_DATA, "" + newClaimCounter);
+                        playerCommandService.setData(playerId, DAILY_LOGIN_LAST_CLAIMED_DATA, now.toString());
+
+                        Item reward = lootCrateBuilderFactory.createLootCrateBuilder(lootCrateType).build();
+                        playerCommandService.giveItem(playerId, reward, false);
+                    } else {
+                        playerCommandService.sendNotification(playerId, "Please make sure you have at least 1 free inventory slot.");
+                    }
                 }
 
                 menuCommandService.closeMenu(playerId);
@@ -135,6 +197,9 @@ public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements
         int claimCounter = getClaimCounter(player);
         LocalDate lastClaimed = getLastClaimed(player);
         boolean canClaim = lastClaimed.isBefore(LocalDate.now());
+        if (canClaim && claimCounter == 28) {
+            claimCounter = 0;
+        }
 
         MenuBuilder builder = createMenuBuilder("Daily Login", MenuSize.FOUR_ROWS);
         builder.addButton(0, createInfoButton());
