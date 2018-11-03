@@ -56,11 +56,11 @@ public class MassBamboozle extends AbstractAbility implements RangedAbility {
         this.server = server;
         this.massBamboozleRepository = massBamboozleRepository;
         this.taskService = taskService;
-        Location location = null;
+        Location location;
         if (rangedTarget != null) {
             location = rangedTarget.getLocation();
         } else if (blockTarget != null) {
-            blockTarget.getLocation().toLocation().add(1, 0.5f, 1);
+            location = blockTarget.getLocation().toLocation().add(1, 0.5f, 1);
         } else {
             throw new IllegalStateException("Failed to cast Mass Bamboozle with null entity and block targets");
         }
