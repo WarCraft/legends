@@ -46,10 +46,8 @@ public class LootCrateUseHandler {
             return false;
         }
 
-        System.out.println("DEBUG checking LootCrate interact");
         LootCrateReader reader = lootCrateReaderFactory.createLootCrateReader(itemInHand);
         if (!LOOT_CRATE_TYPE.equals(reader.getType())) {
-            System.out.println("DEBUG not a LootCrate: " + reader.getType());
             return false;
         }
 
