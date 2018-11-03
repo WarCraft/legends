@@ -3,11 +3,18 @@ package gg.warcraft.legends.app.combat.ranger.hunter;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.Hitbox;
+import gg.warcraft.combat.api.HitboxFactory;
+import gg.warcraft.combat.api.Movement;
+import gg.warcraft.combat.api.MovementFactory;
 import gg.warcraft.combat.api.ability.AbstractAbility;
 import gg.warcraft.combat.api.ability.RangedAbility;
+import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
+import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.monolith.api.combat.PotionEffect;
 import gg.warcraft.monolith.api.combat.PotionEffectType;
+import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.player.Player;
@@ -21,6 +28,7 @@ import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.BlockType;
 import gg.warcraft.monolith.api.world.block.spoofing.BlockSpoofingCommandService;
 import gg.warcraft.monolith.api.world.location.BlockLocation;
+import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
 
@@ -33,19 +41,23 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
     private static final Sound PLACE_SOUND = Sound.BLOCK_IRON_TRAPDOOR_OPEN;
     private static final Sound TRIGGER_SOUND = Sound.BLOCK_IRON_TRAPDOOR_CLOSE;
 
+    private final AbilityCommandService abilityCommandService;
     private final EntityCommandService entityCommandService;
     private final WorldCommandService worldCommandService;
     private final BlockSpoofingCommandService blockSpoofingCommandService;
     private final BlockLocation blockLocation;
     private final UUID[] spoofedPlayerIds;
+    private final UUID projectileId;
 
     @Inject
-    public Trap(EntityCommandService entityCommandService, PlayerQueryService playerQueryService,
-                WorldCommandService worldCommandService, WorldQueryService worldQueryService,
-                BlockSpoofingCommandService blockSpoofingCommandService, TaskService taskService,
+    public Trap(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
+                PlayerQueryService playerQueryService, WorldCommandService worldCommandService,
+                WorldQueryService worldQueryService, BlockSpoofingCommandService blockSpoofingCommandService,
+                MovementFactory movementFactory, HitboxFactory hitboxFactory, TaskService taskService,
                 @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                 @Assisted("target") @Nullable Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
         super(caster.getId(), snapshot);
+        this.abilityCommandService = abilityCommandService;
         this.entityCommandService = entityCommandService;
         this.worldCommandService = worldCommandService;
         this.blockSpoofingCommandService = blockSpoofingCommandService;
@@ -58,14 +70,21 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
                 .map(Player::getId)
                 .toArray(UUID[]::new);
         blockSpoofingCommandService.spoofBlock(fakeBlock, spoofedPlayerIds);
-        worldCommandService.playSound(caster.getLocation(), PLACE_SOUND, SOUND_CATEGORY, 1, 1);
+
+        Location trapLocation = blockLocation.toLocation().add(0.5f, 0, 0.5f);
+        Movement movement = movementFactory.createStationaryMovement(trapLocation);
+        CombatValue radius = snapshot.getValue(AbilityConfigurationValue.RADIUS);
+        Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius.getModifiedValue(), entity -> entity.getTeam() != caster.getTeam());
+        projectileId = abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
 
         Duration duration = snapshot.getDuration();
         taskService.runLater(this::cancel, duration);
+        worldCommandService.playSound(caster.getLocation(), PLACE_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
     @Override
     public void cancel() {
+        abilityCommandService.cancelProjectile(projectileId);
         Arrays.stream(spoofedPlayerIds).forEach(id -> blockSpoofingCommandService.unspoofBlock(blockLocation));
     }
 
