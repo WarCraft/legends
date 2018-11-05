@@ -1,16 +1,14 @@
 package gg.warcraft.legends.spigot.OLD.combat;
 
 import com.google.common.eventbus.Subscribe;
-import gg.warcraft.combat.api.ability.config.AbilityConfiguration;
-import gg.warcraft.combat.api.ability.config.service.AbilityConfigurationQueryService;
 import gg.warcraft.combat.api.ability.event.AbilityCastEvent;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerDisconnectEvent;
+import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -26,7 +24,6 @@ public class PersonalScoreboardHandler {
     private static final String HEALTH_OBJECTIVE = "Health";
     private static final String HEALTH_CRITERIA = "health";
 
-    private final AbilityConfigurationQueryService abilityConfigurationQueryService;
     private final EventService eventService;
     private final Map<UUID, PersonalScoreboard> scoreboards;
 
@@ -36,11 +33,9 @@ public class PersonalScoreboardHandler {
     private final TaskService taskService;
     private final TimeUtils timeUtils;
 
-    public PersonalScoreboardHandler(AbilityConfigurationQueryService abilityConfigurationQueryService,
-                                     EventService eventService, Server server, Plugin plugin,
+    public PersonalScoreboardHandler(EventService eventService, Server server, Plugin plugin,
                                      LegendsPlayerQueryService legendsPlayerQueryService, TaskService taskService,
                                      TimeUtils timeUtils) {
-        this.abilityConfigurationQueryService = abilityConfigurationQueryService;
         this.eventService = eventService;
         this.scoreboards = new HashMap<>();
 
@@ -64,10 +59,9 @@ public class PersonalScoreboardHandler {
     public void onMonolithAbilityCastEvent(AbilityCastEvent event) {
         PersonalScoreboard scoreboard = scoreboards.get(event.getCasterId());
         if (scoreboard != null) {
-            String abilityClassName = event.getAbilityName();
-            String abilityName = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(abilityClassName), " ");
-            AbilityConfiguration configuration = abilityConfigurationQueryService.getConfiguration(event.getAbilityName());
-            scoreboard.track(abilityName, configuration.getCooldown());
+            String abilityName = event.getAbilityName();
+            Duration cooldown = event.getSnapshot().getCooldown();
+            scoreboard.track(abilityName, cooldown);
         }
     }
 

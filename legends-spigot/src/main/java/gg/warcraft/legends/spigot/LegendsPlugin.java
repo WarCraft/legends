@@ -219,8 +219,8 @@ public class LegendsPlugin extends JavaPlugin {
         SpigotMiniPetFactory spigotMiniPetFactory = injector.getInstance(SpigotMiniPetFactory.class);
         eventService.subscribe(spigotMiniPetFactory);
 
-        PersonalScoreboardHandler personalScoreboardHandler = new PersonalScoreboardHandler(abilityConfigurationQueryService,
-                eventService, getServer(), this, legendsPlayerQueryService, taskService, timeUtils);
+        PersonalScoreboardHandler personalScoreboardHandler = new PersonalScoreboardHandler(eventService, getServer(),
+                this, legendsPlayerQueryService, taskService, timeUtils);
         eventService.subscribe(personalScoreboardHandler);
 
         RangerOnlyBowHandler rangerOnlyBowHandler = new RangerOnlyBowHandler(legendsPlayerQueryService);
