@@ -3,6 +3,9 @@ package gg.warcraft.legends.app;
 import com.google.inject.PrivateModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Names;
+import gg.warcraft.legends.api.ai.npc.service.NpcCommandService;
+import gg.warcraft.legends.api.ai.npc.service.NpcQueryService;
+import gg.warcraft.legends.api.ai.npc.service.NpcRepository;
 import gg.warcraft.legends.api.combat.passive.PassiveFactory;
 import gg.warcraft.legends.api.core.MetricsService;
 import gg.warcraft.legends.api.core.game.service.GameCommandService;
@@ -47,6 +50,9 @@ import gg.warcraft.legends.api.shop.profile.service.ShopProfileRepository;
 import gg.warcraft.legends.api.shop.service.ShopCommandService;
 import gg.warcraft.legends.api.shop.service.ShopQueryService;
 import gg.warcraft.legends.api.shop.service.ShopRepository;
+import gg.warcraft.legends.app.ai.npc.service.DefaultNpcCommandService;
+import gg.warcraft.legends.app.ai.npc.service.DefaultNpcQueryService;
+import gg.warcraft.legends.app.ai.npc.service.DefaultNpcRepository;
 import gg.warcraft.legends.app.combat.mage.effect.ArcaneMissileEffect;
 import gg.warcraft.legends.app.combat.mage.effect.FireballEffect;
 import gg.warcraft.legends.app.combat.mage.effect.FlameTotemFireballEffect;
@@ -117,12 +123,24 @@ public abstract class AbstractLegendsModule extends PrivateModule {
 
     @Override
     protected void configure() {
+        configureAi();
         configureCombat();
         configureCore();
         configureEntity();
         configureItem();
         configureMenu();
         configureShop();
+    }
+
+    private void configureAi() {
+        bind(NpcCommandService.class).to(DefaultNpcCommandService.class);
+        expose(NpcCommandService.class);
+
+        bind(NpcQueryService.class).to(DefaultNpcQueryService.class);
+        expose(NpcQueryService.class);
+
+        bind(NpcRepository.class).to(DefaultNpcRepository.class);
+        expose(NpcRepository.class);
     }
 
     private void configureCombat() {

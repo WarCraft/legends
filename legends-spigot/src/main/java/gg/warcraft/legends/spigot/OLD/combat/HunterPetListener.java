@@ -3,10 +3,10 @@ package gg.warcraft.legends.spigot.OLD.combat;
 import com.google.common.eventbus.Subscribe;
 import gg.warcraft.combat.api.specialization.Specialization;
 import gg.warcraft.combat.api.specialization.event.PlayerSpecializationChangedEvent;
+import gg.warcraft.legends.api.ai.CombatPetFactory;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.legends.spigot.OLD.ai.CombatPetMaker;
 import gg.warcraft.monolith.api.combat.CombatSource;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.core.event.ServerShutdownEvent;
@@ -47,6 +47,7 @@ public class HunterPetListener implements Listener {
     private final Server server;
     private final LegendsPlayerQueryService legendsPlayerQueryService;
     private final TeamCommandService teamCommandService;
+    private final CombatPetFactory combatPetFactory;
     private final TaskService taskService;
     private final TimeUtils timeUtils;
 
@@ -54,10 +55,12 @@ public class HunterPetListener implements Listener {
     final Map<Tameable, UUID> petToOwner;
 
     public HunterPetListener(Server server, LegendsPlayerQueryService legendsPlayerQueryService,
-                             TeamCommandService teamCommandService, TaskService taskService, TimeUtils timeUtils) {
+                             TeamCommandService teamCommandService, CombatPetFactory combatPetFactory,
+                             TaskService taskService, TimeUtils timeUtils) {
         this.server = server;
         this.legendsPlayerQueryService = legendsPlayerQueryService;
         this.teamCommandService = teamCommandService;
+        this.combatPetFactory = combatPetFactory;
         this.taskService = taskService;
         this.timeUtils = timeUtils;
         this.pets = new HashMap<>();
@@ -78,7 +81,7 @@ public class HunterPetListener implements Listener {
                         Wolf wolf = (Wolf) world.spawnEntity(spigotPlayer.getLocation(), EntityType.WOLF);
                         wolf.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(BASE_PET_HEALTH);
                         wolf.setHealth(BASE_PET_HEALTH);
-                        CombatPetMaker.makePet(wolf, spigotPlayer);
+                        combatPetFactory.create(wolf.getUniqueId(), spigotPlayer.getUniqueId());
                         pet = wolf;
                         teamCommandService.setTeam(LegendsTeam.HUMAN, wolf.getUniqueId());
                     }
@@ -88,7 +91,7 @@ public class HunterPetListener implements Listener {
                         Wolf wolf = (Wolf) world.spawnEntity(spigotPlayer.getLocation(), EntityType.WOLF);
                         wolf.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(BASE_PET_HEALTH);
                         wolf.setHealth(BASE_PET_HEALTH);
-                        CombatPetMaker.makePet(wolf, spigotPlayer);
+                        combatPetFactory.create(wolf.getUniqueId(), spigotPlayer.getUniqueId());
                         pet = wolf;
                         teamCommandService.setTeam(LegendsTeam.ORC, wolf.getUniqueId());
 

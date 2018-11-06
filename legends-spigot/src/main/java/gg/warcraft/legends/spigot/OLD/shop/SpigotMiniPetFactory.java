@@ -3,7 +3,6 @@ package gg.warcraft.legends.spigot.OLD.shop;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.shop.MiniPetFactory;
-import gg.warcraft.legends.spigot.OLD.ai.PetMaker;
 import gg.warcraft.monolith.api.core.event.ServerShutdownEvent;
 import gg.warcraft.monolith.api.entity.EntityType;
 import org.bukkit.Server;
@@ -20,10 +19,12 @@ public class SpigotMiniPetFactory implements MiniPetFactory {
     private static final Map<UUID, UUID> playerIdToPetId = new HashMap<>();
 
     private final Server server;
+    private final gg.warcraft.legends.api.ai.MiniPetFactory miniPetFactory;
 
     @Inject
-    public SpigotMiniPetFactory(Server server) {
+    public SpigotMiniPetFactory(Server server, gg.warcraft.legends.api.ai.MiniPetFactory miniPetFactory) {
         this.server = server;
+        this.miniPetFactory = miniPetFactory;
     }
 
     org.bukkit.entity.EntityType mapEntityType(EntityType type) {
@@ -58,7 +59,7 @@ public class SpigotMiniPetFactory implements MiniPetFactory {
         Ageable ageable = (Ageable) pet;
         LivingEntity livingEntity = (LivingEntity) pet;
         ageable.setBaby();
-        PetMaker.makePet(livingEntity, player);
+        miniPetFactory.create(livingEntity.getUniqueId(), player.getUniqueId());
         playerIdToPetId.put(playerId, pet.getUniqueId());
     }
 

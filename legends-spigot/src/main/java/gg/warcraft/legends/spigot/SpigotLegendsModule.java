@@ -1,7 +1,11 @@
 package gg.warcraft.legends.spigot;
 
+import gg.warcraft.legends.api.ai.CombatPetFactory;
+import gg.warcraft.legends.api.ai.NpcFactory;
 import gg.warcraft.legends.api.shop.MiniPetFactory;
 import gg.warcraft.legends.app.AbstractLegendsModule;
+import gg.warcraft.legends.spigot.OLD.ai.SpigotCombatPetFactory;
+import gg.warcraft.legends.spigot.OLD.ai.SpigotNpcFactory;
 import gg.warcraft.legends.spigot.OLD.shop.SpigotMiniPetFactory;
 import gg.warcraft.legends.spigot.core.handler.SpigotScoreboardHandler;
 import gg.warcraft.monolith.api.core.PluginLogger;
@@ -22,9 +26,16 @@ public class SpigotLegendsModule extends AbstractLegendsModule {
         bind(Plugin.class).toInstance(plugin);
         bind(Logger.class).annotatedWith(PluginLogger.class).toProvider(plugin::getLogger);
 
-        // TODO eventually remove this hack and all classes associated with it
+        bind(CombatPetFactory.class).to(SpigotCombatPetFactory.class);
+        expose(CombatPetFactory.class);
+
+        bind(gg.warcraft.legends.api.ai.MiniPetFactory.class).to(gg.warcraft.legends.spigot.OLD.ai.SpigotMiniPetFactory.class);
+        expose(gg.warcraft.legends.api.ai.MiniPetFactory.class);
         bind(MiniPetFactory.class).to(SpigotMiniPetFactory.class);
         expose(MiniPetFactory.class);
+
+        bind(NpcFactory.class).to(SpigotNpcFactory.class);
+        expose(NpcFactory.class);
 
         bind(SpigotScoreboardHandler.class);
         expose(SpigotScoreboardHandler.class);

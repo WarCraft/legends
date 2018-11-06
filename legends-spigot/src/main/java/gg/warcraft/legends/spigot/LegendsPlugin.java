@@ -4,6 +4,9 @@ import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 import gg.warcraft.combat.api.ability.config.service.AbilityConfigurationQueryService;
 import gg.warcraft.combat.api.ability.service.AbilityCommandService;
+import gg.warcraft.legends.api.ai.CombatPetFactory;
+import gg.warcraft.legends.api.ai.npc.config.NpcsConfiguration;
+import gg.warcraft.legends.api.ai.npc.service.NpcCommandService;
 import gg.warcraft.legends.api.config.ServerConfiguration;
 import gg.warcraft.legends.api.core.game.Game;
 import gg.warcraft.legends.api.core.game.service.GameCommandService;
@@ -16,6 +19,8 @@ import gg.warcraft.legends.api.item.config.service.EquipmentConfigurationReposit
 import gg.warcraft.legends.api.item.crate.service.LootCrateCommandService;
 import gg.warcraft.legends.api.shop.config.ShopConfiguration;
 import gg.warcraft.legends.api.shop.service.ShopCommandService;
+import gg.warcraft.legends.app.ai.npc.handler.NpcInteractHandler;
+import gg.warcraft.legends.app.ai.npc.handler.NpcPersistenceHandler;
 import gg.warcraft.legends.app.combat.LegendsCombatConfiguration;
 import gg.warcraft.legends.app.combat.handler.ArrowDistributionHandler;
 import gg.warcraft.legends.app.combat.handler.ArrowPickupHandler;
@@ -86,6 +91,16 @@ public class LegendsPlugin extends JavaPlugin {
         lootCrateCommandService.readConfiguration(serverConfiguration);
     }
 
+    void loadNpcConfiguration() {
+        MonolithPluginUtils pluginUtils = injector.getInstance(MonolithPluginUtils.class);
+        LegendsMapperModule legendsMapperModule = new LegendsMapperModule();
+
+        NpcsConfiguration npcsConfiguration = pluginUtils.loadConfiguration("REMOTE", "legends/npc.yml", "",
+                NpcsConfiguration.class, legendsMapperModule);
+        NpcCommandService npcCommandService = injector.getInstance(NpcCommandService.class);
+        npcsConfiguration.getNpcs().forEach(npcCommandService::readConfiguration);
+    }
+
     void loadShopConfiguration() {
         MonolithPluginUtils pluginUtils = injector.getInstance(MonolithPluginUtils.class);
         LegendsMapperModule legendsMapperModule = new LegendsMapperModule();
@@ -119,6 +134,13 @@ public class LegendsPlugin extends JavaPlugin {
 
         PlayerCurrencyEventHandler playerCurrencyEventHandler = injector.getInstance(PlayerCurrencyEventHandler.class);
         eventService.subscribe(playerCurrencyEventHandler);
+
+        // AI
+        NpcInteractHandler npcInteractHandler = injector.getInstance(NpcInteractHandler.class);
+        eventService.subscribe(npcInteractHandler);
+
+        NpcPersistenceHandler npcPersistenceHandler = injector.getInstance(NpcPersistenceHandler.class);
+        eventService.subscribe(npcPersistenceHandler);
 
         // Combat
         EquipmentAttributesHandler equipmentAttributesHandler = injector.getInstance(EquipmentAttributesHandler.class);
@@ -207,12 +229,13 @@ public class LegendsPlugin extends JavaPlugin {
         LegendsPlayerQueryService legendsPlayerQueryService = injector.getInstance(LegendsPlayerQueryService.class);
         AbilityConfigurationQueryService abilityConfigurationQueryService = injector.getInstance(AbilityConfigurationQueryService.class);
         TeamCommandService teamCommandService = injector.getInstance(TeamCommandService.class);
+        CombatPetFactory combatPetFactory = injector.getInstance(CombatPetFactory.class);
         TaskService taskService = injector.getInstance(TaskService.class);
         TimeUtils timeUtils = injector.getInstance(TimeUtils.class);
         EventService eventService = injector.getInstance(EventService.class);
 
         HunterPetListener hunterPetListener = new HunterPetListener(getServer(), legendsPlayerQueryService,
-                teamCommandService, taskService, timeUtils);
+                teamCommandService, combatPetFactory, taskService, timeUtils);
         eventService.subscribe(hunterPetListener);
         getServer().getPluginManager().registerEvents(hunterPetListener, this);
 
@@ -269,6 +292,7 @@ public class LegendsPlugin extends JavaPlugin {
         boolean isProduction = getConfig().getBoolean("isProduction");
 
         loadServerConfiguration();
+        loadNpcConfiguration();
         loadShopConfiguration();
         loadEquipmentConfiguration();
         initializeLegendsTeams();
