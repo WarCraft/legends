@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import gg.warcraft.legends.api.ai.npc.service.NpcQueryService;
 import gg.warcraft.legends.api.ai.npc.service.NpcRepository;
 
+import java.util.Set;
 import java.util.UUID;
 
 public class DefaultNpcQueryService implements NpcQueryService {
@@ -15,7 +16,7 @@ public class DefaultNpcQueryService implements NpcQueryService {
     }
 
     @Override
-    public boolean isNpc(UUID entityId) {
-        return npcRepository.getNpcIds().contains(entityId);
+    public Set<UUID> getNpcIds() {
+        return npcRepository.getNpcIds();
     }
 }

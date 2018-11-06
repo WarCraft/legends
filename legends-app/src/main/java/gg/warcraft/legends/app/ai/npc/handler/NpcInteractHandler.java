@@ -21,7 +21,7 @@ public class NpcInteractHandler {
     @Subscribe
     public void onEntityPreInteractEvent(EntityPreInteractEvent event) {
         UUID entityId = event.getEntityId();
-        if (npcQueryService.isNpc(entityId)) {
+        if (npcQueryService.getNpcIds().contains(entityId)) {
             npcCommandService.openDialog(entityId, event.getPlayerId());
             event.cancel();
         }
