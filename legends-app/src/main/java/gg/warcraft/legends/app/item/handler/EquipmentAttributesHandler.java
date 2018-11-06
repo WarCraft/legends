@@ -2,12 +2,14 @@ package gg.warcraft.legends.app.item.handler;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.monolith.api.entity.EquipmentSlot;
 import gg.warcraft.monolith.api.entity.attribute.AttributeModifier;
 import gg.warcraft.monolith.api.entity.attribute.service.AttributeCommandService;
 import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
+import gg.warcraft.monolith.api.entity.player.event.PlayerEquipmentChangedEvent;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemReader;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Singleton
 public class EquipmentAttributesHandler {
     private final AttributeCommandService attributeCommandService;
     private final PlayerQueryService playerQueryService;
@@ -80,25 +83,8 @@ public class EquipmentAttributesHandler {
         updateEquipmentModifiers(event.getPlayerId());
     }
 
-    // TODO
-//    @Subscribe
-//    public void onPlayerEquipmentChangedEvent(PlayerEquipmentChangedEvent event) {
-//        updateEquipmentModifiers(event.getPlayerId());
-//    }
-
-//    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-//    public void onInventoryClickEvent(InventoryClickEvent event) {
-//        if (event.getSlotType() == InventoryType.SlotType.ARMOR) {
-//            RunnableUtils.runOnNextTick(() -> {
-//                setEquipmentAttributeModifiers(event.getWhoClicked().getUniqueId());
-//            });
-//        }
-//    }
-
-//    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-//    public void onPlayerItemHeldEvent(PlayerItemHeldEvent event) {
-//        RunnableUtils.runOnNextTick(() -> {
-//            setEquipmentAttributeModifiers(event.getPlayer().getUniqueId());
-//        });
-//    }
+    @Subscribe
+    public void onPlayerEquipmentChangedEvent(PlayerEquipmentChangedEvent event) {
+        updateEquipmentModifiers(event.getPlayerId());
+    }
 }
