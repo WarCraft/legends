@@ -1,5 +1,7 @@
 package gg.warcraft.legends.spigot.OLD.ai;
 
+import com.google.inject.Inject;
+import gg.warcraft.legends.api.ai.MiniPetFactory;
 import net.minecraft.server.v1_12_R1.EntityAgeable;
 import net.minecraft.server.v1_12_R1.EntityHuman;
 import net.minecraft.server.v1_12_R1.EntityInsentient;
@@ -9,13 +11,31 @@ import net.minecraft.server.v1_12_R1.PathfinderGoalLookAtPlayer;
 import net.minecraft.server.v1_12_R1.PathfinderGoalRandomLookaround;
 import net.minecraft.server.v1_12_R1.PathfinderGoalSelector;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftLivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-public class PetMaker {
+import java.util.UUID;
 
-    public static void makePet(LivingEntity entity, Player owner) {
+public class SpigotMiniPetFactory implements MiniPetFactory {
+    private final Server server;
+
+    @Inject
+    public SpigotMiniPetFactory(Server server) {
+        this.server = server;
+    }
+
+    @Override
+    public UUID create(UUID entityId, UUID ownerId) {
+        Entity baseEntity = server.getEntity(entityId);
+        if (!(baseEntity instanceof LivingEntity)) {
+            return null;
+        }
+
+        Entity owner = server.getEntity(ownerId);
+        LivingEntity entity = (LivingEntity) baseEntity;
         entity.setInvulnerable(true);
         try {
             EntityLiving nmsEntity = ((CraftLivingEntity) entity).getHandle();
@@ -28,11 +48,11 @@ public class PetMaker {
                 PathfinderGoalSelector goal = PathfinderUtils.resetAndGetGoalSelectorFor(nmsEntity);
 
                 goal.a(0, new PathfinderGoalFloat(insentientEntity));
-                goal.a(1, new PathfinderGoalFollowOwnerReliable(entity, owner));
+                goal.a(1, new PathfinderGoalFollowOwnerReliable(entity, (Player) owner));
                 goal.a(2, new PathfinderGoalLookAtPlayer(insentientEntity, EntityHuman.class, 8.0F));
                 goal.a(2, new PathfinderGoalRandomLookaround(insentientEntity));
 
-                insentientEntity.setCustomName(ChatColor.LIGHT_PURPLE + owner.getDisplayName() + "'s pet");
+                insentientEntity.setCustomName(ChatColor.LIGHT_PURPLE + owner.getName() + "'s pet");
             } else {
                 System.out.println("Failed to make pet");
                 System.out.println(entity.getType() + " is not an instance of an EntityInsentient");
@@ -41,5 +61,7 @@ public class PetMaker {
             System.out.println("Failed to set pet goal selectors");
             ex.printStackTrace();
         }
+
+        return entityId;
     }
 }

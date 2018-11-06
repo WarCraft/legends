@@ -1,5 +1,7 @@
 package gg.warcraft.legends.spigot.OLD.ai;
 
+import com.google.inject.Inject;
+import gg.warcraft.legends.api.ai.NpcFactory;
 import net.minecraft.server.v1_12_R1.EntityAgeable;
 import net.minecraft.server.v1_12_R1.EntityHuman;
 import net.minecraft.server.v1_12_R1.EntityInsentient;
@@ -7,16 +9,31 @@ import net.minecraft.server.v1_12_R1.EntityLiving;
 import net.minecraft.server.v1_12_R1.PathfinderGoalLookAtPlayer;
 import net.minecraft.server.v1_12_R1.PathfinderGoalRandomLookaround;
 import net.minecraft.server.v1_12_R1.PathfinderGoalSelector;
+import org.bukkit.Server;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftLivingEntity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 
-public class NpcMaker {
+import java.util.UUID;
 
-    public static void makeNpc(LivingEntity entity, String name) {
-        entity.setInvulnerable(true);
+public class SpigotNpcFactory implements NpcFactory {
+    private final Server server;
+
+    @Inject
+    public SpigotNpcFactory(Server server) {
+        this.server = server;
+    }
+
+    @Override
+    public UUID create(UUID entityId, String name) {
+        Entity entity = server.getEntity(entityId);
+        if (entity == null) {
+            return null;
+        }
+
         try {
             EntityLiving nmsEntity = ((CraftLivingEntity) entity).getHandle();
             if (nmsEntity instanceof EntityInsentient) {
+                entity.setInvulnerable(true);
                 EntityInsentient insentientEntity = (EntityInsentient) nmsEntity;
                 if (insentientEntity instanceof EntityAgeable) {
                     ((EntityAgeable) insentientEntity).ageLocked = true;
@@ -36,5 +53,7 @@ public class NpcMaker {
             System.out.println("Failed to set npc goal selectors");
             ex.printStackTrace();
         }
+
+        return entityId;
     }
 }

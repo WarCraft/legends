@@ -1,5 +1,7 @@
 package gg.warcraft.legends.spigot.OLD.ai;
 
+import com.google.inject.Inject;
+import gg.warcraft.legends.api.ai.CombatPetFactory;
 import net.minecraft.server.v1_12_R1.EntityHuman;
 import net.minecraft.server.v1_12_R1.EntityLiving;
 import net.minecraft.server.v1_12_R1.EntityTameableAnimal;
@@ -14,14 +16,31 @@ import net.minecraft.server.v1_12_R1.PathfinderGoalOwnerHurtTarget;
 import net.minecraft.server.v1_12_R1.PathfinderGoalRandomLookaround;
 import net.minecraft.server.v1_12_R1.PathfinderGoalSelector;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftLivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 
-public class CombatPetMaker {
+import java.util.UUID;
 
-    public static void makePet(LivingEntity entity, Player owner) {
+public class SpigotCombatPetFactory implements CombatPetFactory {
+    private final Server server;
+
+    @Inject
+    public SpigotCombatPetFactory(Server server) {
+        this.server = server;
+    }
+
+    @Override
+    public UUID create(UUID entityId, UUID ownerId) {
+        Entity baseEntity = server.getEntity(entityId);
+        if (!(baseEntity instanceof LivingEntity)) {
+            return null;
+        }
+
+        Entity owner = server.getEntity(ownerId);
+        LivingEntity entity = (LivingEntity) baseEntity;
         try {
             EntityLiving nmsEntity = ((CraftLivingEntity) entity).getHandle();
             if (nmsEntity instanceof EntityTameableAnimal) {
@@ -31,8 +50,8 @@ public class CombatPetMaker {
 
                 EntityTameableAnimal tameableEntity = (EntityTameableAnimal) nmsEntity;
                 tameableEntity.setTamed(true);
-                tameableEntity.setOwnerUUID(owner.getUniqueId());
-                tameableEntity.setCustomName(ChatColor.LIGHT_PURPLE + owner.getDisplayName() + "'s pet");
+                tameableEntity.setOwnerUUID(ownerId);
+                tameableEntity.setCustomName(ChatColor.LIGHT_PURPLE + owner.getName() + "'s pet");
 
                 PathfinderGoalSelector goal = PathfinderUtils.resetAndGetGoalSelectorFor(nmsEntity);
                 PathfinderGoalSelector target = PathfinderUtils.resetAndGetTargetSelectorFor(nmsEntity);
@@ -58,5 +77,7 @@ public class CombatPetMaker {
             System.out.println("Failed to set combat pet goal selectors");
             ex.printStackTrace();
         }
+
+        return entityId;
     }
 }
