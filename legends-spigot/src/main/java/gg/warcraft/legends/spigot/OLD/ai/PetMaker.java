@@ -25,7 +25,7 @@ public class PetMaker {
                     ((EntityAgeable) insentientEntity).ageLocked = true;
                 }
 
-                PathfinderGoalSelector goal = PathfinderUtils.getGoalSelectorFor(nmsEntity);
+                PathfinderGoalSelector goal = PathfinderUtils.resetAndGetGoalSelectorFor(nmsEntity);
 
                 goal.a(0, new PathfinderGoalFloat(insentientEntity));
                 goal.a(1, new PathfinderGoalFollowOwnerReliable(entity, owner));

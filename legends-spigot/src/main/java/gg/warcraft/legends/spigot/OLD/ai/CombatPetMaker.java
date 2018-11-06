@@ -34,8 +34,8 @@ public class CombatPetMaker {
                 tameableEntity.setOwnerUUID(owner.getUniqueId());
                 tameableEntity.setCustomName(ChatColor.LIGHT_PURPLE + owner.getDisplayName() + "'s pet");
 
-                PathfinderGoalSelector goal = PathfinderUtils.getGoalSelectorFor(nmsEntity);
-                PathfinderGoalSelector target = PathfinderUtils.getTargetSelectorFor(nmsEntity);
+                PathfinderGoalSelector goal = PathfinderUtils.resetAndGetGoalSelectorFor(nmsEntity);
+                PathfinderGoalSelector target = PathfinderUtils.resetAndGetTargetSelectorFor(nmsEntity);
 
                 goal.a(0, new PathfinderGoalFloat(tameableEntity));
                 goal.a(1, new PathfinderGoalLeapAtTarget(tameableEntity, 0.4F));

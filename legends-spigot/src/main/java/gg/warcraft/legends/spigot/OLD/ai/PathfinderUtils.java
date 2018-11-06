@@ -32,14 +32,14 @@ public class PathfinderUtils {
         }
     }
 
-    public static PathfinderGoalSelector getGoalSelectorFor(EntityLiving nmsEntity) throws IllegalAccessException {
+    public static PathfinderGoalSelector resetAndGetGoalSelectorFor(EntityLiving nmsEntity) throws IllegalAccessException {
         PathfinderGoalSelector goal = (PathfinderGoalSelector) goalSelectorField.get(nmsEntity);
         pathfinderB.set(goal, Sets.newLinkedHashSet());
         pathfinderC.set(goal, Sets.newLinkedHashSet());
         return goal;
     }
 
-    public static PathfinderGoalSelector getTargetSelectorFor(EntityLiving nmsEntity) throws IllegalAccessException {
+    public static PathfinderGoalSelector resetAndGetTargetSelectorFor(EntityLiving nmsEntity) throws IllegalAccessException {
         PathfinderGoalSelector target = (PathfinderGoalSelector) targetSelectorField.get(nmsEntity);
         pathfinderB.set(target, Sets.newLinkedHashSet());
         pathfinderC.set(target, Sets.newLinkedHashSet());
