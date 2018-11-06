@@ -2,6 +2,7 @@ package gg.warcraft.legends.app.ai.npc.service;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Singleton;
 import gg.warcraft.legends.api.ai.npc.Npc;
 import gg.warcraft.legends.api.ai.npc.service.NpcRepository;
 
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Singleton
 public class DefaultNpcRepository implements NpcRepository {
     private final Map<UUID, Npc> internalNpcs;
 

@@ -5,6 +5,7 @@ import gg.warcraft.legends.api.ai.NpcFactory;
 import gg.warcraft.legends.api.ai.npc.Npc;
 import gg.warcraft.legends.api.ai.npc.NpcType;
 import gg.warcraft.legends.api.ai.npc.config.NpcConfiguration;
+import gg.warcraft.legends.api.ai.npc.menu.BlueprintVendorDialogFactory;
 import gg.warcraft.legends.api.ai.npc.service.NpcCommandService;
 import gg.warcraft.legends.api.ai.npc.service.NpcRepository;
 import gg.warcraft.legends.app.ai.npc.SimpleNpc;
@@ -25,19 +26,23 @@ public class DefaultNpcCommandService implements NpcCommandService {
     private final MenuCommandService menuCommandService;
     private final LocationFactory locationFactory;
     private final NpcFactory npcFactory;
+    private final BlueprintVendorDialogFactory blueprintVendorDialogFactory;
     private final Logger pluginLogger;
 
     @Inject
     public DefaultNpcCommandService(NpcRepository npcRepository,
                                     EntityCommandService entityCommandService,
                                     MenuCommandService menuCommandService,
-                                    LocationFactory locationFactory, NpcFactory npcFactory,
+                                    LocationFactory locationFactory,
+                                    NpcFactory npcFactory,
+                                    BlueprintVendorDialogFactory blueprintVendorDialogFactory,
                                     @PluginLogger Logger pluginLogger) {
         this.npcRepository = npcRepository;
         this.entityCommandService = entityCommandService;
         this.menuCommandService = menuCommandService;
         this.locationFactory = locationFactory;
         this.npcFactory = npcFactory;
+        this.blueprintVendorDialogFactory = blueprintVendorDialogFactory;
         this.pluginLogger = pluginLogger;
     }
 
@@ -66,7 +71,7 @@ public class DefaultNpcCommandService implements NpcCommandService {
 
         switch (npc.getType()) {
             case BLUEPRINT_VENDOR:
-                Menu blueprintMenu = null; // TODO
+                Menu blueprintMenu = blueprintVendorDialogFactory.createBlueprintVendorDialog(playerId);
                 menuCommandService.showMenu(blueprintMenu, playerId);
                 break;
             default:

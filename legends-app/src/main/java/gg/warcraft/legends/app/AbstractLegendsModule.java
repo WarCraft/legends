@@ -3,6 +3,7 @@ package gg.warcraft.legends.app;
 import com.google.inject.PrivateModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Names;
+import gg.warcraft.legends.api.ai.npc.menu.BlueprintVendorDialogFactory;
 import gg.warcraft.legends.api.ai.npc.service.NpcCommandService;
 import gg.warcraft.legends.api.ai.npc.service.NpcQueryService;
 import gg.warcraft.legends.api.ai.npc.service.NpcRepository;
@@ -19,6 +20,7 @@ import gg.warcraft.legends.api.entity.player.rank.service.RankQueryService;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.legends.api.item.BlueprintBuilder;
 import gg.warcraft.legends.api.item.ConsumableBuilder;
 import gg.warcraft.legends.api.item.ConsumableBuilderFactory;
 import gg.warcraft.legends.api.item.config.service.EquipmentConfigurationRepository;
@@ -50,6 +52,7 @@ import gg.warcraft.legends.api.shop.profile.service.ShopProfileRepository;
 import gg.warcraft.legends.api.shop.service.ShopCommandService;
 import gg.warcraft.legends.api.shop.service.ShopQueryService;
 import gg.warcraft.legends.api.shop.service.ShopRepository;
+import gg.warcraft.legends.app.ai.npc.menu.DefaultBlueprintVendorDialogFactory;
 import gg.warcraft.legends.app.ai.npc.service.DefaultNpcCommandService;
 import gg.warcraft.legends.app.ai.npc.service.DefaultNpcQueryService;
 import gg.warcraft.legends.app.ai.npc.service.DefaultNpcRepository;
@@ -89,6 +92,7 @@ import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankQueryServic
 import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankRepository;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerCommandService;
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerQueryService;
+import gg.warcraft.legends.app.item.SimpleBlueprintBuilder;
 import gg.warcraft.legends.app.item.SimpleConsumableBuilder;
 import gg.warcraft.legends.app.item.config.service.DefaultEquipmentConfigurationRepository;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateBuilder;
@@ -130,6 +134,7 @@ public abstract class AbstractLegendsModule extends PrivateModule {
         configureItem();
         configureMenu();
         configureShop();
+        configureSiege();
     }
 
     private void configureAi() {
@@ -321,5 +326,16 @@ public abstract class AbstractLegendsModule extends PrivateModule {
 
         bind(ShopProfileRepository.class).to(DefaultShopProfileRepository.class);
         expose(ShopProfileRepository.class);
+    }
+
+    private void configureSiege() {
+        // Blueprints
+        bind(BlueprintVendorDialogFactory.class).to(DefaultBlueprintVendorDialogFactory.class);
+        expose(BlueprintVendorDialogFactory.class);
+
+        install(new FactoryModuleBuilder()
+                .implement(BlueprintBuilder.class, SimpleBlueprintBuilder.class)
+                .build(BlueprintVendorDialogFactory.class));
+        expose(BlueprintVendorDialogFactory.class);
     }
 }
