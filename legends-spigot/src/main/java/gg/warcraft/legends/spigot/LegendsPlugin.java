@@ -91,11 +91,11 @@ public class LegendsPlugin extends JavaPlugin {
         lootCrateCommandService.readConfiguration(serverConfiguration);
     }
 
-    void loadNpcConfiguration() {
+    void loadNpcsConfiguration() {
         MonolithPluginUtils pluginUtils = injector.getInstance(MonolithPluginUtils.class);
         LegendsMapperModule legendsMapperModule = new LegendsMapperModule();
 
-        NpcsConfiguration npcsConfiguration = pluginUtils.loadConfiguration("REMOTE", "legends/npc.yml", "",
+        NpcsConfiguration npcsConfiguration = pluginUtils.loadConfiguration("REMOTE", "legends/npcs.yml", "",
                 NpcsConfiguration.class, legendsMapperModule);
         NpcCommandService npcCommandService = injector.getInstance(NpcCommandService.class);
         npcsConfiguration.getNpcs().forEach(npcCommandService::readConfiguration);
@@ -292,7 +292,7 @@ public class LegendsPlugin extends JavaPlugin {
         boolean isProduction = getConfig().getBoolean("isProduction");
 
         loadServerConfiguration();
-        loadNpcConfiguration();
+        loadNpcsConfiguration();
         loadShopConfiguration();
         loadEquipmentConfiguration();
         initializeLegendsTeams();

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import gg.warcraft.legends.api.ai.npc.config.NpcConfiguration;
+import gg.warcraft.legends.api.ai.npc.config.NpcsConfiguration;
 import gg.warcraft.legends.api.config.RankPrefixConfiguration;
 import gg.warcraft.legends.api.config.ServerConfiguration;
 import gg.warcraft.legends.api.item.config.AttributeRollConfiguration;
@@ -18,6 +19,7 @@ import gg.warcraft.legends.api.shop.config.PromotionConfiguration;
 import gg.warcraft.legends.api.shop.config.ShopConfiguration;
 import gg.warcraft.legends.api.shop.config.ShopItemConfiguration;
 import gg.warcraft.legends.app.ai.npc.config.JacksonNpcConfiguration;
+import gg.warcraft.legends.app.ai.npc.config.JacksonNpcsConfiguration;
 import gg.warcraft.legends.app.item.config.JacksonAttributeRollConfiguration;
 import gg.warcraft.legends.app.item.config.JacksonEquipmentConfiguration;
 import gg.warcraft.legends.app.item.config.JacksonEquipmentLoreConfiguration;
@@ -37,6 +39,7 @@ public class LegendsMapperModule extends SimpleModule {
         SimpleAbstractTypeResolver resolver = new SimpleAbstractTypeResolver();
 
         // AI configuration
+        resolver.addMapping(NpcsConfiguration.class, JacksonNpcsConfiguration.class);
         resolver.addMapping(NpcConfiguration.class, JacksonNpcConfiguration.class);
 
         // Server configuration

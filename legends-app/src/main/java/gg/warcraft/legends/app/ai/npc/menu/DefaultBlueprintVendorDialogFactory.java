@@ -79,7 +79,7 @@ public class DefaultBlueprintVendorDialogFactory extends AbstractMenuFactory imp
 
                 playerCommandService.removeCurrency(playerId, LegendsCurrency.FAVOR, 50);
                 Item blueprint = blueprintBuilderFactory
-                        .createBlueprintBuilder(ItemType.MAP, "Trebuchet Blueprint", ItemRarity.COMMON)
+                        .createBlueprintBuilder("Trebuchet Blueprint", ItemRarity.COMMON)
                         .build();
                 playerCommandService.giveItem(playerId, blueprint, false);
             }

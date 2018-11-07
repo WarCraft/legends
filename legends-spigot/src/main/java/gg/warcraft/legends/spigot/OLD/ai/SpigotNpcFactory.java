@@ -33,7 +33,8 @@ public class SpigotNpcFactory implements NpcFactory {
         try {
             EntityLiving nmsEntity = ((CraftLivingEntity) entity).getHandle();
             if (nmsEntity instanceof EntityInsentient) {
-                entity.setInvulnerable(true);
+                ((CraftLivingEntity) entity).setCollidable(false);
+                nmsEntity.setInvulnerable(true);
                 EntityInsentient insentientEntity = (EntityInsentient) nmsEntity;
                 if (insentientEntity instanceof EntityAgeable) {
                     ((EntityAgeable) insentientEntity).ageLocked = true;

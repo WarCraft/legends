@@ -21,6 +21,7 @@ import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.item.BlueprintBuilder;
+import gg.warcraft.legends.api.item.BlueprintBuilderFactory;
 import gg.warcraft.legends.api.item.ConsumableBuilder;
 import gg.warcraft.legends.api.item.ConsumableBuilderFactory;
 import gg.warcraft.legends.api.item.config.service.EquipmentConfigurationRepository;
@@ -335,7 +336,7 @@ public abstract class AbstractLegendsModule extends PrivateModule {
 
         install(new FactoryModuleBuilder()
                 .implement(BlueprintBuilder.class, SimpleBlueprintBuilder.class)
-                .build(BlueprintVendorDialogFactory.class));
-        expose(BlueprintVendorDialogFactory.class);
+                .build(BlueprintBuilderFactory.class));
+        expose(BlueprintBuilderFactory.class);
     }
 }

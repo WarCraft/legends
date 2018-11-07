@@ -6,6 +6,7 @@ import gg.warcraft.legends.api.ai.npc.Npc;
 import gg.warcraft.legends.api.ai.npc.service.NpcRepository;
 import gg.warcraft.monolith.api.core.event.ServerShutdownEvent;
 import gg.warcraft.monolith.api.entity.event.EntityDeathEvent;
+import gg.warcraft.monolith.api.entity.event.EntityPreDespawnEvent;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 
 public class NpcPersistenceHandler {
@@ -16,6 +17,13 @@ public class NpcPersistenceHandler {
     public NpcPersistenceHandler(NpcRepository npcRepository, EntityCommandService entityCommandService) {
         this.npcRepository = npcRepository;
         this.entityCommandService = entityCommandService;
+    }
+
+    @Subscribe
+    public void onEntityPreDespawnEvent(EntityPreDespawnEvent event) {
+        if (npcRepository.getNpcIds().contains(event.getEntityId())) {
+            event.cancel();
+        }
     }
 
     @Subscribe
