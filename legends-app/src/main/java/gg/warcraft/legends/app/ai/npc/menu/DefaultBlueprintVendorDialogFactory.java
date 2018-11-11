@@ -53,7 +53,7 @@ public class DefaultBlueprintVendorDialogFactory extends AbstractMenuFactory imp
     }
 
     private Button createBlueprintButton(UUID playerId) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.MAP, "Trebuchet Blueprint");
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.PAPER, "Trebuchet Blueprint");
         builder.addTooltip("This blueprint allows you to place a");
         builder.addTooltip("trebuchet plot. The trebuchet is a long");
         builder.addTooltip("distance siege weapon that can destroy");
