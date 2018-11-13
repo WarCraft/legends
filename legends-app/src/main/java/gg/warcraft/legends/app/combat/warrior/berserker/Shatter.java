@@ -14,9 +14,11 @@ import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.monolith.api.combat.PotionEffect;
 import gg.warcraft.monolith.api.combat.PotionEffectType;
 import gg.warcraft.monolith.api.combat.value.CombatValue;
+import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.entity.team.Team;
+import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.location.Location;
 import org.joml.Vector3f;
 
@@ -35,8 +37,9 @@ public class Shatter extends AbstractAbility implements RangedAbility {
 
     @Inject
     public Shatter(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                   MovementFactory movementFactory, HitboxFactory hitboxFactory, @Assisted AbilitySnapshot snapshot,
-                   @Assisted("caster") Entity caster, @Assisted("target") @Nullable Entity meleeTarget) {
+                   TaskService taskService, MovementFactory movementFactory, HitboxFactory hitboxFactory,
+                   TimeUtils timeUtils, @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
+                   @Assisted("target") @Nullable Entity meleeTarget) {
         super(caster.getId(), snapshot);
         this.abilityCommandService = abilityCommandService;
         this.entityCommandService = entityCommandService;
@@ -54,7 +57,8 @@ public class Shatter extends AbstractAbility implements RangedAbility {
 
         Movement movement = movementFactory.createEntityMovement(caster.getId());
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(0.1f, entity -> false);
-        abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
+        taskService.runLater(() -> abilityCommandService.createProjectile(this, movement, hitbox, () -> {}),
+                timeUtils.oneSecond());
     }
 
     @Override
