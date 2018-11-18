@@ -31,6 +31,8 @@ import java.util.TreeMap;
 
 public class DefaultGameCommandService implements GameCommandService {
     private static final int TALLY_TIMER_IN_SECONDS = 900;
+    private static final int DAILY_WINNER_SCORE = 5;
+    private static final int SKIRMISH_WINNER_SCORE = 1;
 
     private final GameRepository gameRepository;
     private final ObjectiveQueryService objectiveQueryService;
@@ -125,11 +127,6 @@ public class DefaultGameCommandService implements GameCommandService {
                     break;
                 case SKIRMISH:
                     endSkirmish();
-
-                    Game currentWar = gameRepository.getCurrentWar();
-                    gameRepository.saveActiveGame(currentWar.getId());
-
-                    initializeActiveGame();
                     break;
                 default:
                     throw new IllegalStateException("Failed to tick game with illegal type " + gameType);
@@ -183,12 +180,7 @@ public class DefaultGameCommandService implements GameCommandService {
         eventService.publish(tallyEvent);
     }
 
-    @Override
-    public void runScore() {
-        War war = (War) gameRepository.getCurrentWar();
-        Map<Team, Integer> points = war.getPoints();
-
-        // calculate daily winner
+    private Set<Team> computeWinners(Map<Team, Integer> points) {
         int mostPoints = 0;
         Set<Team> winners = new HashSet<>();
         for (Map.Entry<Team, Integer> contestant : points.entrySet()) {
@@ -201,7 +193,15 @@ public class DefaultGameCommandService implements GameCommandService {
                 winners.add(contestant.getKey());
             }
         }
+        return winners;
+    }
 
+    @Override
+    public void runScore() {
+        War war = (War) gameRepository.getCurrentWar();
+        Map<Team, Integer> points = war.getPoints();
+
+        Set<Team> winners = computeWinners(points);
         if (winners.size() != 1) {
             // wait with running score until 1 team gets ahead in points
             return;
@@ -214,7 +214,7 @@ public class DefaultGameCommandService implements GameCommandService {
 
         Map<Team, Integer> newScore = war.getWarScore();
         int currentScore = newScore.getOrDefault(winner, 0);
-        newScore.put(winner, currentScore + 1);
+        newScore.put(winner, currentScore + DAILY_WINNER_SCORE);
 
         Map<String, Team> newObjectives = new HashMap<>();
         objectiveQueryService.getObjectives().forEach(objective -> {
@@ -252,15 +252,33 @@ public class DefaultGameCommandService implements GameCommandService {
                 null);
         gameRepository.save(newSkirmish);
         gameRepository.saveActiveGame(newSkirmishId);
+        initializeActiveGame();
     }
 
     @Override
     public void endSkirmish() {
         Skirmish skirmish = (Skirmish) gameRepository.getActiveGame();
+
+        Set<Team> winners = computeWinners(skirmish.getPoints());
+        if (winners.size() != 1) {
+            // wait with ending skirmish until 1 team gets ahead in points
+            return;
+        }
+
         String endTime = LocalDateTime.now().toString();
         Game updatedSkirmish = skirmish.getCopyer()
                 .withEndTime(endTime)
                 .copy();
         gameRepository.save(updatedSkirmish);
+        War currentWar = (War) gameRepository.getCurrentWar();
+
+        Team winner = winners.iterator().next();
+        Map<Team, Integer> newScore = currentWar.getWarScore();
+        int currentScore = newScore.getOrDefault(winner, 0);
+        newScore.put(winner, currentScore + SKIRMISH_WINNER_SCORE);
+        gameRepository.save(currentWar);
+
+        gameRepository.saveActiveGame(currentWar.getId());
+        initializeActiveGame();
     }
 }
