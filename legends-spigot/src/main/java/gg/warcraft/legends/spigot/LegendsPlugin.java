@@ -28,6 +28,7 @@ import gg.warcraft.legends.app.combat.handler.ArrowPickupHandler;
 import gg.warcraft.legends.app.combat.passive.handler.PassiveAssignmentHandler;
 import gg.warcraft.legends.app.combat.ranger.marksman.FocusHandler;
 import gg.warcraft.legends.app.config.LegendsMapperModule;
+import gg.warcraft.legends.app.core.game.handler.DailySkirmishHandler;
 import gg.warcraft.legends.app.core.game.handler.GameObjectivesAndPointsHandler;
 import gg.warcraft.legends.app.core.game.handler.GameTimerHandler;
 import gg.warcraft.legends.app.core.game.handler.ObjectiveAnnouncementHandler;
@@ -208,6 +209,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         SpigotScoreboardHandler spigotScoreboardHandler = injector.getInstance(SpigotScoreboardHandler.class);
         taskService.runTask(spigotScoreboardHandler, timeUtils.createDurationInTicks(9), timeUtils.createDurationInSeconds(1));
+
+        DailySkirmishHandler dailySkirmishHandler = injector.getInstance(DailySkirmishHandler.class);
+        taskService.runTask(dailySkirmishHandler, timeUtils.createDurationInSeconds(60), timeUtils.createDurationInSeconds(60));
 
         // Metrics
         if (isProduction) {
