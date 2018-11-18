@@ -1,11 +1,15 @@
 package gg.warcraft.legends.api.config;
 
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.item.crate.config.LootCrateConfiguration;
+import gg.warcraft.monolith.api.config.OrientedLocationConfiguration;
 
 import java.util.List;
 import java.util.Map;
 
 public interface ServerConfiguration {
+
+    Map<LegendsTeam, OrientedLocationConfiguration> getSpawnLocations();
 
     List<RankPrefixConfiguration> getRankPrefixes();
 

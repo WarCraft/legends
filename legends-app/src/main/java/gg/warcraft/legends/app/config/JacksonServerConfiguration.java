@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gg.warcraft.legends.api.config.RankPrefixConfiguration;
 import gg.warcraft.legends.api.config.ServerConfiguration;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.item.crate.config.LootCrateConfiguration;
+import gg.warcraft.monolith.api.config.OrientedLocationConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class JacksonServerConfiguration implements ServerConfiguration {
+    private final Map<LegendsTeam, OrientedLocationConfiguration> spawnLocations;
     private final List<RankPrefixConfiguration> rankPrefixes;
     private final List<String> humanRankSuffixes;
     private final List<String> orcRankSuffixes;
@@ -21,13 +24,15 @@ public class JacksonServerConfiguration implements ServerConfiguration {
     private final List<LootCrateConfiguration> lootCrates;
 
     @JsonCreator
-    public JacksonServerConfiguration(@JsonProperty("prestigeChar") String prestigeChar,
+    public JacksonServerConfiguration(@JsonProperty("spawnLocations") Map<LegendsTeam, OrientedLocationConfiguration> spawnLocations,
+                                      @JsonProperty("prestigeChar") String prestigeChar,
                                       @JsonProperty("rankPrefixes") List<RankPrefixConfiguration> rankPrefixes,
                                       @JsonProperty("humanRankSuffixes") List<String> humanRankSuffixes,
                                       @JsonProperty("orcRankSuffixes") List<String> orcRankSuffixes,
                                       @JsonProperty("rankFavorTable") List<Integer> rankFavorTable,
                                       @JsonProperty("objectivePoints") Map<String, Integer> objectivePoints,
                                       @JsonProperty("lootCrates") List<LootCrateConfiguration> lootCrates) {
+        this.spawnLocations = spawnLocations;
         this.prestigeChar = prestigeChar;
         this.rankPrefixes = rankPrefixes;
         this.humanRankSuffixes = humanRankSuffixes;
@@ -35,6 +40,11 @@ public class JacksonServerConfiguration implements ServerConfiguration {
         this.rankFavorTable = rankFavorTable;
         this.objectivePoints = objectivePoints;
         this.lootCrates = lootCrates;
+    }
+
+    @Override
+    public Map<LegendsTeam, OrientedLocationConfiguration> getSpawnLocations() {
+        return spawnLocations;
     }
 
     @Override

@@ -11,6 +11,7 @@ import gg.warcraft.legends.api.config.ServerConfiguration;
 import gg.warcraft.legends.api.core.game.Game;
 import gg.warcraft.legends.api.core.game.service.GameCommandService;
 import gg.warcraft.legends.api.core.game.service.GameQueryService;
+import gg.warcraft.legends.api.core.service.SpawnLocationRepository;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.rank.service.RankCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
@@ -33,6 +34,7 @@ import gg.warcraft.legends.app.core.game.handler.ObjectiveAnnouncementHandler;
 import gg.warcraft.legends.app.core.handler.CombatLoggingHandler;
 import gg.warcraft.legends.app.core.handler.FishCommandHandler;
 import gg.warcraft.legends.app.core.handler.PlayerCountMetricHandler;
+import gg.warcraft.legends.app.core.handler.PlayerSpawnHandler;
 import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
 import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerCurrencyEventHandler;
@@ -60,6 +62,8 @@ import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
 import gg.warcraft.monolith.api.util.TimeUtils;
+import gg.warcraft.monolith.api.world.location.LocationFactory;
+import gg.warcraft.monolith.api.world.location.OrientedLocation;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
@@ -73,10 +77,17 @@ public class LegendsPlugin extends JavaPlugin {
 
     void loadServerConfiguration() {
         MonolithPluginUtils pluginUtils = injector.getInstance(MonolithPluginUtils.class);
+        LocationFactory locationFactory = injector.getInstance(LocationFactory.class);
         LegendsMapperModule legendsMapperModule = new LegendsMapperModule();
 
         ServerConfiguration serverConfiguration = pluginUtils.loadConfiguration("REMOTE", "legends/server.yml", "",
                 ServerConfiguration.class, legendsMapperModule);
+
+        SpawnLocationRepository spawnLocationRepository = injector.getInstance(SpawnLocationRepository.class);
+        serverConfiguration.getSpawnLocations().forEach((team, location) -> {
+            OrientedLocation spawn = locationFactory.createOrientedLocation(location);
+            spawnLocationRepository.save(team, spawn);
+        });
 
         RankCommandService rankCommandService = injector.getInstance(RankCommandService.class);
         rankCommandService.initializeRanks(LegendsTeam.HUMAN, serverConfiguration.getRankFavorTable(),
@@ -131,6 +142,9 @@ public class LegendsPlugin extends JavaPlugin {
         UniversalBlockBreakPlaceHandler universalBlockBreakPlaceHandler =
                 injector.getInstance(UniversalBlockBreakPlaceHandler.class);
         eventService.subscribe(universalBlockBreakPlaceHandler);
+
+        PlayerSpawnHandler playerSpawnHandler = injector.getInstance(PlayerSpawnHandler.class);
+        eventService.subscribe(playerSpawnHandler);
 
         PlayerCurrencyEventHandler playerCurrencyEventHandler = injector.getInstance(PlayerCurrencyEventHandler.class);
         eventService.subscribe(playerCurrencyEventHandler);

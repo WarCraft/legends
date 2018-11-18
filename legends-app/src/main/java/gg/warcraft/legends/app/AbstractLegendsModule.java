@@ -12,6 +12,7 @@ import gg.warcraft.legends.api.core.MetricsService;
 import gg.warcraft.legends.api.core.game.service.GameCommandService;
 import gg.warcraft.legends.api.core.game.service.GameQueryService;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
+import gg.warcraft.legends.api.core.service.SpawnLocationRepository;
 import gg.warcraft.legends.api.entity.LegendsEntityFactory;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.rank.service.RankAttributeModifierRepository;
@@ -85,6 +86,7 @@ import gg.warcraft.legends.app.core.AwsMetricsService;
 import gg.warcraft.legends.app.core.game.service.DefaultGameCommandService;
 import gg.warcraft.legends.app.core.game.service.DefaultGameQueryService;
 import gg.warcraft.legends.app.core.game.service.DefaultGameRepository;
+import gg.warcraft.legends.app.core.service.DefaultSpawnLocationRepository;
 import gg.warcraft.legends.app.entity.player.SimpleLegendsPlayer;
 import gg.warcraft.legends.app.entity.player.rank.handler.PrestigeAttributesHandler;
 import gg.warcraft.legends.app.entity.player.rank.service.DefaultRankAttributeModifierRepository;
@@ -197,6 +199,9 @@ public abstract class AbstractLegendsModule extends PrivateModule {
     }
 
     private void configureCore() {
+        bind(SpawnLocationRepository.class).to(DefaultSpawnLocationRepository.class);
+        expose(SpawnLocationRepository.class);
+
         bind(MetricsService.class).to(AwsMetricsService.class);
         expose(MetricsService.class);
 
