@@ -36,6 +36,10 @@ import gg.warcraft.legends.api.item.equipment.EquipmentBuilder;
 import gg.warcraft.legends.api.item.equipment.EquipmentBuilderFactory;
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
 import gg.warcraft.legends.api.item.equipment.EquipmentGeneratorFactory;
+import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeBuilder;
+import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeBuilderFactory;
+import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeGenerator;
+import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeGeneratorFactory;
 import gg.warcraft.legends.api.menu.AdminMenuFactory;
 import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
@@ -105,6 +109,8 @@ import gg.warcraft.legends.app.item.crate.service.DefaultLootCrateCommandService
 import gg.warcraft.legends.app.item.crate.service.DefaultLootCrateRepository;
 import gg.warcraft.legends.app.item.equipment.SimpleEquipmentBuilder;
 import gg.warcraft.legends.app.item.equipment.SimpleEquipmentGenerator;
+import gg.warcraft.legends.app.item.equipment.SimpleEquipmentUpgradeBuilder;
+import gg.warcraft.legends.app.item.equipment.SimpleEquipmentUpgradeGenerator;
 import gg.warcraft.legends.app.menu.DefaultAdminMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultCollectablesMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDailyLoginMenuFactory;
@@ -265,10 +271,16 @@ public abstract class AbstractLegendsModule extends PrivateModule {
                 .build(EquipmentGeneratorFactory.class));
         expose(EquipmentGeneratorFactory.class);
 
-//        install(new FactoryModuleBuilder()
-//                .implement(GemBuilder.class, SimpleGemBuilder.class)
-//                .build(GemBuilderFactory.class));
-//        expose(GemBuilderFactory.class);
+        // Equipment upgrade bindings
+        install(new FactoryModuleBuilder()
+                .implement(EquipmentUpgradeBuilder.class, SimpleEquipmentUpgradeBuilder.class)
+                .build(EquipmentUpgradeBuilderFactory.class));
+        expose(EquipmentUpgradeBuilderFactory.class);
+
+        install(new FactoryModuleBuilder()
+                .implement(EquipmentUpgradeGenerator.class, SimpleEquipmentUpgradeGenerator.class)
+                .build(EquipmentUpgradeGeneratorFactory.class));
+        expose(EquipmentUpgradeGeneratorFactory.class);
 
         // Consumable bindings
         install(new FactoryModuleBuilder()

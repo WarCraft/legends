@@ -21,6 +21,8 @@ import gg.warcraft.legends.api.item.crate.service.LootCrateCommandService;
 import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
 import gg.warcraft.legends.api.item.equipment.EquipmentGeneratorFactory;
+import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeGenerator;
+import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeGeneratorFactory;
 import gg.warcraft.legends.api.shop.DecorationId;
 import gg.warcraft.legends.api.shop.DecorationPackId;
 import gg.warcraft.legends.api.shop.MiniPetId;
@@ -51,6 +53,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
     private final PlayerCommandService playerCommandService;
     private final LegendsPlayerQueryService playerQueryService;
     private final EquipmentGeneratorFactory equipmentGeneratorFactory;
+    private final EquipmentUpgradeGeneratorFactory equipmentUpgradeGeneratorFactory;
     private final ConsumableBuilderFactory consumableBuilderFactory;
     private final ShopQueryService shopQueryService;
     private final ShopProfileQueryService shopProfileQueryService;
@@ -64,6 +67,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
                                           PlayerCommandService playerCommandService,
                                           LegendsPlayerQueryService playerQueryService,
                                           EquipmentGeneratorFactory equipmentGeneratorFactory,
+                                          EquipmentUpgradeGeneratorFactory equipmentUpgradeGeneratorFactory,
                                           ConsumableBuilderFactory consumableBuilderFactory,
                                           ShopQueryService shopQueryService,
                                           ShopProfileQueryService shopProfileQueryService,
@@ -74,6 +78,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         this.playerCommandService = playerCommandService;
         this.playerQueryService = playerQueryService;
         this.equipmentGeneratorFactory = equipmentGeneratorFactory;
+        this.equipmentUpgradeGeneratorFactory = equipmentUpgradeGeneratorFactory;
         this.consumableBuilderFactory = consumableBuilderFactory;
         this.shopQueryService = shopQueryService;
         this.shopProfileQueryService = shopProfileQueryService;
@@ -215,7 +220,30 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
     }
 
     private boolean awardRandomEquipmentUpgrade(UUID playerId, ItemRarity rarity) {
-        sendReceivedNotification(playerId, "Imaginary Equipment Upgrade");
+        LegendsPlayer player = playerQueryService.getPlayer(playerId);
+        if (player == null) {
+            pluginLogger.warning("Failed to award random equipment upgrade to player " + playerId + ", player not found.");
+            return false;
+        }
+
+        EquipmentUpgradeGenerator equipmentUpgradeGenerator =
+                equipmentUpgradeGeneratorFactory.createEquipmentUpgradeGenerator();
+        Specialization specialization = player.getSpecialization();
+        LegendsSpecializationType specializationType = null;
+        for (LegendsSpecialization legendsSpecialization : LegendsSpecialization.values()) {
+            if (legendsSpecialization.getName().equals(specialization.getName())) {
+                specializationType = legendsSpecialization.getType();
+            }
+        }
+        if (specializationType == null) {
+            pluginLogger.warning("Failed to award random equipment upgrade to player " + playerId +
+                    ", could not determine specialization type for " + specialization.getName());
+            return false;
+        }
+
+        Item equipmentUpgrade = equipmentUpgradeGenerator.generate(specializationType, rarity);
+        playerCommandService.giveItem(playerId, equipmentUpgrade, false);
+        sendReceivedNotification(playerId, equipmentUpgrade.getName());
         return true;
     }
 

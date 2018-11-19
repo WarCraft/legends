@@ -44,6 +44,7 @@ import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangeHandle
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangedHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PrestigeAttributesHandler;
 import gg.warcraft.legends.app.item.crate.handler.LootCrateUseHandler;
+import gg.warcraft.legends.app.item.equipment.handler.EquipmentUpgradeUseHandler;
 import gg.warcraft.legends.app.item.handler.EquipmentAttributesHandler;
 import gg.warcraft.legends.app.menu.handler.MenuCommandHandler;
 import gg.warcraft.legends.app.misc.SpydeyBot;
@@ -180,6 +181,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         LootCrateUseHandler lootCrateUseHandler = injector.getInstance(LootCrateUseHandler.class);
         eventService.subscribe(lootCrateUseHandler);
+
+        EquipmentUpgradeUseHandler equipmentUpgradeUseHandler = injector.getInstance(EquipmentUpgradeUseHandler.class);
+        eventService.subscribe(equipmentUpgradeUseHandler);
 
         // Player ranks
         PlayerRankChangeHandler playerRankChangeHandler = injector.getInstance(PlayerRankChangeHandler.class);

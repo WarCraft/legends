@@ -90,7 +90,9 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
         if (!attributes.keySet().isEmpty()) {
             itemBuilder.addLore("");
             for (Map.Entry<LegendsAttribute, Integer> entry : attributes.entrySet()) {
-                itemBuilder.addLore("+" + entry.getValue() + " " + entry.getKey().getName());
+                if (entry.getValue() != 0) {
+                    itemBuilder.addLore("+" + entry.getValue() + " " + entry.getKey().getName());
+                }
             }
         }
 
