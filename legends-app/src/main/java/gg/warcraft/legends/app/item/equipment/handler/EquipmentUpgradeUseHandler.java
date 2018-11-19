@@ -64,6 +64,8 @@ public class EquipmentUpgradeUseHandler {
             return false;
         }
 
+        // TODO check if equipment has sufficient upgrade slots remaining
+
         EquipmentModifier equipmentModifier = equipmentModifierFactory.createEquipmentModifier(itemInHand);
         int strength = upgradeReader.getAttribute(LegendsAttribute.STRENGTH);
         equipmentModifier.addAttribute(LegendsAttribute.STRENGTH, strength);
