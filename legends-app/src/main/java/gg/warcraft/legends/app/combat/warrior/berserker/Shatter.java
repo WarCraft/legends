@@ -58,7 +58,7 @@ public class Shatter extends AbstractAbility implements RangedAbility {
         Movement movement = movementFactory.createEntityMovement(caster.getId());
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(0.1f, entity -> false);
         taskService.runLater(() -> abilityCommandService.createProjectile(this, movement, hitbox, () -> {}),
-                timeUtils.oneSecond());
+                timeUtils.createDurationInMillis(500));
     }
 
     @Override
