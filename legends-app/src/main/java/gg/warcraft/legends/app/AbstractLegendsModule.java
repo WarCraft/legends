@@ -36,6 +36,8 @@ import gg.warcraft.legends.api.item.equipment.EquipmentBuilder;
 import gg.warcraft.legends.api.item.equipment.EquipmentBuilderFactory;
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
 import gg.warcraft.legends.api.item.equipment.EquipmentGeneratorFactory;
+import gg.warcraft.legends.api.item.equipment.EquipmentModifier;
+import gg.warcraft.legends.api.item.equipment.EquipmentModifierFactory;
 import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeBuilder;
 import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeBuilderFactory;
 import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeGenerator;
@@ -109,6 +111,7 @@ import gg.warcraft.legends.app.item.crate.service.DefaultLootCrateCommandService
 import gg.warcraft.legends.app.item.crate.service.DefaultLootCrateRepository;
 import gg.warcraft.legends.app.item.equipment.SimpleEquipmentBuilder;
 import gg.warcraft.legends.app.item.equipment.SimpleEquipmentGenerator;
+import gg.warcraft.legends.app.item.equipment.SimpleEquipmentModifier;
 import gg.warcraft.legends.app.item.equipment.SimpleEquipmentUpgradeBuilder;
 import gg.warcraft.legends.app.item.equipment.SimpleEquipmentUpgradeGenerator;
 import gg.warcraft.legends.app.menu.DefaultAdminMenuFactory;
@@ -270,6 +273,11 @@ public abstract class AbstractLegendsModule extends PrivateModule {
                 .implement(EquipmentGenerator.class, SimpleEquipmentGenerator.class)
                 .build(EquipmentGeneratorFactory.class));
         expose(EquipmentGeneratorFactory.class);
+
+        install(new FactoryModuleBuilder()
+                .implement(EquipmentModifier.class, SimpleEquipmentModifier.class)
+                .build(EquipmentModifierFactory.class));
+        expose(EquipmentModifierFactory.class);
 
         // Equipment upgrade bindings
         install(new FactoryModuleBuilder()

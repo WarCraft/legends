@@ -21,13 +21,12 @@ public class SimpleEquipmentModifier implements EquipmentModifier {
 
     @Inject
     public SimpleEquipmentModifier(EquipmentBuilderFactory equipmentBuilderFactory, ItemReaderFactory itemReaderFactory,
-                                   ColorCodeUtils colorCodeUtils,
-                                   @Assisted Item item) {
+                                   ColorCodeUtils colorCodeUtils, @Assisted Item item) {
         this.modifiedAttributes = new HashMap<>();
 
         String itemName = colorCodeUtils.stripColorCodes(item.getName());
         String rarityColorCode = item.getName().replace(itemName, "");
-        ItemRarity itemRarity = null;
+        ItemRarity itemRarity = ItemRarity.COMMON;
         for (ItemRarity rarity : ItemRarity.values()) {
             if (rarityColorCode.equals(rarity.getColor().toString())) {
                 itemRarity = rarity;
