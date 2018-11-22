@@ -175,6 +175,8 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
         int randomRoll = getRandomRollFor(attributeRoll, rarity);
         Map<LegendsAttribute, Integer> randomAttributeRoll = getRandomAttributesFor(attributeRoll, randomRoll);
         builder.withAttributes(randomAttributeRoll);
+
+        builder.withAvailableUpgrades(random.nextInt(4));
         return builder.build();
     }
 }
