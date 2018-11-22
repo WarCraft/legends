@@ -7,5 +7,9 @@ public interface EquipmentModifier {
 
     EquipmentModifier addAttribute(LegendsAttribute attribute, int amount);
 
+    EquipmentModifier addAvailableUpgrades(int count);
+
+    EquipmentModifier addUpgradeCount(int count);
+
     Item build();
 }

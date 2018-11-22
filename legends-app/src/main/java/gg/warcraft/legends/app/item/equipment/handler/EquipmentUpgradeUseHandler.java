@@ -7,6 +7,8 @@ import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.item.equipment.EquipmentModifier;
 import gg.warcraft.legends.api.item.equipment.EquipmentModifierFactory;
+import gg.warcraft.legends.api.item.equipment.EquipmentReader;
+import gg.warcraft.legends.api.item.equipment.EquipmentReaderFactory;
 import gg.warcraft.monolith.api.entity.EquipmentSlot;
 import gg.warcraft.monolith.api.entity.event.EntityPreInteractEvent;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
@@ -28,6 +30,7 @@ public class EquipmentUpgradeUseHandler {
     private final PlayerCommandService playerCommandService;
     private final LegendsPlayerQueryService playerQueryService;
     private final ItemReaderFactory itemReaderFactory;
+    private final EquipmentReaderFactory equipmentReaderFactory;
     private final EquipmentModifierFactory equipmentModifierFactory;
 
     @Inject
@@ -35,11 +38,13 @@ public class EquipmentUpgradeUseHandler {
                                       PlayerCommandService playerCommandService,
                                       LegendsPlayerQueryService playerQueryService,
                                       EquipmentModifierFactory equipmentModifierFactory,
+                                      EquipmentReaderFactory equipmentReaderFactory,
                                       ItemReaderFactory itemReaderFactory) {
         this.worldCommandService = worldCommandService;
         this.playerCommandService = playerCommandService;
         this.playerQueryService = playerQueryService;
         this.itemReaderFactory = itemReaderFactory;
+        this.equipmentReaderFactory = equipmentReaderFactory;
         this.equipmentModifierFactory = equipmentModifierFactory;
     }
 
@@ -59,12 +64,14 @@ public class EquipmentUpgradeUseHandler {
             return false;
         }
 
-        ItemReader equipmentReader = itemReaderFactory.createItemReader(itemInHand);
+        EquipmentReader equipmentReader = equipmentReaderFactory.createEquipmentReader(itemInHand);
         if (!EQUIPMENT_TYPE.equals(equipmentReader.getType())) {
             return false;
         }
 
-        // TODO check if equipment has sufficient upgrade slots remaining
+        if (equipmentReader.getAvailableUpgrades() < 1) {
+            return false;
+        }
 
         EquipmentModifier equipmentModifier = equipmentModifierFactory.createEquipmentModifier(itemInHand);
         int strength = upgradeReader.getAttribute(LegendsAttribute.STRENGTH);
@@ -77,9 +84,13 @@ public class EquipmentUpgradeUseHandler {
         equipmentModifier.addAttribute(LegendsAttribute.VITALITY, vitality);
         int crit = upgradeReader.getAttribute(LegendsAttribute.CRIT);
         equipmentModifier.addAttribute(LegendsAttribute.CRIT, crit);
+        equipmentModifier.addAvailableUpgrades(-1);
+        equipmentModifier.addUpgradeCount(1);
         Item newEquipment = equipmentModifier.build();
 
-        playerCommandService.setEquipment(playerId, EquipmentSlot.OFF_HAND, null);
+        Item newUpgrade = offhand.withStackSize(offhand.getStackSize() - 1);
+
+        playerCommandService.setEquipment(playerId, EquipmentSlot.OFF_HAND, newUpgrade);
         playerCommandService.setEquipment(playerId, EquipmentSlot.MAIN_HAND, newEquipment);
 
         worldCommandService.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,

@@ -1,6 +1,5 @@
 package gg.warcraft.legends.app.item.equipment;
 
-import com.google.common.base.CharMatcher;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
@@ -18,16 +17,14 @@ import java.util.List;
 import java.util.Map;
 
 public class SimpleEquipmentBuilder implements EquipmentBuilder {
-    private static final char GEM_CHAR = '❂';
-
     private final ItemBuilderFactory itemBuilderFactory;
     private final ItemType type;
     private final ItemRarity rarity;
     private final String name;
 
     private Map<LegendsAttribute, Integer> attributes;
-    private int availableSockets;
-    private int brokenSockets;
+    private int availableUpgrades;
+    private int upgradeCount;
     private List<String> flavorText;
 
     @Inject
@@ -38,8 +35,8 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
         this.rarity = rarity;
         this.name = name;
         this.attributes = new HashMap<>();
-        this.availableSockets = 0;
-        this.brokenSockets = 0;
+        this.availableUpgrades = 0;
+        this.upgradeCount = 0;
         this.flavorText = new ArrayList<>();
     }
 
@@ -62,14 +59,14 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
     }
 
     @Override
-    public EquipmentBuilder withAvailableSockets(int sockets) {
-        this.availableSockets = sockets;
+    public EquipmentBuilder withAvailableUpgrades(int count) {
+        this.availableUpgrades = count;
         return this;
     }
 
     @Override
-    public EquipmentBuilder withBrokenSockets(int sockets) {
-        this.brokenSockets = sockets;
+    public EquipmentBuilder withUpgradeCount(int count) {
+        this.upgradeCount = count;
         return this;
     }
 
@@ -81,7 +78,10 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
 
     @Override
     public Item build() {
-        ItemBuilder itemBuilder = itemBuilderFactory.createItemBuilder(type, rarity.getColor() + name);
+        String upgradedName = upgradeCount > 0
+                ? name + " (+" + upgradeCount + ")"
+                : name;
+        ItemBuilder itemBuilder = itemBuilderFactory.createItemBuilder(type, rarity.getColor() + upgradedName);
 
         // set type at top of tooltip
         itemBuilder.addLore("Equipment");
@@ -96,18 +96,10 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
             }
         }
 
-        // add sockets
-        int usedSockets = CharMatcher.is(GEM_CHAR).countIn(name);
-        if ((usedSockets + availableSockets + brokenSockets) > 0) {
+        // add upgrades
+        if (availableUpgrades > 0) {
             itemBuilder.addLore("");
-            String availableSocketText = availableSockets == 1
-                    ? "Available Socket"
-                    : "Available Sockets";
-            itemBuilder.addLore(availableSockets + " " + availableSocketText);
-            String brokenSocketText = brokenSockets == 1
-                    ? "Broken Socket"
-                    : "Broken Sockets";
-            itemBuilder.addLore(brokenSockets + " " + brokenSocketText);
+            itemBuilder.addLore(availableUpgrades + " Available Upgrades");
         }
 
         // add flavor text

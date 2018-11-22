@@ -1,10 +1,10 @@
-package gg.warcraft.legends.app.item.equipment;
+package gg.warcraft.legends.app.item.equipment.upgrade;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.legends.api.item.ItemRarity;
-import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeBuilder;
+import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeBuilder;
 import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemBuilder;
 import gg.warcraft.monolith.api.item.ItemBuilderFactory;

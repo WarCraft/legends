@@ -38,10 +38,12 @@ import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
 import gg.warcraft.legends.api.item.equipment.EquipmentGeneratorFactory;
 import gg.warcraft.legends.api.item.equipment.EquipmentModifier;
 import gg.warcraft.legends.api.item.equipment.EquipmentModifierFactory;
-import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeBuilder;
-import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeBuilderFactory;
-import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeGenerator;
-import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeGeneratorFactory;
+import gg.warcraft.legends.api.item.equipment.EquipmentReader;
+import gg.warcraft.legends.api.item.equipment.EquipmentReaderFactory;
+import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeBuilder;
+import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeBuilderFactory;
+import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeGenerator;
+import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeGeneratorFactory;
 import gg.warcraft.legends.api.menu.AdminMenuFactory;
 import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
@@ -112,8 +114,9 @@ import gg.warcraft.legends.app.item.crate.service.DefaultLootCrateRepository;
 import gg.warcraft.legends.app.item.equipment.SimpleEquipmentBuilder;
 import gg.warcraft.legends.app.item.equipment.SimpleEquipmentGenerator;
 import gg.warcraft.legends.app.item.equipment.SimpleEquipmentModifier;
-import gg.warcraft.legends.app.item.equipment.SimpleEquipmentUpgradeBuilder;
-import gg.warcraft.legends.app.item.equipment.SimpleEquipmentUpgradeGenerator;
+import gg.warcraft.legends.app.item.equipment.SimpleEquipmentReader;
+import gg.warcraft.legends.app.item.equipment.upgrade.SimpleEquipmentUpgradeBuilder;
+import gg.warcraft.legends.app.item.equipment.upgrade.SimpleEquipmentUpgradeGenerator;
 import gg.warcraft.legends.app.menu.DefaultAdminMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultCollectablesMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDailyLoginMenuFactory;
@@ -263,6 +266,11 @@ public abstract class AbstractLegendsModule extends PrivateModule {
 
         bind(LootCrateUseHandler.class);
         expose(LootCrateUseHandler.class);
+
+        install(new FactoryModuleBuilder()
+                .implement(EquipmentReader.class, SimpleEquipmentReader.class)
+                .build(EquipmentReaderFactory.class));
+        expose(EquipmentReaderFactory.class);
 
         install(new FactoryModuleBuilder()
                 .implement(EquipmentBuilder.class, SimpleEquipmentBuilder.class)

@@ -7,41 +7,42 @@ import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.item.equipment.EquipmentBuilder;
 import gg.warcraft.legends.api.item.equipment.EquipmentBuilderFactory;
 import gg.warcraft.legends.api.item.equipment.EquipmentModifier;
+import gg.warcraft.legends.api.item.equipment.EquipmentReader;
+import gg.warcraft.legends.api.item.equipment.EquipmentReaderFactory;
 import gg.warcraft.monolith.api.item.Item;
-import gg.warcraft.monolith.api.item.ItemReader;
-import gg.warcraft.monolith.api.item.ItemReaderFactory;
 import gg.warcraft.monolith.api.util.ColorCodeUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleEquipmentModifier implements EquipmentModifier {
+    private final EquipmentBuilderFactory equipmentBuilderFactory;
+    private final ColorCodeUtils colorCodeUtils;
+    private final Item item;
     private final Map<LegendsAttribute, Integer> modifiedAttributes;
-    private final EquipmentBuilder equipmentBuilder;
+
+    private int availableUpgrades;
+    private int upgradeCount;
 
     @Inject
-    public SimpleEquipmentModifier(EquipmentBuilderFactory equipmentBuilderFactory, ItemReaderFactory itemReaderFactory,
+    public SimpleEquipmentModifier(EquipmentBuilderFactory equipmentBuilderFactory, EquipmentReaderFactory equipmentReaderFactory,
                                    ColorCodeUtils colorCodeUtils, @Assisted Item item) {
+        this.equipmentBuilderFactory = equipmentBuilderFactory;
+        this.colorCodeUtils = colorCodeUtils;
+        this.item = item;
         this.modifiedAttributes = new HashMap<>();
 
-        String itemName = colorCodeUtils.stripColorCodes(item.getName());
-        String rarityColorCode = item.getName().replace(itemName, "");
-        ItemRarity itemRarity = ItemRarity.COMMON;
-        for (ItemRarity rarity : ItemRarity.values()) {
-            if (rarityColorCode.equals(rarity.getColor().toString())) {
-                itemRarity = rarity;
-            }
-        }
-        this.equipmentBuilder = equipmentBuilderFactory.createEquipmentBuilder(item.getType(), itemRarity, itemName);
-
-        ItemReader reader = itemReaderFactory.createItemReader(item);
+        EquipmentReader reader = equipmentReaderFactory.createEquipmentReader(item);
         modifiedAttributes.put(LegendsAttribute.STRENGTH, reader.getAttribute(LegendsAttribute.STRENGTH));
         modifiedAttributes.put(LegendsAttribute.DEXTERITY, reader.getAttribute(LegendsAttribute.DEXTERITY));
         modifiedAttributes.put(LegendsAttribute.INTELLIGENCE, reader.getAttribute(LegendsAttribute.INTELLIGENCE));
         modifiedAttributes.put(LegendsAttribute.VITALITY, reader.getAttribute(LegendsAttribute.VITALITY));
         modifiedAttributes.put(LegendsAttribute.CRIT, reader.getAttribute(LegendsAttribute.CRIT));
 
-        // TODO add existing item lore to builder
+        this.availableUpgrades = reader.getAvailableUpgrades();
+        this.upgradeCount = reader.getUpgradeCount();
+
+        // TODO extract existing item lore and add to builder on build
     }
 
     @Override
@@ -52,8 +53,34 @@ public class SimpleEquipmentModifier implements EquipmentModifier {
     }
 
     @Override
+    public EquipmentModifier addAvailableUpgrades(int count) {
+        this.availableUpgrades += count;
+        return this;
+    }
+
+    @Override
+    public EquipmentModifier addUpgradeCount(int count) {
+        this.upgradeCount += count;
+        return this;
+    }
+
+    @Override
     public Item build() {
+        String itemName = colorCodeUtils.stripColorCodes(item.getName());
+        itemName = itemName.replace("[ ]\\(\\+\\d*\\)", "");
+
+        String rarityColorCode = item.getName().replace(itemName, "");
+        ItemRarity itemRarity = ItemRarity.COMMON;
+        for (ItemRarity rarity : ItemRarity.values()) {
+            if (rarityColorCode.equals(rarity.getColor().toString())) {
+                itemRarity = rarity;
+            }
+        }
+
+        EquipmentBuilder equipmentBuilder = equipmentBuilderFactory.createEquipmentBuilder(item.getType(), itemRarity, itemName);
         modifiedAttributes.forEach(equipmentBuilder::withAttribute);
+        equipmentBuilder.withAvailableUpgrades(availableUpgrades);
+        equipmentBuilder.withUpgradeCount(upgradeCount);
         return equipmentBuilder.build();
     }
 }

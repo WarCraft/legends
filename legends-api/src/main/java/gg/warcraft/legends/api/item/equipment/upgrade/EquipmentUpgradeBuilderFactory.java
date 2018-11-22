@@ -1,4 +1,4 @@
-package gg.warcraft.legends.api.item.equipment;
+package gg.warcraft.legends.api.item.equipment.upgrade;
 
 import gg.warcraft.legends.api.item.ItemRarity;
 

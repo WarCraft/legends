@@ -1,11 +1,11 @@
-package gg.warcraft.legends.app.item.equipment;
+package gg.warcraft.legends.app.item.equipment.upgrade;
 
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.combat.LegendsSpecializationType;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.legends.api.item.ItemRarity;
-import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeBuilderFactory;
-import gg.warcraft.legends.api.item.equipment.EquipmentUpgradeGenerator;
+import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeBuilderFactory;
+import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeGenerator;
 import gg.warcraft.monolith.api.item.Item;
 
 public class SimpleEquipmentUpgradeGenerator implements EquipmentUpgradeGenerator {

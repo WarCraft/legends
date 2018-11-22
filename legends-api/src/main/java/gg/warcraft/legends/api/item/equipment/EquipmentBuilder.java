@@ -14,9 +14,9 @@ public interface EquipmentBuilder {
 
     EquipmentBuilder withAttributes(Map<LegendsAttribute, Integer> attributes);
 
-    EquipmentBuilder withAvailableSockets(int sockets);
+    EquipmentBuilder withAvailableUpgrades(int count);
 
-    EquipmentBuilder withBrokenSockets(int sockets);
+    EquipmentBuilder withUpgradeCount(int count);
 
     EquipmentBuilder withFlavorText(List<String> flavorText);
 
