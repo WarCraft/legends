@@ -39,7 +39,7 @@ public class PlayerInspectionHandler {
             String teamPrefix = stringUtils.isVowel(team.charAt(0)) ? "an " : "a ";
             String specialization = inspectedPlayer.getSpecialization().getName();
             String message = "You are looking at " + inspectedPlayer.getName() + ", " +
-                    teamPrefix + team + specialization;
+                    teamPrefix + team + " " + specialization;
             playerCommandService.sendNotification(inspectingPlayerId, message);
         }
     }
