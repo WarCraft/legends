@@ -66,10 +66,9 @@ public class SimpleEquipmentModifier implements EquipmentModifier {
 
     @Override
     public Item build() {
-        String itemName = colorCodeUtils.stripColorCodes(item.getName());
-        itemName = itemName.replace("[ ]\\(\\+\\d*\\)", "");
-
-        String rarityColorCode = item.getName().replace(itemName, "");
+        String itemName = item.getName();
+        String cleanItemName = colorCodeUtils.stripColorCodes(itemName).replace("\\s\\(\\+\\d+\\)$", "");
+        String rarityColorCode = itemName.replace(cleanItemName, "");
         ItemRarity itemRarity = ItemRarity.COMMON;
         for (ItemRarity rarity : ItemRarity.values()) {
             if (rarityColorCode.equals(rarity.getColor().toString())) {
@@ -77,7 +76,7 @@ public class SimpleEquipmentModifier implements EquipmentModifier {
             }
         }
 
-        EquipmentBuilder equipmentBuilder = equipmentBuilderFactory.createEquipmentBuilder(item.getType(), itemRarity, itemName);
+        EquipmentBuilder equipmentBuilder = equipmentBuilderFactory.createEquipmentBuilder(item.getType(), itemRarity, cleanItemName);
         modifiedAttributes.forEach(equipmentBuilder::withAttribute);
         equipmentBuilder.withAvailableUpgrades(availableUpgrades);
         equipmentBuilder.withUpgradeCount(upgradeCount);
