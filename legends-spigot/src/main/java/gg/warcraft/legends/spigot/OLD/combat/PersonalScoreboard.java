@@ -113,7 +113,9 @@ public class PersonalScoreboard implements Runnable, Cancellable {
         LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getPlayerId());
         if (player.getTeam() != null) {
             Team team = scoreboard.getTeam(player.getTeam().toString());
-            team.addEntry(player.getName());
+            if (team != null) {
+                team.addEntry(player.getName());
+            }
         }
     }
 
@@ -121,9 +123,8 @@ public class PersonalScoreboard implements Runnable, Cancellable {
     public void onEntityTeamChangedEvent(EntityTeamChangedEvent event) {
         LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getEntityId());
         if (player != null) {
-            gg.warcraft.monolith.api.entity.team.Team playerTeam = player.getTeam();
-            if (playerTeam != null) {
-                Team team = scoreboard.getTeam(playerTeam.toString());
+            Team team = scoreboard.getTeam(event.getNewTeam().toString());
+            if (team != null) {
                 team.addEntry(player.getName());
             }
         }
