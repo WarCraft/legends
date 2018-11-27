@@ -67,8 +67,8 @@ public class SimpleEquipmentModifier implements EquipmentModifier {
     @Override
     public Item build() {
         String itemName = item.getName();
-        String cleanItemName = colorCodeUtils.stripColorCodes(itemName).replace("\\s\\(\\+\\d+\\)$", "");
-        String rarityColorCode = itemName.replace(cleanItemName, "");
+        String cleanItemName = colorCodeUtils.stripColorCodes(itemName).replaceAll("\\s\\(\\+\\d+\\)$", "");
+        String rarityColorCode = itemName.replace(colorCodeUtils.stripColorCodes(itemName), "");
         ItemRarity itemRarity = ItemRarity.COMMON;
         for (ItemRarity rarity : ItemRarity.values()) {
             if (rarityColorCode.equals(rarity.getColor().toString())) {

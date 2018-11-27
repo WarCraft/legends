@@ -53,7 +53,7 @@ public class SimpleEquipmentReader implements EquipmentReader {
 
         String name = item.getName();
         if (name.matches("^.*\\(\\+\\d*\\)$")) {
-            String onlyUpgradeNumbers = name.replace("^.*\\(\\+", "").replace("\\)$", "");
+            String onlyUpgradeNumbers = name.replaceAll("^.*\\(\\+", "").replaceAll("\\)$", "");
             try {
                 return Integer.parseInt(onlyUpgradeNumbers);
             } catch (NumberFormatException ex) {
