@@ -56,6 +56,7 @@ import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozle;
 import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozleFactory;
 import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozleHandler;
 import gg.warcraft.legends.spigot.OLD.shop.SpigotMiniPetFactory;
+import gg.warcraft.legends.spigot.core.handler.OnePointEightPvPInitializationHandler;
 import gg.warcraft.legends.spigot.core.handler.SpigotScoreboardHandler;
 import gg.warcraft.monolith.api.Monolith;
 import gg.warcraft.monolith.api.MonolithPluginUtils;
@@ -273,6 +274,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         SpydeyBot spyBot = injector.getInstance(SpydeyBot.class);
         eventService.subscribe(spyBot);
+
+        OnePointEightPvPInitializationHandler onePointEightPvPInitializationHandler = new OnePointEightPvPInitializationHandler();
+        getServer().getPluginManager().registerEvents(onePointEightPvPInitializationHandler, this);
 
         // TODO mass bamboozle is actually implemented quite cleanly, needs to be in the spigot package until
         // TODO LibsDisguises support has been added to Monolith though

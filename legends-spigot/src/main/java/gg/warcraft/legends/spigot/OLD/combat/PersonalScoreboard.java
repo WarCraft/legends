@@ -122,10 +122,13 @@ public class PersonalScoreboard implements Runnable, Cancellable {
     @Subscribe
     public void onEntityTeamChangedEvent(EntityTeamChangedEvent event) {
         LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getEntityId());
-        if (player != null) {
-            Team team = scoreboard.getTeam(event.getNewTeam().toString());
-            if (team != null) {
-                team.addEntry(player.getName());
+        if (player != null && player.getName() != null) {
+            scoreboard.getTeams().forEach(team -> team.removeEntry(player.getName()));
+            if (event.getNewTeam() != null) {
+                Team team = scoreboard.getTeam(event.getNewTeam().toString());
+                if (team != null) {
+                    team.addEntry(player.getName());
+                }
             }
         }
     }

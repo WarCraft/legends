@@ -42,8 +42,8 @@ public class Slam extends AbstractAbility implements MeleeAbility {
         float knockback = getSnapshot().getFloat(AbilityConfigurationValue.KNOCKBACK);
         PotionEffect confusion = getSnapshot().getPotionEffect(PotionEffectType.CONFUSION);
         entityCommandService.damage(entity.getId(), damage);
-        entityCommandService.knockback(getCasterId(), direction, knockback);
-        entityCommandService.addPotionEffect(getCasterId(), confusion);
+        entityCommandService.knockback(entity.getId(), direction, knockback);
+        entityCommandService.addPotionEffect(entity.getId(), confusion);
 
         worldCommandService.playSound(entity.getLocation(), HIT_SOUND, SOUND_CATEGORY, 1, 1);
     }

@@ -43,6 +43,7 @@ public class LegendsCombatConfiguration {
 
     @Inject
     public LegendsCombatConfiguration(AbilityCommandService abilityCommandService) {
+        abilityCommandService.registerMeleeAbility("Vanilla", Vanilla.class, VanillaFactory.class);
         registerMageAbilities(abilityCommandService);
         registerRangerAbilities(abilityCommandService);
         registerWarriorAbilities(abilityCommandService);

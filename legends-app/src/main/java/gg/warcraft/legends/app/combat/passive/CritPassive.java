@@ -51,7 +51,7 @@ public class CritPassive extends AbstractRacialPassive implements CombatStatusEf
         float critChance = crit * 0.005f;
         if (random.nextFloat() <= critChance) {
             CombatValueModifier damageModifier =
-                    combatFactory.createCombatValueModifier(CombatValueModifierType.FLAT, CRIT_MODIFIER, this);
+                    combatFactory.createCombatValueModifier(CombatValueModifierType.PERCENT, CRIT_MODIFIER, this);
             event.addDamageModifier(damageModifier);
         }
     }
