@@ -24,18 +24,20 @@ import gg.warcraft.monolith.api.util.ColorCode;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements DailyLoginMenuFactory {
     private static final String DAILY_LOGIN_COUNTER_DATA = "dailyLoginCounter";
     private static final String DAILY_LOGIN_LAST_CLAIMED_DATA = "dailyLoginLastClaimed";
+    private static final NavigableMap<Integer, Item> DAILY_REWARDS = new TreeMap<>();
 
     private final PlayerQueryService playerQueryService;
     private final PlayerCommandService playerCommandService;
     private final MenuCommandService menuCommandService;
     private final MainMenuFactory mainMenuFactory;
-    private final LootCrateBuilderFactory lootCrateBuilderFactory;
     private final Logger pluginLogger;
 
     @Inject
@@ -52,8 +54,22 @@ public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements
         this.playerCommandService = playerCommandService;
         this.menuCommandService = menuCommandService;
         this.mainMenuFactory = mainMenuFactory;
-        this.lootCrateBuilderFactory = lootCrateBuilderFactory;
         this.pluginLogger = pluginLogger;
+
+        if (DAILY_REWARDS.isEmpty()) {
+            Item warCrate = lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.WAR_CRATE).build();
+            Item legendCrate = lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.LEGEND_CRATE).build();
+            Item titanCrate = lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.TITAN_CRATE).build();
+
+            DAILY_REWARDS.put(1, warCrate);
+            DAILY_REWARDS.put(7, legendCrate);
+            DAILY_REWARDS.put(8, warCrate);
+            DAILY_REWARDS.put(14, legendCrate);
+            DAILY_REWARDS.put(15, warCrate.withStackSize(2));
+            DAILY_REWARDS.put(21, legendCrate.withStackSize(2));
+            DAILY_REWARDS.put(22, warCrate.withStackSize(2));
+            DAILY_REWARDS.put(28, titanCrate);
+        }
     }
 
     int getClaimCounter(Player player) {
@@ -176,7 +192,7 @@ public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements
                         playerCommandService.setData(playerId, DAILY_LOGIN_COUNTER_DATA, "" + newClaimCounter);
                         playerCommandService.setData(playerId, DAILY_LOGIN_LAST_CLAIMED_DATA, now.toString());
 
-                        Item reward = lootCrateBuilderFactory.createLootCrateBuilder(lootCrateType).build();
+                        Item reward = DAILY_REWARDS.floorEntry(newClaimCounter).getValue();
                         playerCommandService.giveItem(playerId, reward, false);
                     } else {
                         playerCommandService.sendNotification(playerId, "Please make sure you have at least 1 free inventory slot.");
@@ -197,7 +213,7 @@ public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements
         int claimCounter = getClaimCounter(player);
         LocalDate lastClaimed = getLastClaimed(player);
         boolean canClaim = lastClaimed.isBefore(LocalDate.now());
-        if (canClaim && claimCounter == 28) {
+        if (canClaim && claimCounter >= 28) {
             claimCounter = 0;
         }
 
