@@ -9,9 +9,9 @@ import gg.warcraft.legends.api.core.game.service.GameQueryService;
 import java.time.LocalTime;
 
 public class DailySkirmishHandler implements Runnable {
-    private static final LocalTime FIRST_DAILY_SKIRMISH_TIME = LocalTime.of(15, 0);
-    private static final LocalTime SECOND_DAILY_SKIRMISH_TIME = LocalTime.of(18, 0);
-    private static final LocalTime THIRD_DAILY_SKIRMISH_TIME = LocalTime.of(21, 0);
+    private static final LocalTime FIRST_DAILY_SKIRMISH_TIME = LocalTime.of(2, 0); // in UTC = 21PM NYT
+    private static final LocalTime SECOND_DAILY_SKIRMISH_TIME = LocalTime.of(20, 0); // in UTC = 15PM NYT
+    private static final LocalTime THIRD_DAILY_SKIRMISH_TIME = LocalTime.of(23, 0); // in UTC = 18PM NYT
 
     private final GameQueryService gameQueryService;
     private final GameCommandService gameCommandService;

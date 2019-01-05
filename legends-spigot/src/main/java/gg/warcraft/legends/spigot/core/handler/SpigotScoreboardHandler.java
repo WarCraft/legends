@@ -7,6 +7,7 @@ import gg.warcraft.legends.api.core.game.War;
 import gg.warcraft.legends.api.core.game.service.GameQueryService;
 import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.entity.team.Team;
+import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.siege.api.objective.Objective;
 import gg.warcraft.siege.api.objective.service.ObjectiveQueryService;
@@ -16,6 +17,7 @@ import org.bukkit.Server;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 
 import java.lang.reflect.Field;
+import java.time.LocalTime;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -31,8 +33,13 @@ public class SpigotScoreboardHandler implements Runnable {
     private static final String FOOTER = "\\nJoin your team on the WarCraft Community Discord at discord.warcraft.gg!";
     private static final String TEXT_JSON = "{\"text\": \"%s\"}";
 
+    private static final LocalTime FIRST_DAILY_SKIRMISH_TIME = LocalTime.of(2, 0); // in UTC = 21PM NYT
+    private static final LocalTime SECOND_DAILY_SKIRMISH_TIME = LocalTime.of(20, 0); // in UTC = 15PM NYT
+    private static final LocalTime THIRD_DAILY_SKIRMISH_TIME = LocalTime.of(23, 0); // in UTC = 18PM NYT
+
     static {
-        WAR_HEADER = "WarCraft: Legends War\\n" +
+        WAR_HEADER = ColorCode.GOLD + "WarCraft: Legends War\\n" + RESET +
+                "Next skirmish in %s\\n" +
                 HUMAN.getChatColor() + HUMAN.getName() + RESET + " | " +
                 ORC.getChatColor() + ORC.getName() + RESET + "\\n" +
                 "\\n" +
@@ -45,7 +52,7 @@ public class SpigotScoreboardHandler implements Runnable {
                 "Next tally in %s\\n" +
                 "%s\\n";
 
-        SKIRMISH_HEADER = "WarCraft: Legends Skirmish\\n" +
+        SKIRMISH_HEADER = ColorCode.GOLD + "WarCraft: Legends Skirmish\\n" + RESET +
                 HUMAN.getChatColor() + HUMAN.getName() + RESET + " | " +
                 ORC.getChatColor() + ORC.getName() + RESET + "\\n" +
                 "\\n" +
@@ -86,6 +93,30 @@ public class SpigotScoreboardHandler implements Runnable {
             footerField = ReflectionUtils.getField("PacketPlayOutPlayerListHeaderFooter", PackageType.MINECRAFT_SERVER, true, "b");
         } catch (ClassNotFoundException | NoSuchFieldException ex) {
             pluginLogger.severe("Could not get footer field from 'PacketPlayOutPlayerListHeaderFooter': " + ex.getMessage());
+        }
+    }
+
+    private String getFormattedSkirmishCountdown() {
+        LocalTime thisMinute = LocalTime.now().withSecond(0).withNano(0);
+        int hours;
+        int minutes = 60 - thisMinute.getMinute();
+        if (thisMinute.isBefore(FIRST_DAILY_SKIRMISH_TIME)) {
+            hours = FIRST_DAILY_SKIRMISH_TIME.getHour() - thisMinute.getHour();
+        } else if (thisMinute.isBefore(SECOND_DAILY_SKIRMISH_TIME)) {
+            hours = SECOND_DAILY_SKIRMISH_TIME.getHour() - thisMinute.getHour();
+        } else if (thisMinute.isBefore(THIRD_DAILY_SKIRMISH_TIME)) {
+            hours = THIRD_DAILY_SKIRMISH_TIME.getHour() - thisMinute.getHour();
+        } else {
+            hours = 24 - thisMinute.getHour() + FIRST_DAILY_SKIRMISH_TIME.getHour();
+        }
+
+        if (hours > 1) {
+            return (hours + 1) + " hours";
+        } else {
+            if (minutes == 1) {
+                return "1 minute";
+            }
+            return minutes + " minutes";
         }
     }
 
@@ -153,8 +184,10 @@ public class SpigotScoreboardHandler implements Runnable {
         switch (activeGame.getType()) {
             case WAR:
                 War activeWar = (War) activeGame;
+                String skirmishCountdown = getFormattedSkirmishCountdown();
                 String formattedScore = getFormattedScore(activeWar);
-                header = String.format(WAR_HEADER, formattedScore, formattedPoints, timer, getFormattedObjectives());
+                header = String.format(WAR_HEADER, skirmishCountdown, formattedScore, formattedPoints, timer,
+                        getFormattedObjectives());
                 break;
             case SKIRMISH:
                 header = String.format(SKIRMISH_HEADER, timer, formattedPoints, getFormattedObjectives());
