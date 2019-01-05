@@ -4,18 +4,24 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.core.game.Game;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
+import gg.warcraft.monolith.api.entity.event.EntityFatalDamageEvent;
+import gg.warcraft.monolith.api.entity.player.Player;
+import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.siege.api.objective.Objective;
 import gg.warcraft.siege.api.objective.event.ObjectiveCapturedEvent;
 import gg.warcraft.siege.api.objective.event.ObjectiveNeutralizedEvent;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class GameObjectivesAndPointsHandler {
+    private final PlayerQueryService playerQueryService;
     private final GameRepository gameRepository;
 
     @Inject
-    public GameObjectivesAndPointsHandler(GameRepository gameRepository) {
+    public GameObjectivesAndPointsHandler(PlayerQueryService playerQueryService, GameRepository gameRepository) {
+        this.playerQueryService = playerQueryService;
         this.gameRepository = gameRepository;
     }
 
@@ -56,5 +62,23 @@ public class GameObjectivesAndPointsHandler {
                 .copy();
 
         gameRepository.save(newGame);
+    }
+
+    @Subscribe
+    public void onEntityFatalDamageEvent(EntityFatalDamageEvent event) {
+        Player player = playerQueryService.getPlayer(event.getEntityId());
+        if (player != null) {
+            UUID killerId = event.getDamage().getSource().getEntityId();
+            if (killerId != null) {
+                Player killer = playerQueryService.getPlayer(killerId);
+                if (killer != null) {
+                    Game activeGame = gameRepository.getActiveGame();
+                    Map<Team, Integer> newPoints = activeGame.getPoints();
+                    int currentTeamPoints = newPoints.getOrDefault(killer.getTeam(), 0);
+                    int newTeamPoints = currentTeamPoints + 1;
+                    newPoints.put(killer.getTeam(), newTeamPoints);
+                }
+            }
+        }
     }
 }
