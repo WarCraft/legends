@@ -8,6 +8,7 @@ import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
 import gg.warcraft.monolith.api.core.AuthorizationService;
+import gg.warcraft.monolith.api.core.PersistenceCache;
 import gg.warcraft.monolith.api.entity.player.Currency;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
@@ -29,6 +30,7 @@ public class FishCommandHandler implements CommandHandler {
     private final BlockBackupCommandService blockBackupCommandService;
     private final MenuCommandService menuCommandService;
     private final AdminMenuFactory adminMenuFactory;
+    private final PersistenceCache persistenceCache;
 
     @Inject
     public FishCommandHandler(AuthorizationService authorizationService, PlayerCommandService playerCommandService,
@@ -37,7 +39,7 @@ public class FishCommandHandler implements CommandHandler {
                               BlockBackupQueryService blockBackupQueryService,
                               BlockBackupCommandService blockBackupCommandService,
                               MenuCommandService menuCommandService,
-                              AdminMenuFactory adminMenuFactory) {
+                              AdminMenuFactory adminMenuFactory, PersistenceCache persistenceCache) {
         this.authorizationService = authorizationService;
         this.playerCommandService = playerCommandService;
         this.teamCommandService = teamCommandService;
@@ -46,6 +48,7 @@ public class FishCommandHandler implements CommandHandler {
         this.blockBackupCommandService = blockBackupCommandService;
         this.menuCommandService = menuCommandService;
         this.adminMenuFactory = adminMenuFactory;
+        this.persistenceCache = persistenceCache;
     }
 
     boolean onMenuCommand(UUID playerId) {
@@ -89,6 +92,19 @@ public class FishCommandHandler implements CommandHandler {
         }
     }
 
+    boolean onClearCacheCommand(List<String> arguments) {
+        if (arguments.size() > 1) {
+            return false;
+        }
+
+        if (arguments.isEmpty()) {
+            persistenceCache.clear();
+        } else {
+            persistenceCache.delete(arguments.get(0));
+        }
+        return true;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, List<String> arguments) {
         if (sender.isPlayer() && !authorizationService.isDev(sender.getPlayerId())) {
@@ -111,6 +127,8 @@ public class FishCommandHandler implements CommandHandler {
                 return onCurrencyCommand(LegendsCurrency.FAVOR, subArguments);
             case "fragments":
                 return onCurrencyCommand(LegendsCurrency.FRAGMENTS, subArguments);
+            case "clearcache":
+                return onClearCacheCommand(subArguments);
             default:
                 return false;
         }
