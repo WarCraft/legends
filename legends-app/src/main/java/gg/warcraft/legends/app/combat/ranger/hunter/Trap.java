@@ -33,7 +33,6 @@ import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.UUID;
 
 public class Trap extends AbstractAbility implements RangedAbility, Cancellable {
@@ -48,6 +47,8 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
     private final BlockLocation blockLocation;
     private final UUID[] spoofedPlayerIds;
     private final UUID projectileId;
+
+    private boolean cancelled = false;
 
     @Inject
     public Trap(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
@@ -82,14 +83,13 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
         worldCommandService.playSound(caster.getLocation(), PLACE_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
-    private void unspoof() {
-        Arrays.stream(spoofedPlayerIds).forEach(id -> blockSpoofingCommandService.unspoofBlock(blockLocation));
-    }
-
     @Override
     public void cancel() {
-        abilityCommandService.cancelProjectile(projectileId);
-        unspoof();
+        if (!cancelled) {
+            cancelled = true;
+            abilityCommandService.cancelProjectile(projectileId);
+            blockSpoofingCommandService.unspoofBlock(blockLocation, spoofedPlayerIds);
+        }
     }
 
     @Override
@@ -99,15 +99,21 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
         entityCommandService.addPotionEffect(entity.getId(), poison);
         entityCommandService.freeze(entity.getId(), rootDuration);
 
-        unspoof();
+        cancel();
         worldCommandService.playSound(entity.getLocation(), TRIGGER_SOUND, SOUND_CATEGORY, 1, 1);
         return true;
     }
 
     @Override
     public boolean onMiss(Entity entity) {
-        unspoof();
+        cancel();
         worldCommandService.playSound(entity.getLocation(), TRIGGER_SOUND, SOUND_CATEGORY, 1, 1);
         return true;
+    }
+
+    @Override
+    public boolean onGrounded(Location location) {
+        // do nothing
+        return false;
     }
 }
