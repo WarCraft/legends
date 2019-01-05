@@ -39,7 +39,14 @@ public class SpigotCombatPetFactory implements CombatPetFactory {
             return null;
         }
 
-        Entity owner = server.getEntity(ownerId);
+        Entity owner = server.getPlayer(ownerId);
+        if (owner == null) {
+            owner = server.getEntity(ownerId);
+            if (owner == null) {
+                return null;
+            }
+        }
+
         LivingEntity entity = (LivingEntity) baseEntity;
         try {
             EntityLiving nmsEntity = ((CraftLivingEntity) entity).getHandle();
