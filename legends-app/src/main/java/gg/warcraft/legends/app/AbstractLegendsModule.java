@@ -45,6 +45,7 @@ import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeBuilderFac
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeGenerator;
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeGeneratorFactory;
 import gg.warcraft.legends.api.menu.AdminMenuFactory;
+import gg.warcraft.legends.api.menu.ChallengesMenuFactory;
 import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
 import gg.warcraft.legends.api.menu.DecorationPackMenuFactory;
@@ -118,6 +119,7 @@ import gg.warcraft.legends.app.item.equipment.SimpleEquipmentReader;
 import gg.warcraft.legends.app.item.equipment.upgrade.SimpleEquipmentUpgradeBuilder;
 import gg.warcraft.legends.app.item.equipment.upgrade.SimpleEquipmentUpgradeGenerator;
 import gg.warcraft.legends.app.menu.DefaultAdminMenuFactory;
+import gg.warcraft.legends.app.menu.DefaultChallengesMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultCollectablesMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDailyLoginMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDecorationPackMenuFactory;
@@ -335,6 +337,7 @@ public abstract class AbstractLegendsModule extends PrivateModule {
         bind(PromotionsMenuFactory.class).to(DefaultPromotionsMenuFactory.class);
         bind(ShopMenuFactory.class).to(DefaultShopMenuFactory.class);
         bind(AdminMenuFactory.class).to(DefaultAdminMenuFactory.class);
+        bind(ChallengesMenuFactory.class).to(DefaultChallengesMenuFactory.class);
 
         expose(LegendsMenuFactory.class);
         expose(AdminMenuFactory.class);

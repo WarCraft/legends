@@ -5,6 +5,7 @@ import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.legends.api.menu.ChallengesMenuFactory;
 import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
@@ -40,6 +41,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     private final TeamMenuFactory teamMenuFactory;
     private final DailyLoginMenuFactory dailyLoginMenuFactory;
     private final CollectablesMenuFactory collectablesMenuFactory;
+    private final ChallengesMenuFactory challengesMenuFactory;
     private final ShopMenuFactory shopMenuFactory;
     private final StringUtils stringUtils;
 
@@ -49,7 +51,8 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
                                   ButtonBuilderFactory buttonBuilderFactory,
                                   SpecializationMenuFactory specializationMenuFactory,
                                   DailyLoginMenuFactory dailyLoginMenuFactory, TeamMenuFactory teamMenuFactory,
-                                  CollectablesMenuFactory collectablesMenuFactory, ShopMenuFactory shopMenuFactory,
+                                  CollectablesMenuFactory collectablesMenuFactory,
+                                  ChallengesMenuFactory challengesMenuFactory, ShopMenuFactory shopMenuFactory,
                                   StringUtils stringUtils) {
         this.legendsPlayerQueryService = legendsPlayerQueryService;
         this.menuCommandService = menuCommandService;
@@ -59,6 +62,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         this.dailyLoginMenuFactory = dailyLoginMenuFactory;
         this.teamMenuFactory = teamMenuFactory;
         this.collectablesMenuFactory = collectablesMenuFactory;
+        this.challengesMenuFactory = challengesMenuFactory;
         this.shopMenuFactory = shopMenuFactory;
         this.stringUtils = stringUtils;
     }
@@ -180,6 +184,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     }
 
     Button createChallengesButton(LegendsPlayer player) {
+        UUID playerId = player.getId();
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.TNT, "Challenges");
         builder.addTooltip("Challenges are a simple way of adding a");
         builder.addTooltip("little bit of extra action to your day to");
@@ -189,7 +194,8 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         builder.addTooltip("[CLICK] To view your challenges");
 
         builder.withAction(action -> {
-
+            Menu menu = challengesMenuFactory.createChallengesMenu(playerId);
+            menuCommandService.showMenu(menu, playerId);
         });
         return builder.build();
     }
