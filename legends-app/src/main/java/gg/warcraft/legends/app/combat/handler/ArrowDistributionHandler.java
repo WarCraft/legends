@@ -34,10 +34,12 @@ public class ArrowDistributionHandler {
     public void onProjectileLaunchEvent(ProjectileLaunchEvent event) {
         if (event.getProjectileType() == ProjectileType.ARROW) {
             UUID playerId = event.getShooterId();
-            Player player = playerQueryService.getPlayer(playerId);
-            if (player != null) {
-                Item arrow = itemBuilderFactory.createItemBuilder(ItemType.ARROW, "Arrow").build();
-                taskService.runNextTick(() -> playerCommandService.giveItem(playerId, arrow, false));
+            if (playerId != null) {
+                Player player = playerQueryService.getPlayer(playerId);
+                if (player != null) {
+                    Item arrow = itemBuilderFactory.createItemBuilder(ItemType.ARROW, "Arrow").build();
+                    taskService.runNextTick(() -> playerCommandService.giveItem(playerId, arrow, false));
+                }
             }
         }
     }
