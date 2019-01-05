@@ -82,10 +82,14 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
         worldCommandService.playSound(caster.getLocation(), PLACE_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
+    private void unspoof() {
+        Arrays.stream(spoofedPlayerIds).forEach(id -> blockSpoofingCommandService.unspoofBlock(blockLocation));
+    }
+
     @Override
     public void cancel() {
         abilityCommandService.cancelProjectile(projectileId);
-        Arrays.stream(spoofedPlayerIds).forEach(id -> blockSpoofingCommandService.unspoofBlock(blockLocation));
+        unspoof();
     }
 
     @Override
@@ -95,14 +99,14 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
         entityCommandService.addPotionEffect(entity.getId(), poison);
         entityCommandService.freeze(entity.getId(), rootDuration);
 
-        cancel();
+        unspoof();
         worldCommandService.playSound(entity.getLocation(), TRIGGER_SOUND, SOUND_CATEGORY, 1, 1);
         return true;
     }
 
     @Override
     public boolean onMiss(Entity entity) {
-        cancel();
+        unspoof();
         worldCommandService.playSound(entity.getLocation(), TRIGGER_SOUND, SOUND_CATEGORY, 1, 1);
         return true;
     }
