@@ -146,7 +146,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         builder.addTooltip("");
         createCurrenciesView(player).forEach(builder::addTooltip);
         builder.addTooltip("");
-        builder.addTooltip("[SHIFT LEFT CLICK] To change your kit");
+        builder.addTooltip("[SHIFT LEFT CLICK] To change your class");
         builder.addTooltip("[SHIFT RIGHT CLICK] To change your team");
 
         builder.withAction(action -> {
