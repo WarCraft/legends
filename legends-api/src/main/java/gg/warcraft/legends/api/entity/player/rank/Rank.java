@@ -11,4 +11,6 @@ public interface Rank {
     int getPrestige();
 
     ColorCode getColor();
+
+    int getRequiredFavor();
 }

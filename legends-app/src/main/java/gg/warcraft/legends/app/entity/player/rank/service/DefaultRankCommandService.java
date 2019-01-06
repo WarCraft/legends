@@ -8,8 +8,10 @@ import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
 import gg.warcraft.legends.app.entity.player.rank.SimpleRank;
 import gg.warcraft.monolith.api.entity.team.Team;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
@@ -24,7 +26,8 @@ public class DefaultRankCommandService implements RankCommandService {
     @Override
     public void initializeRanks(Team team, List<Integer> rankFavorTable,
                                 List<RankPrefixConfiguration> rankPrefixes, List<String> rankSuffixes) {
-        NavigableMap<Integer, Rank> ranks = new TreeMap<>();
+        Map<Integer, Rank> ranksByLevel = new HashMap<>();
+        NavigableMap<Integer, Rank> ranksByFavor = new TreeMap<>();
         Iterator<RankPrefixConfiguration> prefixes = rankPrefixes.iterator();
         RankPrefixConfiguration prefix = prefixes.next();
         Iterator<String> suffixes = rankSuffixes.iterator();
@@ -38,13 +41,15 @@ public class DefaultRankCommandService implements RankCommandService {
             String suffix = suffixes.next();
 
             String rankName = prefix.getName() + " " + suffix;
-            int rankLevel = ranks.size() + 1;
-            Rank rank = new SimpleRank(rankName, rankLevel, 0, prefix.getColor());
+            int rankLevel = ranksByFavor.size() + 1;
+            Rank rank = new SimpleRank(rankName, rankLevel, 0, prefix.getColor(), favor);
 
-            ranks.put(favor, rank);
+            ranksByLevel.put(rankLevel, rank);
+            ranksByFavor.put(favor, rank);
         }
 
-        rankRepository.save(team, ranks);
+        rankRepository.save(ranksByLevel);
+        rankRepository.save(team, ranksByFavor);
 
         int maxFavor = rankFavorTable.get(rankFavorTable.size() - 1);
         rankRepository.save(maxFavor);

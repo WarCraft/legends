@@ -10,12 +10,14 @@ public class SimpleRank implements Rank {
     private final int level;
     private final int prestige;
     private final ColorCode color;
+    private final int requiredFavor;
 
-    public SimpleRank(String name, int level, int prestige, ColorCode color) {
+    public SimpleRank(String name, int level, int prestige, ColorCode color, int requiredFavor) {
         this.name = name;
         this.level = level;
         this.prestige = prestige;
         this.color = color;
+        this.requiredFavor = requiredFavor;
     }
 
     @Override
@@ -36,6 +38,11 @@ public class SimpleRank implements Rank {
     @Override
     public ColorCode getColor() {
         return color;
+    }
+
+    @Override
+    public int getRequiredFavor() {
+        return requiredFavor;
     }
 
     @Override

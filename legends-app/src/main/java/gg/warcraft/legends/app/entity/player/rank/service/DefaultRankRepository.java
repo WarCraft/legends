@@ -13,19 +13,27 @@ import java.util.TreeMap;
 
 @Singleton
 public class DefaultRankRepository implements RankRepository {
-    private final Map<String, NavigableMap<Integer, Rank>> ranks;
+    private final Map<Integer, Rank> ranksByLevel;
+    private final Map<String, NavigableMap<Integer, Rank>> ranksByFavor;
 
     private int maxFavor;
 
     public DefaultRankRepository() {
-        this.ranks = new HashMap<>();
+        this.ranksByLevel = new HashMap<>();
+        this.ranksByFavor = new HashMap<>();
+    }
+
+    @Override
+    public Rank getRank(int level) {
+        int clippedLevel = level % ranksByLevel.size();
+        return ranksByLevel.get(clippedLevel);
     }
 
     @Override
     public NavigableMap<Integer, Rank> getRanks(Team team) {
         if (team != null) {
             String teamName = team.getName();
-            return new TreeMap<>(ranks.getOrDefault(teamName, Collections.emptyNavigableMap()));
+            return new TreeMap<>(ranksByFavor.getOrDefault(teamName, Collections.emptyNavigableMap()));
         } else {
             return Collections.emptyNavigableMap();
         }
@@ -37,9 +45,15 @@ public class DefaultRankRepository implements RankRepository {
     }
 
     @Override
-    public void save(Team team, NavigableMap<Integer, Rank> ranks) {
+    public void save(Map<Integer, Rank> ranksByLevel) {
+        this.ranksByLevel.clear();
+        this.ranksByLevel.putAll(ranksByLevel);
+    }
+
+    @Override
+    public void save(Team team, NavigableMap<Integer, Rank> ranksByFavor) {
         String teamName = team.getName();
-        this.ranks.put(teamName, new TreeMap<>(ranks));
+        this.ranksByFavor.put(teamName, new TreeMap<>(ranksByFavor));
     }
 
     @Override
