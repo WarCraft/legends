@@ -93,13 +93,15 @@ public class ObjectiveAnnouncementHandler {
     public void onObjectiveNeutralizedEvent(ObjectiveNeutralizedEvent event) {
         Objective objective = event.getObjective();
         Team defenders = event.getDefenders();
-        String notification = "The " + defenders.getName() + " have lost " + objective.getName() + "!";
-        String announcement = ColorCode.GRAY + notification;
-        legendsPlayerQueryService.getOnlinePlayers().forEach(player -> {
-            UUID playerId = player.getId();
-            legendsPlayerCommandService.sendTitle(playerId, "", announcement);
-            legendsPlayerCommandService.sendNotification(playerId, announcement);
-        });
+        if (defenders != null) {
+            String notification = "The " + defenders.getName() + " have lost " + objective.getName() + "!";
+            String announcement = ColorCode.GRAY + notification;
+            legendsPlayerQueryService.getOnlinePlayers().forEach(player -> {
+                UUID playerId = player.getId();
+                legendsPlayerCommandService.sendTitle(playerId, "", announcement);
+                legendsPlayerCommandService.sendNotification(playerId, announcement);
+            });
+        }
         // TODO disabled for now: taskService.runLaterAsync(() -> publishDiscordNotification(notification), timeUtils.oneTick());
     }
 }

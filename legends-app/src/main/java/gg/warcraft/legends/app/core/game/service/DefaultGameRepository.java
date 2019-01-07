@@ -185,7 +185,8 @@ public class DefaultGameRepository implements GameRepository {
         Map<String, Integer> points = new HashMap<>();
         skirmish.getPoints().forEach((team, teamPoints) -> points.put(team.getName(), teamPoints));
         Map<String, String> objectives = new HashMap<>();
-        skirmish.getObjectives().forEach((objectiveId, team) -> objectives.put(objectiveId, team.getName()));
+        skirmish.getObjectives().forEach((objectiveId, team) ->
+                objectives.put(objectiveId, team != null ? team.getName() : null));
         int timer = skirmish.getTimer().inSeconds();
         String startTime = skirmish.getStartTime();
         String endTime = skirmish.getEndTime();
