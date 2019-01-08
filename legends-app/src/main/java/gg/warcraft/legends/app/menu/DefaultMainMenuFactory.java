@@ -8,6 +8,7 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.menu.ChallengesMenuFactory;
 import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
+import gg.warcraft.legends.api.menu.HelpMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.ShopMenuFactory;
 import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
@@ -43,6 +44,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     private final CollectablesMenuFactory collectablesMenuFactory;
     private final ChallengesMenuFactory challengesMenuFactory;
     private final ShopMenuFactory shopMenuFactory;
+    private final HelpMenuFactory helpMenuFactory;
     private final StringUtils stringUtils;
 
     @Inject
@@ -53,7 +55,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
                                   DailyLoginMenuFactory dailyLoginMenuFactory, TeamMenuFactory teamMenuFactory,
                                   CollectablesMenuFactory collectablesMenuFactory,
                                   ChallengesMenuFactory challengesMenuFactory, ShopMenuFactory shopMenuFactory,
-                                  StringUtils stringUtils) {
+                                  HelpMenuFactory helpMenuFactory, StringUtils stringUtils) {
         this.legendsPlayerQueryService = legendsPlayerQueryService;
         this.menuCommandService = menuCommandService;
         this.menuBuilderFactory = menuBuilderFactory;
@@ -64,6 +66,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         this.collectablesMenuFactory = collectablesMenuFactory;
         this.challengesMenuFactory = challengesMenuFactory;
         this.shopMenuFactory = shopMenuFactory;
+        this.helpMenuFactory = helpMenuFactory;
         this.stringUtils = stringUtils;
     }
 
@@ -250,11 +253,14 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     }
 
     Button createHelpButton(LegendsPlayer player) {
+        UUID playerId = player.getId();
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.BOOK, "Help Menu");
-        builder.addTooltip("hlp ples");
+        builder.addTooltip("Read the Server Manual or contact a member");
+        builder.addTooltip("of staff if you have any more question!");
 
         builder.withAction(action -> {
-
+            Menu menu = helpMenuFactory.createHelpMenu(playerId);
+            menuCommandService.showMenu(menu, playerId);
         });
         return builder.build();
     }

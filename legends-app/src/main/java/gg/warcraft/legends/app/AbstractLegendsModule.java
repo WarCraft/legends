@@ -50,6 +50,7 @@ import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
 import gg.warcraft.legends.api.menu.DecorationPackMenuFactory;
 import gg.warcraft.legends.api.menu.DecorationsMenuFactory;
+import gg.warcraft.legends.api.menu.HelpMenuFactory;
 import gg.warcraft.legends.api.menu.LegendsMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.MiniPetsMenuFactory;
@@ -124,6 +125,7 @@ import gg.warcraft.legends.app.menu.DefaultCollectablesMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDailyLoginMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDecorationPackMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultDecorationsMenuFactory;
+import gg.warcraft.legends.app.menu.DefaultHelpMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultLegendsMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultMainMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultMiniPetsMenuFactory;
@@ -338,6 +340,7 @@ public abstract class AbstractLegendsModule extends PrivateModule {
         bind(ShopMenuFactory.class).to(DefaultShopMenuFactory.class);
         bind(AdminMenuFactory.class).to(DefaultAdminMenuFactory.class);
         bind(ChallengesMenuFactory.class).to(DefaultChallengesMenuFactory.class);
+        bind(HelpMenuFactory.class).to(DefaultHelpMenuFactory.class);
 
         expose(LegendsMenuFactory.class);
         expose(AdminMenuFactory.class);
