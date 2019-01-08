@@ -65,12 +65,24 @@ import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
 import gg.warcraft.monolith.api.util.TimeUtils;
+import gg.warcraft.monolith.api.world.Direction;
+import gg.warcraft.monolith.api.world.WorldType;
+import gg.warcraft.monolith.api.world.block.Block;
+import gg.warcraft.monolith.api.world.block.box.BoundingBlockBox;
+import gg.warcraft.monolith.api.world.block.box.BoundingBlockBoxFactory;
 import gg.warcraft.monolith.api.world.location.LocationFactory;
 import gg.warcraft.monolith.api.world.location.OrientedLocation;
+import gg.warcraft.monolith.api.world.service.WorldQueryService;
+import gg.warcraft.siege.api.weapon.SiegeWeapon;
+import gg.warcraft.siege.api.weapon.SiegeWeaponFactory;
+import gg.warcraft.siege.api.weapon.service.SiegeWeaponRepository;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.joml.Vector3i;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class LegendsPlugin extends JavaPlugin {
     private Injector injector;
@@ -287,6 +299,29 @@ public class LegendsPlugin extends JavaPlugin {
         abilityCommandService.registerRangedAbility("Mass Bamboozle", MassBamboozle.class, MassBamboozleFactory.class);
     }
 
+    void initializeTutorial() {
+        SiegeWeaponFactory siegeWeaponFactory = injector.getInstance(SiegeWeaponFactory.class);
+        SiegeWeaponRepository siegeWeaponRepository = injector.getInstance(SiegeWeaponRepository.class);
+        WorldQueryService worldQueryService = injector.getInstance(WorldQueryService.class);
+
+        Block loadBlock = worldQueryService.getBlockAt(WorldType.THE_END, 294, 164, -193);
+        Block turnLeftBlock = worldQueryService.getBlockAt(WorldType.THE_END, 293, 165, -198);
+        Block turnRightBlock = worldQueryService.getBlockAt(WorldType.THE_END, 295, 165, -198);
+        Block chargeBlock = worldQueryService.getBlockAt(WorldType.THE_END, 294, 165, -197);
+        Block fireBlock = worldQueryService.getBlockAt(WorldType.THE_END, 294, 166, -197);
+        Block projectileOriginBlock = worldQueryService.getBlockAt(WorldType.THE_END, 294, 176, -206);
+
+        BoundingBlockBoxFactory boundingBlockBoxFactory = injector.getInstance(BoundingBlockBoxFactory.class);
+        BoundingBlockBox tutorialTrebuchetBoundingBox = boundingBlockBoxFactory.createBoundingBlockBox(
+                WorldType.THE_END, new Vector3i(291, 164, -206), new Vector3i(296, 176, -193));
+
+        SiegeWeapon tutorialTrebuchet = siegeWeaponFactory.createTrebuchet(Direction.NORTH,
+                tutorialTrebuchetBoundingBox.stream().collect(Collectors.toSet()),
+                new ArrayList<>(), loadBlock, turnLeftBlock, turnRightBlock, chargeBlock, fireBlock,
+                projectileOriginBlock);
+        siegeWeaponRepository.save(tutorialTrebuchet);
+    }
+
     private void initializeGame() {
         GameCommandService gameCommandService = injector.getInstance(GameCommandService.class);
         GameQueryService gameQueryService = injector.getInstance(GameQueryService.class);
@@ -325,6 +360,7 @@ public class LegendsPlugin extends JavaPlugin {
         initializeLegendsHandlers(isProduction);
         initializeLegendsCommands();
         initializeOLDHACK();
+        initializeTutorial();
         initializeGame();
         injector.getInstance(LegendsCombatConfiguration.class);
     }
