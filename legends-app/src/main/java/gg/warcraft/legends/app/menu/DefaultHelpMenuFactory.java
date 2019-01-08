@@ -207,7 +207,7 @@ public class DefaultHelpMenuFactory extends AbstractMenuFactory implements HelpM
     }
 
     Button createChallengesButton() {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Rewards");
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Challenges");
         builder.addTooltip("Challenges are a simple way of adding a");
         builder.addTooltip("little bit of extra action to your day to");
         builder.addTooltip("day activities on the server.");
@@ -226,7 +226,7 @@ public class DefaultHelpMenuFactory extends AbstractMenuFactory implements HelpM
     }
 
     Button createLeaderboardsButton() {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Rewards");
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Leaderboards");
         builder.addTooltip("Why make a legend if no one will document");
         builder.addTooltip("your tales?");
         builder.addTooltip("");
@@ -240,7 +240,7 @@ public class DefaultHelpMenuFactory extends AbstractMenuFactory implements HelpM
     }
 
     Button createShopButton() {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Rewards");
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "WarCraft Shop");
         builder.addTooltip("Running a server is a lot of fun and super");
         builder.addTooltip("rewarding, but it also requires large amounts");
         builder.addTooltip("of time and funds. Purchasing items in the");
@@ -249,7 +249,7 @@ public class DefaultHelpMenuFactory extends AbstractMenuFactory implements HelpM
         builder.addTooltip("for simply playing on the server.");
         builder.addTooltip("");
         builder.addTooltip("To go even further beyond in supporting the");
-        builder.addTooltip("server the WarCraft: Shop has six different");
+        builder.addTooltip("server the WarCraft Shop has six different");
         builder.addTooltip("items for sale every day. These items can");
         builder.addTooltip("be bought with Fragments which are available");
         builder.addTooltip("from the web shop at " + ColorCode.YELLOW + "shop.warcraft.gg");
