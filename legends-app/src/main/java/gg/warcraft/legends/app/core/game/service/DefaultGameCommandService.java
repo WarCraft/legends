@@ -14,7 +14,6 @@ import gg.warcraft.legends.app.core.game.SimpleSkirmish;
 import gg.warcraft.legends.app.core.game.SimpleWar;
 import gg.warcraft.legends.app.core.game.event.SimpleWarTallyEvent;
 import gg.warcraft.monolith.api.core.EventService;
-import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.siege.api.objective.service.ObjectiveCommandService;
@@ -96,7 +95,7 @@ public class DefaultGameCommandService implements GameCommandService {
                     runTally();
 
                     War updatedWar = (War) gameRepository.getActiveGame();
-                    SortedMap<String, Map<Team, Integer>> dailyPoints = updatedWar.getDailyPoints();
+                    SortedMap<String, Map<LegendsTeam, Integer>> dailyPoints = updatedWar.getDailyPoints();
                     String lastScoreDate = dailyPoints.isEmpty()
                             ? updatedWar.getStartTime()
                             : updatedWar.getDailyPoints().lastKey();
@@ -155,10 +154,10 @@ public class DefaultGameCommandService implements GameCommandService {
     @Override
     public void runTally() {
         War war = (War) gameRepository.getCurrentWar();
-        Map<String, Team> newObjectives = war.getObjectives();
-        Map<Team, Integer> newPoints = war.getPoints();
+        Map<String, LegendsTeam> newObjectives = war.getObjectives();
+        Map<LegendsTeam, Integer> newPoints = war.getPoints();
         objectiveQueryService.getObjectives().forEach(objective -> {
-            Team occupiers = objective.getOccupiers();
+            LegendsTeam occupiers = (LegendsTeam) objective.getOccupiers();
             if (occupiers != null) {
                 newObjectives.put(objective.getId(), occupiers);
 
@@ -180,10 +179,10 @@ public class DefaultGameCommandService implements GameCommandService {
         eventService.publish(tallyEvent);
     }
 
-    private Set<Team> computeWinners(Map<Team, Integer> points) {
+    private Set<LegendsTeam> computeWinners(Map<LegendsTeam, Integer> points) {
         int mostPoints = 0;
-        Set<Team> winners = new HashSet<>();
-        for (Map.Entry<Team, Integer> contestant : points.entrySet()) {
+        Set<LegendsTeam> winners = new HashSet<>();
+        for (Map.Entry<LegendsTeam, Integer> contestant : points.entrySet()) {
             int contestantPoints = contestant.getValue();
             if (contestantPoints > mostPoints) {
                 mostPoints = contestantPoints;
@@ -199,29 +198,29 @@ public class DefaultGameCommandService implements GameCommandService {
     @Override
     public void runScore() {
         War war = (War) gameRepository.getCurrentWar();
-        Map<Team, Integer> points = war.getPoints();
+        Map<LegendsTeam, Integer> points = war.getPoints();
 
-        Set<Team> winners = computeWinners(points);
+        Set<LegendsTeam> winners = computeWinners(points);
         if (winners.size() != 1) {
             // wait with running score until 1 team gets ahead in points
             return;
         }
 
-        Team winner = winners.iterator().next();
-        SortedMap<String, Map<Team, Integer>> newDailyPoints = war.getDailyPoints();
+        LegendsTeam winner = winners.iterator().next();
+        SortedMap<String, Map<LegendsTeam, Integer>> newDailyPoints = war.getDailyPoints();
         String scoreTime = LocalDateTime.now().toString();
         newDailyPoints.put(scoreTime, points);
 
-        Map<Team, Integer> newScore = war.getWarScore();
+        Map<LegendsTeam, Integer> newScore = war.getWarScore();
         int currentScore = newScore.getOrDefault(winner, 0);
         newScore.put(winner, currentScore + DAILY_WINNER_SCORE);
 
-        Map<String, Team> newObjectives = new HashMap<>();
+        Map<String, LegendsTeam> newObjectives = new HashMap<>();
         objectiveQueryService.getObjectives().forEach(objective -> {
             newObjectives.put(objective.getId(), null);
             objectiveCommandService.setOccupiers(objective.getId(), null);
         });
-        Map<Team, Integer> newPoints = new HashMap<>();
+        Map<LegendsTeam, Integer> newPoints = new HashMap<>();
         Arrays.stream(LegendsTeam.values()).forEach(team -> newPoints.put(team, 0));
 
         War updatedWar = war.getCopyer()
@@ -259,7 +258,7 @@ public class DefaultGameCommandService implements GameCommandService {
     public void endSkirmish() {
         Skirmish skirmish = (Skirmish) gameRepository.getActiveGame();
 
-        Set<Team> winners = computeWinners(skirmish.getPoints());
+        Set<LegendsTeam> winners = computeWinners(skirmish.getPoints());
         if (winners.size() != 1) {
             // wait with ending skirmish until 1 team gets ahead in points
             return;
@@ -272,8 +271,8 @@ public class DefaultGameCommandService implements GameCommandService {
         gameRepository.save(updatedSkirmish);
         War currentWar = (War) gameRepository.getCurrentWar();
 
-        Team winner = winners.iterator().next();
-        Map<Team, Integer> newScore = currentWar.getWarScore();
+        LegendsTeam winner = winners.iterator().next();
+        Map<LegendsTeam, Integer> newScore = currentWar.getWarScore();
         int currentScore = newScore.getOrDefault(winner, 0);
         newScore.put(winner, currentScore + SKIRMISH_WINNER_SCORE);
         gameRepository.save(currentWar);

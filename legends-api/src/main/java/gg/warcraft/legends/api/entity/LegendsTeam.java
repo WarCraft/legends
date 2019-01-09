@@ -5,18 +5,20 @@ import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.ColorHue;
 
 public enum LegendsTeam implements Team {
-    ORC("Vorkulth", ColorHue.RED, ColorCode.RED),
-    HUMAN("Humenum", ColorHue.AQUA, ColorCode.AQUA),
-    DWARF("DWARF_PH", ColorHue.ORANGE, ColorCode.GOLD),
-    ELF("ELF_PH", ColorHue.GREEN, ColorCode.GREEN),
-    WAYFARER("Wayfarer", ColorHue.WHITE, ColorCode.WHITE);
+    ORC("Orc", "Orcs", ColorHue.RED, ColorCode.RED),
+    HUMAN("Human", "Humans", ColorHue.AQUA, ColorCode.AQUA),
+    DWARF("Dwarf", "Dwarves", ColorHue.ORANGE, ColorCode.GOLD),
+    ELF("Elf", "Elves", ColorHue.GREEN, ColorCode.GREEN),
+    WAYFARER("Wayfarer", "Wayfarers", ColorHue.WHITE, ColorCode.WHITE);
 
     private final String name;
+    private final String plural;
     private final ColorHue color;
     private final ColorCode chatColor;
 
-    LegendsTeam(String name, ColorHue color, ColorCode chatColor) {
+    LegendsTeam(String name, String plural, ColorHue color, ColorCode chatColor) {
         this.name = name;
+        this.plural = plural;
         this.color = color;
         this.chatColor = chatColor;
     }
@@ -24,6 +26,10 @@ public enum LegendsTeam implements Team {
     @Override
     public String getName() {
         return name;
+    }
+
+    public String getPlural() {
+        return plural;
     }
 
     @Override

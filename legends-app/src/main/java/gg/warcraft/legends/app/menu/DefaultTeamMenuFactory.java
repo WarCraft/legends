@@ -49,7 +49,7 @@ public class DefaultTeamMenuFactory extends AbstractMenuFactory implements TeamM
         List<String> view = new ArrayList<>();
         if (canSwitch) {
             if (cooldown == null) {
-                view.add(GREEN + "[SHIFT RIGHT CLICK] To switch to the " + team.getName());
+                view.add(GREEN + "[SHIFT RIGHT CLICK] To switch to the " + ((LegendsTeam) team).getPlural());
             } else {
                 view.add(RED + "You can change teams in " + cooldown);
             }
@@ -63,8 +63,8 @@ public class DefaultTeamMenuFactory extends AbstractMenuFactory implements TeamM
         ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Choosing a team");
         builder.addTooltip("You are currently fighting for the");
         String currentTeam = player.getTeam() != null
-                ? player.getTeam().getName()
-                : LegendsTeam.WAYFARER.getName();
+                ? player.getTeam().getPlural()
+                : LegendsTeam.WAYFARER.getPlural();
         builder.addTooltip(YELLOW + currentTeam);
         builder.addTooltip("");
 //        builder.addTooltip("You can switch teams freely the first");
@@ -82,8 +82,8 @@ public class DefaultTeamMenuFactory extends AbstractMenuFactory implements TeamM
     }
 
     Button createHumanButton(UUID playerId, boolean canSwitch) {
-        Team team = LegendsTeam.HUMAN;
-        ButtonBuilder builder = createSkullButtonBuilder("eijlen", team.getName());
+        LegendsTeam team = LegendsTeam.HUMAN;
+        ButtonBuilder builder = createSkullButtonBuilder("eijlen", team.getPlural());
         // TODO add some human lore
         builder.addTooltip("");
         createSwitchView(team, canSwitch, null).forEach(builder::addTooltip);
@@ -97,8 +97,8 @@ public class DefaultTeamMenuFactory extends AbstractMenuFactory implements TeamM
     }
 
     Button createOrcButton(UUID playerId, boolean canSwitch) {
-        Team team = LegendsTeam.ORC;
-        ButtonBuilder builder = createSkullButtonBuilder("fishb6nes", team.getName());
+        LegendsTeam team = LegendsTeam.ORC;
+        ButtonBuilder builder = createSkullButtonBuilder("fishb6nes", team.getPlural());
         // TODO add some orc lore
         builder.addTooltip("");
         createSwitchView(team, canSwitch, null).forEach(builder::addTooltip);

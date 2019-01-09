@@ -8,6 +8,7 @@ import gg.warcraft.legends.api.core.game.GameType;
 import gg.warcraft.legends.api.core.game.Skirmish;
 import gg.warcraft.legends.api.core.game.War;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.app.core.game.SimpleSkirmish;
 import gg.warcraft.legends.app.core.game.SimpleWar;
 import gg.warcraft.legends.app.core.game.persistence.GameItem;
@@ -16,8 +17,6 @@ import gg.warcraft.legends.app.core.game.persistence.WarItem;
 import gg.warcraft.monolith.api.core.JsonMapper;
 import gg.warcraft.monolith.api.core.PersistenceService;
 import gg.warcraft.monolith.api.core.PluginLogger;
-import gg.warcraft.monolith.api.entity.team.Team;
-import gg.warcraft.monolith.api.entity.team.service.TeamQueryService;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
 
@@ -35,18 +34,15 @@ public class DefaultGameRepository implements GameRepository {
     private static final String CURRENT_WAR_ID_KEY = "game:currentWarId";
 
     private final PersistenceService persistenceService;
-    private final TeamQueryService teamQueryService;
     private final TimeUtils timeUtils;
     private final ObjectMapper jsonMapper;
     private final Logger pluginLogger;
     private final Map<String, Integer> capturePoints;
 
     @Inject
-    public DefaultGameRepository(PersistenceService persistenceService, TeamQueryService teamQueryService,
-                                 TimeUtils timeUtils, @JsonMapper ObjectMapper jsonMapper,
-                                 @PluginLogger Logger pluginLogger) {
+    public DefaultGameRepository(PersistenceService persistenceService, TimeUtils timeUtils,
+                                 @JsonMapper ObjectMapper jsonMapper, @PluginLogger Logger pluginLogger) {
         this.persistenceService = persistenceService;
-        this.teamQueryService = teamQueryService;
         this.timeUtils = timeUtils;
         this.jsonMapper = jsonMapper;
         this.pluginLogger = pluginLogger;
@@ -59,29 +55,29 @@ public class DefaultGameRepository implements GameRepository {
 
     Game mapItemToWar(WarItem item) {
         int id = item.getId();
-        Map<Team, Integer> points = new HashMap<>();
+        Map<LegendsTeam, Integer> points = new HashMap<>();
         item.getPoints().forEach((teamName, teamPoints) -> {
-            Team team = teamQueryService.getTeam(teamName);
+            LegendsTeam team = LegendsTeam.valueOf(teamName);
             points.put(team, teamPoints);
         });
-        Map<String, Team> objectives = new HashMap<>();
+        Map<String, LegendsTeam> objectives = new HashMap<>();
         item.getObjectives().forEach((objectiveId, teamName) -> {
-            Team team = teamQueryService.getTeam(teamName);
+            LegendsTeam team = LegendsTeam.valueOf(teamName);
             objectives.put(objectiveId, team);
         });
         Duration timer = timeUtils.createDurationInSeconds(item.getTimer());
         String startTime = item.getStartTime();
         String endTime = item.getEndTime();
-        Map<Team, Integer> warScore = new HashMap<>();
+        Map<LegendsTeam, Integer> warScore = new HashMap<>();
         item.getWarScore().forEach((teamName, teamScore) -> {
-            Team team = teamQueryService.getTeam(teamName);
+            LegendsTeam team = LegendsTeam.valueOf(teamName);
             warScore.put(team, teamScore);
         });
-        SortedMap<String, Map<Team, Integer>> dailyPoints = new TreeMap<>();
+        SortedMap<String, Map<LegendsTeam, Integer>> dailyPoints = new TreeMap<>();
         item.getDailyPoints().forEach((date, dailyPointsMap) -> {
-            Map<Team, Integer> dateDailyPoints = new HashMap<>();
+            Map<LegendsTeam, Integer> dateDailyPoints = new HashMap<>();
             dailyPointsMap.forEach((teamName, teamDailyPoints) -> {
-                Team team = teamQueryService.getTeam(teamName);
+                LegendsTeam team = LegendsTeam.valueOf(teamName);
                 dateDailyPoints.put(team, teamDailyPoints);
             });
             dailyPoints.put(date, dateDailyPoints);
@@ -91,14 +87,14 @@ public class DefaultGameRepository implements GameRepository {
 
     Game mapItemToSkirmish(SkirmishItem item) {
         int id = item.getId();
-        Map<Team, Integer> points = new HashMap<>();
+        Map<LegendsTeam, Integer> points = new HashMap<>();
         item.getPoints().forEach((teamName, teamPoints) -> {
-            Team team = teamQueryService.getTeam(teamName);
+            LegendsTeam team = LegendsTeam.valueOf(teamName);
             points.put(team, teamPoints);
         });
-        Map<String, Team> objectives = new HashMap<>();
+        Map<String, LegendsTeam> objectives = new HashMap<>();
         item.getObjectives().forEach((objectiveId, teamName) -> {
-            Team team = teamQueryService.getTeam(teamName);
+            LegendsTeam team = LegendsTeam.valueOf(teamName);
             objectives.put(objectiveId, team);
         });
         Duration timer = timeUtils.createDurationInSeconds(item.getTimer());
@@ -161,19 +157,19 @@ public class DefaultGameRepository implements GameRepository {
         int id = war.getId();
         String type = war.getType().name();
         Map<String, Integer> points = new HashMap<>();
-        war.getPoints().forEach((team, teamPoints) -> points.put(team.getName(), teamPoints));
+        war.getPoints().forEach((team, teamPoints) -> points.put(team.name(), teamPoints));
         Map<String, String> objectives = new HashMap<>();
         war.getObjectives().forEach((objectiveId, team) ->
-                objectives.put(objectiveId, team == null ? null : team.getName()));
+                objectives.put(objectiveId, team == null ? null : team.name()));
         int timer = war.getTimer().inSeconds();
         String startTime = war.getStartTime();
         String endTime = war.getEndTime();
         Map<String, Integer> warScore = new HashMap<>();
-        war.getWarScore().forEach((team, teamScore) -> warScore.put(team.getName(), teamScore));
+        war.getWarScore().forEach((team, teamScore) -> warScore.put(team.name(), teamScore));
         SortedMap<String, Map<String, Integer>> dailyPoints = new TreeMap<>();
         war.getDailyPoints().forEach((date, dailyPointsMap) -> {
             Map<String, Integer> dateDailyPoints = new HashMap<>();
-            dailyPointsMap.forEach((team, teamDailyPoints) -> dateDailyPoints.put(team.getName(), teamDailyPoints));
+            dailyPointsMap.forEach((team, teamDailyPoints) -> dateDailyPoints.put(team.name(), teamDailyPoints));
             dailyPoints.put(date, dateDailyPoints);
         });
         return new WarItem(id, type, points, warScore, dailyPoints, objectives, timer, startTime, endTime);
@@ -183,10 +179,10 @@ public class DefaultGameRepository implements GameRepository {
         int id = skirmish.getId();
         String type = skirmish.getType().name();
         Map<String, Integer> points = new HashMap<>();
-        skirmish.getPoints().forEach((team, teamPoints) -> points.put(team.getName(), teamPoints));
+        skirmish.getPoints().forEach((team, teamPoints) -> points.put(team.name(), teamPoints));
         Map<String, String> objectives = new HashMap<>();
         skirmish.getObjectives().forEach((objectiveId, team) ->
-                objectives.put(objectiveId, team != null ? team.getName() : null));
+                objectives.put(objectiveId, team != null ? team.name() : null));
         int timer = skirmish.getTimer().inSeconds();
         String startTime = skirmish.getStartTime();
         String endTime = skirmish.getEndTime();

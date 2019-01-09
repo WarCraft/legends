@@ -1,9 +1,9 @@
 package gg.warcraft.legends.app.entity.player.rank.service;
 
 import com.google.inject.Singleton;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
-import gg.warcraft.monolith.api.entity.team.Team;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,10 +30,9 @@ public class DefaultRankRepository implements RankRepository {
     }
 
     @Override
-    public NavigableMap<Integer, Rank> getRanks(Team team) {
+    public NavigableMap<Integer, Rank> getRanks(LegendsTeam team) {
         if (team != null) {
-            String teamName = team.getName();
-            return new TreeMap<>(ranksByFavor.getOrDefault(teamName, Collections.emptyNavigableMap()));
+            return new TreeMap<>(ranksByFavor.getOrDefault(team.name(), Collections.emptyNavigableMap()));
         } else {
             return Collections.emptyNavigableMap();
         }
@@ -51,9 +50,8 @@ public class DefaultRankRepository implements RankRepository {
     }
 
     @Override
-    public void save(Team team, NavigableMap<Integer, Rank> ranksByFavor) {
-        String teamName = team.getName();
-        this.ranksByFavor.put(teamName, new TreeMap<>(ranksByFavor));
+    public void save(LegendsTeam team, NavigableMap<Integer, Rank> ranksByFavor) {
+        this.ranksByFavor.put(team.name(), new TreeMap<>(ranksByFavor));
     }
 
     @Override

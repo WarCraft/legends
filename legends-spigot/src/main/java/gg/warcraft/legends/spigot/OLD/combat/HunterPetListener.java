@@ -14,7 +14,6 @@ import gg.warcraft.monolith.api.entity.event.EntityDamageEvent;
 import gg.warcraft.monolith.api.entity.event.EntityTeamChangedEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerDisconnectEvent;
-import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -74,9 +73,9 @@ public class HunterPetListener implements Listener {
         switch (specialization.getName()) {
             case "Marksman":
             case "Hunter":
-                Team team = player.getTeam();
-                switch (team.getName()) {
-                    case "Humenum": {
+                LegendsTeam team = player.getTeam();
+                switch (team) {
+                    case HUMAN: {
                         World world = spigotPlayer.getLocation().getWorld();
                         Wolf wolf = (Wolf) world.spawnEntity(spigotPlayer.getLocation(), EntityType.WOLF);
                         wolf.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(BASE_PET_HEALTH);
@@ -86,7 +85,7 @@ public class HunterPetListener implements Listener {
                         teamCommandService.setTeam(LegendsTeam.HUMAN, wolf.getUniqueId());
                     }
                     break;
-                    case "Vorkulth": {
+                    case ORC: {
                         World world = spigotPlayer.getLocation().getWorld();
                         Wolf wolf = (Wolf) world.spawnEntity(spigotPlayer.getLocation(), EntityType.WOLF);
                         wolf.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(BASE_PET_HEALTH);

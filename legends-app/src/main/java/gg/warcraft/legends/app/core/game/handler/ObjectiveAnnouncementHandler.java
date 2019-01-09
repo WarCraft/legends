@@ -2,10 +2,10 @@ package gg.warcraft.legends.app.core.game.handler;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.monolith.api.core.TaskService;
-import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.siege.api.objective.Objective;
@@ -78,8 +78,9 @@ public class ObjectiveAnnouncementHandler {
     @Subscribe
     public void onObjectiveCapturedEvent(ObjectiveCapturedEvent event) {
         Objective objective = event.getObjective();
-        Team occupiers = objective.getOccupiers();
-        String notification = "The " + occupiers.getName() + " have captured " + objective.getName() + "!";
+        LegendsTeam occupiers = (LegendsTeam) objective.getOccupiers();
+        String notification = "The " + occupiers.getPlural() +
+                " have captured " + objective.getName() + "!";
         String announcement = occupiers.getChatColor() + notification;
         legendsPlayerQueryService.getOnlinePlayers().forEach(player -> {
             UUID playerId = player.getId();
@@ -92,9 +93,10 @@ public class ObjectiveAnnouncementHandler {
     @Subscribe
     public void onObjectiveNeutralizedEvent(ObjectiveNeutralizedEvent event) {
         Objective objective = event.getObjective();
-        Team defenders = event.getDefenders();
+        LegendsTeam defenders = (LegendsTeam) event.getDefenders();
         if (defenders != null) {
-            String notification = "The " + defenders.getName() + " have lost " + objective.getName() + "!";
+            String notification = "The " + defenders.getPlural() +
+                    " have lost " + objective.getName() + "!";
             String announcement = ColorCode.GRAY + notification;
             legendsPlayerQueryService.getOnlinePlayers().forEach(player -> {
                 UUID playerId = player.getId();

@@ -3,11 +3,11 @@ package gg.warcraft.legends.app.core.handler;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.core.MetricsService;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.monolith.api.entity.EntityType;
 import gg.warcraft.monolith.api.entity.event.EntityTeamChangedEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerDisconnectEvent;
-import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.entity.team.service.TeamQueryService;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class PlayerCountMetricHandler implements Runnable {
     private final TeamQueryService teamQueryService;
     private final MetricsService metricsService;
-    private final Map<Team, Set<UUID>> players;
+    private final Map<LegendsTeam, Set<UUID>> players;
 
     @Inject
     public PlayerCountMetricHandler(TeamQueryService teamQueryService, MetricsService metricsService) {
@@ -33,12 +33,12 @@ public class PlayerCountMetricHandler implements Runnable {
         players.forEach((team, playerIds) -> metricsService.recordPlayerCount(team, playerIds.size()));
     }
 
-    private void addPlayerTo(UUID playerId, Team team) {
+    private void addPlayerTo(UUID playerId, LegendsTeam team) {
         Set<UUID> teamMates = players.computeIfAbsent(team, key -> new HashSet<>());
         teamMates.add(playerId);
     }
 
-    private void removePlayerFrom(UUID playerId, Team team) {
+    private void removePlayerFrom(UUID playerId, LegendsTeam team) {
         Set<UUID> teamMates = players.computeIfAbsent(team, key -> new HashSet<>());
         teamMates.remove(playerId);
     }
@@ -46,7 +46,7 @@ public class PlayerCountMetricHandler implements Runnable {
     @Subscribe
     public void onPlayerConnectEvent(PlayerConnectEvent event) {
         UUID playerId = event.getPlayerId();
-        Team team = teamQueryService.getTeam(playerId);
+        LegendsTeam team = (LegendsTeam) teamQueryService.getTeam(playerId);
         addPlayerTo(playerId, team);
     }
 
@@ -57,14 +57,14 @@ public class PlayerCountMetricHandler implements Runnable {
         }
 
         UUID playerId = event.getEntityId();
-        removePlayerFrom(playerId, event.getPreviousTeam());
-        addPlayerTo(playerId, event.getNewTeam());
+        removePlayerFrom(playerId, (LegendsTeam) event.getPreviousTeam());
+        addPlayerTo(playerId, (LegendsTeam) event.getNewTeam());
     }
 
     @Subscribe
     public void onPlayerDisconnectEvent(PlayerDisconnectEvent event) {
         UUID playerId = event.getPlayerId();
-        Team team = teamQueryService.getTeam(playerId);
+        LegendsTeam team = (LegendsTeam) teamQueryService.getTeam(playerId);
         removePlayerFrom(playerId, team);
     }
 }

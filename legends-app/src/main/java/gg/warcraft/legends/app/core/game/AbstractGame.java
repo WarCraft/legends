@@ -2,7 +2,7 @@ package gg.warcraft.legends.app.core.game;
 
 import gg.warcraft.legends.api.core.game.Game;
 import gg.warcraft.legends.api.core.game.GameType;
-import gg.warcraft.monolith.api.entity.team.Team;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.monolith.api.util.Duration;
 
 import java.util.Map;
@@ -10,14 +10,14 @@ import java.util.Map;
 public abstract class AbstractGame implements Game {
     private final int id;
     private final GameType type;
-    private final Map<Team, Integer> points;
-    private final Map<String, Team> objectives;
+    private final Map<LegendsTeam, Integer> points;
+    private final Map<String, LegendsTeam> objectives;
     private final Duration timer;
     private final String startTime;
     private final String endTime;
 
-    public AbstractGame(int id, GameType type, Map<Team, Integer> points, Map<String, Team> objectives, Duration timer,
-                        String startTime, String endTime) {
+    public AbstractGame(int id, GameType type, Map<LegendsTeam, Integer> points, Map<String, LegendsTeam> objectives,
+                        Duration timer, String startTime, String endTime) {
         this.id = id;
         this.type = type;
         this.points = points;
@@ -38,12 +38,12 @@ public abstract class AbstractGame implements Game {
     }
 
     @Override
-    public Map<Team, Integer> getPoints() {
+    public Map<LegendsTeam, Integer> getPoints() {
         return points;
     }
 
     @Override
-    public Map<String, Team> getObjectives() {
+    public Map<String, LegendsTeam> getObjectives() {
         return objectives;
     }
 

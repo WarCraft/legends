@@ -1,6 +1,6 @@
 package gg.warcraft.legends.api.core.game;
 
-import gg.warcraft.monolith.api.entity.team.Team;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.monolith.api.util.Duration;
 
 import java.util.Map;
@@ -8,15 +8,15 @@ import java.util.SortedMap;
 
 public interface WarCopyer extends GameCopyer {
 
-    WarCopyer withWarScore(Map<Team, Integer> score);
+    WarCopyer withWarScore(Map<LegendsTeam, Integer> score);
 
-    WarCopyer withDailyPoints(SortedMap<String, Map<Team, Integer>> dailyPoints);
-
-    @Override
-    WarCopyer withPoints(Map<Team, Integer> points);
+    WarCopyer withDailyPoints(SortedMap<String, Map<LegendsTeam, Integer>> dailyPoints);
 
     @Override
-    WarCopyer withObjectives(Map<String, Team> objectives);
+    WarCopyer withPoints(Map<LegendsTeam, Integer> points);
+
+    @Override
+    WarCopyer withObjectives(Map<String, LegendsTeam> objectives);
 
     @Override
     WarCopyer withTimer(Duration timer);

@@ -1,6 +1,6 @@
 package gg.warcraft.legends.api.core.game;
 
-import gg.warcraft.monolith.api.entity.team.Team;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.monolith.api.util.Duration;
 
 import java.util.Map;
@@ -11,9 +11,9 @@ public interface Game {
 
     GameType getType();
 
-    Map<Team, Integer> getPoints();
+    Map<LegendsTeam, Integer> getPoints();
 
-    Map<String, Team> getObjectives();
+    Map<String, LegendsTeam> getObjectives();
 
     Duration getTimer();
 

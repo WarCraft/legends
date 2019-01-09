@@ -4,10 +4,10 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.core.game.Game;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.monolith.api.entity.event.EntityFatalDamageEvent;
 import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
-import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.siege.api.objective.Objective;
 import gg.warcraft.siege.api.objective.event.ObjectiveCapturedEvent;
 import gg.warcraft.siege.api.objective.event.ObjectiveNeutralizedEvent;
@@ -29,12 +29,12 @@ public class GameObjectivesAndPointsHandler {
     public void onObjectiveCapturedEvent(ObjectiveCapturedEvent event) {
         Game activeGame = gameRepository.getActiveGame();
         Objective objective = event.getObjective();
-        Team newOccupiers = objective.getOccupiers();
+        LegendsTeam newOccupiers = (LegendsTeam) objective.getOccupiers();
 
-        Map<String, Team> newObjectives = activeGame.getObjectives();
+        Map<String, LegendsTeam> newObjectives = activeGame.getObjectives();
         newObjectives.put(objective.getId(), newOccupiers);
 
-        Map<Team, Integer> newPoints = activeGame.getPoints();
+        Map<LegendsTeam, Integer> newPoints = activeGame.getPoints();
         int currentTeamPoints = newPoints.getOrDefault(newOccupiers, 0);
         int capturePoints = gameRepository.getCapturePoints(objective.getType());
         int newTeamPoints = currentTeamPoints + capturePoints;
@@ -52,9 +52,9 @@ public class GameObjectivesAndPointsHandler {
     public void onObjectiveNeutralizedEvent(ObjectiveNeutralizedEvent event) {
         Game activeGame = gameRepository.getActiveGame();
         Objective objective = event.getObjective();
-        Team newOccupiers = objective.getOccupiers();
+        LegendsTeam newOccupiers = (LegendsTeam) objective.getOccupiers();
 
-        Map<String, Team> newObjectives = activeGame.getObjectives();
+        Map<String, LegendsTeam> newObjectives = activeGame.getObjectives();
         newObjectives.put(objective.getId(), newOccupiers);
 
         Game newGame = activeGame.getCopyer()
@@ -73,10 +73,10 @@ public class GameObjectivesAndPointsHandler {
                 Player killer = playerQueryService.getPlayer(killerId);
                 if (killer != null) {
                     Game activeGame = gameRepository.getActiveGame();
-                    Map<Team, Integer> newPoints = activeGame.getPoints();
+                    Map<LegendsTeam, Integer> newPoints = activeGame.getPoints();
                     int currentTeamPoints = newPoints.getOrDefault(killer.getTeam(), 0);
                     int newTeamPoints = currentTeamPoints + 1;
-                    newPoints.put(killer.getTeam(), newTeamPoints);
+                    newPoints.put((LegendsTeam) killer.getTeam(), newTeamPoints);
                 }
             }
         }

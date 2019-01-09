@@ -2,11 +2,11 @@ package gg.warcraft.legends.app.entity.player.rank.service;
 
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.config.RankPrefixConfiguration;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.rank.service.RankCommandService;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
 import gg.warcraft.legends.app.entity.player.rank.SimpleRank;
-import gg.warcraft.monolith.api.entity.team.Team;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,7 +24,7 @@ public class DefaultRankCommandService implements RankCommandService {
     }
 
     @Override
-    public void initializeRanks(Team team, List<Integer> rankFavorTable,
+    public void initializeRanks(LegendsTeam team, List<Integer> rankFavorTable,
                                 List<RankPrefixConfiguration> rankPrefixes, List<String> rankSuffixes) {
         Map<Integer, Rank> ranksByLevel = new HashMap<>();
         NavigableMap<Integer, Rank> ranksByFavor = new TreeMap<>();

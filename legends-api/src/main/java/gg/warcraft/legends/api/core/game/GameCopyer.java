@@ -1,15 +1,15 @@
 package gg.warcraft.legends.api.core.game;
 
-import gg.warcraft.monolith.api.entity.team.Team;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.monolith.api.util.Duration;
 
 import java.util.Map;
 
 public interface GameCopyer {
 
-    GameCopyer withPoints(Map<Team, Integer> points);
+    GameCopyer withPoints(Map<LegendsTeam, Integer> points);
 
-    GameCopyer withObjectives(Map<String, Team> objectives);
+    GameCopyer withObjectives(Map<String, LegendsTeam> objectives);
 
     GameCopyer withTimer(Duration timer);
 

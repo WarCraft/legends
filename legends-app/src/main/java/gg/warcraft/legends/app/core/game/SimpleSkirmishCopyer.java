@@ -3,7 +3,7 @@ package gg.warcraft.legends.app.core.game;
 import gg.warcraft.legends.api.core.game.Game;
 import gg.warcraft.legends.api.core.game.GameCopyer;
 import gg.warcraft.legends.api.core.game.Skirmish;
-import gg.warcraft.monolith.api.entity.team.Team;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.monolith.api.util.Duration;
 
 import java.util.Map;
@@ -11,8 +11,8 @@ import java.util.Map;
 public class SimpleSkirmishCopyer implements GameCopyer {
     private final Skirmish skirmish;
 
-    private Map<Team, Integer> points;
-    private Map<String, Team> objectives;
+    private Map<LegendsTeam, Integer> points;
+    private Map<String, LegendsTeam> objectives;
     private Duration timer;
     private String endTime;
 
@@ -25,13 +25,13 @@ public class SimpleSkirmishCopyer implements GameCopyer {
     }
 
     @Override
-    public GameCopyer withPoints(Map<Team, Integer> points) {
+    public GameCopyer withPoints(Map<LegendsTeam, Integer> points) {
         this.points = points;
         return this;
     }
 
     @Override
-    public GameCopyer withObjectives(Map<String, Team> objectives) {
+    public GameCopyer withObjectives(Map<String, LegendsTeam> objectives) {
         this.objectives = objectives;
         return this;
     }

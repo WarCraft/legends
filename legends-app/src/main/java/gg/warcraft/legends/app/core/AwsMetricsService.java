@@ -10,8 +10,8 @@ import com.amazonaws.services.cloudwatch.model.StandardUnit;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import gg.warcraft.legends.api.core.MetricsService;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.monolith.api.core.TaskService;
-import gg.warcraft.monolith.api.entity.team.Team;
 
 @Singleton
 public class AwsMetricsService implements MetricsService {
@@ -45,12 +45,12 @@ public class AwsMetricsService implements MetricsService {
     }
 
     @Override
-    public void recordPlayerCount(Team team, int count) {
-        record("PlayerCount", "Team", team.getName(), count);
+    public void recordPlayerCount(LegendsTeam team, int count) {
+        record("PlayerCount", "Team", team.getPlural(), count);
     }
 
     @Override
-    public void recordTotalPoints(Team team, int points) {
-        record("TotalPoints", "Team", team.getName(), points);
+    public void recordTotalPoints(LegendsTeam team, int points) {
+        record("TotalPoints", "Team", team.getPlural(), points);
     }
 }

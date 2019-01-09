@@ -1,10 +1,10 @@
 package gg.warcraft.legends.api.core;
 
-import gg.warcraft.monolith.api.entity.team.Team;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 
 public interface MetricsService {
 
-    void recordPlayerCount(Team team, int count);
+    void recordPlayerCount(LegendsTeam team, int count);
 
-    void recordTotalPoints(Team team, int points);
+    void recordTotalPoints(LegendsTeam team, int points);
 }

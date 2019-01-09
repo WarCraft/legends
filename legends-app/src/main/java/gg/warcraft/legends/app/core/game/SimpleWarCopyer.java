@@ -2,7 +2,7 @@ package gg.warcraft.legends.app.core.game;
 
 import gg.warcraft.legends.api.core.game.War;
 import gg.warcraft.legends.api.core.game.WarCopyer;
-import gg.warcraft.monolith.api.entity.team.Team;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.monolith.api.util.Duration;
 
 import java.util.HashMap;
@@ -13,10 +13,10 @@ import java.util.TreeMap;
 public class SimpleWarCopyer implements WarCopyer {
     private final War war;
 
-    private Map<Team, Integer> points;
-    private Map<Team, Integer> warScore;
-    private SortedMap<String, Map<Team, Integer>> dailyPoints;
-    private Map<String, Team> objectives;
+    private Map<LegendsTeam, Integer> points;
+    private Map<LegendsTeam, Integer> warScore;
+    private SortedMap<String, Map<LegendsTeam, Integer>> dailyPoints;
+    private Map<String, LegendsTeam> objectives;
     private Duration timer;
     private String endTime;
 
@@ -31,25 +31,25 @@ public class SimpleWarCopyer implements WarCopyer {
     }
 
     @Override
-    public WarCopyer withWarScore(Map<Team, Integer> score) {
+    public WarCopyer withWarScore(Map<LegendsTeam, Integer> score) {
         this.warScore = new HashMap<>(score);
         return this;
     }
 
     @Override
-    public WarCopyer withDailyPoints(SortedMap<String, Map<Team, Integer>> dailyPoints) {
+    public WarCopyer withDailyPoints(SortedMap<String, Map<LegendsTeam, Integer>> dailyPoints) {
         this.dailyPoints = new TreeMap<>(dailyPoints);
         return this;
     }
 
     @Override
-    public WarCopyer withPoints(Map<Team, Integer> points) {
+    public WarCopyer withPoints(Map<LegendsTeam, Integer> points) {
         this.points = points;
         return this;
     }
 
     @Override
-    public WarCopyer withObjectives(Map<String, Team> objectives) {
+    public WarCopyer withObjectives(Map<String, LegendsTeam> objectives) {
         this.objectives = objectives;
         return this;
     }

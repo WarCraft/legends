@@ -1,11 +1,11 @@
 package gg.warcraft.legends.app.entity.player.rank.service;
 
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.rank.service.RankQueryService;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
 import gg.warcraft.legends.app.entity.player.rank.SimpleRank;
-import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.ColorCode;
 
 import java.util.NavigableMap;
@@ -27,7 +27,7 @@ public class DefaultRankQueryService implements RankQueryService {
     }
 
     @Override
-    public Rank getRank(Team team, int favor) {
+    public Rank getRank(LegendsTeam team, int favor) {
         NavigableMap<Integer, Rank> ranks = rankRepository.getRanks(team);
         if (ranks == null || ranks.isEmpty()) {
             return new SimpleRank(WAYFARER_NAME, 1, 0, WAYFARER_COLOR, 1);

@@ -5,6 +5,7 @@ import de.slikey.effectlib.util.ReflectionUtils;
 import gg.warcraft.legends.api.core.game.Game;
 import gg.warcraft.legends.api.core.game.War;
 import gg.warcraft.legends.api.core.game.service.GameQueryService;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.ColorCode;
@@ -40,8 +41,8 @@ public class SpigotScoreboardHandler implements Runnable {
     static {
         WAR_HEADER = ColorCode.GOLD + "WarCraft: Legends War\\n" + RESET +
                 "Next skirmish in %s\\n" +
-                HUMAN.getChatColor() + HUMAN.getName() + RESET + " | " +
-                ORC.getChatColor() + ORC.getName() + RESET + "\\n" +
+                HUMAN.getChatColor() + HUMAN.getPlural() + RESET + " | " +
+                ORC.getChatColor() + ORC.getPlural() + RESET + "\\n" +
                 "\\n" +
                 "Monthly Score\\n" +
                 "%s\\n" + RESET +
@@ -53,8 +54,8 @@ public class SpigotScoreboardHandler implements Runnable {
                 "%s\\n";
 
         SKIRMISH_HEADER = ColorCode.GOLD + "WarCraft: Legends Skirmish\\n" + RESET +
-                HUMAN.getChatColor() + HUMAN.getName() + RESET + " | " +
-                ORC.getChatColor() + ORC.getName() + RESET + "\\n" +
+                HUMAN.getChatColor() + HUMAN.getPlural() + RESET + " | " +
+                ORC.getChatColor() + ORC.getPlural() + RESET + "\\n" +
                 "\\n" +
                 "Timer\\n" +
                 "%s\\n" +
@@ -121,7 +122,7 @@ public class SpigotScoreboardHandler implements Runnable {
     }
 
     private String getFormattedScore(War war) {
-        Map<Team, Integer> score = war.getWarScore();
+        Map<LegendsTeam, Integer> score = war.getWarScore();
         return "" +
                 HUMAN.getChatColor() + score.getOrDefault(HUMAN, 0) + RESET + " | " +
                 ORC.getChatColor() + score.getOrDefault(ORC, 0);
@@ -130,7 +131,7 @@ public class SpigotScoreboardHandler implements Runnable {
     }
 
     private String getFormattedPoints(Game game) {
-        Map<Team, Integer> points = game.getPoints();
+        Map<LegendsTeam, Integer> points = game.getPoints();
         return "" +
                 HUMAN.getChatColor() + points.getOrDefault(HUMAN, 0) + RESET + " | " +
                 ORC.getChatColor() + points.getOrDefault(ORC, 0);
