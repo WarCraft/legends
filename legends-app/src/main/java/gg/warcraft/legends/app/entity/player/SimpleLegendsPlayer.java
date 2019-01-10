@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.combat.api.specialization.Specialization;
 import gg.warcraft.combat.api.specialization.service.SpecializationQueryService;
+import gg.warcraft.legends.api.core.tutorial.TutorialStep;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.LegendsCurrency;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
@@ -60,6 +61,16 @@ public class SimpleLegendsPlayer implements LegendsPlayer, PlayerDecorator {
     @Override
     public int getLifetimeFragments() {
         return getLifetimeCurrency(LegendsCurrency.FRAGMENTS.getName());
+    }
+
+    @Override
+    public TutorialStep getTutorialStep() {
+        try {
+            return TutorialStep.valueOf(getData(LegendsPlayerData.TUTORIAL_STEP.getName()));
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return TutorialStep.START;
+        }
     }
 
     @Override

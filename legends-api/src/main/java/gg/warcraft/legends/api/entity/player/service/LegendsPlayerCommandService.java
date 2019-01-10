@@ -1,10 +1,13 @@
 package gg.warcraft.legends.api.entity.player.service;
 
+import gg.warcraft.legends.api.core.tutorial.TutorialStep;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 
 import java.util.UUID;
 
 public interface LegendsPlayerCommandService extends PlayerCommandService {
+
+    void setTutorialStep(UUID playerId, TutorialStep step);
 
     void setSpecialization(UUID playerId, String specialization);
 
