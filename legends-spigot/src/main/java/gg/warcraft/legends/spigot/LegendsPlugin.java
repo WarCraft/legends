@@ -38,6 +38,7 @@ import gg.warcraft.legends.app.core.handler.PlayerCountMetricHandler;
 import gg.warcraft.legends.app.core.handler.PlayerSpawnHandler;
 import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
 import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
+import gg.warcraft.legends.app.core.tutorial.handler.TutorialCommandHandler;
 import gg.warcraft.legends.app.core.tutorial.handler.TutorialStepHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerCurrencyEventHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerInspectionHandler;
@@ -253,6 +254,10 @@ public class LegendsPlugin extends JavaPlugin {
         TutorialStepHandler tutorialStepHandler = injector.getInstance(TutorialStepHandler.class);
         commandCommandService.createCommand("next", Collections.emptyList(), tutorialStepHandler);
         eventService.subscribe(tutorialStepHandler);
+
+        TutorialCommandHandler tutorialCommandHandler = injector.getInstance(TutorialCommandHandler.class);
+        commandCommandService.createCommand("setRaceTutorial", Collections.emptyList(), tutorialCommandHandler);
+        commandCommandService.createCommand("setClassTutorial", Collections.emptyList(), tutorialCommandHandler);
 
         MenuCommandHandler menuCommandHandler = injector.getInstance(MenuCommandHandler.class);
         commandCommandService.createCommand("me", Lists.newArrayList("menu", "monolith", "help"), menuCommandHandler);
