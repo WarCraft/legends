@@ -75,6 +75,7 @@ import gg.warcraft.monolith.api.world.block.box.BoundingBlockBoxFactory;
 import gg.warcraft.monolith.api.world.location.LocationFactory;
 import gg.warcraft.monolith.api.world.location.OrientedLocation;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
+import gg.warcraft.siege.api.weapon.PersistentSiegeWeaponDecorator;
 import gg.warcraft.siege.api.weapon.SiegeWeapon;
 import gg.warcraft.siege.api.weapon.SiegeWeaponFactory;
 import gg.warcraft.siege.api.weapon.service.SiegeWeaponRepository;
@@ -330,7 +331,8 @@ public class LegendsPlugin extends JavaPlugin {
                 tutorialTrebuchetBoundingBox.stream().collect(Collectors.toSet()),
                 new ArrayList<>(), loadBlock, turnLeftBlock, turnRightBlock, chargeBlock, fireBlock,
                 projectileOriginBlock);
-        siegeWeaponRepository.save(tutorialTrebuchet);
+        SiegeWeapon persistentTutorialTrebuchet = new PersistentSiegeWeaponDecorator(tutorialTrebuchet);
+        siegeWeaponRepository.save(persistentTutorialTrebuchet);
     }
 
     private void initializeGame() {
