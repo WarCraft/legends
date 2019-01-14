@@ -145,6 +145,11 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
     @Override
     public Item generate(LegendsSpecializationType specialization, EquipmentType type, ItemRarity rarity,
                          LegendsTeam team) {
+        if (team == LegendsTeam.WAYFARER) {
+            // TODO do we want to return for a random team here?
+            return null;
+        }
+
         // TODO remove when Ancient is ready
         if (rarity == ItemRarity.ANCIENT) {
             rarity = ItemRarity.LEGENDARY;

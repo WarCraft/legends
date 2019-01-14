@@ -250,15 +250,6 @@ public class LegendsPlugin extends JavaPlugin {
 
     void initializeLegendsCommands() {
         CommandCommandService commandCommandService = injector.getInstance(CommandCommandService.class);
-        EventService eventService = injector.getInstance(EventService.class);
-
-        TutorialStepHandler tutorialStepHandler = injector.getInstance(TutorialStepHandler.class);
-        commandCommandService.createCommand("next", Collections.emptyList(), tutorialStepHandler);
-        eventService.subscribe(tutorialStepHandler);
-
-        TutorialCommandHandler tutorialCommandHandler = injector.getInstance(TutorialCommandHandler.class);
-        commandCommandService.createCommand("setRaceTutorial", Collections.emptyList(), tutorialCommandHandler);
-        commandCommandService.createCommand("setClassTutorial", Collections.emptyList(), tutorialCommandHandler);
 
         MenuCommandHandler menuCommandHandler = injector.getInstance(MenuCommandHandler.class);
         commandCommandService.createCommand("me", Lists.newArrayList("menu", "monolith", "help"), menuCommandHandler);
@@ -312,6 +303,19 @@ public class LegendsPlugin extends JavaPlugin {
     }
 
     void initializeTutorial() {
+        // Commands
+        CommandCommandService commandCommandService = injector.getInstance(CommandCommandService.class);
+        EventService eventService = injector.getInstance(EventService.class);
+
+        TutorialStepHandler tutorialStepHandler = injector.getInstance(TutorialStepHandler.class);
+        commandCommandService.createCommand("next", Collections.emptyList(), tutorialStepHandler);
+        eventService.subscribe(tutorialStepHandler);
+
+        TutorialCommandHandler tutorialCommandHandler = injector.getInstance(TutorialCommandHandler.class);
+        commandCommandService.createCommand("setracetutorial", Collections.emptyList(), tutorialCommandHandler);
+        commandCommandService.createCommand("setclasstutorial", Collections.emptyList(), tutorialCommandHandler);
+
+        // Siege weapon
         SiegeWeaponFactory siegeWeaponFactory = injector.getInstance(SiegeWeaponFactory.class);
         SiegeWeaponRepository siegeWeaponRepository = injector.getInstance(SiegeWeaponRepository.class);
         WorldQueryService worldQueryService = injector.getInstance(WorldQueryService.class);

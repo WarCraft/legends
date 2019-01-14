@@ -29,7 +29,7 @@ public class TutorialCommandHandler implements CommandHandler {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, List<String> arguments) {
-        if (!sender.isPlayer()) {
+        if (!sender.isPlayer() || arguments.isEmpty()) {
             return false;
         }
 
@@ -39,17 +39,13 @@ public class TutorialCommandHandler implements CommandHandler {
             return false;
         }
 
-        if (arguments.isEmpty()) {
-            return false;
-        }
-
         String argument = arguments.get(0);
         switch (label) {
-            case "setRaceTutorial":
+            case "setracetutorial":
                 LegendsTeam race = LegendsTeam.valueOf(argument);
                 teamCommandService.setTeam(race, playerId);
                 return true;
-            case "setClassTutorial":
+            case "setclasstutorial":
                 specializationCommandService.setSpecialization(argument, playerId);
                 return true;
             default:
