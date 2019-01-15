@@ -78,6 +78,10 @@ public class ObjectiveAnnouncementHandler {
     @Subscribe
     public void onObjectiveCapturedEvent(ObjectiveCapturedEvent event) {
         Objective objective = event.getObjective();
+        if (objective.getType().equals("TUTORIAL")) {
+            return;
+        }
+
         LegendsTeam occupiers = (LegendsTeam) objective.getOccupiers();
         String notification = "The " + occupiers.getPlural() +
                 " have captured " + objective.getName() + "!";
@@ -93,6 +97,10 @@ public class ObjectiveAnnouncementHandler {
     @Subscribe
     public void onObjectiveNeutralizedEvent(ObjectiveNeutralizedEvent event) {
         Objective objective = event.getObjective();
+        if (objective.getType().equals("TUTORIAL")) {
+            return;
+        }
+
         LegendsTeam defenders = (LegendsTeam) event.getDefenders();
         if (defenders != null) {
             String notification = "The " + defenders.getPlural() +

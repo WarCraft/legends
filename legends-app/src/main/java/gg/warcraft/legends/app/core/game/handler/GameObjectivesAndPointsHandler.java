@@ -27,10 +27,13 @@ public class GameObjectivesAndPointsHandler {
 
     @Subscribe
     public void onObjectiveCapturedEvent(ObjectiveCapturedEvent event) {
-        Game activeGame = gameRepository.getActiveGame();
         Objective objective = event.getObjective();
-        LegendsTeam newOccupiers = (LegendsTeam) objective.getOccupiers();
+        if (objective.getType().equals("TUTORIAL")) {
+            return;
+        }
 
+        Game activeGame = gameRepository.getActiveGame();
+        LegendsTeam newOccupiers = (LegendsTeam) objective.getOccupiers();
         Map<String, LegendsTeam> newObjectives = activeGame.getObjectives();
         newObjectives.put(objective.getId(), newOccupiers);
 
@@ -44,23 +47,24 @@ public class GameObjectivesAndPointsHandler {
                 .withObjectives(newObjectives)
                 .withPoints(newPoints)
                 .copy();
-
         gameRepository.save(newGame);
     }
 
     @Subscribe
     public void onObjectiveNeutralizedEvent(ObjectiveNeutralizedEvent event) {
-        Game activeGame = gameRepository.getActiveGame();
         Objective objective = event.getObjective();
-        LegendsTeam newOccupiers = (LegendsTeam) objective.getOccupiers();
+        if (objective.getType().equals("TUTORIAL")) {
+            return;
+        }
 
+        Game activeGame = gameRepository.getActiveGame();
+        LegendsTeam newOccupiers = (LegendsTeam) objective.getOccupiers();
         Map<String, LegendsTeam> newObjectives = activeGame.getObjectives();
         newObjectives.put(objective.getId(), newOccupiers);
 
         Game newGame = activeGame.getCopyer()
                 .withObjectives(newObjectives)
                 .copy();
-
         gameRepository.save(newGame);
     }
 
