@@ -2,6 +2,7 @@ package gg.warcraft.legends.app.core.tutorial.handler;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.core.service.SpawnLocationRepository;
 import gg.warcraft.legends.api.core.tutorial.TutorialStep;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
@@ -13,9 +14,11 @@ import gg.warcraft.monolith.api.command.CommandSender;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.Direction;
+import gg.warcraft.monolith.api.world.DirectionUtils;
 import gg.warcraft.monolith.api.world.WorldType;
 import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.location.LocationFactory;
+import gg.warcraft.monolith.api.world.location.OrientedLocation;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +27,8 @@ public class TutorialStepHandler implements CommandHandler {
     private final LegendsPlayerQueryService playerQueryService;
     private final LegendsPlayerCommandService playerCommandService;
     private final EntityCommandService entityCommandService;
+    private final DirectionUtils directionUtils;
+    private final SpawnLocationRepository spawnLocationRepository;
 
     private Location startLocation;
     private Direction startOrientation;
@@ -41,10 +46,15 @@ public class TutorialStepHandler implements CommandHandler {
     @Inject
     public TutorialStepHandler(LegendsPlayerQueryService playerQueryService,
                                LegendsPlayerCommandService playerCommandService,
-                               EntityCommandService entityCommandService, LocationFactory locationFactory) {
+                               EntityCommandService entityCommandService,
+                               SpawnLocationRepository spawnLocationRepository,
+                               DirectionUtils directionUtils,
+                               LocationFactory locationFactory) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.entityCommandService = entityCommandService;
+        this.spawnLocationRepository = spawnLocationRepository;
+        this.directionUtils = directionUtils;
 
         this.startLocation = locationFactory.createLocation(WorldType.THE_END, 196.5f, 163f, -19.5f);
         this.startOrientation = Direction.EAST;
@@ -102,7 +112,9 @@ public class TutorialStepHandler implements CommandHandler {
                 break;
             case FINALE:
                 nextStep = TutorialStep.DONE;
-                // TODO TP to race specific capital
+                OrientedLocation spawn = spawnLocationRepository.getSpawn(player.getTeam());
+                Direction direction = directionUtils.toDirection(spawn.getYaw());
+                entityCommandService.teleport(playerId, spawn, direction);
                 break;
         }
 

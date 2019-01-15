@@ -2,6 +2,7 @@ package gg.warcraft.legends.app.core.tutorial.handler;
 
 import com.google.inject.Inject;
 import gg.warcraft.combat.api.specialization.service.SpecializationCommandService;
+import gg.warcraft.legends.api.core.service.SpawnLocationRepository;
 import gg.warcraft.legends.api.core.tutorial.TutorialStep;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
@@ -10,7 +11,11 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
+import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
+import gg.warcraft.monolith.api.world.Direction;
+import gg.warcraft.monolith.api.world.DirectionUtils;
+import gg.warcraft.monolith.api.world.location.OrientedLocation;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,18 +23,27 @@ import java.util.UUID;
 public class TutorialCommandHandler implements CommandHandler {
     private final LegendsPlayerQueryService playerQueryService;
     private final LegendsPlayerCommandService playerCommandService;
+    private final EntityCommandService entityCommandService;
     private final TeamCommandService teamCommandService;
     private final SpecializationCommandService specializationCommandService;
+    private final DirectionUtils directionUtils;
+    private final SpawnLocationRepository spawnLocationRepository;
 
     @Inject
     public TutorialCommandHandler(LegendsPlayerQueryService playerQueryService,
                                   LegendsPlayerCommandService playerCommandService,
+                                  EntityCommandService entityCommandService,
                                   TeamCommandService teamCommandService,
-                                  SpecializationCommandService specializationCommandService) {
+                                  SpecializationCommandService specializationCommandService,
+                                  SpawnLocationRepository spawnLocationRepository,
+                                  DirectionUtils directionUtils) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
+        this.entityCommandService = entityCommandService;
         this.teamCommandService = teamCommandService;
         this.specializationCommandService = specializationCommandService;
+        this.directionUtils = directionUtils;
+        this.spawnLocationRepository = spawnLocationRepository;
     }
 
     @Override
@@ -55,17 +69,20 @@ public class TutorialCommandHandler implements CommandHandler {
                 specializationCommandService.setSpecialization(argument, playerId);
                 return true;
             case "skiptutorial":
-                if (currentStep == TutorialStep.START
-                        || currentStep == TutorialStep.RACE
-                        || currentStep == TutorialStep.CLASS) {
-                    playerCommandService.sendNotification(playerId,
-                            "Please finish the race and class steps before skipping the rest of the tutorial.");
+                switch (currentStep) {
+                    case START:
+                    case RACE:
+                    case CLASS:
+                        playerCommandService.sendNotification(playerId,
+                                "Please finish the race and class steps before skipping the rest of the tutorial.");
+                        return true;
                 }
                 playerCommandService.setTutorialStep(playerId, TutorialStep.DONE);
-                // TODO TP to race specific capital
+                OrientedLocation spawn = spawnLocationRepository.getSpawn(player.getTeam());
+                Direction direction = directionUtils.toDirection(spawn.getYaw());
+                entityCommandService.teleport(playerId, spawn, direction);
                 return true;
-            default:
-                return false;
         }
+        return false;
     }
 }
