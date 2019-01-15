@@ -1,6 +1,7 @@
 package gg.warcraft.legends.app.ai.npc.service;
 
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.ai.npc.Npc;
 import gg.warcraft.legends.api.ai.npc.service.NpcQueryService;
 import gg.warcraft.legends.api.ai.npc.service.NpcRepository;
 
@@ -18,5 +19,10 @@ public class DefaultNpcQueryService implements NpcQueryService {
     @Override
     public Set<UUID> getNpcIds() {
         return npcRepository.getNpcIds();
+    }
+
+    @Override
+    public Npc getNpc(UUID entityId) {
+        return npcRepository.getNpc(entityId);
     }
 }

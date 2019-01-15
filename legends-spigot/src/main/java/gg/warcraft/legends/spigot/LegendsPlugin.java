@@ -22,6 +22,7 @@ import gg.warcraft.legends.api.shop.config.ShopConfiguration;
 import gg.warcraft.legends.api.shop.service.ShopCommandService;
 import gg.warcraft.legends.app.ai.npc.handler.NpcInteractHandler;
 import gg.warcraft.legends.app.ai.npc.handler.NpcPersistenceHandler;
+import gg.warcraft.legends.app.ai.npc.handler.TargetDummyDamageHandler;
 import gg.warcraft.legends.app.combat.LegendsCombatConfiguration;
 import gg.warcraft.legends.app.combat.handler.ArrowDistributionHandler;
 import gg.warcraft.legends.app.combat.handler.ArrowPickupHandler;
@@ -173,6 +174,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         NpcPersistenceHandler npcPersistenceHandler = injector.getInstance(NpcPersistenceHandler.class);
         eventService.subscribe(npcPersistenceHandler);
+
+        TargetDummyDamageHandler targetDummyDamageHandler = injector.getInstance(TargetDummyDamageHandler.class);
+        eventService.subscribe(targetDummyDamageHandler);
 
         // Combat
         EquipmentAttributesHandler equipmentAttributesHandler = injector.getInstance(EquipmentAttributesHandler.class);
