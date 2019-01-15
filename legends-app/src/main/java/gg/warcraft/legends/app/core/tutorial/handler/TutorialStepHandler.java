@@ -3,6 +3,7 @@ package gg.warcraft.legends.app.core.tutorial.handler;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.core.tutorial.TutorialStep;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
@@ -24,7 +25,6 @@ public class TutorialStepHandler implements CommandHandler {
     private final LegendsPlayerCommandService playerCommandService;
     private final EntityCommandService entityCommandService;
 
-    private boolean initialized = false;
     private Location startLocation;
     private Direction startOrientation;
     private Location raceLocation;
@@ -46,21 +46,18 @@ public class TutorialStepHandler implements CommandHandler {
         this.playerCommandService = playerCommandService;
         this.entityCommandService = entityCommandService;
 
-        if (!this.initialized) {
-            this.initialized = true;
-            this.startLocation = locationFactory.createLocation(WorldType.THE_END, 196.5f, 163f, -19.5f);
-            this.startOrientation = Direction.EAST;
-            this.raceLocation = locationFactory.createLocation(WorldType.THE_END, 253.5f, 174f, 92.5f);
-            this.raceOrientation = Direction.EAST;
-            this.classLocation = locationFactory.createLocation(WorldType.THE_END, 357.5f, 191f, 34.5f);
-            this.classOrientation = Direction.EAST;
-            this.gatheringLocation = locationFactory.createLocation(WorldType.THE_END, 203.5f, 180f, -138.5f);
-            this.gatheringOrientation = Direction.SOUTH;
-            this.siegeLocation = locationFactory.createLocation(WorldType.THE_END, 288.5f, 165f, -191.5f);
-            this.siegeOrientation = Direction.EAST;
-            this.finaleLocation = locationFactory.createLocation(WorldType.THE_END, 414.5f, 178f, -112.5f);
-            this.finaleOrientation = Direction.EAST;
-        }
+        this.startLocation = locationFactory.createLocation(WorldType.THE_END, 196.5f, 163f, -19.5f);
+        this.startOrientation = Direction.EAST;
+        this.raceLocation = locationFactory.createLocation(WorldType.THE_END, 253.5f, 174f, 92.5f);
+        this.raceOrientation = Direction.EAST;
+        this.classLocation = locationFactory.createLocation(WorldType.THE_END, 357.5f, 191f, 34.5f);
+        this.classOrientation = Direction.EAST;
+        this.gatheringLocation = locationFactory.createLocation(WorldType.THE_END, 203.5f, 180f, -138.5f);
+        this.gatheringOrientation = Direction.SOUTH;
+        this.siegeLocation = locationFactory.createLocation(WorldType.THE_END, 288.5f, 165f, -191.5f);
+        this.siegeOrientation = Direction.EAST;
+        this.finaleLocation = locationFactory.createLocation(WorldType.THE_END, 414.5f, 178f, -112.5f);
+        this.finaleOrientation = Direction.EAST;
     }
 
     @Override
@@ -78,10 +75,20 @@ public class TutorialStepHandler implements CommandHandler {
                 entityCommandService.teleport(playerId, raceLocation, raceOrientation);
                 break;
             case RACE:
+                if (player.getTeam() == LegendsTeam.WAYFARER) {
+                    playerCommandService.sendNotification(playerId,
+                            "Please choose a race by right clicking on one of the signs before continuing.");
+                    return true;
+                }
                 nextStep = TutorialStep.CLASS;
                 entityCommandService.teleport(playerId, classLocation, classOrientation);
                 break;
             case CLASS:
+                if (player.getSpecialization() == null) {
+                    playerCommandService.sendNotification(playerId,
+                            "Please choose a class by right clicking on one of the signs before continuing.");
+                    return true;
+                }
                 nextStep = TutorialStep.GATHERING;
                 entityCommandService.teleport(playerId, gatheringLocation, gatheringOrientation);
                 break;

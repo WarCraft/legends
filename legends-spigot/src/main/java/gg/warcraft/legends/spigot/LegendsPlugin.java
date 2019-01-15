@@ -314,6 +314,7 @@ public class LegendsPlugin extends JavaPlugin {
         TutorialCommandHandler tutorialCommandHandler = injector.getInstance(TutorialCommandHandler.class);
         commandCommandService.createCommand("setracetutorial", Collections.emptyList(), tutorialCommandHandler);
         commandCommandService.createCommand("setclasstutorial", Collections.emptyList(), tutorialCommandHandler);
+        commandCommandService.createCommand("skiptutorial", Collections.emptyList(), tutorialCommandHandler);
 
         // Siege weapon
         SiegeWeaponFactory siegeWeaponFactory = injector.getInstance(SiegeWeaponFactory.class);
