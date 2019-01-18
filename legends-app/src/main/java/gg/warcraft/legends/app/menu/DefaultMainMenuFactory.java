@@ -256,7 +256,9 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         UUID playerId = player.getId();
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.BOOK, "Help Menu");
         builder.addTooltip("Read the Server Manual or contact a member");
-        builder.addTooltip("of staff if you have any more question!");
+        builder.addTooltip("of staff if you have any more questions!");
+        builder.addTooltip("");
+        builder.addTooltip("[CLICK] To open the Help Menu");
 
         builder.withAction(action -> {
             Menu menu = helpMenuFactory.createHelpMenu(playerId);
