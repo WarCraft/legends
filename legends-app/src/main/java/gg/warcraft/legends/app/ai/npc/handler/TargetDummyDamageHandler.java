@@ -3,6 +3,7 @@ package gg.warcraft.legends.app.ai.npc.handler;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.ai.npc.Npc;
+import gg.warcraft.legends.api.ai.npc.NpcType;
 import gg.warcraft.legends.api.ai.npc.service.NpcQueryService;
 import gg.warcraft.monolith.api.entity.event.EntityPreDamageEvent;
 
@@ -17,7 +18,7 @@ public class TargetDummyDamageHandler {
     @Subscribe
     public void onEntityPreDamageEvent(EntityPreDamageEvent event) {
         Npc npc = npcQueryService.getNpc(event.getEntityId());
-        if (npc != null && "TARGET_DUMMY".equals(npc.getType())) {
+        if (npc != null && npc.getType() == NpcType.TARGET_DUMMY) {
             event.cancel();
         }
     }

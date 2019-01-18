@@ -74,10 +74,6 @@ public class DefaultNpcCommandService implements NpcCommandService {
                 Menu blueprintMenu = blueprintVendorDialogFactory.createBlueprintVendorDialog(playerId);
                 menuCommandService.showMenu(blueprintMenu, playerId);
                 break;
-            default:
-                pluginLogger.info("Asked to open dialog for npc " + npcId + " to player " + playerId +
-                        ", but npc type " + npc.getType() + " doesn't have a dialog yet.");
-                break;
         }
     }
 }
