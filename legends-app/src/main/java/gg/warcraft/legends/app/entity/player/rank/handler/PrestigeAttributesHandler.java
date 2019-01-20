@@ -2,6 +2,7 @@ package gg.warcraft.legends.app.entity.player.rank.handler;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.rank.event.PlayerRankChangedEvent;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Singleton
 public class PrestigeAttributesHandler {
     private static final List<Integer> attributeModifierValues;
 
@@ -67,8 +69,7 @@ public class PrestigeAttributesHandler {
             newModifiers.add(strengthModifier);
             AttributeModifier dexterityModifier = createModifier(playerId, LegendsAttribute.DEXTERITY, attributeValue);
             newModifiers.add(dexterityModifier);
-            AttributeModifier intelligenceModifier =
-                    createModifier(playerId, LegendsAttribute.INTELLIGENCE, attributeValue);
+            AttributeModifier intelligenceModifier = createModifier(playerId, LegendsAttribute.INTELLIGENCE, attributeValue);
             newModifiers.add(intelligenceModifier);
         } else if (prestige == 2) {
             AttributeModifier vitalityModifier = createModifier(playerId, GenericAttribute.MAX_HEALTH, 6);
