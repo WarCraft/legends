@@ -37,7 +37,7 @@ public class DefaultChallengesMenuFactory extends AbstractMenuFactory implements
     }
 
     Button createDailyChallengesButton(UUID playerId) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.TNT, "Daily Challenges");
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.GUNPOWDER, "Daily Challenges");
         builder.addTooltip("Daily challenges are small tasks that");
         builder.addTooltip("reset at the start of every day.");
         builder.addTooltip("");
@@ -67,7 +67,7 @@ public class DefaultChallengesMenuFactory extends AbstractMenuFactory implements
     }
 
     Button createAlltimeChallengesButton(UUID playerId) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.TNT, "All-time Challenges");
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.MINECART_WITH_TNT, "All-time Challenges");
         builder.addTooltip("All-time challenges are the passive");
         builder.addTooltip("challenges of Ouros. Simply playing on");
         builder.addTooltip("the server will progress them. Some");
