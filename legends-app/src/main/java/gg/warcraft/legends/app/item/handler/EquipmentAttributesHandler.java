@@ -4,8 +4,10 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
+import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.EquipmentSlot;
 import gg.warcraft.monolith.api.entity.attribute.AttributeModifier;
+import gg.warcraft.monolith.api.entity.attribute.GenericAttribute;
 import gg.warcraft.monolith.api.entity.attribute.service.AttributeCommandService;
 import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
@@ -26,14 +28,17 @@ import java.util.UUID;
 public class EquipmentAttributesHandler {
     private final AttributeCommandService attributeCommandService;
     private final PlayerQueryService playerQueryService;
+    private final TaskService taskService;
     private final ItemReaderFactory itemReaderFactory;
     private final Map<UUID, List<AttributeModifier>> equipmentModifiers;
 
     @Inject
     public EquipmentAttributesHandler(AttributeCommandService attributeCommandService,
-                                      PlayerQueryService playerQueryService, ItemReaderFactory itemReaderFactory) {
+                                      PlayerQueryService playerQueryService,
+                                      TaskService taskService, ItemReaderFactory itemReaderFactory) {
         this.attributeCommandService = attributeCommandService;
         this.playerQueryService = playerQueryService;
+        this.taskService = taskService;
         this.itemReaderFactory = itemReaderFactory;
         this.equipmentModifiers = new HashMap<>();
     }
@@ -66,6 +71,8 @@ public class EquipmentAttributesHandler {
                 attributeCommandService.addAttributeModifier(playerId, LegendsAttribute.INTELLIGENCE, intelligence);
         AttributeModifier vitalityModifier =
                 attributeCommandService.addAttributeModifier(playerId, LegendsAttribute.VITALITY, vitality);
+        AttributeModifier maxHealthModifier =
+                attributeCommandService.addAttributeModifier(playerId, GenericAttribute.MAX_HEALTH, vitality);
         AttributeModifier critModifier =
                 attributeCommandService.addAttributeModifier(playerId, LegendsAttribute.CRIT, crit);
 
@@ -74,13 +81,15 @@ public class EquipmentAttributesHandler {
         newModifiers.add(dexterityModifier);
         newModifiers.add(intelligenceModifier);
         newModifiers.add(vitalityModifier);
+        newModifiers.add(maxHealthModifier);
         newModifiers.add(critModifier);
         equipmentModifiers.put(playerId, newModifiers);
     }
 
     @Subscribe
     public void onPlayerConnectEvent(PlayerConnectEvent event) {
-        updateEquipmentModifiers(event.getPlayerId());
+        // await Monolith::AttributesInitializationHandler
+        taskService.runNextTick(() -> updateEquipmentModifiers(event.getPlayerId()));
     }
 
     @Subscribe
