@@ -15,6 +15,7 @@ import gg.warcraft.monolith.api.entity.attribute.AttributeModifier;
 import gg.warcraft.monolith.api.entity.attribute.GenericAttribute;
 import gg.warcraft.monolith.api.entity.attribute.service.AttributeCommandService;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
+import gg.warcraft.monolith.api.entity.player.event.PlayerDisconnectEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,5 +123,11 @@ public class PrestigeAttributesHandler {
         }
 
         updateModifiers(playerId, currentRank.getPrestige(), currentRank.getLevel());
+    }
+
+    @Subscribe
+    public void onPlayerDisconnectEvent(PlayerDisconnectEvent event) {
+        List<AttributeModifier> modifiers = rankAttributeModifierRepository.getModifiers(event.getPlayerId());
+        modifiers.forEach(modifier -> attributeCommandService.removeAttributeModifier(event.getPlayerId(), modifier));
     }
 }
