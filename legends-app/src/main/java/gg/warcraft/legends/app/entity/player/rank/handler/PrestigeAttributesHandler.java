@@ -33,6 +33,7 @@ public class PrestigeAttributesHandler {
         attributeModifierValues.add(5);
         attributeModifierValues.add(7);
         attributeModifierValues.add(10);
+        attributeModifierValues.add(10);
     }
 
     private final RankAttributeModifierRepository rankAttributeModifierRepository;
@@ -56,7 +57,8 @@ public class PrestigeAttributesHandler {
     }
 
     private void updateModifiers(UUID playerId, int prestige, int level) {
-        int attributeValue = attributeModifierValues.get(level / 7);
+        int clippedLevel = level % rankQueryService.getRankCount();
+        int attributeValue = attributeModifierValues.get(clippedLevel / 7);
 
         // remove existing modifiers
         List<AttributeModifier> modifiers = rankAttributeModifierRepository.getModifiers(playerId);
@@ -68,7 +70,7 @@ public class PrestigeAttributesHandler {
             AttributeModifier vitalityModifier = createModifier(playerId, GenericAttribute.MAX_HEALTH, attributeValue);
             newModifiers.add(vitalityModifier);
         } else if (prestige == 1) {
-            AttributeModifier vitalityModifier = createModifier(playerId, GenericAttribute.MAX_HEALTH, 6);
+            AttributeModifier vitalityModifier = createModifier(playerId, GenericAttribute.MAX_HEALTH, 10);
             newModifiers.add(vitalityModifier);
             AttributeModifier strengthModifier = createModifier(playerId, LegendsAttribute.STRENGTH, attributeValue);
             newModifiers.add(strengthModifier);
@@ -77,26 +79,26 @@ public class PrestigeAttributesHandler {
             AttributeModifier intelligenceModifier = createModifier(playerId, LegendsAttribute.INTELLIGENCE, attributeValue);
             newModifiers.add(intelligenceModifier);
         } else if (prestige == 2) {
-            AttributeModifier vitalityModifier = createModifier(playerId, GenericAttribute.MAX_HEALTH, 6);
+            AttributeModifier vitalityModifier = createModifier(playerId, GenericAttribute.MAX_HEALTH, 10);
             newModifiers.add(vitalityModifier);
-            AttributeModifier strengthModifier = createModifier(playerId, LegendsAttribute.STRENGTH, 6);
+            AttributeModifier strengthModifier = createModifier(playerId, LegendsAttribute.STRENGTH, 10);
             newModifiers.add(strengthModifier);
-            AttributeModifier dexterityModifier = createModifier(playerId, LegendsAttribute.DEXTERITY, 6);
+            AttributeModifier dexterityModifier = createModifier(playerId, LegendsAttribute.DEXTERITY, 10);
             newModifiers.add(dexterityModifier);
-            AttributeModifier intelligenceModifier = createModifier(playerId, LegendsAttribute.INTELLIGENCE, 6);
+            AttributeModifier intelligenceModifier = createModifier(playerId, LegendsAttribute.INTELLIGENCE, 10);
             newModifiers.add(intelligenceModifier);
             AttributeModifier critModifier = createModifier(playerId, LegendsAttribute.CRIT, attributeValue);
             newModifiers.add(critModifier);
         } else if (prestige > 2) {
-            AttributeModifier vitalityModifier = createModifier(playerId, GenericAttribute.MAX_HEALTH, 6);
+            AttributeModifier vitalityModifier = createModifier(playerId, GenericAttribute.MAX_HEALTH, 10);
             newModifiers.add(vitalityModifier);
-            AttributeModifier strengthModifier = createModifier(playerId, LegendsAttribute.STRENGTH, 6);
+            AttributeModifier strengthModifier = createModifier(playerId, LegendsAttribute.STRENGTH, 10);
             newModifiers.add(strengthModifier);
-            AttributeModifier dexterityModifier = createModifier(playerId, LegendsAttribute.DEXTERITY, 6);
+            AttributeModifier dexterityModifier = createModifier(playerId, LegendsAttribute.DEXTERITY, 10);
             newModifiers.add(dexterityModifier);
-            AttributeModifier intelligenceModifier = createModifier(playerId, LegendsAttribute.INTELLIGENCE, 6);
+            AttributeModifier intelligenceModifier = createModifier(playerId, LegendsAttribute.INTELLIGENCE, 10);
             newModifiers.add(intelligenceModifier);
-            AttributeModifier critModifier = createModifier(playerId, LegendsAttribute.CRIT, 6);
+            AttributeModifier critModifier = createModifier(playerId, LegendsAttribute.CRIT, 10);
             newModifiers.add(critModifier);
         }
         rankAttributeModifierRepository.save(playerId, newModifiers);

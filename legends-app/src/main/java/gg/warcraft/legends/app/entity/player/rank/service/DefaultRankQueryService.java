@@ -22,6 +22,11 @@ public class DefaultRankQueryService implements RankQueryService {
     }
 
     @Override
+    public int getRankCount() {
+        return rankRepository.getRanks(LegendsTeam.HUMAN).size();
+    }
+
+    @Override
     public Rank getRank(int level) {
         return rankRepository.getRank(level);
     }

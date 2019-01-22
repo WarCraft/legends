@@ -30,15 +30,17 @@ public class PlayerRankChangeHandler {
         this.eventService = eventService;
     }
 
-    private void updatePlayerExperienceAndLevel(UUID playerId, float newLifetimeFavor, Rank rank) {
-        float clippedNewLifetimeFavor = newLifetimeFavor - rank.getRequiredFavor();
+    private void updatePlayerExperienceAndLevel(UUID playerId, int newLifetimeFavor, Rank rank) {
+        // TODO this is nasty, but 1016000 is the max XP to prestige
+        float clippedNewCurrentFavor = (newLifetimeFavor % 1016000) - rank.getRequiredFavor();
         Rank nextRank = rankQueryService.getRank(rank.getLevel() + 1);
 
         float clippedRequiredFavor = nextRank.getRequiredFavor() - rank.getRequiredFavor();
-        float newLevelProgression = clippedNewLifetimeFavor / clippedRequiredFavor;
+        float newLevelProgression = clippedNewCurrentFavor / clippedRequiredFavor;
 
         playerServerAdapter.setExperienceProgress(playerId, newLevelProgression);
-        playerServerAdapter.setLevel(playerId, rank.getLevel());
+        int adjustedLevel = rank.getLevel() + rank.getPrestige() * rankQueryService.getRankCount() - rank.getPrestige();
+        playerServerAdapter.setLevel(playerId, adjustedLevel);
     }
 
     @Subscribe
