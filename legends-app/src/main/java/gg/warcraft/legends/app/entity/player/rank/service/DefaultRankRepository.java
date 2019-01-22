@@ -4,6 +4,7 @@ import com.google.inject.Singleton;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
+import gg.warcraft.legends.app.entity.player.rank.SimpleRank;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +27,11 @@ public class DefaultRankRepository implements RankRepository {
     @Override
     public Rank getRank(int level) {
         int clippedLevel = level % ranksByLevel.size();
-        return ranksByLevel.get(clippedLevel);
+        Rank baseRank = ranksByLevel.get(clippedLevel);
+
+        int prestige = level / ranksByLevel.size();
+        return new SimpleRank(baseRank.getName(), baseRank.getLevel(), prestige, baseRank.getColor(),
+                baseRank.getRequiredFavor());
     }
 
     @Override

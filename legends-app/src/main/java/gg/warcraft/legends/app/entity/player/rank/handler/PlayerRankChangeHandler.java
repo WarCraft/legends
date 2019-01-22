@@ -30,15 +30,15 @@ public class PlayerRankChangeHandler {
         this.eventService = eventService;
     }
 
-    private float calculateExperienceProgress(float newLifetimeFavor, Rank newRank) {
-        float clippedNewLifetimeFavor = newLifetimeFavor - newRank.getRequiredFavor();
-        Rank nextRank = rankQueryService.getRank(newRank.getLevel() + 1);
-        if (nextRank == null) {
-            return 0; // TODO this will give issues once players prestige
-        }
+    private void updatePlayerExperienceAndLevel(UUID playerId, float newLifetimeFavor, Rank rank) {
+        float clippedNewLifetimeFavor = newLifetimeFavor - rank.getRequiredFavor();
+        Rank nextRank = rankQueryService.getRank(rank.getLevel() + 1);
 
-        float clippedRequiredFavor = nextRank.getRequiredFavor() - newRank.getRequiredFavor();
-        return clippedNewLifetimeFavor / clippedRequiredFavor;
+        float clippedRequiredFavor = nextRank.getRequiredFavor() - rank.getRequiredFavor();
+        float newLevelProgression = clippedNewLifetimeFavor / clippedRequiredFavor;
+
+        playerServerAdapter.setExperienceProgress(playerId, newLevelProgression);
+        playerServerAdapter.setLevel(playerId, rank.getLevel());
     }
 
     @Subscribe
@@ -46,15 +46,15 @@ public class PlayerRankChangeHandler {
         UUID playerId = event.getPlayerId();
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
         LegendsTeam team = player.getTeam();
-        int previousLifetimeFavor = event.getNewLifetime() - event.getAmount();
+        int newLifetimeFavor = event.getNewLifetime();
+        int previousLifetimeFavor = newLifetimeFavor - event.getAmount();
         Rank currentRank = rankQueryService.getRank(team, previousLifetimeFavor);
-        Rank newRank = rankQueryService.getRank(team, event.getNewLifetime());
+        Rank newRank = rankQueryService.getRank(team, newLifetimeFavor);
         if (!currentRank.equals(newRank)) {
             PlayerRankChangedEvent rankChangedEvent = new SimplePlayerRankChangedEvent(playerId, currentRank, newRank);
             eventService.publish(rankChangedEvent);
         }
 
-        float newLevelProgression = calculateExperienceProgress(event.getNewLifetime(), newRank);
-        playerServerAdapter.setExperienceProgress(playerId, newLevelProgression);
+        updatePlayerExperienceAndLevel(playerId, newLifetimeFavor, newRank);
     }
 }
