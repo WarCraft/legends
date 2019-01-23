@@ -6,22 +6,18 @@ import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.monolith.api.entity.event.EntityInteractEvent;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.util.StringUtils;
 
 import java.util.UUID;
 
-public class PlayerInspectionHandler {
+public class PlayerInspectHandler {
     private final LegendsPlayerQueryService legendsPlayerQueryService;
     private final PlayerCommandService playerCommandService;
-    private final StringUtils stringUtils;
 
     @Inject
-    public PlayerInspectionHandler(LegendsPlayerQueryService legendsPlayerQueryService,
-                                   PlayerCommandService playerCommandService,
-                                   StringUtils stringUtils) {
+    public PlayerInspectHandler(LegendsPlayerQueryService legendsPlayerQueryService,
+                                PlayerCommandService playerCommandService) {
         this.legendsPlayerQueryService = legendsPlayerQueryService;
         this.playerCommandService = playerCommandService;
-        this.stringUtils = stringUtils;
     }
 
     @Subscribe
@@ -36,10 +32,10 @@ public class PlayerInspectionHandler {
         LegendsPlayer inspectingPlayer = legendsPlayerQueryService.getPlayer(inspectingPlayerId);
         if (inspectingPlayer.isSneaking()) {
             String team = inspectedPlayer.getTeam().getName();
-            String teamPrefix = stringUtils.isVowel(team.charAt(0)) ? "an " : "a ";
             String specialization = inspectedPlayer.getSpecialization().getName();
-            String message = "You are looking at " + inspectedPlayer.getName() + ", " +
-                    teamPrefix + team + " " + specialization;
+            int level = inspectedPlayer.getRank().getLevel();
+            String message = "You are looking at " + inspectedPlayer.getName() + ", a level " +
+                    level + " " + team + " " + specialization;
             playerCommandService.sendNotification(inspectingPlayerId, message);
         }
     }

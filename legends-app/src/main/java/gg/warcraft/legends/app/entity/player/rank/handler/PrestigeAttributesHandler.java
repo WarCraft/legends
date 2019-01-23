@@ -10,6 +10,7 @@ import gg.warcraft.legends.api.entity.player.rank.event.PlayerRankChangedEvent;
 import gg.warcraft.legends.api.entity.player.rank.service.RankAttributeModifierRepository;
 import gg.warcraft.legends.api.entity.player.rank.service.RankQueryService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.attribute.Attribute;
 import gg.warcraft.monolith.api.entity.attribute.AttributeModifier;
 import gg.warcraft.monolith.api.entity.attribute.GenericAttribute;
@@ -40,16 +41,19 @@ public class PrestigeAttributesHandler {
     private final RankQueryService rankQueryService;
     private final LegendsPlayerQueryService playerQueryService;
     private final AttributeCommandService attributeCommandService;
+    private final TaskService taskService;
 
     @Inject
     public PrestigeAttributesHandler(RankAttributeModifierRepository rankAttributeModifierRepository,
                                      RankQueryService rankQueryService,
                                      LegendsPlayerQueryService playerQueryService,
-                                     AttributeCommandService attributeCommandService) {
+                                     AttributeCommandService attributeCommandService,
+                                     TaskService taskService) {
         this.rankAttributeModifierRepository = rankAttributeModifierRepository;
         this.rankQueryService = rankQueryService;
         this.playerQueryService = playerQueryService;
         this.attributeCommandService = attributeCommandService;
+        this.taskService = taskService;
     }
 
     private AttributeModifier createModifier(UUID playerId, Attribute attribute, float value) {
@@ -57,7 +61,7 @@ public class PrestigeAttributesHandler {
     }
 
     private void updateModifiers(UUID playerId, int prestige, int level) {
-        int clippedLevel = level % rankQueryService.getRankCount();
+        int clippedLevel = level % 50; // NOTE this is hacky, 50 is the prestige level
         int attributeValue = attributeModifierValues.get(clippedLevel / 7);
 
         // remove existing modifiers
@@ -113,18 +117,20 @@ public class PrestigeAttributesHandler {
     @Subscribe
     public void onPlayerConnectEvent(PlayerConnectEvent event) {
         // TODO split these up in connect and join events, connect is used for initialization, join for populating of data
-        UUID playerId = event.getPlayerId();
-        LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        if (player == null || player.getTeam() == null || player.getTeam() == LegendsTeam.WAYFARER) {
-            return;
-        }
+        taskService.runNextTick(() -> {
+            UUID playerId = event.getPlayerId();
+            LegendsPlayer player = playerQueryService.getPlayer(playerId);
+            if (player == null || player.getTeam() == null || player.getTeam() == LegendsTeam.WAYFARER) {
+                return;
+            }
 
-        Rank currentRank = rankQueryService.getRank(player.getTeam(), player.getFavor());
-        if (currentRank == null) {
-            return;
-        }
+            Rank currentRank = rankQueryService.getRank(player.getTeam(), player.getFavor());
+            if (currentRank == null) {
+                return;
+            }
 
-        updateModifiers(playerId, currentRank.getPrestige(), currentRank.getLevel());
+            updateModifiers(playerId, currentRank.getPrestige(), currentRank.getLevel());
+        });
     }
 
     @Subscribe

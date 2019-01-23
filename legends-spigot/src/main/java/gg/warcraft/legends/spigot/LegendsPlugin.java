@@ -41,8 +41,9 @@ import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
 import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
 import gg.warcraft.legends.app.core.tutorial.handler.TutorialCommandHandler;
 import gg.warcraft.legends.app.core.tutorial.handler.TutorialStepHandler;
+import gg.warcraft.legends.app.entity.player.handler.GoldCommandHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerCurrencyEventHandler;
-import gg.warcraft.legends.app.entity.player.handler.PlayerInspectionHandler;
+import gg.warcraft.legends.app.entity.player.handler.PlayerInspectHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangeHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangedHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PrestigeAttributesHandler;
@@ -216,8 +217,8 @@ public class LegendsPlugin extends JavaPlugin {
         eventService.subscribe(prestigeAttributesHandler);
 
         // Player inspect
-        PlayerInspectionHandler playerInspectionHandler = injector.getInstance(PlayerInspectionHandler.class);
-        eventService.subscribe(playerInspectionHandler);
+        PlayerInspectHandler playerInspectHandler = injector.getInstance(PlayerInspectHandler.class);
+        eventService.subscribe(playerInspectHandler);
 
         // Game / Objectives
         ObjectiveAnnouncementHandler objectiveAnnouncementHandler =
@@ -261,6 +262,9 @@ public class LegendsPlugin extends JavaPlugin {
         commandCommandService.createCommand("spec", Lists.newArrayList("specialization", "class", "kits"), menuCommandHandler);
         commandCommandService.createCommand("dec", Lists.newArrayList("decoration", "decorations"), menuCommandHandler);
         commandCommandService.createCommand("pet", Lists.newArrayList("pets", "minipet", "minipets", "mp"), menuCommandHandler);
+
+        GoldCommandHandler goldCommandHandler = injector.getInstance(GoldCommandHandler.class);
+        commandCommandService.createCommand("gold", Collections.emptyList(), goldCommandHandler);
 
         FishCommandHandler fishCommandHandler = injector.getInstance(FishCommandHandler.class);
         commandCommandService.createCommand("fish", Collections.emptyList(), fishCommandHandler);

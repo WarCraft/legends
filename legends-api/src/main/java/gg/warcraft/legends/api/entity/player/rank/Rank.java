@@ -12,5 +12,10 @@ public interface Rank {
 
     ColorCode getColor();
 
+    int getFavor();
+
     int getRequiredFavor();
+
+    @Override
+    String toString();
 }
