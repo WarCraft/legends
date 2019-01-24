@@ -3,8 +3,10 @@ package gg.warcraft.legends.app.core.game.handler;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.core.game.Game;
+import gg.warcraft.legends.api.core.game.GameType;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
 import gg.warcraft.legends.api.entity.LegendsTeam;
+import gg.warcraft.monolith.api.entity.EntityType;
 import gg.warcraft.monolith.api.entity.event.EntityFatalDamageEvent;
 import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
@@ -70,17 +72,31 @@ public class GameObjectivesAndPointsHandler {
 
     @Subscribe
     public void onEntityFatalDamageEvent(EntityFatalDamageEvent event) {
+        if (event.getEntityType() != EntityType.PLAYER) {
+            return;
+        }
+
         Player player = playerQueryService.getPlayer(event.getEntityId());
         if (player != null) {
             UUID killerId = event.getDamage().getSource().getEntityId();
             if (killerId != null) {
                 Player killer = playerQueryService.getPlayer(killerId);
                 if (killer != null) {
-                    Game activeGame = gameRepository.getActiveGame();
-                    Map<LegendsTeam, Integer> newPoints = activeGame.getPoints();
-                    int currentTeamPoints = newPoints.getOrDefault(killer.getTeam(), 0);
-                    int newTeamPoints = currentTeamPoints + 1;
-                    newPoints.put((LegendsTeam) killer.getTeam(), newTeamPoints);
+                    LegendsTeam killerTeam = (LegendsTeam) killer.getTeam();
+                    if (killerTeam != null) {
+                        Game activeGame = gameRepository.getActiveGame();
+                        Map<LegendsTeam, Integer> newPoints = activeGame.getPoints();
+                        int currentTeamPoints = newPoints.getOrDefault(killerTeam, 0);
+                        int newTeamPoints = activeGame.getType() == GameType.SKIRMISH
+                                ? currentTeamPoints + 3
+                                : currentTeamPoints + 1;
+                        newPoints.put(killerTeam, newTeamPoints);
+
+                        Game newGame = activeGame.getCopyer()
+                                .withPoints(newPoints)
+                                .copy();
+                        gameRepository.save(newGame);
+                    }
                 }
             }
         }
