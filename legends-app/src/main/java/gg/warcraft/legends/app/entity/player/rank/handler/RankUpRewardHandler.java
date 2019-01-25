@@ -47,6 +47,7 @@ public class RankUpRewardHandler implements CommandHandler {
             int newRankUpRewardsClaimed = rankUpRewardsClaimed + 1;
             Map<LootCrateType, Integer> rewards = rankUpRewards.get(newRankUpRewardsClaimed);
             if (rewards.isEmpty()) {
+                rankUpRewardsClaimed = newRankUpRewardsClaimed;
                 continue;
             }
 
