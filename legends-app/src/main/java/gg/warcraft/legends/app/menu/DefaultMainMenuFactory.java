@@ -13,6 +13,7 @@ import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.ShopMenuFactory;
 import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
 import gg.warcraft.legends.api.menu.TeamMenuFactory;
+import gg.warcraft.monolith.api.command.service.CommandCommandService;
 import gg.warcraft.monolith.api.entity.attribute.Attributes;
 import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.Button;
@@ -35,6 +36,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     private static final String GRAY = ColorCode.GRAY.toString();
 
     private final LegendsPlayerQueryService legendsPlayerQueryService;
+    private final CommandCommandService commandCommandService;
     private final MenuCommandService menuCommandService;
     private final MenuBuilderFactory menuBuilderFactory;
     private final ButtonBuilderFactory buttonBuilderFactory;
@@ -49,6 +51,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
 
     @Inject
     public DefaultMainMenuFactory(LegendsPlayerQueryService legendsPlayerQueryService,
+                                  CommandCommandService commandCommandService,
                                   MenuCommandService menuCommandService, MenuBuilderFactory menuBuilderFactory,
                                   ButtonBuilderFactory buttonBuilderFactory,
                                   SpecializationMenuFactory specializationMenuFactory,
@@ -57,6 +60,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
                                   ChallengesMenuFactory challengesMenuFactory, ShopMenuFactory shopMenuFactory,
                                   HelpMenuFactory helpMenuFactory, StringUtils stringUtils) {
         this.legendsPlayerQueryService = legendsPlayerQueryService;
+        this.commandCommandService = commandCommandService;
         this.menuCommandService = menuCommandService;
         this.menuBuilderFactory = menuBuilderFactory;
         this.buttonBuilderFactory = buttonBuilderFactory;
@@ -141,10 +145,6 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         UUID playerId = player.getId();
         String playerName = player.getName();
         ButtonBuilder builder = buttonBuilderFactory.createSkullButtonBuilder(playerName, playerName);
-        builder.addTooltip("This is you! If you need any help check");
-        builder.addTooltip("out the Help Menu, which is the last item");
-        builder.addTooltip("in this menu, or ask any member of staff.");
-        builder.addTooltip("");
         createCombatView(player).forEach(builder::addTooltip);
         builder.addTooltip("");
         createRankView(player).forEach(builder::addTooltip);
@@ -153,14 +153,21 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         builder.addTooltip("");
         createCurrenciesView(player).forEach(builder::addTooltip);
         builder.addTooltip("");
-        builder.addTooltip("[SHIFT LEFT CLICK] To change your class");
-        builder.addTooltip("[SHIFT RIGHT CLICK] To change your race");
+        builder.addTooltip("[LEFT CLICK] To change your class");
+        builder.addTooltip("[RIGHT CLICK] To change your race");
+        if (player.getRankUpRewardsClaimed() < player.getRank().getLevel()) {
+            builder.addTooltip("");
+            builder.addTooltip(ColorCode.GREEN + "[SHIFT RIGHT CLICK] To claim your rank up rewards");
+        }
 
         builder.withAction(action -> {
-            if (action.isShiftLeftClick()) {
+            if (action.isShiftRightClick()) {
+                commandCommandService.dispatchCommandFor("claimrankuprewards", playerId);
+                menuCommandService.closeMenu(playerId);
+            } else if (action.isLeftClick()) {
                 Menu menu = specializationMenuFactory.createSpecializationMenu(playerId);
                 menuCommandService.showMenu(menu, playerId);
-            } else if (action.isShiftRightClick()) {
+            } else if (action.isRightClick()) {
                 Menu menu = teamMenuFactory.createTeamMenu(playerId);
                 menuCommandService.showMenu(menu, playerId);
             }
