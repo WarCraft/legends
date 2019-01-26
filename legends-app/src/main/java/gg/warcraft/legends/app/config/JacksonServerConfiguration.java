@@ -20,14 +20,12 @@ public class JacksonServerConfiguration implements ServerConfiguration {
     private final List<String> humanRankSuffixes;
     private final List<String> orcRankSuffixes;
     private final List<Integer> rankFavorTable;
-    private final String prestigeChar;
     private final Map<String, Integer> objectivePoints;
     private final List<LootCrateConfiguration> lootCrates;
     private final Map<Integer, Map<LootCrateType, Integer>> rankUpRewards;
 
     @JsonCreator
     public JacksonServerConfiguration(@JsonProperty("spawnLocations") Map<LegendsTeam, OrientedLocationConfiguration> spawnLocations,
-                                      @JsonProperty("prestigeChar") String prestigeChar,
                                       @JsonProperty("rankPrefixes") List<RankPrefixConfiguration> rankPrefixes,
                                       @JsonProperty("humanRankSuffixes") List<String> humanRankSuffixes,
                                       @JsonProperty("orcRankSuffixes") List<String> orcRankSuffixes,
@@ -36,7 +34,6 @@ public class JacksonServerConfiguration implements ServerConfiguration {
                                       @JsonProperty("lootCrates") List<LootCrateConfiguration> lootCrates,
                                       @JsonProperty("rankUpRewards") Map<Integer, Map<LootCrateType, Integer>> rankUpRewards) {
         this.spawnLocations = spawnLocations;
-        this.prestigeChar = prestigeChar;
         this.rankPrefixes = rankPrefixes;
         this.humanRankSuffixes = humanRankSuffixes;
         this.orcRankSuffixes = orcRankSuffixes;
@@ -69,11 +66,6 @@ public class JacksonServerConfiguration implements ServerConfiguration {
     @Override
     public List<Integer> getRankFavorTable() {
         return new ArrayList<>(rankFavorTable);
-    }
-
-    @Override
-    public String getPrestigeChar() {
-        return prestigeChar;
     }
 
     @Override

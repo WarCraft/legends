@@ -20,8 +20,6 @@ public interface ServerConfiguration {
 
     List<Integer> getRankFavorTable();
 
-    String getPrestigeChar();
-
     Map<String, Integer> getObjectivePoints();
 
     List<LootCrateConfiguration> getLootCrates();

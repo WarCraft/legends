@@ -22,7 +22,7 @@ public class SimpleRank implements Rank {
         this.favor = favor;
         this.requiredFavor = requiredFavor;
         if (prestige > 0) {
-            String prestigePrefix = new String(new char[prestige]).replace("\0", "★");
+            String prestigePrefix = new String(new char[prestige]).replace("\0", "✯");
             this.formattedName = prestigePrefix + " " + name;
         } else {
             this.formattedName = name;
