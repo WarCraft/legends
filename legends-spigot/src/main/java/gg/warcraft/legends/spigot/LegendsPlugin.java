@@ -272,7 +272,7 @@ public class LegendsPlugin extends JavaPlugin {
         MenuCommandHandler menuCommandHandler = injector.getInstance(MenuCommandHandler.class);
         commandCommandService.createCommand("me", Lists.newArrayList("menu", "monolith", "help"), menuCommandHandler);
         commandCommandService.createCommand("team", Lists.newArrayList("race"), menuCommandHandler);
-        commandCommandService.createCommand("spec", Lists.newArrayList("specialization", "class", "kits"), menuCommandHandler);
+        commandCommandService.createCommand("class", Lists.newArrayList("kit", "kits"), menuCommandHandler);
         commandCommandService.createCommand("dec", Lists.newArrayList("decoration", "decorations"), menuCommandHandler);
         commandCommandService.createCommand("pet", Lists.newArrayList("pets", "minipet", "minipets", "mp"), menuCommandHandler);
 
