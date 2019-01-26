@@ -2,6 +2,7 @@ package gg.warcraft.legends.app.combat.warrior.effect;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.legends.app.combat.EntityLocationSupplier;
 import gg.warcraft.monolith.api.effect.Effect;
 import gg.warcraft.monolith.api.effect.EffectFactory;
 import gg.warcraft.monolith.api.effect.EffectRenderer;
@@ -33,10 +34,8 @@ public class GrudgeEffect implements Cancellable {
                         EffectVectorsFactory effectVectorsFactory, EffectRendererFactory effectRendererFactory,
                         EffectFactory effectFactory, TimeUtils timeUtils, @Assisted Entity target,
                         @Assisted Duration duration) {
-        Supplier<Location> locationSupplier = () -> {
-            Entity entity = entityQueryService.getEntity(target.getId());
-            return entity.getLocation().add(OFFSET);
-        };
+        EntityLocationSupplier entityLocationSupplier = new EntityLocationSupplier(entityQueryService, target);
+        Supplier<Location> locationSupplier = () -> entityLocationSupplier.get().add(OFFSET);
         Duration period = timeUtils.createDurationInTicks(PERIOD_IN_TICKS);
         this.effect = effectFactory.createPeriodicEffect(locationSupplier, period);
         this.effect.cancel(duration);

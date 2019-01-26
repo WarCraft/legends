@@ -2,6 +2,7 @@ package gg.warcraft.legends.app.combat.warrior.effect;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.legends.app.combat.EntityLocationSupplier;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.effect.Effect;
 import gg.warcraft.monolith.api.effect.EffectFactory;
@@ -37,10 +38,7 @@ public class StandYourGroundEffect implements Runnable, Cancellable {
         this.effectVectorsFactory = effectVectorsFactory;
         this.effectRendererFactory = effectRendererFactory;
 
-        Supplier<Location> locationSupplier = () -> {
-            Entity entity = entityQueryService.getEntity(target.getId());
-            return entity.getLocation();
-        };
+        Supplier<Location> locationSupplier = new EntityLocationSupplier(entityQueryService, target);
         this.effect = effectFactory.createDynamicEffect(locationSupplier, this);
         this.particle = particleFactory.createSimpleParticle(ParticleType.CRIT_MAGIC);
 
