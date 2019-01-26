@@ -6,6 +6,8 @@ public interface Rank {
 
     String getName();
 
+    String getFormattedName();
+
     int getLevel();
 
     int getPrestige();
@@ -15,7 +17,4 @@ public interface Rank {
     int getFavor();
 
     int getRequiredFavor();
-
-    @Override
-    String toString();
 }

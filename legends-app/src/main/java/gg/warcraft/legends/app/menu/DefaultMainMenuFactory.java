@@ -88,13 +88,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
 
     List<String> createRankView(LegendsPlayer player) {
         Rank rank = player.getRank();
-        int prestige = rank.getPrestige();
-        String name = rank.getName();
-        String formattedRank = name;
-        if (prestige > 0) {
-            String prestigePrefix = new String(new char[prestige]).replace("\0", "★");
-            formattedRank = prestigePrefix + " " + name;
-        }
+        String formattedRank = rank.getFormattedName();
 
         List<String> rankView = new ArrayList<>();
         rankView.add("Rank:");
