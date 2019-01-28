@@ -18,6 +18,7 @@ import java.util.UUID;
 
 public class CritPassive extends AbstractRacialPassive implements CombatStatusEffect {
     private static final String EFFECT_NAME = "Crit";
+    private static final float DEFAULT_CRIT = 5;
     private static final float CRIT_MODIFIER = 0.5f;
     private static final Random random;
 
@@ -48,7 +49,7 @@ public class CritPassive extends AbstractRacialPassive implements CombatStatusEf
 
         Entity entity = entityQueryService.getEntity(getEntityId());
         float crit = entity.getAttributes().getValue(LegendsAttribute.CRIT);
-        float critChance = crit * 0.005f;
+        float critChance = (crit + DEFAULT_CRIT) * 0.01f;
         if (random.nextFloat() <= critChance) {
             CombatValueModifier damageModifier =
                     combatFactory.createCombatValueModifier(CombatValueModifierType.PERCENT, CRIT_MODIFIER, this);
