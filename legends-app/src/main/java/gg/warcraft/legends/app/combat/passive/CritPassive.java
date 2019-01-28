@@ -19,7 +19,7 @@ import java.util.UUID;
 public class CritPassive extends AbstractRacialPassive implements CombatStatusEffect {
     private static final String EFFECT_NAME = "Crit";
     private static final float DEFAULT_CRIT = 5;
-    private static final float CRIT_MODIFIER = 0.5f;
+    private static final float CRIT_MODIFIER = 1; // a modifier of 1 means double damage (value is additive)
     private static final Random random;
 
     static {
