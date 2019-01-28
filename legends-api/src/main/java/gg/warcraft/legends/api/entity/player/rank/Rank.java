@@ -6,11 +6,15 @@ public interface Rank {
 
     String getName();
 
+    String getFormattedName();
+
     int getLevel();
 
     int getPrestige();
 
     ColorCode getColor();
+
+    int getFavor();
 
     int getRequiredFavor();
 }

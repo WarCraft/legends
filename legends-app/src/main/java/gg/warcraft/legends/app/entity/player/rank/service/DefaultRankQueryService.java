@@ -22,21 +22,12 @@ public class DefaultRankQueryService implements RankQueryService {
     }
 
     @Override
-    public Rank getRank(int level) {
-        return rankRepository.getRank(level);
-    }
-
-    @Override
     public Rank getRank(LegendsTeam team, int favor) {
         NavigableMap<Integer, Rank> ranks = rankRepository.getRanks(team);
         if (ranks == null || ranks.isEmpty()) {
-            return new SimpleRank(WAYFARER_NAME, 1, 0, WAYFARER_COLOR, 1);
+            return new SimpleRank(WAYFARER_NAME, 1, 0, WAYFARER_COLOR, 0, 1000000);
         }
 
-        int maxFavor = rankRepository.getMaxFavor();
-        int adjustedFavor = favor % maxFavor;
-        Rank rank = ranks.floorEntry(adjustedFavor).getValue();
-        int prestige = favor / maxFavor;
-        return new SimpleRank(rank.getName(), rank.getLevel(), prestige, rank.getColor(), rank.getRequiredFavor());
+        return ranks.floorEntry(favor).getValue();
     }
 }

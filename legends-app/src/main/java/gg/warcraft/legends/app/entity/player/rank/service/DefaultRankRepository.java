@@ -4,6 +4,7 @@ import com.google.inject.Singleton;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
+import gg.warcraft.legends.api.item.crate.LootCrateType;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,20 +14,12 @@ import java.util.TreeMap;
 
 @Singleton
 public class DefaultRankRepository implements RankRepository {
-    private final Map<Integer, Rank> ranksByLevel;
     private final Map<String, NavigableMap<Integer, Rank>> ranksByFavor;
-
-    private int maxFavor;
+    private final Map<Integer, Map<LootCrateType, Integer>> rankUpRewards;
 
     public DefaultRankRepository() {
-        this.ranksByLevel = new HashMap<>();
         this.ranksByFavor = new HashMap<>();
-    }
-
-    @Override
-    public Rank getRank(int level) {
-        int clippedLevel = level % ranksByLevel.size();
-        return ranksByLevel.get(clippedLevel);
+        this.rankUpRewards = new HashMap<>();
     }
 
     @Override
@@ -39,14 +32,8 @@ public class DefaultRankRepository implements RankRepository {
     }
 
     @Override
-    public int getMaxFavor() {
-        return maxFavor;
-    }
-
-    @Override
-    public void save(Map<Integer, Rank> ranksByLevel) {
-        this.ranksByLevel.clear();
-        this.ranksByLevel.putAll(ranksByLevel);
+    public Map<Integer, Map<LootCrateType, Integer>> getRankUpRewards() {
+        return new HashMap<>(rankUpRewards);
     }
 
     @Override
@@ -55,7 +42,8 @@ public class DefaultRankRepository implements RankRepository {
     }
 
     @Override
-    public void save(int maxFavor) {
-        this.maxFavor = maxFavor;
+    public void save(Map<Integer, Map<LootCrateType, Integer>> rankUpRewards) {
+        this.rankUpRewards.clear();
+        this.rankUpRewards.putAll(rankUpRewards);
     }
 }

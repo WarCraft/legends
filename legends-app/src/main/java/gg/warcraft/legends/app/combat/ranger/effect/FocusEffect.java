@@ -2,6 +2,7 @@ package gg.warcraft.legends.app.combat.ranger.effect;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.legends.app.combat.EntityLocationSupplier;
 import gg.warcraft.monolith.api.effect.Effect;
 import gg.warcraft.monolith.api.effect.EffectFactory;
 import gg.warcraft.monolith.api.effect.EffectRenderer;
@@ -31,10 +32,8 @@ public class FocusEffect implements Cancellable {
     public FocusEffect(EntityQueryService entityQueryService, ParticleFactory particleFactory,
                        EffectVectorsFactory effectVectorsFactory, EffectRendererFactory effectRendererFactory,
                        EffectFactory effectFactory, @Assisted Entity target) {
-        Supplier<Location> locationSupplier = () -> {
-            Entity entity = entityQueryService.getEntity(target.getId());
-            return entity.getLocation().add(OFFSET);
-        };
+        EntityLocationSupplier entityLocationSupplier = new EntityLocationSupplier(entityQueryService, target);
+        Supplier<Location> locationSupplier = () -> entityLocationSupplier.get().add(OFFSET);
         this.effect = effectFactory.createSimpleEffect(locationSupplier);
 
         Particle particle = particleFactory.createSimpleParticle(ParticleType.REDSTONE);

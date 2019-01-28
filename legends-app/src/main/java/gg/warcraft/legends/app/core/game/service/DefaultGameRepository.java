@@ -62,7 +62,7 @@ public class DefaultGameRepository implements GameRepository {
         });
         Map<String, LegendsTeam> objectives = new HashMap<>();
         item.getObjectives().forEach((objectiveId, teamName) -> {
-            LegendsTeam team = LegendsTeam.valueOf(teamName);
+            LegendsTeam team = teamName == null ? null : LegendsTeam.valueOf(teamName);
             objectives.put(objectiveId, team);
         });
         Duration timer = timeUtils.createDurationInSeconds(item.getTimer());

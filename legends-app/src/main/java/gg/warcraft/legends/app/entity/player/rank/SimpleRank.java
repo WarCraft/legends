@@ -7,22 +7,36 @@ import java.util.Objects;
 
 public class SimpleRank implements Rank {
     private final String name;
+    private final String formattedName;
     private final int level;
     private final int prestige;
     private final ColorCode color;
+    private final int favor;
     private final int requiredFavor;
 
-    public SimpleRank(String name, int level, int prestige, ColorCode color, int requiredFavor) {
+    public SimpleRank(String name, int level, int prestige, ColorCode color, int favor, int requiredFavor) {
         this.name = name;
         this.level = level;
         this.prestige = prestige;
         this.color = color;
+        this.favor = favor;
         this.requiredFavor = requiredFavor;
+        if (prestige > 0) {
+            String prestigePrefix = new String(new char[prestige]).replace("\0", "✯");
+            this.formattedName = prestigePrefix + " " + name;
+        } else {
+            this.formattedName = name;
+        }
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getFormattedName() {
+        return formattedName;
     }
 
     @Override
@@ -38,6 +52,11 @@ public class SimpleRank implements Rank {
     @Override
     public ColorCode getColor() {
         return color;
+    }
+
+    @Override
+    public int getFavor() {
+        return favor;
     }
 
     @Override

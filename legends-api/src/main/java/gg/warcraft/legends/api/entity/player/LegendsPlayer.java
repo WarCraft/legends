@@ -28,6 +28,8 @@ public interface LegendsPlayer extends Player {
 
     long getSpecializationCooldown();
 
+    int getRankUpRewardsClaimed();
+
     @Override
     LegendsTeam getTeam();
 }

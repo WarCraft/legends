@@ -14,6 +14,7 @@ import gg.warcraft.legends.api.core.game.service.GameQueryService;
 import gg.warcraft.legends.api.core.service.SpawnLocationRepository;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.rank.service.RankCommandService;
+import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.item.config.EquipmentConfiguration;
 import gg.warcraft.legends.api.item.config.service.EquipmentConfigurationRepository;
@@ -41,11 +42,13 @@ import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
 import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
 import gg.warcraft.legends.app.core.tutorial.handler.TutorialCommandHandler;
 import gg.warcraft.legends.app.core.tutorial.handler.TutorialStepHandler;
+import gg.warcraft.legends.app.entity.player.handler.GoldCommandHandler;
 import gg.warcraft.legends.app.entity.player.handler.PlayerCurrencyEventHandler;
-import gg.warcraft.legends.app.entity.player.handler.PlayerInspectionHandler;
+import gg.warcraft.legends.app.entity.player.handler.PlayerInspectHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangeHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangedHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PrestigeAttributesHandler;
+import gg.warcraft.legends.app.entity.player.rank.handler.RankUpRewardHandler;
 import gg.warcraft.legends.app.item.crate.handler.LootCrateUseHandler;
 import gg.warcraft.legends.app.item.equipment.handler.EquipmentUpgradeUseHandler;
 import gg.warcraft.legends.app.item.handler.EquipmentAttributesHandler;
@@ -114,11 +117,16 @@ public class LegendsPlugin extends JavaPlugin {
         rankCommandService.initializeRanks(LegendsTeam.ORC, serverConfiguration.getRankFavorTable(),
                 serverConfiguration.getRankPrefixes(), serverConfiguration.getOrcRankSuffixes());
 
+        RankRepository rankRepository = injector.getInstance(RankRepository.class);
+        rankRepository.save(serverConfiguration.getRankUpRewards());
+
         GameCommandService gameCommandService = injector.getInstance(GameCommandService.class);
         gameCommandService.readConfiguration(serverConfiguration);
 
         LootCrateCommandService lootCrateCommandService = injector.getInstance(LootCrateCommandService.class);
         lootCrateCommandService.readConfiguration(serverConfiguration);
+
+
     }
 
     void loadNpcsConfiguration() {
@@ -158,6 +166,8 @@ public class LegendsPlugin extends JavaPlugin {
     }
 
     void initializeLegendsHandlers(boolean isProduction) {
+        CommandCommandService commandCommandService = injector.getInstance(CommandCommandService.class);
+
         UniversalBlockBreakPlaceHandler universalBlockBreakPlaceHandler =
                 injector.getInstance(UniversalBlockBreakPlaceHandler.class);
         eventService.subscribe(universalBlockBreakPlaceHandler);
@@ -215,9 +225,13 @@ public class LegendsPlugin extends JavaPlugin {
         PrestigeAttributesHandler prestigeAttributesHandler = injector.getInstance(PrestigeAttributesHandler.class);
         eventService.subscribe(prestigeAttributesHandler);
 
+        RankUpRewardHandler rankUpRewardHandler = injector.getInstance(RankUpRewardHandler.class);
+        eventService.subscribe(rankUpRewardHandler);
+        commandCommandService.createCommand("claimrankuprewards", Collections.emptyList(), rankUpRewardHandler);
+
         // Player inspect
-        PlayerInspectionHandler playerInspectionHandler = injector.getInstance(PlayerInspectionHandler.class);
-        eventService.subscribe(playerInspectionHandler);
+        PlayerInspectHandler playerInspectHandler = injector.getInstance(PlayerInspectHandler.class);
+        eventService.subscribe(playerInspectHandler);
 
         // Game / Objectives
         ObjectiveAnnouncementHandler objectiveAnnouncementHandler =
@@ -258,9 +272,12 @@ public class LegendsPlugin extends JavaPlugin {
         MenuCommandHandler menuCommandHandler = injector.getInstance(MenuCommandHandler.class);
         commandCommandService.createCommand("me", Lists.newArrayList("menu", "monolith", "help"), menuCommandHandler);
         commandCommandService.createCommand("team", Lists.newArrayList("race"), menuCommandHandler);
-        commandCommandService.createCommand("spec", Lists.newArrayList("specialization", "class", "kits"), menuCommandHandler);
+        commandCommandService.createCommand("class", Lists.newArrayList("kit", "kits"), menuCommandHandler);
         commandCommandService.createCommand("dec", Lists.newArrayList("decoration", "decorations"), menuCommandHandler);
         commandCommandService.createCommand("pet", Lists.newArrayList("pets", "minipet", "minipets", "mp"), menuCommandHandler);
+
+        GoldCommandHandler goldCommandHandler = injector.getInstance(GoldCommandHandler.class);
+        commandCommandService.createCommand("gold", Collections.emptyList(), goldCommandHandler);
 
         FishCommandHandler fishCommandHandler = injector.getInstance(FishCommandHandler.class);
         commandCommandService.createCommand("fish", Collections.emptyList(), fishCommandHandler);

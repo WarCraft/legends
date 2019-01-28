@@ -94,6 +94,19 @@ public class SimpleLegendsPlayer implements LegendsPlayer, PlayerDecorator {
     }
 
     @Override
+    public int getRankUpRewardsClaimed() {
+        try {
+            String rankUpRewardsClaimed = getData(LegendsPlayerData.RANK_UP_REWARDS_CLAIMED.getName());
+            if (rankUpRewardsClaimed == null) {
+                return 0;
+            }
+            return Integer.parseInt(rankUpRewardsClaimed);
+        } catch (NumberFormatException ex) {
+            return Integer.MAX_VALUE;
+        }
+    }
+
+    @Override
     public LegendsTeam getTeam() {
         Team team = player.getTeam();
         if (team instanceof LegendsTeam) {
