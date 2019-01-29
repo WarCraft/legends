@@ -61,7 +61,7 @@ public class PrestigeAttributesHandler {
     }
 
     private void updateModifiers(UUID playerId, int prestige, int level) {
-        int clippedLevel = level % 50; // NOTE this is hacky, 50 is the prestige level
+        int clippedLevel = level % 50; // NOTE this is hacky, 49/50 is the prestige level
         int attributeValue = attributeModifierValues.get(clippedLevel / 7);
 
         // remove existing modifiers

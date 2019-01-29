@@ -45,7 +45,8 @@ public class RankUpRewardHandler implements CommandHandler {
         int rankUpRewardsClaimed = player.getRankUpRewardsClaimed();
         while (rankUpRewardsClaimed < playerLevel) {
             int newRankUpRewardsClaimed = rankUpRewardsClaimed + 1;
-            Map<LootCrateType, Integer> rewards = rankUpRewards.get(newRankUpRewardsClaimed);
+            int prestigeAdjustedRewardsClaimed = newRankUpRewardsClaimed % 49;
+            Map<LootCrateType, Integer> rewards = rankUpRewards.get(prestigeAdjustedRewardsClaimed);
             if (rewards.isEmpty()) {
                 rankUpRewardsClaimed = newRankUpRewardsClaimed;
                 continue;
