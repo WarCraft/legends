@@ -5,8 +5,6 @@ import gg.warcraft.legends.api.menu.DecorationsMenuFactory;
 import gg.warcraft.legends.api.menu.LegendsMenuFactory;
 import gg.warcraft.legends.api.shop.DecorationPack;
 import gg.warcraft.legends.api.shop.DecorationPackId;
-import gg.warcraft.legends.api.shop.profile.ShopProfile;
-import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
 import gg.warcraft.legends.api.shop.service.ShopQueryService;
 import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
@@ -26,18 +24,16 @@ public class DefaultDecorationsMenuFactory extends AbstractMenuFactory implement
     private static final String GREEN = ColorCode.GREEN.toString();
 
     private final ShopQueryService shopQueryService;
-    private final ShopProfileQueryService shopProfileQueryService;
     private final LegendsMenuFactory legendsMenuFactory;
 
     @Inject
     public DefaultDecorationsMenuFactory(ShopQueryService shopQueryService,
-                                         ShopProfileQueryService shopProfileQueryService,
-                                         MenuCommandService menuCommandService, LegendsMenuFactory legendsMenuFactory,
+                                         MenuCommandService menuCommandService,
+                                         LegendsMenuFactory legendsMenuFactory,
                                          MenuBuilderFactory menuBuilderFactory,
                                          ButtonBuilderFactory buttonBuilderFactory) {
         super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
         this.shopQueryService = shopQueryService;
-        this.shopProfileQueryService = shopProfileQueryService;
         this.legendsMenuFactory = legendsMenuFactory;
     }
 
@@ -52,16 +48,15 @@ public class DefaultDecorationsMenuFactory extends AbstractMenuFactory implement
         return builder.build();
     }
 
-    Button createDecorationButton(DecorationPackId packId, ShopProfile shopProfile) {
-        DecorationPack pack = shopQueryService.getDecorationPack(packId.toString());
+    Button createDecorationButton(UUID playerId, DecorationPackId decorationPackId) {
+        DecorationPack pack = shopQueryService.getDecorationPack(decorationPackId.toString());
         ButtonBuilder builder = createSimpleButtonBuilder(pack.getIcon(), pack.getName());
         pack.getLore().forEach(builder::addTooltip);
         builder.addTooltip("");
         builder.addTooltip(GREEN + "[CLICK] To browse your " + pack.getName() + " decorations");
 
         builder.withAction(action -> {
-            UUID playerId = shopProfile.getPlayerId();
-            Menu packMenu = legendsMenuFactory.createDecorationPackMenu(playerId);
+            Menu packMenu = legendsMenuFactory.createDecorationPackMenu(playerId, decorationPackId);
             showMenu(packMenu, playerId);
         });
         return builder.build();
@@ -69,34 +64,32 @@ public class DefaultDecorationsMenuFactory extends AbstractMenuFactory implement
 
     @Override
     public Menu createDecorationsMenu(UUID playerId) {
-        ShopProfile shopProfile = shopProfileQueryService.getProfile(playerId);
-        MenuBuilder builder = createMenuBuilder("Decorations", MenuSize.ONE_ROW);
+        MenuBuilder builder = createMenuBuilder("Decorations", MenuSize.THREE_ROWS);
         builder.addButton(0, createInfoButton());
         builder.addButton(9, createBackButton(playerId, legendsMenuFactory::createCollectablesMenuFactory));
 
-        builder.addButton(2, createDecorationButton(DecorationPackId.BASIC, shopProfile));
-        builder.addButton(3, createDecorationButton(DecorationPackId.FABRICS, shopProfile));
-        builder.addButton(4, createDecorationButton(DecorationPackId.GLASS, shopProfile));
-        builder.addButton(5, createDecorationButton(DecorationPackId.FLOWERS, shopProfile));
-        builder.addButton(6, createDecorationButton(DecorationPackId.GARDENING, shopProfile));
-        builder.addButton(7, createDecorationButton(DecorationPackId.STONE, shopProfile));
-        builder.addButton(8, createDecorationButton(DecorationPackId.DESERT, shopProfile));
+        builder.addButton(2, createDecorationButton(playerId, DecorationPackId.BASIC));
+        builder.addButton(3, createDecorationButton(playerId, DecorationPackId.FABRICS));
+        builder.addButton(4, createDecorationButton(playerId, DecorationPackId.GLASS));
+        builder.addButton(5, createDecorationButton(playerId, DecorationPackId.STONE));
+        builder.addButton(6, createDecorationButton(playerId, DecorationPackId.WOOD));
+        builder.addButton(7, createDecorationButton(playerId, DecorationPackId.DESERT));
+        builder.addButton(8, createDecorationButton(playerId, DecorationPackId.CLAY));
 
-        builder.addButton(11, createDecorationButton(DecorationPackId.WOOD, shopProfile));
-        builder.addButton(12, createDecorationButton(DecorationPackId.NATURE, shopProfile));
-        builder.addButton(13, createDecorationButton(DecorationPackId.ORES, shopProfile));
-        builder.addButton(14, createDecorationButton(DecorationPackId.GEMSTONES, shopProfile));
-        builder.addButton(15, createDecorationButton(DecorationPackId.CLAY, shopProfile));
-        builder.addButton(16, createDecorationButton(DecorationPackId.ART, shopProfile));
-        builder.addButton(17, createDecorationButton(DecorationPackId.MUSIC, shopProfile));
+        builder.addButton(11, createDecorationButton(playerId, DecorationPackId.NATURE));
+        builder.addButton(12, createDecorationButton(playerId, DecorationPackId.GARDENING));
+        builder.addButton(13, createDecorationButton(playerId, DecorationPackId.FLOWERS));
+        builder.addButton(14, createDecorationButton(playerId, DecorationPackId.ORES));
+        builder.addButton(15, createDecorationButton(playerId, DecorationPackId.GEMSTONES));
+        builder.addButton(16, createDecorationButton(playerId, DecorationPackId.CONCRETE));
+        builder.addButton(17, createDecorationButton(playerId, DecorationPackId.TERRACOTTA));
 
-        // builder.addButton(20, createDecorationButton(DecorationPackId.?, shopProfile));
-        builder.addButton(21, createDecorationButton(DecorationPackId.CONCRETE, shopProfile));
-        builder.addButton(22, createDecorationButton(DecorationPackId.TERRACOTTA, shopProfile));
-        builder.addButton(23, createDecorationButton(DecorationPackId.BLURPLE, shopProfile));
-        builder.addButton(24, createDecorationButton(DecorationPackId.ICE_AND_FIRE, shopProfile));
-        builder.addButton(25, createDecorationButton(DecorationPackId.NETHER, shopProfile));
-        builder.addButton(26, createDecorationButton(DecorationPackId.MOB_HEADS, shopProfile));
+        builder.addButton(20, createDecorationButton(playerId, DecorationPackId.BLURPLE));
+        builder.addButton(21, createDecorationButton(playerId, DecorationPackId.NETHER));
+        builder.addButton(22, createDecorationButton(playerId, DecorationPackId.ICE_AND_FIRE));
+        builder.addButton(23, createDecorationButton(playerId, DecorationPackId.ART));
+        builder.addButton(24, createDecorationButton(playerId, DecorationPackId.MOB_HEADS));
+        builder.addButton(25, createDecorationButton(playerId, DecorationPackId.MUSIC));
         return builder.build();
     }
 }

@@ -1,5 +1,6 @@
 package gg.warcraft.legends.api.menu;
 
+import gg.warcraft.legends.api.shop.DecorationPackId;
 import gg.warcraft.monolith.api.menu.Menu;
 
 import java.util.UUID;
@@ -16,7 +17,7 @@ public interface LegendsMenuFactory {
 
     Menu createDecorationsMenu(UUID playerId);
 
-    Menu createDecorationPackMenu(UUID playerId);
+    Menu createDecorationPackMenu(UUID playerId, DecorationPackId decorationPackId);
 
     Menu createMiniPetsMenu(UUID playerId);
 

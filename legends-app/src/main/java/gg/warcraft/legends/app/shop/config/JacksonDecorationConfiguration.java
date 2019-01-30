@@ -17,10 +17,9 @@ public class JacksonDecorationConfiguration extends JacksonShopItemConfiguration
                                           @JsonProperty("type") ShopItemType type,
                                           @JsonProperty("rarity") ItemRarity rarity,
                                           @JsonProperty("name") String name,
-                                          @JsonProperty("lore") List<String> lore,
-                                          @JsonProperty("id") ItemType itemType) {
-        super(id, type, rarity, name, itemType, null, lore);
-        this.itemType = itemType;
+                                          @JsonProperty("lore") List<String> lore) {
+        super(id, type, rarity, name, ItemType.valueOf(id), null, lore);
+        this.itemType = getIcon();
     }
 
     @Override

@@ -25,6 +25,8 @@ import gg.warcraft.legends.api.item.BlueprintBuilder;
 import gg.warcraft.legends.api.item.BlueprintBuilderFactory;
 import gg.warcraft.legends.api.item.ConsumableBuilder;
 import gg.warcraft.legends.api.item.ConsumableBuilderFactory;
+import gg.warcraft.legends.api.item.DecorationBuilder;
+import gg.warcraft.legends.api.item.DecorationBuilderFactory;
 import gg.warcraft.legends.api.item.config.service.EquipmentConfigurationRepository;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilder;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
@@ -107,6 +109,7 @@ import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerCommand
 import gg.warcraft.legends.app.entity.player.service.DefaultLegendsPlayerQueryService;
 import gg.warcraft.legends.app.item.SimpleBlueprintBuilder;
 import gg.warcraft.legends.app.item.SimpleConsumableBuilder;
+import gg.warcraft.legends.app.item.SimpleDecorationBuilder;
 import gg.warcraft.legends.app.item.config.service.DefaultEquipmentConfigurationRepository;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateBuilder;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateReader;
@@ -324,6 +327,12 @@ public abstract class AbstractLegendsModule extends PrivateModule {
                 .implement(LootCrateReader.class, SimpleLootCrateReader.class)
                 .build(LootCrateReaderFactory.class));
         expose(LootCrateReaderFactory.class);
+
+        // Decoration bindings
+        install(new FactoryModuleBuilder()
+                .implement(DecorationBuilder.class, SimpleDecorationBuilder.class)
+                .build(DecorationBuilderFactory.class));
+        expose(DecorationBuilderFactory.class);
     }
 
     private void configureMenu() {

@@ -10,6 +10,7 @@ import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.MiniPetsMenuFactory;
 import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
 import gg.warcraft.legends.api.menu.TeamMenuFactory;
+import gg.warcraft.legends.api.shop.DecorationPackId;
 import gg.warcraft.monolith.api.menu.Menu;
 
 import java.util.UUID;
@@ -68,8 +69,8 @@ public class DefaultLegendsMenuFactory implements LegendsMenuFactory {
     }
 
     @Override
-    public Menu createDecorationPackMenu(UUID playerId) {
-        return decorationPackMenuFactory.createDecorationItemsMenu(playerId);
+    public Menu createDecorationPackMenu(UUID playerId, DecorationPackId decorationPackId) {
+        return decorationPackMenuFactory.createDecorationItemsMenu(playerId, decorationPackId);
     }
 
     @Override
