@@ -1,6 +1,7 @@
 package gg.warcraft.legends.app.menu;
 
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
 import gg.warcraft.legends.api.menu.DecorationPackMenuFactory;
 import gg.warcraft.legends.api.menu.DecorationsMenuFactory;
@@ -21,6 +22,7 @@ public class DefaultLegendsMenuFactory implements LegendsMenuFactory {
     private final DecorationsMenuFactory decorationsMenuFactory;
     private final DecorationPackMenuFactory decorationPackMenuFactory;
     private final MiniPetsMenuFactory miniPetsMenuFactory;
+    private final CollectablesMenuFactory collectablesMenuFactory;
 
     @Inject
     public DefaultLegendsMenuFactory(MainMenuFactory mainMenuFactory,
@@ -28,7 +30,8 @@ public class DefaultLegendsMenuFactory implements LegendsMenuFactory {
                                      TeamMenuFactory teamMenuFactory, DailyLoginMenuFactory dailyLoginMenuFactory,
                                      DecorationsMenuFactory decorationsMenuFactory,
                                      DecorationPackMenuFactory decorationPackMenuFactory,
-                                     MiniPetsMenuFactory miniPetsMenuFactory) {
+                                     MiniPetsMenuFactory miniPetsMenuFactory,
+                                     CollectablesMenuFactory collectablesMenuFactory) {
         this.mainMenuFactory = mainMenuFactory;
         this.specializationMenuFactory = specializationMenuFactory;
         this.teamMenuFactory = teamMenuFactory;
@@ -36,6 +39,7 @@ public class DefaultLegendsMenuFactory implements LegendsMenuFactory {
         this.decorationsMenuFactory = decorationsMenuFactory;
         this.decorationPackMenuFactory = decorationPackMenuFactory;
         this.miniPetsMenuFactory = miniPetsMenuFactory;
+        this.collectablesMenuFactory = collectablesMenuFactory;
     }
 
     @Override
@@ -71,5 +75,10 @@ public class DefaultLegendsMenuFactory implements LegendsMenuFactory {
     @Override
     public Menu createMiniPetsMenu(UUID playerId) {
         return miniPetsMenuFactory.createMiniPetsMenu(playerId);
+    }
+
+    @Override
+    public Menu createCollectablesMenuFactory(UUID playerId) {
+        return collectablesMenuFactory.createCollectablesMenu(playerId);
     }
 }

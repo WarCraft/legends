@@ -19,4 +19,6 @@ public interface LegendsMenuFactory {
     Menu createDecorationPackMenu(UUID playerId);
 
     Menu createMiniPetsMenu(UUID playerId);
+
+    Menu createCollectablesMenuFactory(UUID playerId);
 }

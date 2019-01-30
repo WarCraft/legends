@@ -19,5 +19,6 @@ public enum DecorationPackId {
     TERRACOTTA,
     CONCRETE,
     BLURPLE,
-    NETHER
+    NETHER,
+    MOB_HEADS
 }
