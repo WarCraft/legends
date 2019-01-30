@@ -2,7 +2,7 @@ package gg.warcraft.legends.api.shop;
 
 public enum DecorationId {
     // Basic pack
-    BED,
+    RED_BED,
     BOOKSHELF,
     CHEST,
     GLASS,
@@ -138,16 +138,15 @@ public enum DecorationId {
     COBBLESTONE_STAIRS,
     COBBLESTONE_WALL,
     CRACKED_STONE_BRICKS,
-    DRIORITE,
+    DIORITE,
     GRANITE,
     GRAVEL,
     MOSS_STONE,
     MOSSY_COBBLESTONE_WALL,
     MOSSY_STONE_BRICKS,
-    MOSSY_STONE_STAIRS,
     PILLAR_QUARTZ_BLOCK,
     POLISHED_ANDESITE,
-    POLISHED_DRIORITE,
+    POLISHED_DIORITE,
     POLISHED_GRANITE,
     QUARTZ_BLOCK,
     QUARTZ_SLAB,
