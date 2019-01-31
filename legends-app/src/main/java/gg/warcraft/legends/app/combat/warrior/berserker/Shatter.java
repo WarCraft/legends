@@ -17,6 +17,7 @@ import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.location.Location;
@@ -25,6 +26,7 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 
 public class Shatter extends AbstractAbility implements RangedAbility {
+    private final EntityQueryService entityQueryService;
     private final AbilityCommandService abilityCommandService;
     private final EntityCommandService entityCommandService;
     private final MovementFactory movementFactory;
@@ -35,12 +37,16 @@ public class Shatter extends AbstractAbility implements RangedAbility {
     private final float launch;
     private final PotionEffect confusion;
 
+    private boolean grounded = false;
+
     @Inject
-    public Shatter(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
+    public Shatter(EntityQueryService entityQueryService,
+                   AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
                    TaskService taskService, MovementFactory movementFactory, HitboxFactory hitboxFactory,
                    TimeUtils timeUtils, @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                    @Assisted("target") @Nullable Entity meleeTarget) {
         super(caster.getId(), snapshot);
+        this.entityQueryService = entityQueryService;
         this.abilityCommandService = abilityCommandService;
         this.entityCommandService = entityCommandService;
         this.movementFactory = movementFactory;
@@ -55,8 +61,8 @@ public class Shatter extends AbstractAbility implements RangedAbility {
         Vector3f direction = caster.getEyeLocation().getDirection();
         entityCommandService.leap(caster.getId(), direction, distance);
 
-        Movement movement = movementFactory.createEntityMovement(caster.getId());
-        Hitbox hitbox = hitboxFactory.createSphericalHitbox(0.1f, entity -> false);
+        Movement movement = movementFactory.createStationaryMovement(caster.getLocation());
+        Hitbox hitbox = hitboxFactory.createVoidHitbox();
         taskService.runLater(() -> abilityCommandService.createProjectile(this, movement, hitbox, () -> {}),
                 timeUtils.createDurationInMillis(500));
     }
@@ -76,12 +82,25 @@ public class Shatter extends AbstractAbility implements RangedAbility {
 
     @Override
     public boolean onGrounded(Location location) {
-        float radius = getSnapshot().getFloat(AbilityConfigurationValue.RADIUS);
-        Movement movement = movementFactory.createOneOffMovement(location);
-        Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != casterTeam);
-        abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
+        return false;
+    }
 
-        // TODO play sound
-        return true;
+    @Override
+    public boolean onTick() {
+        if (grounded) {
+            return false;
+        }
+
+        Entity caster = entityQueryService.getEntity(getCasterId());
+        if (caster.isGrounded()) {
+            grounded = true;
+
+            float radius = getSnapshot().getFloat(AbilityConfigurationValue.RADIUS);
+            Movement movement = movementFactory.createOneOffMovement(caster.getLocation());
+            Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != casterTeam);
+            abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
+            return true;
+        }
+        return false;
     }
 }
