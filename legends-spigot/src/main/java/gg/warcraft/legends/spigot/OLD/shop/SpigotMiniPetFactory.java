@@ -65,6 +65,11 @@ public class SpigotMiniPetFactory implements MiniPetFactory {
 
     @Subscribe
     public void onServerShutdownEvent(ServerShutdownEvent event) {
-        playerIdToPetId.values().forEach(id -> server.getEntity(id).remove());
+        playerIdToPetId.values().forEach(id -> {
+            Entity entity = server.getEntity(id);
+            if (entity != null) {
+                entity.remove();
+            }
+        });
     }
 }
