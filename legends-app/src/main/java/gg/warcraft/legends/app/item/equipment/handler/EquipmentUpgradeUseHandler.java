@@ -90,11 +90,16 @@ public class EquipmentUpgradeUseHandler {
 
         Item newUpgrade = offhand.withStackSize(offhand.getStackSize() - 1);
 
-        playerCommandService.setEquipment(playerId, EquipmentSlot.OFF_HAND, newUpgrade);
-        playerCommandService.setEquipment(playerId, EquipmentSlot.MAIN_HAND, newEquipment);
+        try {
+            playerCommandService.setEquipment(playerId, EquipmentSlot.OFF_HAND, newUpgrade);
+            playerCommandService.setEquipment(playerId, EquipmentSlot.MAIN_HAND, newEquipment);
 
-        worldCommandService.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
-                SoundCategory.AMBIENT, 1, 1);
+            worldCommandService.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+                    SoundCategory.AMBIENT, 1, 1);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
         return true;
     }
 
