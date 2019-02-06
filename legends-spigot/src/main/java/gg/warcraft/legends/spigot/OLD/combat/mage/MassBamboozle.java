@@ -65,11 +65,11 @@ public class MassBamboozle extends AbstractAbility implements RangedAbility {
             throw new IllegalStateException("Failed to cast Mass Bamboozle with null entity and block targets");
         }
 
-        Cancellable effect = mageEffectFactory.createMassBamboozleCountdownEffect(location);
-
         CombatValue radius = snapshot.getValue(AbilityConfigurationValue.RADIUS);
         Movement movement = movementFactory.createOneOffMovement(location);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius.getModifiedValue(), entity -> entity.getTeam() != caster.getTeam());
+
+        Cancellable effect = mageEffectFactory.createMassBamboozleCountdownEffect(location);
         Duration countdown = snapshot.getDuration("countdown");
         taskService.runLater(() -> {
             effect.cancel();

@@ -88,7 +88,7 @@ public class Shatter extends AbstractAbility implements RangedAbility {
     @Override
     public boolean onTick() {
         if (grounded) {
-            return false;
+            return true;
         }
 
         Entity caster = entityQueryService.getEntity(getCasterId());
