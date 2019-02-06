@@ -8,6 +8,7 @@ import gg.warcraft.legends.api.combat.LegendsSpecializationType;
 import gg.warcraft.legends.api.config.ServerConfiguration;
 import gg.warcraft.legends.api.entity.player.LegendsCurrency;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
+import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.item.ConsumableBuilder;
 import gg.warcraft.legends.api.item.ConsumableBuilderFactory;
@@ -35,7 +36,6 @@ import gg.warcraft.legends.api.shop.service.ShopQueryService;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrate;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateDropTable;
 import gg.warcraft.monolith.api.core.PluginLogger;
-import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.util.ColorCode;
@@ -50,7 +50,7 @@ import java.util.logging.Logger;
 
 public class DefaultLootCrateCommandService implements LootCrateCommandService {
     private final LootCrateRepository lootCrateRepository;
-    private final PlayerCommandService playerCommandService;
+    private final LegendsPlayerCommandService playerCommandService;
     private final LegendsPlayerQueryService playerQueryService;
     private final EquipmentGeneratorFactory equipmentGeneratorFactory;
     private final EquipmentUpgradeGeneratorFactory equipmentUpgradeGeneratorFactory;
@@ -64,7 +64,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
 
     @Inject
     public DefaultLootCrateCommandService(LootCrateRepository lootCrateRepository,
-                                          PlayerCommandService playerCommandService,
+                                          LegendsPlayerCommandService playerCommandService,
                                           LegendsPlayerQueryService playerQueryService,
                                           EquipmentGeneratorFactory equipmentGeneratorFactory,
                                           EquipmentUpgradeGeneratorFactory equipmentUpgradeGeneratorFactory,
@@ -144,6 +144,10 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         String strippedName = stringUtils.removeChatCodes(itemName);
         String prefix = stringUtils.isVowel(strippedName.charAt(0)) ? "an " : "a ";
         playerCommandService.sendNotification(playerId, "You received " + prefix + itemName + ColorCode.YELLOW + "!");
+    }
+
+    private void sendCurrencyNotification(UUID playerId, int amount, String currencyName) {
+        playerCommandService.sendNotification(playerId, "You received " + amount + " " + currencyName + ColorCode.YELLOW + "!");
     }
 
     private void sendUnlockedNotification(UUID playerId, String unlockName, String unlockType) {
@@ -327,6 +331,30 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         return true;
     }
 
+    private boolean awardGold(UUID playerId, ItemRarity rarity) {
+        int amount = 0;
+        switch (rarity) {
+            case COMMON:
+                amount = 50;
+                break;
+            case RARE:
+                amount = 150;
+                break;
+            case EPIC:
+                amount = 500;
+                break;
+            case LEGENDARY:
+                amount = 1000;
+                break;
+            case ANCIENT:
+                amount = 1500;
+                break;
+        }
+        playerCommandService.addGold(playerId, amount);
+        sendCurrencyNotification(playerId, amount, "gold");
+        return true;
+    }
+
     @Override
     public boolean openCrate(UUID playerId, LootCrateType type) {
         LootCrate crate = lootCrateRepository.get(type);
@@ -358,6 +386,8 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
                 return awardRandomMiniPet(playerId, dropRarity);
             case SPECIALIZATION:
                 return awardRandomSpecialization(playerId, dropRarity);
+            case GOLD:
+                return awardGold(playerId, dropRarity);
             default:
                 return false;
         }

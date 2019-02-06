@@ -4,6 +4,7 @@ public enum LootCrateDropType {
     CONSUMABLE,
     EQUIPMENT,
     EQUIPMENT_UPGRADE,
+    GOLD,
 
     // Shop categories
     DECORATION,
