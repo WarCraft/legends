@@ -6,12 +6,22 @@ import gg.warcraft.legends.api.core.game.Game;
 import gg.warcraft.legends.api.core.game.GameType;
 import gg.warcraft.legends.api.core.game.Skirmish;
 import gg.warcraft.legends.api.core.game.War;
+import gg.warcraft.legends.api.core.game.event.SkirmishFinishedEvent;
+import gg.warcraft.legends.api.core.game.event.SkirmishStartedEvent;
+import gg.warcraft.legends.api.core.game.event.WarFinishedEvent;
+import gg.warcraft.legends.api.core.game.event.WarResumedEvent;
+import gg.warcraft.legends.api.core.game.event.WarStartedEvent;
 import gg.warcraft.legends.api.core.game.event.WarTallyEvent;
 import gg.warcraft.legends.api.core.game.service.GameCommandService;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.app.core.game.SimpleSkirmish;
 import gg.warcraft.legends.app.core.game.SimpleWar;
+import gg.warcraft.legends.app.core.game.event.SimpleSkirmishFinishedEvent;
+import gg.warcraft.legends.app.core.game.event.SimpleSkirmishStartedEvent;
+import gg.warcraft.legends.app.core.game.event.SimpleWarFinishedEvent;
+import gg.warcraft.legends.app.core.game.event.SimpleWarResumedEvent;
+import gg.warcraft.legends.app.core.game.event.SimpleWarStartedEvent;
 import gg.warcraft.legends.app.core.game.event.SimpleWarTallyEvent;
 import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.util.Duration;
@@ -149,6 +159,9 @@ public class DefaultGameCommandService implements GameCommandService {
         gameRepository.save(newWar);
         gameRepository.saveActiveGame(newWarId);
         gameRepository.saveCurrentWar(newWarId);
+
+        WarStartedEvent warStartedEvent = new SimpleWarStartedEvent(newWarId);
+        eventService.publish(warStartedEvent);
     }
 
     @Override
@@ -240,6 +253,9 @@ public class DefaultGameCommandService implements GameCommandService {
                 .withEndTime(endTime)
                 .copy();
         gameRepository.save(updatedWar);
+
+        WarFinishedEvent warFinishedEvent = new SimpleWarFinishedEvent(war.getId());
+        eventService.publish(warFinishedEvent);
     }
 
     @Override
@@ -251,7 +267,14 @@ public class DefaultGameCommandService implements GameCommandService {
                 null);
         gameRepository.save(newSkirmish);
         gameRepository.saveActiveGame(newSkirmishId);
+
+        // WarPausedEvent warPausedEvent = new SimpleWarPausedEvent(?);
+        // eventService.publish(warPausedEvent);
+
         initializeActiveGame();
+
+        SkirmishStartedEvent skirmishStartedEvent = new SimpleSkirmishStartedEvent(newSkirmishId);
+        eventService.publish(skirmishStartedEvent);
     }
 
     @Override
@@ -278,6 +301,13 @@ public class DefaultGameCommandService implements GameCommandService {
         gameRepository.save(currentWar);
 
         gameRepository.saveActiveGame(currentWar.getId());
+
+        SkirmishFinishedEvent skirmishFinishedEvent = new SimpleSkirmishFinishedEvent(skirmish.getId());
+        eventService.publish(skirmishFinishedEvent);
+
         initializeActiveGame();
+
+        WarResumedEvent warResumedEvent = new SimpleWarResumedEvent(currentWar.getId());
+        eventService.publish(warResumedEvent);
     }
 }
