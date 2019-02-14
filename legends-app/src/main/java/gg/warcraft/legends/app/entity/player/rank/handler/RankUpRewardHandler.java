@@ -68,7 +68,7 @@ public class RankUpRewardHandler implements CommandHandler {
             });
             rankUpRewardsClaimed = newRankUpRewardsClaimed;
         }
-        playerCommandService.setData(playerId, LegendsPlayerData.RANK_UP_REWARDS_CLAIMED.getName(),
+        playerCommandService.setData(playerId, LegendsPlayerData.RANK_UP_REWARDS_CLAIMED.getKey(),
                 "" + rankUpRewardsClaimed);
     }
 

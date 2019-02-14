@@ -40,7 +40,7 @@ public class DefaultLegendsPlayerCommandService implements LegendsPlayerCommandS
 
     @Override
     public void setTutorialStep(UUID playerId, TutorialStep step) {
-        playerCommandService.setData(playerId, LegendsPlayerData.TUTORIAL_STEP.getName(), step.name());
+        playerCommandService.setData(playerId, LegendsPlayerData.TUTORIAL_STEP.getKey(), step.name());
     }
 
     @Override

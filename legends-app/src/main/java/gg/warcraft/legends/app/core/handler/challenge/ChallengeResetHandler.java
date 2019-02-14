@@ -5,7 +5,7 @@ import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 
 import java.util.UUID;
 
-public class DailyChallengeResetHandler {
+public class ChallengeResetHandler {
 
     private void resetDailies(UUID playerId) {
 

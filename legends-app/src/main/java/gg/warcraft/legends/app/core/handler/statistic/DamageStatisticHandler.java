@@ -29,7 +29,7 @@ public class DamageStatisticHandler {
         }
 
         playerCommandService.increaseStatistics(entityId, (int) event.getDamage().getModifiedValue(),
-                LegendsStatistic.DAILY_DAMAGE_DONE, LegendsStatistic.WAR_DAMAGE_DONE,
+                LegendsStatistic.DAILY_DAMAGE_DONE, LegendsStatistic.WARRY_DAMAGE_DONE,
                 LegendsStatistic.ALLTIME_DAMAGE_DONE);
     }
 
@@ -41,7 +41,7 @@ public class DamageStatisticHandler {
         }
 
         playerCommandService.increaseStatistics(entityId, (int) event.getDamage().getModifiedValue(),
-                LegendsStatistic.DAILY_DAMAGE_TAKEN, LegendsStatistic.WAR_DAMAGE_TAKEN,
+                LegendsStatistic.DAILY_DAMAGE_TAKEN, LegendsStatistic.WARRY_DAMAGE_TAKEN,
                 LegendsStatistic.ALLTIME_DAMAGE_TAKEN);
     }
 

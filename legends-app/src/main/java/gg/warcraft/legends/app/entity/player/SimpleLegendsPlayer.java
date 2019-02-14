@@ -66,7 +66,7 @@ public class SimpleLegendsPlayer implements LegendsPlayer, PlayerDecorator {
     @Override
     public TutorialStep getTutorialStep() {
         try {
-            return TutorialStep.valueOf(getData(LegendsPlayerData.TUTORIAL_STEP.getName()));
+            return TutorialStep.valueOf(getData(LegendsPlayerData.TUTORIAL_STEP.getKey()));
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return TutorialStep.START;
@@ -86,7 +86,7 @@ public class SimpleLegendsPlayer implements LegendsPlayer, PlayerDecorator {
     @Override
     public long getSpecializationCooldown() {
         try {
-            return Long.parseLong(getData(LegendsPlayerData.SPECIALIZATION_COOLDOWN.getName()));
+            return Long.parseLong(getData(LegendsPlayerData.SPECIALIZATION_COOLDOWN.getKey()));
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return 0;
@@ -96,7 +96,7 @@ public class SimpleLegendsPlayer implements LegendsPlayer, PlayerDecorator {
     @Override
     public int getRankUpRewardsClaimed() {
         try {
-            String rankUpRewardsClaimed = getData(LegendsPlayerData.RANK_UP_REWARDS_CLAIMED.getName());
+            String rankUpRewardsClaimed = getData(LegendsPlayerData.RANK_UP_REWARDS_CLAIMED.getKey());
             if (rankUpRewardsClaimed == null) {
                 return 0;
             }

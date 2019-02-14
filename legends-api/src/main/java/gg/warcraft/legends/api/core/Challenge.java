@@ -1,5 +1,10 @@
 package gg.warcraft.legends.api.core;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 public enum Challenge {
     // Daily Challenges
     DAILY_KILLS("Daily Kills", 3, 75),
@@ -17,19 +22,19 @@ public enum Challenge {
     DAILY_CHESTS_OPENED("Daily Chests Opened", 3, 75),
 
     // War Challenges
-    WAR_KILLS("War Kills", 25, 600),
+    WARRY_KILLS("War Kills", 25, 600),
 
-    WAR_DAMAGE_DONE("War Damage Done", 500, 600),
-    WAR_HEALING_DONE("War Healing Done", 200, 600),
+    WARRY_DAMAGE_DONE("War Damage Done", 500, 600),
+    WARRY_HEALING_DONE("War Healing Done", 200, 600),
 
-    WAR_CAMPS_CAPTURED("War Camps Captured", 5, 600),
-    WAR_OUTPOSTS_CAPTURED("War Outposts Captured", 3, 600),
-    WAR_KEEPS_CAPTURED("War Keeps Captured", 2, 600),
+    WARRY_CAMPS_CAPTURED("War Camps Captured", 5, 600),
+    WARRY_OUTPOSTS_CAPTURED("War Outposts Captured", 3, 600),
+    WARRY_KEEPS_CAPTURED("War Keeps Captured", 2, 600),
 
-    WAR_TIME_PLAYED("War Time Played", 300, 600),
-    WAR_MONSTER_KILLS("War Monster Kills", 100, 600),
-    WAR_RESOURCES_GATHERED("War Resources Gathered", 250, 600),
-    WAR_CHESTS_OPENED("War Chests Opened", 35, 600),
+    WARRY_TIME_PLAYED("War Time Played", 300, 600),
+    WARRY_MONSTER_KILLS("War Monster Kills", 100, 600),
+    WARRY_RESOURCES_GATHERED("War Resources Gathered", 250, 600),
+    WARRY_CHESTS_OPENED("War Chests Opened", 35, 600),
 
     // Alltime Challenges
     ALLTIME_KILLS_1("All-time Kills", 10, 1),
@@ -161,6 +166,39 @@ public enum Challenge {
 
     SPECIAL_RESOURCES_GATHERED("Nice", 80085, 20000);
 
+    private static final EnumSet<Challenge> dailies;
+    private static final EnumSet<Challenge> warries;
+    private static final EnumSet<Challenge> allTimes;
+
+    static {
+        Supplier<EnumSet<Challenge>> setSupplier =
+                () -> EnumSet.noneOf(Challenge.class);
+
+        dailies = Arrays.stream(Challenge.values())
+                .filter(Challenge::isDaily)
+                .collect(Collectors.toCollection(setSupplier));
+
+        warries = Arrays.stream(Challenge.values())
+                .filter(Challenge::isWarry)
+                .collect(Collectors.toCollection(setSupplier));
+
+        allTimes = Arrays.stream(Challenge.values())
+                .filter(Challenge::isAllTime)
+                .collect(Collectors.toCollection(setSupplier));
+    }
+
+    public static EnumSet<Challenge> getDailies() {
+        return EnumSet.copyOf(dailies);
+    }
+
+    public static EnumSet<Challenge> getWarries() {
+        return EnumSet.copyOf(warries);
+    }
+
+    public static EnumSet<Challenge> getAllTimes() {
+        return EnumSet.copyOf(allTimes);
+    }
+
     private final String name;
     private final int requiredValue;
     private final int favorReward;
@@ -181,5 +219,17 @@ public enum Challenge {
 
     public int getFavorReward() {
         return favorReward;
+    }
+
+    public boolean isDaily() {
+        return name().contains("DAILY");
+    }
+
+    public boolean isWarry() {
+        return name().contains("WARRY");
+    }
+
+    public boolean isAllTime() {
+        return name().contains("ALLTIME") || name().contains("SPECIAL");
     }
 }
