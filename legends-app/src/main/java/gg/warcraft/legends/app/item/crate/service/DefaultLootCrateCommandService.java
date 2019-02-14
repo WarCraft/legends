@@ -24,7 +24,9 @@ import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
 import gg.warcraft.legends.api.item.equipment.EquipmentGeneratorFactory;
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeGenerator;
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeGeneratorFactory;
+import gg.warcraft.legends.api.shop.Decoration;
 import gg.warcraft.legends.api.shop.DecorationId;
+import gg.warcraft.legends.api.shop.DecorationPack;
 import gg.warcraft.legends.api.shop.DecorationPackId;
 import gg.warcraft.legends.api.shop.MiniPetId;
 import gg.warcraft.legends.api.shop.ShopItem;
@@ -165,6 +167,14 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
                 amount + " Fragments " + ColorCode.YELLOW + "instead.");
     }
 
+    private void sendPackReimbursementNotification(UUID playerId, String unlockName, int count, int amount) {
+        String strippedName = stringUtils.removeChatCodes(unlockName);
+        String prefix = stringUtils.isVowel(strippedName.charAt(0)) ? "an " : "a ";
+        playerCommandService.sendNotification(playerId, "You opened " + prefix + unlockName + ColorCode.YELLOW +
+                " Decoration Pack" + ", but you already had " + count + " of its decorations unlocked so were granted " +
+                ColorCode.GOLD + amount + " Fragments " + ColorCode.YELLOW + "in their stead.");
+    }
+
     private boolean awardRandomConsumable(UUID playerId, ItemRarity rarity) {
         ItemType type;
         String name;
@@ -273,7 +283,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
     }
 
     private boolean awardRandomDecorationPack(UUID playerId, ItemRarity rarity) {
-        ShopItem decorationPack = shopQueryService.getRandomItem(ShopItemType.DECORATION_PACK, rarity);
+        DecorationPack decorationPack = (DecorationPack) shopQueryService.getRandomItem(ShopItemType.DECORATION_PACK, rarity);
         if (decorationPack == null) {
             pluginLogger.warning("Failed to award random decoration pack to player " + playerId +
                     ", none exist for rarity " + rarity);
@@ -282,13 +292,22 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
 
         DecorationPackId decorationPackId = DecorationPackId.valueOf(decorationPack.getId());
         ShopProfile profile = shopProfileQueryService.getProfile(playerId);
-        if (profile.hasDecorationPack(decorationPackId)) {
-            int reimbursement = (int) (decorationPack.getPrice() * 0.33);
+
+        int duplicateCount = 0;
+        int reimbursement = 0;
+        for (Decoration decoration : decorationPack.getDecorations()) {
+            DecorationId decorationId = DecorationId.valueOf(decoration.getId());
+            if (profile.hasDecoration(decorationId)) {
+                duplicateCount += 1;
+                reimbursement += (int) (decoration.getPrice() * 0.33);
+            }
+        }
+
+        shopProfileCommandService.unlockDecorationPack(decorationPackId, playerId, false);
+        sendUnlockedNotification(playerId, decorationPack.getName(), "Decoration Pack");
+        if (duplicateCount > 0) {
             playerCommandService.addCurrency(playerId, LegendsCurrency.FRAGMENTS, reimbursement);
-            sendReimbursementNotification(playerId, decorationPack.getName(), "Decoration Pack", reimbursement);
-        } else {
-            shopProfileCommandService.unlockDecorationPack(decorationPackId, playerId, false);
-            sendUnlockedNotification(playerId, decorationPack.getName(), "Decoration Pack");
+            sendPackReimbursementNotification(playerId, decorationPack.getName(), duplicateCount, reimbursement);
         }
         return true;
     }

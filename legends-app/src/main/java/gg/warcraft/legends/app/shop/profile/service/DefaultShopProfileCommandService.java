@@ -5,6 +5,7 @@ import gg.warcraft.legends.api.entity.player.LegendsCurrency;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.shop.DecorationId;
+import gg.warcraft.legends.api.shop.DecorationPack;
 import gg.warcraft.legends.api.shop.DecorationPackId;
 import gg.warcraft.legends.api.shop.MiniPetId;
 import gg.warcraft.legends.api.shop.PromotionId;
@@ -60,7 +61,6 @@ public class DefaultShopProfileCommandService implements ShopProfileCommandServi
         newDecorations.add(decorationId);
         ShopProfile newProfile = new SimpleShopProfile(playerId, profile.isGrandfathered(),
                 EnumSet.copyOf(newDecorations),
-                EnumSet.copyOf(profile.getDecorationPacks()),
                 EnumSet.copyOf(profile.getMiniPets()),
                 EnumSet.copyOf(profile.getPromotions()));
         shopProfileRepository.save(newProfile);
@@ -68,17 +68,17 @@ public class DefaultShopProfileCommandService implements ShopProfileCommandServi
 
     @Override
     public void unlockDecorationPack(DecorationPackId decorationPackId, UUID playerId, boolean requiresPayment) {
-        ShopItem decorationPack = shopRepository.getItem(decorationPackId.toString());
+        DecorationPack decorationPack = (DecorationPack) shopRepository.getItem(decorationPackId.toString());
         if (requiresPayment) {
             takePayment(decorationPack, playerId);
         }
 
         ShopProfile profile = shopProfileRepository.getProfile(playerId);
-        Set<DecorationPackId> newDecorationPacks = profile.getDecorationPacks();
-        newDecorationPacks.add(decorationPackId);
+        Set<DecorationId> newDecorations = profile.getDecorations();
+        decorationPack.getDecorations().forEach(decoration ->
+                newDecorations.add(DecorationId.valueOf(decoration.getId())));
         ShopProfile newProfile = new SimpleShopProfile(playerId, profile.isGrandfathered(),
-                EnumSet.copyOf(profile.getDecorations()),
-                EnumSet.copyOf(newDecorationPacks),
+                EnumSet.copyOf(newDecorations),
                 EnumSet.copyOf(profile.getMiniPets()),
                 EnumSet.copyOf(profile.getPromotions()));
         shopProfileRepository.save(newProfile);
@@ -96,7 +96,6 @@ public class DefaultShopProfileCommandService implements ShopProfileCommandServi
         newMiniPets.add(miniPetId);
         ShopProfile newProfile = new SimpleShopProfile(playerId, profile.isGrandfathered(),
                 EnumSet.copyOf(profile.getDecorations()),
-                EnumSet.copyOf(profile.getDecorationPacks()),
                 EnumSet.copyOf(newMiniPets),
                 EnumSet.copyOf(profile.getPromotions()));
         shopProfileRepository.save(newProfile);
@@ -114,7 +113,6 @@ public class DefaultShopProfileCommandService implements ShopProfileCommandServi
         newPromotions.add(promotionId);
         ShopProfile newProfile = new SimpleShopProfile(playerId, profile.isGrandfathered(),
                 EnumSet.copyOf(profile.getDecorations()),
-                EnumSet.copyOf(profile.getDecorationPacks()),
                 EnumSet.copyOf(profile.getMiniPets()),
                 EnumSet.copyOf(newPromotions));
         shopProfileRepository.save(newProfile);

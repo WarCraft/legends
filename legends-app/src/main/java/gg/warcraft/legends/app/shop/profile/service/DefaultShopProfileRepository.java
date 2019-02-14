@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import gg.warcraft.legends.api.shop.DecorationId;
-import gg.warcraft.legends.api.shop.DecorationPackId;
 import gg.warcraft.legends.api.shop.MiniPetId;
 import gg.warcraft.legends.api.shop.PromotionId;
 import gg.warcraft.legends.api.shop.profile.ShopProfile;
@@ -43,16 +42,13 @@ public class DefaultShopProfileRepository implements ShopProfileRepository {
         EnumSet<DecorationId> decorations = item.getDecorations().stream()
                 .map(DecorationId::valueOf)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(DecorationId.class)));
-        EnumSet<DecorationPackId> decorationPacks = item.getDecorationPacks().stream()
-                .map(DecorationPackId::valueOf)
-                .collect(Collectors.toCollection(() -> EnumSet.noneOf(DecorationPackId.class)));
         EnumSet<MiniPetId> miniPets = item.getMiniPets().stream()
                 .map(MiniPetId::valueOf)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(MiniPetId.class)));
         EnumSet<PromotionId> promotions = item.getPromotions().stream()
                 .map(PromotionId::valueOf)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(PromotionId.class)));
-        return new SimpleShopProfile(playerId, grandfathered, decorations, decorationPacks, miniPets, promotions);
+        return new SimpleShopProfile(playerId, grandfathered, decorations, miniPets, promotions);
     }
 
     @Override
@@ -82,10 +78,9 @@ public class DefaultShopProfileRepository implements ShopProfileRepository {
         UUID playerId = profile.getPlayerId();
         boolean grandfathered = profile.isGrandfathered();
         Set<String> decorations = mapSetToStringSet(profile.getDecorations());
-        Set<String> decorationPacks = mapSetToStringSet(profile.getDecorationPacks());
         Set<String> miniPets = mapSetToStringSet(profile.getMiniPets());
         Set<String> promotions = mapSetToStringSet(profile.getPromotions());
-        return new ShopProfileItem(playerId, grandfathered, decorations, decorationPacks, miniPets, promotions);
+        return new ShopProfileItem(playerId, grandfathered, decorations, miniPets, promotions);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package gg.warcraft.legends.app.shop.profile;
 
 import gg.warcraft.legends.api.shop.DecorationId;
-import gg.warcraft.legends.api.shop.DecorationPackId;
 import gg.warcraft.legends.api.shop.MiniPetId;
 import gg.warcraft.legends.api.shop.PromotionId;
 import gg.warcraft.legends.api.shop.profile.ShopProfile;
@@ -14,17 +13,14 @@ public class SimpleShopProfile implements ShopProfile {
     private final UUID playerId;
     private final boolean grandfathered;
     private final EnumSet<DecorationId> decorations;
-    private final EnumSet<DecorationPackId> decorationPacks;
     private final EnumSet<MiniPetId> miniPets;
     private final EnumSet<PromotionId> promotions;
 
     public SimpleShopProfile(UUID playerId, boolean grandfathered, EnumSet<DecorationId> decorations,
-                             EnumSet<DecorationPackId> decorationPacks, EnumSet<MiniPetId> miniPets,
-                             EnumSet<PromotionId> promotions) {
+                             EnumSet<MiniPetId> miniPets, EnumSet<PromotionId> promotions) {
         this.playerId = playerId;
         this.grandfathered = grandfathered;
         this.decorations = decorations;
-        this.decorationPacks = decorationPacks;
         this.miniPets = miniPets;
         this.promotions = promotions;
     }
@@ -37,11 +33,6 @@ public class SimpleShopProfile implements ShopProfile {
     @Override
     public Set<DecorationId> getDecorations() {
         return EnumSet.copyOf(decorations);
-    }
-
-    @Override
-    public Set<DecorationPackId> getDecorationPacks() {
-        return EnumSet.copyOf(decorationPacks);
     }
 
     @Override
@@ -62,11 +53,6 @@ public class SimpleShopProfile implements ShopProfile {
     @Override
     public boolean hasDecoration(DecorationId id) {
         return decorations.contains(id);
-    }
-
-    @Override
-    public boolean hasDecorationPack(DecorationPackId id) {
-        return decorationPacks.contains(id);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package gg.warcraft.legends.api.shop.profile;
 
 import gg.warcraft.legends.api.shop.DecorationId;
-import gg.warcraft.legends.api.shop.DecorationPackId;
 import gg.warcraft.legends.api.shop.MiniPetId;
 import gg.warcraft.legends.api.shop.PromotionId;
 
@@ -14,8 +13,6 @@ public interface ShopProfile {
 
     Set<DecorationId> getDecorations();
 
-    Set<DecorationPackId> getDecorationPacks();
-
     Set<MiniPetId> getMiniPets();
 
     Set<PromotionId> getPromotions();
@@ -23,8 +20,6 @@ public interface ShopProfile {
     boolean isGrandfathered();
 
     boolean hasDecoration(DecorationId id);
-
-    boolean hasDecorationPack(DecorationPackId id);
 
     boolean hasMiniPet(MiniPetId id);
 

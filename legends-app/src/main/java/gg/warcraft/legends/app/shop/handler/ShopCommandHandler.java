@@ -86,7 +86,7 @@ public class ShopCommandHandler implements CommandHandler {
                     return false;
                 }
                 return handleFragments(arguments.get(1), arguments.get(2));
-            case "create":
+            case "crate":
                 if (arguments.size() != 3) {
                     return false;
                 }

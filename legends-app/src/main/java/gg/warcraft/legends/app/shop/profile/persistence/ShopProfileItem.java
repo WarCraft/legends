@@ -10,7 +10,6 @@ public class ShopProfileItem {
     private final UUID playerId;
     private final boolean grandfathered;
     private final Set<String> decorations;
-    private final Set<String> decorationPacks;
     private final Set<String> miniPets;
     private final Set<String> promotions;
 
@@ -18,13 +17,11 @@ public class ShopProfileItem {
     public ShopProfileItem(@JsonProperty("playerId") UUID playerId,
                            @JsonProperty("grandfathered") boolean grandfathered,
                            @JsonProperty("decorations") Set<String> decorations,
-                           @JsonProperty("decorationPacks") Set<String> decorationPacks,
                            @JsonProperty("miniPets") Set<String> miniPets,
                            @JsonProperty("promotions") Set<String> promotions) {
         this.playerId = playerId;
         this.grandfathered = grandfathered;
         this.decorations = decorations;
-        this.decorationPacks = decorationPacks;
         this.miniPets = miniPets;
         this.promotions = promotions;
     }
@@ -39,10 +36,6 @@ public class ShopProfileItem {
 
     public Set<String> getDecorations() {
         return decorations;
-    }
-
-    public Set<String> getDecorationPacks() {
-        return decorationPacks;
     }
 
     public Set<String> getMiniPets() {
