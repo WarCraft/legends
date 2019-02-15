@@ -9,6 +9,7 @@ import gg.warcraft.legends.api.ai.npc.service.NpcQueryService;
 import gg.warcraft.legends.api.ai.npc.service.NpcRepository;
 import gg.warcraft.legends.api.combat.passive.PassiveFactory;
 import gg.warcraft.legends.api.core.MetricsService;
+import gg.warcraft.legends.api.core.challenge.service.ChallengeRepository;
 import gg.warcraft.legends.api.core.game.service.GameCommandService;
 import gg.warcraft.legends.api.core.game.service.GameQueryService;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
@@ -95,6 +96,7 @@ import gg.warcraft.legends.app.combat.warrior.status.GrudgeStatusEffect;
 import gg.warcraft.legends.app.combat.warrior.status.StandYourGroundStatusEffect;
 import gg.warcraft.legends.app.combat.warrior.status.WarriorStatusEffectFactory;
 import gg.warcraft.legends.app.core.AwsMetricsService;
+import gg.warcraft.legends.app.core.challenge.service.DefaultChallengeRepository;
 import gg.warcraft.legends.app.core.game.service.DefaultGameCommandService;
 import gg.warcraft.legends.app.core.game.service.DefaultGameQueryService;
 import gg.warcraft.legends.app.core.game.service.DefaultGameRepository;
@@ -264,6 +266,10 @@ public abstract class AbstractLegendsModule extends PrivateModule {
 
         bind(PrestigeAttributesHandler.class);
         expose(PrestigeAttributesHandler.class);
+
+        // Challenge bindings
+        bind(ChallengeRepository.class).to(DefaultChallengeRepository.class);
+        expose(ChallengeRepository.class);
     }
 
     private void configureItem() {

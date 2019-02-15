@@ -1,8 +1,8 @@
-package gg.warcraft.legends.app.core.handler.challenge;
+package gg.warcraft.legends.app.core.challenge.handler;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import gg.warcraft.legends.api.core.Challenge;
+import gg.warcraft.legends.api.core.challenge.Challenge;
 import gg.warcraft.legends.api.entity.player.LegendsCurrency;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.LegendsStatistic;

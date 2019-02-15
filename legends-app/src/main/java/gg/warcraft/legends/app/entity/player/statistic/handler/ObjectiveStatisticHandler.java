@@ -1,4 +1,4 @@
-package gg.warcraft.legends.app.core.handler.statistic;
+package gg.warcraft.legends.app.entity.player.statistic.handler;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;

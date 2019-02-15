@@ -1,4 +1,4 @@
-package gg.warcraft.legends.api.core;
+package gg.warcraft.legends.api.core.challenge;
 
 import gg.warcraft.legends.api.entity.player.LegendsPlayerData;
 import gg.warcraft.legends.api.entity.player.LegendsStatistic;

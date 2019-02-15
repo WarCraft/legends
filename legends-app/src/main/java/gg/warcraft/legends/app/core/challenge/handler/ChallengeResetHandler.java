@@ -1,7 +1,8 @@
-package gg.warcraft.legends.app.core.handler.statistic;
+package gg.warcraft.legends.app.core.challenge.handler;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.core.challenge.Challenge;
 import gg.warcraft.legends.api.core.game.event.WarStartedEvent;
 import gg.warcraft.legends.api.core.game.service.GameQueryService;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
@@ -15,13 +16,13 @@ import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class StatisticResetHandler {
+public class ChallengeResetHandler {
     private final LegendsPlayerQueryService playerQueryService;
     private final LegendsPlayerCommandService playerCommandService;
     private final GameQueryService gameQueryService;
 
     @Inject
-    public StatisticResetHandler(LegendsPlayerQueryService playerQueryService,
+    public ChallengeResetHandler(LegendsPlayerQueryService playerQueryService,
                                  LegendsPlayerCommandService playerCommandService,
                                  GameQueryService gameQueryService) {
         this.playerQueryService = playerQueryService;
@@ -35,22 +36,24 @@ public class StatisticResetHandler {
         return currentNewYorkTime.getDayOfMonth();
     }
 
-    private void resetDailies(UUID playerId) {
+    private void resetDailies(UUID playerId, int currentNewYorkDay) {
         LegendsStatistic.getDailies().forEach(daily ->
                 playerCommandService.setData(playerId, daily.getKey(), "0"));
+        Challenge.getDailies().forEach(daily ->
+                playerCommandService.setData(playerId, daily.getPlayerData().getKey(), null));
 
-        int currentNewYorkDay = getCurrentNewYorkDay();
         playerCommandService.setData(playerId,
                 LegendsPlayerData.LAST_DAILY_RESET.getKey(), "" + currentNewYorkDay);
     }
 
-    private void resetWarries(UUID playerId) {
+    private void resetWarries(UUID playerId, int currentWarId) {
         LegendsStatistic.getWarries().forEach(warry ->
                 playerCommandService.setData(playerId, warry.getKey(), "0"));
+        Challenge.getWarries().forEach(warry ->
+                playerCommandService.setData(playerId, warry.getPlayerData().getKey(), null));
 
-        int currentWar = gameQueryService.getCurrentWar().getId();
         playerCommandService.setData(playerId,
-                LegendsPlayerData.LAST_WARRY_RESET.getKey(), "" + currentWar);
+                LegendsPlayerData.LAST_WARRY_RESET.getKey(), "" + currentWarId);
     }
 
     @Subscribe
@@ -66,7 +69,7 @@ public class StatisticResetHandler {
 
         int currentNewYorkDay = getCurrentNewYorkDay();
         if (currentNewYorkDay != lastPlayerDailyResetDay) {
-            resetDailies(playerId);
+            resetDailies(playerId, currentNewYorkDay);
         }
 
         // warries
@@ -75,21 +78,22 @@ public class StatisticResetHandler {
                 ? Integer.parseInt(lastPlayerWarryResetData)
                 : 0;
 
-        int currentWar = gameQueryService.getCurrentWar().getId();
-        if (lastPlayerWarryResetWar != currentWar) {
-            resetWarries(playerId);
+        int currentWarId = gameQueryService.getCurrentWar().getId();
+        if (lastPlayerWarryResetWar != currentWarId) {
+            resetWarries(playerId, currentWarId);
         }
     }
 
     @Subscribe
     public void onDailyTickEvent(DailyTickEvent event) {
+        int currentNewYorkDay = getCurrentNewYorkDay();
         playerQueryService.getOnlinePlayers().forEach(player ->
-                resetDailies(player.getId()));
+                resetDailies(player.getId(), currentNewYorkDay));
     }
 
     @Subscribe
     public void onWarStartedEvent(WarStartedEvent event) {
         playerQueryService.getOnlinePlayers().forEach(player ->
-                resetWarries(player.getId()));
+                resetWarries(player.getId(), event.getGameId()));
     }
 }

@@ -30,6 +30,9 @@ import gg.warcraft.legends.app.combat.handler.ArrowPickupHandler;
 import gg.warcraft.legends.app.combat.passive.handler.PassiveAssignmentHandler;
 import gg.warcraft.legends.app.combat.ranger.marksman.FocusHandler;
 import gg.warcraft.legends.app.config.LegendsMapperModule;
+import gg.warcraft.legends.app.core.challenge.handler.ChallengeCompletionHandler;
+import gg.warcraft.legends.app.core.challenge.handler.ChallengeCycleHandler;
+import gg.warcraft.legends.app.core.challenge.handler.ChallengeResetHandler;
 import gg.warcraft.legends.app.core.game.handler.DailySkirmishHandler;
 import gg.warcraft.legends.app.core.game.handler.GameObjectivesAndPointsHandler;
 import gg.warcraft.legends.app.core.game.handler.GameTimerHandler;
@@ -264,6 +267,16 @@ public class LegendsPlugin extends JavaPlugin {
         // Combat logging
         CombatLoggingHandler combatLoggingHandler = injector.getInstance(CombatLoggingHandler.class);
         eventService.subscribe(combatLoggingHandler);
+
+        // Challenges
+        ChallengeResetHandler challengeResetHandler = injector.getInstance(ChallengeResetHandler.class);
+        eventService.subscribe(challengeResetHandler);
+
+        ChallengeCycleHandler challengeCycleHandler = injector.getInstance(ChallengeCycleHandler.class);
+        eventService.subscribe(challengeCycleHandler);
+
+        ChallengeCompletionHandler challengeCompletionHandler = injector.getInstance(ChallengeCompletionHandler.class);
+        eventService.subscribe(challengeCompletionHandler);
     }
 
     void initializeLegendsCommands() {
