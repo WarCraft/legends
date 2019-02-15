@@ -9,6 +9,7 @@ import gg.warcraft.legends.api.shop.config.DecorationPackConfiguration;
 import gg.warcraft.legends.api.shop.config.MiniPetConfiguration;
 import gg.warcraft.legends.api.shop.config.PromotionConfiguration;
 import gg.warcraft.legends.api.shop.config.ShopConfiguration;
+import gg.warcraft.legends.api.shop.config.SpecializationConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,18 +21,21 @@ public class JacksonShopConfiguration implements ShopConfiguration {
     private final List<DecorationPackConfiguration> decorationPacks;
     private final List<MiniPetConfiguration> miniPets;
     private final List<PromotionConfiguration> promotions;
+    private final List<SpecializationConfiguration> specializations;
 
     @JsonCreator
     public JacksonShopConfiguration(@JsonProperty("prices") Map<ShopItemType, Map<ItemRarity, Integer>> prices,
                                     @JsonProperty("decorations") List<DecorationConfiguration> decorations,
                                     @JsonProperty("decorationPacks") List<DecorationPackConfiguration> decorationPacks,
                                     @JsonProperty("miniPets") List<MiniPetConfiguration> miniPets,
-                                    @JsonProperty("promotions") List<PromotionConfiguration> promotions) {
+                                    @JsonProperty("promotions") List<PromotionConfiguration> promotions,
+                                    @JsonProperty("specializations") List<SpecializationConfiguration> specializations) {
         this.prices = prices;
         this.decorations = decorations;
         this.decorationPacks = decorationPacks;
         this.miniPets = miniPets;
         this.promotions = promotions;
+        this.specializations = specializations;
     }
 
     @Override
@@ -57,5 +61,10 @@ public class JacksonShopConfiguration implements ShopConfiguration {
     @Override
     public List<PromotionConfiguration> getPromotions() {
         return new ArrayList<>(promotions);
+    }
+
+    @Override
+    public List<SpecializationConfiguration> getSpecializations() {
+        return new ArrayList<>(specializations);
     }
 }

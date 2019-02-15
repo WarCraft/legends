@@ -17,4 +17,6 @@ public interface ShopConfiguration {
     List<MiniPetConfiguration> getMiniPets();
 
     List<PromotionConfiguration> getPromotions();
+
+    List<SpecializationConfiguration> getSpecializations();
 }

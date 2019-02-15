@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import gg.warcraft.legends.api.shop.DecorationId;
 import gg.warcraft.legends.api.shop.MiniPetId;
 import gg.warcraft.legends.api.shop.PromotionId;
+import gg.warcraft.legends.api.shop.SpecializationId;
 import gg.warcraft.legends.api.shop.profile.ShopProfile;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileRepository;
 import gg.warcraft.legends.app.shop.profile.SimpleShopProfile;
@@ -48,7 +49,10 @@ public class DefaultShopProfileRepository implements ShopProfileRepository {
         EnumSet<PromotionId> promotions = item.getPromotions().stream()
                 .map(PromotionId::valueOf)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(PromotionId.class)));
-        return new SimpleShopProfile(playerId, grandfathered, decorations, miniPets, promotions);
+        EnumSet<SpecializationId> specializations = item.getSpecializations().stream()
+                .map(SpecializationId::valueOf)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(SpecializationId.class)));
+        return new SimpleShopProfile(playerId, grandfathered, decorations, miniPets, promotions, specializations);
     }
 
     @Override
@@ -80,7 +84,8 @@ public class DefaultShopProfileRepository implements ShopProfileRepository {
         Set<String> decorations = mapSetToStringSet(profile.getDecorations());
         Set<String> miniPets = mapSetToStringSet(profile.getMiniPets());
         Set<String> promotions = mapSetToStringSet(profile.getPromotions());
-        return new ShopProfileItem(playerId, grandfathered, decorations, miniPets, promotions);
+        Set<String> specializations = mapSetToStringSet(profile.getSpecializations());
+        return new ShopProfileItem(playerId, grandfathered, decorations, miniPets, promotions, specializations);
     }
 
     @Override

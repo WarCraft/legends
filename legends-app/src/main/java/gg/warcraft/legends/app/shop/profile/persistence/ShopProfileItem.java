@@ -12,18 +12,21 @@ public class ShopProfileItem {
     private final Set<String> decorations;
     private final Set<String> miniPets;
     private final Set<String> promotions;
+    private final Set<String> specializations;
 
     @JsonCreator
     public ShopProfileItem(@JsonProperty("playerId") UUID playerId,
                            @JsonProperty("grandfathered") boolean grandfathered,
                            @JsonProperty("decorations") Set<String> decorations,
                            @JsonProperty("miniPets") Set<String> miniPets,
-                           @JsonProperty("promotions") Set<String> promotions) {
+                           @JsonProperty("promotions") Set<String> promotions,
+                           @JsonProperty("specializations") Set<String> specializations) {
         this.playerId = playerId;
         this.grandfathered = grandfathered;
         this.decorations = decorations;
         this.miniPets = miniPets;
         this.promotions = promotions;
+        this.specializations = specializations;
     }
 
     public UUID getPlayerId() {
@@ -44,5 +47,9 @@ public class ShopProfileItem {
 
     public Set<String> getPromotions() {
         return promotions;
+    }
+
+    public Set<String> getSpecializations() {
+        return specializations;
     }
 }

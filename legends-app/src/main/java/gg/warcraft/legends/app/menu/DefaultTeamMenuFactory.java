@@ -6,6 +6,7 @@ import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.TeamMenuFactory;
+import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.item.ItemType;
@@ -32,16 +33,21 @@ public class DefaultTeamMenuFactory extends AbstractMenuFactory implements TeamM
 
     private final LegendsPlayerQueryService legendsPlayerQueryService;
     private final PlayerCommandService playerCommandService;
+    private final ShopProfileQueryService shopProfileQueryService;
     private final MainMenuFactory mainMenuFactory;
 
     @Inject
     public DefaultTeamMenuFactory(LegendsPlayerQueryService legendsPlayerQueryService,
-                                  PlayerCommandService playerCommandService, MenuCommandService menuCommandService,
-                                  MenuBuilderFactory menuBuilderFactory, ButtonBuilderFactory buttonBuilderFactory,
+                                  PlayerCommandService playerCommandService,
+                                  ShopProfileQueryService shopProfileQueryService,
+                                  MenuCommandService menuCommandService,
+                                  MenuBuilderFactory menuBuilderFactory,
+                                  ButtonBuilderFactory buttonBuilderFactory,
                                   MainMenuFactory mainMenuFactory) {
         super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
         this.legendsPlayerQueryService = legendsPlayerQueryService;
         this.playerCommandService = playerCommandService;
+        this.shopProfileQueryService = shopProfileQueryService;
         this.mainMenuFactory = mainMenuFactory;
     }
 

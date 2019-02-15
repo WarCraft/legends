@@ -31,6 +31,7 @@ import gg.warcraft.legends.api.shop.DecorationPackId;
 import gg.warcraft.legends.api.shop.MiniPetId;
 import gg.warcraft.legends.api.shop.ShopItem;
 import gg.warcraft.legends.api.shop.ShopItemType;
+import gg.warcraft.legends.api.shop.SpecializationId;
 import gg.warcraft.legends.api.shop.profile.ShopProfile;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileCommandService;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
@@ -334,19 +335,23 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
     }
 
     private boolean awardRandomSpecialization(UUID playerId, ItemRarity rarity) {
-        // TODO
-//        ShopItem specialization = shopQueryService.getRandomItem(ShopItemType.SPECIALIZATION, rarity);
-//        SpecializationId specializationId = SpecializationId.valueOf(specialization.getId());
-//        ShopProfile profile = shopProfileQueryService.getProfile(playerId);
-//        if (profile.hasSpecialization(specializationId)) {
-//            int reimbursement = (int) (specialization.getPrice() * 0.33);
-//            playerCommandService.addCurrency(playerId, LegendsCurrency.FRAGMENTS, reimbursement);
-//            sendReimbursementNotification(playerId, specialization.getName(), "Specialization", reimbursement);
-//        } else {
-//            shopProfileCommandService.unlockSpecialization(specializationId, playerId, false);
-//            sendUnlockedNotification(playerId, specialization.getName(), "Specialization");
-//        }
-        sendReceivedNotification(playerId, "Imaginary Specialization");
+        ShopItem specialization = shopQueryService.getRandomItem(ShopItemType.SPECIALIZATION, rarity);
+        if (specialization == null) {
+            pluginLogger.warning("Failed to award random specialization to player " + playerId +
+                    ", none exist for rarity " + rarity);
+            return false;
+        }
+
+        SpecializationId specializationId = SpecializationId.valueOf(specialization.getId());
+        ShopProfile profile = shopProfileQueryService.getProfile(playerId);
+        if (profile.hasSpecialization(specializationId)) {
+            int reimbursement = (int) (specialization.getPrice() * 0.33);
+            playerCommandService.addCurrency(playerId, LegendsCurrency.FRAGMENTS, reimbursement);
+            sendReimbursementNotification(playerId, specialization.getName(), "Specialization", reimbursement);
+        } else {
+            shopProfileCommandService.unlockSpecialization(specializationId, playerId, false);
+            sendUnlockedNotification(playerId, specialization.getName(), "Specialization");
+        }
         return true;
     }
 

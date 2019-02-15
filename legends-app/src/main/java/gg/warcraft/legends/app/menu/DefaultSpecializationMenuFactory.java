@@ -9,6 +9,7 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
+import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
 import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
@@ -35,6 +36,7 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
     private final LegendsPlayerQueryService legendsPlayerQueryService;
     private final LegendsPlayerCommandService legendsPlayerCommandService;
     private final SpecializationQueryService specializationQueryService;
+    private final ShopProfileQueryService shopProfileQueryService;
     private final MainMenuFactory mainMenuFactory;
     private final StringUtils stringUtils;
     private final TimeUtils timeUtils;
@@ -43,13 +45,17 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
     public DefaultSpecializationMenuFactory(LegendsPlayerQueryService legendsPlayerQueryService,
                                             LegendsPlayerCommandService legendsPlayerCommandService,
                                             SpecializationQueryService specializationQueryService,
-                                            MenuCommandService menuCommandService, MenuBuilderFactory menuBuilderFactory,
-                                            ButtonBuilderFactory buttonBuilderFactory, MainMenuFactory mainMenuFactory,
+                                            ShopProfileQueryService shopProfileQueryService,
+                                            MenuCommandService menuCommandService,
+                                            MenuBuilderFactory menuBuilderFactory,
+                                            ButtonBuilderFactory buttonBuilderFactory,
+                                            MainMenuFactory mainMenuFactory,
                                             StringUtils stringUtils, TimeUtils timeUtils) {
         super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
         this.legendsPlayerQueryService = legendsPlayerQueryService;
         this.legendsPlayerCommandService = legendsPlayerCommandService;
         this.specializationQueryService = specializationQueryService;
+        this.shopProfileQueryService = shopProfileQueryService;
         this.mainMenuFactory = mainMenuFactory;
         this.stringUtils = stringUtils;
         this.timeUtils = timeUtils;

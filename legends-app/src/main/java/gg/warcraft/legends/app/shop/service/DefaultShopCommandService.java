@@ -7,17 +7,20 @@ import gg.warcraft.legends.api.shop.DecorationPack;
 import gg.warcraft.legends.api.shop.MiniPet;
 import gg.warcraft.legends.api.shop.Promotion;
 import gg.warcraft.legends.api.shop.ShopItemType;
+import gg.warcraft.legends.api.shop.Specialization;
 import gg.warcraft.legends.api.shop.config.DecorationConfiguration;
 import gg.warcraft.legends.api.shop.config.DecorationPackConfiguration;
 import gg.warcraft.legends.api.shop.config.MiniPetConfiguration;
 import gg.warcraft.legends.api.shop.config.PromotionConfiguration;
 import gg.warcraft.legends.api.shop.config.ShopConfiguration;
+import gg.warcraft.legends.api.shop.config.SpecializationConfiguration;
 import gg.warcraft.legends.api.shop.service.ShopCommandService;
 import gg.warcraft.legends.api.shop.service.ShopRepository;
 import gg.warcraft.legends.app.shop.SimpleDecoration;
 import gg.warcraft.legends.app.shop.SimpleDecorationPack;
 import gg.warcraft.legends.app.shop.SimpleMiniPet;
 import gg.warcraft.legends.app.shop.SimplePromotion;
+import gg.warcraft.legends.app.shop.SimpleSpecialization;
 
 import java.util.List;
 import java.util.Map;
@@ -108,6 +111,22 @@ public class DefaultShopCommandService implements ShopCommandService {
         shopRepository.save(promotion);
     }
 
+    void readSpecializationConfiguration(SpecializationConfiguration configuration,
+                                         Map<ShopItemType, Map<ItemRarity, Integer>> prices) {
+        ShopItemType type = configuration.getType();
+        ItemRarity rarity = configuration.getRarity();
+        int price = prices.get(type).get(rarity);
+        Specialization specialization = new SimpleSpecialization(
+                configuration.getId(),
+                type,
+                rarity,
+                price,
+                configuration.getName(),
+                configuration.getIcon(),
+                configuration.getLore());
+        shopRepository.save(specialization);
+    }
+
     @Override
     public void readConfiguration(ShopConfiguration shopConfiguration) {
         Map<ShopItemType, Map<ItemRarity, Integer>> prices = shopConfiguration.getPrices();
@@ -115,5 +134,6 @@ public class DefaultShopCommandService implements ShopCommandService {
         shopConfiguration.getDecorationPacks().forEach(config -> readDecorationPackConfiguration(config, prices));
         shopConfiguration.getMiniPets().forEach(config -> readMiniPetConfiguration(config, prices));
         shopConfiguration.getPromotions().forEach(config -> readPromotionConfiguration(config, prices));
+        shopConfiguration.getSpecializations().forEach(config -> readSpecializationConfiguration(config, prices));
     }
 }
