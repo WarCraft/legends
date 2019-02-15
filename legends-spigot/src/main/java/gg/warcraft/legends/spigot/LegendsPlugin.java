@@ -37,6 +37,7 @@ import gg.warcraft.legends.app.core.game.handler.DailySkirmishHandler;
 import gg.warcraft.legends.app.core.game.handler.GameObjectivesAndPointsHandler;
 import gg.warcraft.legends.app.core.game.handler.GameTimerHandler;
 import gg.warcraft.legends.app.core.game.handler.ObjectiveAnnouncementHandler;
+import gg.warcraft.legends.app.core.game.handler.SkirmishRewardHandler;
 import gg.warcraft.legends.app.core.handler.CombatLoggingHandler;
 import gg.warcraft.legends.app.core.handler.FishCommandHandler;
 import gg.warcraft.legends.app.core.handler.PlayerCountMetricHandler;
@@ -253,6 +254,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         DailySkirmishHandler dailySkirmishHandler = injector.getInstance(DailySkirmishHandler.class);
         taskService.runTask(dailySkirmishHandler, timeUtils.createDurationInSeconds(60), timeUtils.createDurationInSeconds(60));
+
+        SkirmishRewardHandler skirmishRewardHandler = injector.getInstance(SkirmishRewardHandler.class);
+        eventService.subscribe(skirmishRewardHandler);
 
         // Metrics
         if (isProduction) {

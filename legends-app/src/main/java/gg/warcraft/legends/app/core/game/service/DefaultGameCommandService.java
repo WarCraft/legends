@@ -302,7 +302,7 @@ public class DefaultGameCommandService implements GameCommandService {
 
         gameRepository.saveActiveGame(currentWar.getId());
 
-        SkirmishFinishedEvent skirmishFinishedEvent = new SimpleSkirmishFinishedEvent(skirmish.getId());
+        SkirmishFinishedEvent skirmishFinishedEvent = new SimpleSkirmishFinishedEvent(skirmish.getId(), winner);
         eventService.publish(skirmishFinishedEvent);
 
         initializeActiveGame();
