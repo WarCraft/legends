@@ -1,103 +1,66 @@
 package gg.warcraft.legends.app.core.handler.challenge;
 
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
+import gg.warcraft.legends.api.core.Challenge;
+import gg.warcraft.legends.api.entity.player.LegendsCurrency;
+import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.LegendsStatistic;
+import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.monolith.api.entity.player.Statistic;
 import gg.warcraft.monolith.api.entity.player.event.PlayerStatisticChangedEvent;
+import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class ChallengeCompletionHandler {
+    private static final Map<Statistic, Set<Challenge>> challenges;
 
+    static {
+        challenges = new HashMap<>();
+        Arrays.stream(Challenge.values()).forEach(challenge -> {
+            Statistic statistic = challenge.getStatistic();
+            Set<Challenge> newStatisticChallenges =
+                    challenges.computeIfAbsent(statistic, key -> new HashSet<>());
+            newStatisticChallenges.add(challenge);
+            challenges.put(statistic, newStatisticChallenges);
+        });
+    }
+
+    private final LegendsPlayerQueryService playerQueryService;
+    private final PlayerCommandService playerCommandService;
+
+    @Inject
+    public ChallengeCompletionHandler(LegendsPlayerQueryService playerQueryService,
+                                      PlayerCommandService playerCommandService) {
+        this.playerQueryService = playerQueryService;
+        this.playerCommandService = playerCommandService;
+    }
+
+    @Subscribe
     public void onPlayerStatisticChangedEvent(PlayerStatisticChangedEvent event) {
+        UUID playerId = event.getPlayerId();
+        LegendsPlayer player = playerQueryService.getPlayer(playerId);
         LegendsStatistic statistic = (LegendsStatistic) event.getStatistic();
-        switch (statistic) {
-            case DAILY_KILLS:
-                break;
-            case WARRY_KILLS:
-                break;
-            case ALLTIME_KILLS:
-                break;
-
-            case DAILY_DEATHS:
-                break;
-            case WARRY_DEATHS:
-                break;
-            case ALLTIME_DEATHS:
-                break;
-
-            case DAILY_ASSISTS:
-                break;
-            case WARRY_ASSISTS:
-                break;
-            case ALLTIME_ASSISTS:
-                break;
-
-            case DAILY_DAMAGE_DONE:
-                break;
-            case WARRY_DAMAGE_DONE:
-                break;
-            case ALLTIME_DAMAGE_DONE:
-                break;
-
-            case DAILY_HEALING_DONE:
-                break;
-            case WARRY_HEALING_DONE:
-                break;
-            case ALLTIME_HEALING_DONE:
-                break;
-
-            case DAILY_DAMAGE_TAKEN:
-                break;
-            case WARRY_DAMAGE_TAKEN:
-                break;
-            case ALLTIME_DAMAGE_TAKEN:
-                break;
-
-            case DAILY_CAMPS_CAPTURED:
-                break;
-            case WARRY_CAMPS_NEUTRALIZED:
-                break;
-            case ALLTIME_CAMPS_DEFENDED:
-                break;
-
-            case DAILY_OUTPOSTS_CAPTURED:
-                break;
-            case WARRY_OUTPOSTS_NEUTRALIZED:
-                break;
-            case ALLTIME_OUTPOSTS_DEFENDED:
-                break;
-
-            case DAILY_KEEPS_CAPTURED:
-                break;
-            case WARRY_KEEPS_NEUTRALIZED:
-                break;
-            case ALLTIME_KEEPS_DEFENDED:
-                break;
-
-            case DAILY_TIME_PLAYED:
-                break;
-            case WARRY_TIME_PLAYED:
-                break;
-            case ALLTIME_TIME_PLAYED:
-                break;
-
-            case DAILY_MONSTER_KILLS:
-                break;
-            case WARRY_MONSTER_KILLS:
-                break;
-            case ALLTIME_MONSTER_KILLS:
-                break;
-
-            case DAILY_RESOURCES_GATHERED:
-                break;
-            case WARRY_RESOURCES_GATHERED:
-                break;
-            case ALLTIME_RESOURCES_GATHERED:
-                break;
-
-            case DAILY_CHESTS_OPENED:
-                break;
-            case WARRY_CHESTS_OPENED:
-                break;
-            case ALLTIME_CHESTS_OPENED:
-                break;
-        }
+        Set<Challenge> statisticChallenges = challenges.getOrDefault(statistic, Collections.emptySet());
+        statisticChallenges.forEach(challenge -> {
+            if (event.getNewCurrent() >= challenge.getRequiredStatisticValue()) {
+                String playerDataKey = challenge.getPlayerData().getKey();
+                if (!player.getDataBool(playerDataKey)) {
+                    playerCommandService.setData(playerId, playerDataKey, "true");
+                    playerCommandService.addCurrency(playerId, LegendsCurrency.FAVOR, challenge.getFavorReward());
+                    playerCommandService.sendNotification(playerId, "You have completed the " +
+                            challenge.getName() + " challenge!");
+                    playerCommandService.sendNotification(playerId, "You gained " +
+                            challenge.getFavorReward() + " favor.");
+                }
+            }
+        });
     }
 }
