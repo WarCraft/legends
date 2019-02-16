@@ -173,6 +173,7 @@ public enum Challenge {
     private static final EnumSet<Challenge> dailies;
     private static final EnumSet<Challenge> warries;
     private static final EnumSet<Challenge> allTimes;
+    private static final EnumSet<Challenge> specials;
 
     static {
         Supplier<EnumSet<Challenge>> setSupplier =
@@ -189,6 +190,10 @@ public enum Challenge {
         allTimes = Arrays.stream(Challenge.values())
                 .filter(Challenge::isAllTime)
                 .collect(Collectors.toCollection(setSupplier));
+
+        specials = Arrays.stream(Challenge.values())
+                .filter(Challenge::isSpecial)
+                .collect(Collectors.toCollection(setSupplier));
     }
 
     public static EnumSet<Challenge> getDailies() {
@@ -201,6 +206,10 @@ public enum Challenge {
 
     public static EnumSet<Challenge> getAllTimes() {
         return EnumSet.copyOf(allTimes);
+    }
+
+    public static EnumSet<Challenge> getSpecials() {
+        return EnumSet.copyOf(specials);
     }
 
     private final String name;
@@ -247,6 +256,10 @@ public enum Challenge {
     }
 
     public boolean isAllTime() {
-        return name().contains("ALLTIME") || name().contains("SPECIAL");
+        return name().contains("ALLTIME");
+    }
+
+    public boolean isSpecial() {
+        return name().contains("SPECIAL");
     }
 }

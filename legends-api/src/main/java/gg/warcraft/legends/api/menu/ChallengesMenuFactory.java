@@ -13,4 +13,6 @@ public interface ChallengesMenuFactory {
     Menu createWarChallengesMenu(UUID playerId);
 
     Menu createAlltimeChallengesMenu(UUID playerId);
+
+    Menu createSpecialChallengesMenu(UUID playerId);
 }

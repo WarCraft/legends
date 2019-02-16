@@ -94,6 +94,20 @@ public class DefaultChallengesMenuFactory extends AbstractMenuFactory implements
         return builder.build();
     }
 
+    Button createSpecialChallengesButton(UUID playerId) {
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.MINECART_WITH_TNT, "Special Challenges");
+        builder.addTooltip("Special challenges are challenges");
+        builder.addTooltip("that require a little bit more thought.");
+        builder.addTooltip("");
+        builder.addTooltip("[CLICK] To browse your special challenges");
+
+        builder.withAction(action -> {
+            Menu menu = createSpecialChallengesMenu(playerId);
+            showMenu(menu, playerId);
+        });
+        return builder.build();
+    }
+
     @Override
     public Menu createChallengesMenu(UUID playerId) {
         MenuBuilder builder = createMenuBuilder("Challenges", MenuSize.ONE_ROW);
@@ -101,6 +115,7 @@ public class DefaultChallengesMenuFactory extends AbstractMenuFactory implements
         builder.addButton(2, createDailyChallengesButton(playerId));
         builder.addButton(3, createWarChallengesButton(playerId));
         builder.addButton(4, createAlltimeChallengesButton(playerId));
+        builder.addButton(5, createSpecialChallengesButton(playerId));
         builder.addButton(8, createBackButton(playerId, mainMenuFactory::createMainMenu));
         return builder.build();
     }
@@ -154,7 +169,7 @@ public class DefaultChallengesMenuFactory extends AbstractMenuFactory implements
     @Override
     public Menu createWarChallengesMenu(UUID playerId) {
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        MenuBuilder builder = createMenuBuilder("War Challenges", MenuSize.ONE_ROW);
+        MenuBuilder builder = createMenuBuilder("War Challenges", MenuSize.TWO_ROWS);
         builder.addButton(0, createWarChallengesInfoButton(playerId));
 
         int slot = 2;
@@ -188,6 +203,32 @@ public class DefaultChallengesMenuFactory extends AbstractMenuFactory implements
     public Menu createAlltimeChallengesMenu(UUID playerId) {
         MenuBuilder builder = createMenuBuilder("All-time Challenges", MenuSize.ONE_ROW);
         builder.addButton(0, createAlltimeChallengesInfoButton(playerId));
+
+        builder.addButton(8, createBackButton(playerId, this::createChallengesMenu));
+        return builder.build();
+    }
+
+    Button createSpecialChallengesInfoButton(UUID playerId) {
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Special Challenges");
+        builder.addTooltip("Special challenges are challenges");
+        builder.addTooltip("that require a little bit more thought.");
+        return builder.build();
+    }
+
+    @Override
+    public Menu createSpecialChallengesMenu(UUID playerId) {
+        LegendsPlayer player = playerQueryService.getPlayer(playerId);
+        MenuBuilder builder = createMenuBuilder("Special Challenges", MenuSize.ONE_ROW);
+        builder.addButton(0, createWarChallengesInfoButton(playerId));
+
+        int slot = 2;
+        for (Challenge special : Challenge.getSpecials()) {
+            builder.addButton(slot, createChallengeButton(player, special));
+            slot += 1;
+            if (slot == 7) {
+                slot = 11;
+            }
+        }
 
         builder.addButton(8, createBackButton(playerId, this::createChallengesMenu));
         return builder.build();
