@@ -38,6 +38,6 @@ public class ChallengeCycleHandler {
     @Subscribe
     public void onWarStartedEvent(WarStartedEvent event) {
         List<Challenge> newWarries = getRandomChallenges(Challenge.getWarries(), 10);
-        challengeRepository.setDailies(newWarries);
+        challengeRepository.setWarries(newWarries);
     }
 }
