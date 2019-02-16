@@ -8,7 +8,7 @@ public enum LegendsPlayerData {
     LAST_WARRY_RESET("lastWarryReset"),
 
     // Daily Challenges
-    DAILY_KILLS_CHALLENGE("challengechallengeDailyKills"),
+    DAILY_KILLS_CHALLENGE("challengeDailyKills"),
 
     DAILY_DAMAGE_DONE_CHALLENGE("challengeDailyDamageDone"),
     DAILY_HEALING_DONE_CHALLENGE("challengeDailyHealingDone"),
