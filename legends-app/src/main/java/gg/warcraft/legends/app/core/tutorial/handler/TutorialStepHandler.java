@@ -8,6 +8,8 @@ import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.legends.api.shop.SpecializationId;
+import gg.warcraft.legends.api.shop.profile.service.ShopProfileCommandService;
 import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
@@ -20,13 +22,28 @@ import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.location.LocationFactory;
 import gg.warcraft.monolith.api.world.location.OrientedLocation;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class TutorialStepHandler implements CommandHandler {
+    private static final Map<String, SpecializationId> specializationNameToId;
+
+    static {
+        specializationNameToId = new HashMap<>();
+        specializationNameToId.put("Armsmaster", SpecializationId.ARMSMASTER);
+        specializationNameToId.put("Berserker", SpecializationId.BERSERKER);
+        specializationNameToId.put("Hunter", SpecializationId.HUNTER);
+        specializationNameToId.put("Marksman", SpecializationId.MARKSMAN);
+        specializationNameToId.put("Tempest", SpecializationId.TEMPEST);
+        specializationNameToId.put("Wizard", SpecializationId.WIZARD);
+    }
+
     private final LegendsPlayerQueryService playerQueryService;
     private final LegendsPlayerCommandService playerCommandService;
     private final EntityCommandService entityCommandService;
+    private final ShopProfileCommandService shopProfileCommandService;
     private final DirectionUtils directionUtils;
     private final SpawnLocationRepository spawnLocationRepository;
 
@@ -47,12 +64,14 @@ public class TutorialStepHandler implements CommandHandler {
     public TutorialStepHandler(LegendsPlayerQueryService playerQueryService,
                                LegendsPlayerCommandService playerCommandService,
                                EntityCommandService entityCommandService,
+                               ShopProfileCommandService shopProfileCommandService,
                                SpawnLocationRepository spawnLocationRepository,
                                DirectionUtils directionUtils,
                                LocationFactory locationFactory) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.entityCommandService = entityCommandService;
+        this.shopProfileCommandService = shopProfileCommandService;
         this.spawnLocationRepository = spawnLocationRepository;
         this.directionUtils = directionUtils;
 
@@ -115,6 +134,16 @@ public class TutorialStepHandler implements CommandHandler {
                 OrientedLocation spawn = spawnLocationRepository.getSpawn(player.getTeam());
                 Direction direction = directionUtils.toDirection(spawn.getYaw());
                 entityCommandService.teleport(playerId, spawn, direction);
+
+                // Unlock current player specialization
+                String specializationName = player.getSpecialization().getName();
+                SpecializationId specializationId = specializationNameToId.get(specializationName);
+                if (specializationId != null) {
+                    shopProfileCommandService.unlockSpecialization(specializationId, playerId, false);
+                } else {
+                    System.out.println("WARN Failed to unlock " + specializationName +
+                            " specialization for " + player.getName() + " after completing tutorial");
+                }
                 break;
         }
 

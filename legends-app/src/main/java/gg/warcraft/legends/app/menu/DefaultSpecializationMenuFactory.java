@@ -9,6 +9,7 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
+import gg.warcraft.legends.api.shop.SpecializationId;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
 import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
@@ -25,13 +26,26 @@ import gg.warcraft.monolith.api.util.StringUtils;
 import gg.warcraft.monolith.api.util.TimeUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implements SpecializationMenuFactory {
     private static final String YELLOW = ColorCode.YELLOW.toString();
     private static final String GREEN = ColorCode.GREEN.toString();
     private static final String RED = ColorCode.RED.toString();
+    private static final Map<String, SpecializationId> specializationNameToId;
+
+    static {
+        specializationNameToId = new HashMap<>();
+        specializationNameToId.put("Armsmaster", SpecializationId.ARMSMASTER);
+        specializationNameToId.put("Berserker", SpecializationId.BERSERKER);
+        specializationNameToId.put("Hunter", SpecializationId.HUNTER);
+        specializationNameToId.put("Marksman", SpecializationId.MARKSMAN);
+        specializationNameToId.put("Tempest", SpecializationId.TEMPEST);
+        specializationNameToId.put("Wizard", SpecializationId.WIZARD);
+    }
 
     private final LegendsPlayerQueryService legendsPlayerQueryService;
     private final LegendsPlayerCommandService legendsPlayerCommandService;
@@ -83,9 +97,12 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
         return view;
     }
 
-    List<String> createSwitchView(Specialization specialization, boolean canSwitch, String cooldown) {
+    List<String> createSwitchView(Specialization specialization, boolean isLocked,
+                                  boolean canSwitch, String cooldown) {
         List<String> view = new ArrayList<>();
-        if (canSwitch) {
+        if (isLocked) {
+            view.add(RED + "Locked");
+        } else if (canSwitch) {
             if (cooldown == null) {
                 view.add(GREEN + "[SHIFT RIGHT CLICK] To switch to the " + specialization.getName());
             } else {
@@ -101,6 +118,15 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
                                       ItemType icon, List<String> lore, String cooldown) {
         String specializationName = legendsSpecialization.getName();
         Specialization specialization = specializationQueryService.getSpecialization(specializationName);
+        SpecializationId specializationId = specializationNameToId.get(specializationName);
+        if (specializationId == null) {
+            System.out.println("WARN failed to createSpecializationButton, specializationId is null for " + specializationName);
+            ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BARRIER, "Something went wrong");
+            builder.addTooltip("Please contact fishb6nes");
+            return builder.build();
+        }
+
+        boolean isLocked = !shopProfileQueryService.getProfile(player.getId()).hasSpecialization(specializationId);
         boolean canSwitch = !player.getSpecialization().getName().equals(specializationName);
 
         ButtonBuilder builder = createSimpleButtonBuilder(icon, specializationName);
@@ -108,10 +134,10 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
         builder.addTooltip("");
         createAbilitiesView(specialization).forEach(builder::addTooltip);
         builder.addTooltip("");
-        createSwitchView(specialization, canSwitch, cooldown).forEach(builder::addTooltip);
+        createSwitchView(specialization, isLocked, canSwitch, cooldown).forEach(builder::addTooltip);
 
         builder.withAction(action -> {
-            if (cooldown == null && action.isShiftRightClick()) {
+            if (!isLocked && cooldown == null && action.isShiftRightClick()) {
                 legendsPlayerCommandService.setSpecialization(player.getId(), specializationName);
             }
         });
