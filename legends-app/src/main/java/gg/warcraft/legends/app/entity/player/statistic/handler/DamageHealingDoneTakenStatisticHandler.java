@@ -7,16 +7,17 @@ import gg.warcraft.legends.api.entity.player.LegendsStatistic;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.monolith.api.entity.event.EntityDamageEvent;
+import gg.warcraft.monolith.api.entity.event.EntityHealEvent;
 
 import java.util.UUID;
 
-public class DamageStatisticHandler {
+public class DamageHealingDoneTakenStatisticHandler {
     private final LegendsPlayerQueryService playerQueryService;
     private final LegendsPlayerCommandService playerCommandService;
 
     @Inject
-    public DamageStatisticHandler(LegendsPlayerQueryService playerQueryService,
-                                  LegendsPlayerCommandService playerCommandService) {
+    public DamageHealingDoneTakenStatisticHandler(LegendsPlayerQueryService playerQueryService,
+                                                  LegendsPlayerCommandService playerCommandService) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
     }
@@ -45,9 +46,39 @@ public class DamageStatisticHandler {
                 LegendsStatistic.ALLTIME_DAMAGE_TAKEN);
     }
 
+    private void updateHealingDone(EntityHealEvent event) {
+        UUID entityId = event.getHeal().getSource().getEntityId();
+        LegendsPlayer player = playerQueryService.getPlayer(entityId);
+        if (player == null) {
+            return;
+        }
+
+        playerCommandService.increaseStatistics(entityId, (int) event.getHeal().getModifiedValue(),
+                LegendsStatistic.DAILY_HEALING_DONE, LegendsStatistic.WARRY_HEALING_DONE,
+                LegendsStatistic.ALLTIME_HEALING_DONE);
+    }
+
+    private void updateHealingTaken(EntityHealEvent event) {
+        UUID entityId = event.getEntityId();
+        LegendsPlayer player = playerQueryService.getPlayer(entityId);
+        if (player == null) {
+            return;
+        }
+
+        playerCommandService.increaseStatistics(entityId, (int) event.getHeal().getModifiedValue(),
+                LegendsStatistic.DAILY_HEALING_TAKEN, LegendsStatistic.WARRY_HEALING_TAKEN,
+                LegendsStatistic.ALLTIME_HEALING_TAKEN);
+    }
+
     @Subscribe
     public void onEntityDamageEvent(EntityDamageEvent event) {
         updateDamageDone(event);
         updateDamageTaken(event);
+    }
+
+    @Subscribe
+    public void onEntityHealEvent(EntityHealEvent event) {
+        updateHealingDone(event);
+        updateHealingTaken(event);
     }
 }

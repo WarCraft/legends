@@ -33,6 +33,10 @@ public enum LegendsStatistic implements Statistic {
     WARRY_DAMAGE_TAKEN("War Damage Taken", "warryDamageTaken"),
     ALLTIME_DAMAGE_TAKEN("All-time Damage Taken", "alltimeDamageTaken"),
 
+    DAILY_HEALING_TAKEN("Daily Healing Taken", "dailyHealingTaken"),
+    WARRY_HEALING_TAKEN("War Healing Taken", "warryHealingTaken"),
+    ALLTIME_HEALING_TAKEN("All-time Healing Taken", "alltimeHealingTaken"),
+
     // Siege Statistics
     DAILY_CAMPS_CAPTURED("Daily Camps Captured", "dailyCampsCaptured"),
     DAILY_CAMPS_NEUTRALIZED("Daily Camps Neutralized", "dailyCampsNeutralized"),
