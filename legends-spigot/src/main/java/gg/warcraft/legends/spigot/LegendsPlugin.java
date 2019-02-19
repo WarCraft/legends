@@ -56,6 +56,7 @@ import gg.warcraft.legends.app.entity.player.rank.handler.RankUpRewardHandler;
 import gg.warcraft.legends.app.entity.player.statistic.handler.DamageHealingDoneTakenStatisticHandler;
 import gg.warcraft.legends.app.entity.player.statistic.handler.KillDeathStatisticHandler;
 import gg.warcraft.legends.app.entity.player.statistic.handler.ObjectiveStatisticHandler;
+import gg.warcraft.legends.app.entity.player.statistic.handler.ResourcesGatheredStatisticHandler;
 import gg.warcraft.legends.app.item.crate.handler.LootCrateUseHandler;
 import gg.warcraft.legends.app.item.equipment.handler.EquipmentUpgradeUseHandler;
 import gg.warcraft.legends.app.item.handler.EquipmentAttributesHandler;
@@ -241,11 +242,17 @@ public class LegendsPlugin extends JavaPlugin {
                 injector.getInstance(DamageHealingDoneTakenStatisticHandler.class);
         eventService.subscribe(damageHealingDoneTakenStatisticHandler);
 
-        KillDeathStatisticHandler killDeathStatisticHandler = injector.getInstance(KillDeathStatisticHandler.class);
+        KillDeathStatisticHandler killDeathStatisticHandler =
+                injector.getInstance(KillDeathStatisticHandler.class);
         eventService.subscribe(killDeathStatisticHandler);
 
-        ObjectiveStatisticHandler objectiveStatisticHandler = injector.getInstance(ObjectiveStatisticHandler.class);
+        ObjectiveStatisticHandler objectiveStatisticHandler =
+                injector.getInstance(ObjectiveStatisticHandler.class);
         eventService.subscribe(objectiveStatisticHandler);
+
+        ResourcesGatheredStatisticHandler resourcesGatheredStatisticHandler =
+                injector.getInstance(ResourcesGatheredStatisticHandler.class);
+        eventService.subscribe(resourcesGatheredStatisticHandler);
 
         // Player inspect
         PlayerInspectHandler playerInspectHandler = injector.getInstance(PlayerInspectHandler.class);
