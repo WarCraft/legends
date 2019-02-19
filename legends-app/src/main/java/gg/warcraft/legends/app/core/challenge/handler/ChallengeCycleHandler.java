@@ -19,6 +19,12 @@ public class ChallengeCycleHandler {
     @Inject
     public ChallengeCycleHandler(ChallengeRepository challengeRepository) {
         this.challengeRepository = challengeRepository;
+        if (challengeRepository.getDailies().isEmpty()) {
+            cycleDailies();
+        }
+        if (challengeRepository.getWarries().isEmpty()) {
+            cycleWarries();
+        }
     }
 
     private List<Challenge> getRandomChallenges(EnumSet<Challenge> challenges, int count) {
@@ -29,15 +35,23 @@ public class ChallengeCycleHandler {
                 .collect(Collectors.toList());
     }
 
-    @Subscribe
-    public void onDailyTickEvent(DailyTickEvent event) {
+    private void cycleDailies() {
         List<Challenge> newDailies = getRandomChallenges(Challenge.getDailies(), 3);
         challengeRepository.setDailies(newDailies);
     }
 
-    @Subscribe
-    public void onWarStartedEvent(WarStartedEvent event) {
+    private void cycleWarries() {
         List<Challenge> newWarries = getRandomChallenges(Challenge.getWarries(), 10);
         challengeRepository.setWarries(newWarries);
+    }
+
+    @Subscribe
+    public void onDailyTickEvent(DailyTickEvent event) {
+        cycleDailies();
+    }
+
+    @Subscribe
+    public void onWarStartedEvent(WarStartedEvent event) {
+        cycleWarries();
     }
 }
