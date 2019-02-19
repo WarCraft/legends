@@ -18,6 +18,7 @@ import gg.warcraft.legends.api.item.crate.LootCrateDropTable;
 import gg.warcraft.legends.api.item.crate.LootCrateDropType;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.legends.api.item.crate.config.LootCrateDropTableConfiguration;
+import gg.warcraft.legends.api.item.crate.event.LootCrateOpenedEvent;
 import gg.warcraft.legends.api.item.crate.service.LootCrateCommandService;
 import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
@@ -38,6 +39,8 @@ import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
 import gg.warcraft.legends.api.shop.service.ShopQueryService;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrate;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateDropTable;
+import gg.warcraft.legends.app.item.crate.event.SimpleLootCrateOpenedEvent;
+import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemType;
@@ -61,6 +64,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
     private final ShopQueryService shopQueryService;
     private final ShopProfileQueryService shopProfileQueryService;
     private final ShopProfileCommandService shopProfileCommandService;
+    private final EventService eventService;
     private final StringUtils stringUtils;
     private final Logger pluginLogger;
     private final Random random;
@@ -75,6 +79,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
                                           ShopQueryService shopQueryService,
                                           ShopProfileQueryService shopProfileQueryService,
                                           ShopProfileCommandService shopProfileCommandService,
+                                          EventService eventService,
                                           StringUtils stringUtils, Random random,
                                           @PluginLogger Logger pluginLogger) {
         this.lootCrateRepository = lootCrateRepository;
@@ -86,6 +91,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         this.shopQueryService = shopQueryService;
         this.shopProfileQueryService = shopProfileQueryService;
         this.shopProfileCommandService = shopProfileCommandService;
+        this.eventService = eventService;
         this.stringUtils = stringUtils;
         this.pluginLogger = pluginLogger;
         this.random = random;
@@ -395,25 +401,31 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         float dropRarityRoll = 100 * random.nextFloat();
         ItemRarity dropRarity = dropTable.viewDistribution().floorEntry(dropRarityRoll).getValue();
 
+        boolean success = false;
         switch (dropType) {
             case CONSUMABLE:
-                return awardRandomConsumable(playerId, dropRarity);
+                success = awardRandomConsumable(playerId, dropRarity);
             case EQUIPMENT:
-                return awardRandomEquipment(playerId, dropRarity);
+                success = awardRandomEquipment(playerId, dropRarity);
             case EQUIPMENT_UPGRADE:
-                return awardRandomEquipmentUpgrade(playerId, dropRarity);
+                success = awardRandomEquipmentUpgrade(playerId, dropRarity);
             case DECORATION:
-                return awardRandomDecoration(playerId, dropRarity);
+                success = awardRandomDecoration(playerId, dropRarity);
             case DECORATION_PACK:
-                return awardRandomDecorationPack(playerId, dropRarity);
+                success = awardRandomDecorationPack(playerId, dropRarity);
             case MINI_PET:
-                return awardRandomMiniPet(playerId, dropRarity);
+                success = awardRandomMiniPet(playerId, dropRarity);
             case SPECIALIZATION:
-                return awardRandomSpecialization(playerId, dropRarity);
+                success = awardRandomSpecialization(playerId, dropRarity);
             case GOLD:
-                return awardGold(playerId, dropRarity);
-            default:
-                return false;
+                success = awardGold(playerId, dropRarity);
         }
+
+        if (success) {
+            LootCrateOpenedEvent event = new SimpleLootCrateOpenedEvent(playerId);
+            eventService.publish(event);
+        }
+
+        return success;
     }
 }

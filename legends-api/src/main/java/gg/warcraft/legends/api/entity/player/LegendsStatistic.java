@@ -81,9 +81,9 @@ public enum LegendsStatistic implements Statistic {
     WARRY_RESOURCES_GATHERED("War Resources Gathered", "warryResourcesGathered"),
     ALLTIME_RESOURCES_GATHERED("All-time Resources Gathered", "alltimeResourcesGathered"),
 
-    DAILY_CHESTS_OPENED("Daily Chests Opened", "dailyChestsOpened"),
-    WARRY_CHESTS_OPENED("War Chests Opened", "warryChestsOpened"),
-    ALLTIME_CHESTS_OPENED("All-time Chests Opened", "alltimeChestsOpened");
+    DAILY_CRATES_OPENED("Daily Crates Opened", "dailyCratesOpened"),
+    WARRY_CRATES_OPENED("War Crates Opened", "warryCratesOpened"),
+    ALLTIME_CRATES_OPENED("All-time Crates Opened", "alltimeCratesOpened");
 
     private static final EnumSet<LegendsStatistic> dailies;
     private static final EnumSet<LegendsStatistic> warries;

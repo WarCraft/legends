@@ -20,7 +20,7 @@ public enum LegendsPlayerData {
     DAILY_TIME_PLAYED_CHALLENGE("challengeDailyTimePlayed"),
     DAILY_MONSTER_KILLS_CHALLENGE("challengeDailyMonsterKills"),
     DAILY_RESOURCES_GATHERED_CHALLENGE("challengeDailyResourcesGathered"),
-    DAILY_CHESTS_OPENED_CHALLENGE("challengeDailyChestsOpened"),
+    DAILY_CRATES_OPENED_CHALLENGE("challengeDailyCratesOpened"),
 
     //War Challenges
     WARRY_KILLS_CHALLENGE("challengeWarKills"),
@@ -35,7 +35,7 @@ public enum LegendsPlayerData {
     WARRY_TIME_PLAYED_CHALLENGE("challengeWarTimePlayed"),
     WARRY_MONSTER_KILLS_CHALLENGE("challengeWarMonsterKills"),
     WARRY_RESOURCES_GATHERED_CHALLENGE("challengeWarResourcesGathered"),
-    WARRY_CHESTS_OPENED_CHALLENGE("challengeWarChestsOpened"),
+    WARRY_CRATES_OPENED_CHALLENGE("challengeWarCratesOpened"),
 
     //All-time Challenges
     ALLTIME_KILLS_1_CHALLENGE("challengeAlltimeKills"),
@@ -151,12 +151,12 @@ public enum LegendsPlayerData {
     ALLTIME_RESOURCES_GATHERED_4_CHALLENGE("challengeAlltimeResourcesGathered"),
     ALLTIME_RESOURCES_GATHERED_5_CHALLENGE("challengeAlltimeResourcesGathered"),
     ALLTIME_RESOURCES_GATHERED_6_CHALLENGE("challengeAlltimeResourcesGathered"),
-    ALLTIME_CHESTS_OPENED_1_CHALLENGE("challengeAlltimeChestsOpened"),
-    ALLTIME_CHESTS_OPENED_2_CHALLENGE("challengeAlltimeChestsOpened"),
-    ALLTIME_CHESTS_OPENED_3_CHALLENGE("challengeAlltimeChestsOpened"),
-    ALLTIME_CHESTS_OPENED_4_CHALLENGE("challengeAlltimeChestsOpened"),
-    ALLTIME_CHESTS_OPENED_5_CHALLENGE("challengeAlltimeChestsOpened"),
-    ALLTIME_CHESTS_OPENED_6_CHALLENGE("challengeAlltimeChestsOpened"),
+    ALLTIME_CRATES_OPENED_1_CHALLENGE("challengeAlltimeCratesOpened"),
+    ALLTIME_CRATES_OPENED_2_CHALLENGE("challengeAlltimeCratesOpened"),
+    ALLTIME_CRATES_OPENED_3_CHALLENGE("challengeAlltimeCratesOpened"),
+    ALLTIME_CRATES_OPENED_4_CHALLENGE("challengeAlltimeCratesOpened"),
+    ALLTIME_CRATES_OPENED_5_CHALLENGE("challengeAlltimeCratesOpened"),
+    ALLTIME_CRATES_OPENED_6_CHALLENGE("challengeAlltimeCratesOpened"),
 
     //Special Challenges
     SPECIAL_KILLS_CHALLENGE("challenge1337"),

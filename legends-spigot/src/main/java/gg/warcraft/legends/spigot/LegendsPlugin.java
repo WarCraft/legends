@@ -55,6 +55,7 @@ import gg.warcraft.legends.app.entity.player.rank.handler.PrestigeAttributesHand
 import gg.warcraft.legends.app.entity.player.rank.handler.RankUpRewardHandler;
 import gg.warcraft.legends.app.entity.player.statistic.handler.DamageHealingDoneTakenStatisticHandler;
 import gg.warcraft.legends.app.entity.player.statistic.handler.KillDeathStatisticHandler;
+import gg.warcraft.legends.app.entity.player.statistic.handler.LootCrateStatisticHandler;
 import gg.warcraft.legends.app.entity.player.statistic.handler.ObjectiveStatisticHandler;
 import gg.warcraft.legends.app.entity.player.statistic.handler.ResourcesGatheredStatisticHandler;
 import gg.warcraft.legends.app.item.crate.handler.LootCrateUseHandler;
@@ -253,6 +254,10 @@ public class LegendsPlugin extends JavaPlugin {
         ResourcesGatheredStatisticHandler resourcesGatheredStatisticHandler =
                 injector.getInstance(ResourcesGatheredStatisticHandler.class);
         eventService.subscribe(resourcesGatheredStatisticHandler);
+
+        LootCrateStatisticHandler lootCrateStatisticHandler =
+                injector.getInstance(LootCrateStatisticHandler.class);
+        eventService.subscribe(lootCrateStatisticHandler);
 
         // Player inspect
         PlayerInspectHandler playerInspectHandler = injector.getInstance(PlayerInspectHandler.class);
