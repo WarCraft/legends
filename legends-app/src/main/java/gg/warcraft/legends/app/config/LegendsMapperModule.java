@@ -18,6 +18,7 @@ import gg.warcraft.legends.api.shop.config.MiniPetConfiguration;
 import gg.warcraft.legends.api.shop.config.PromotionConfiguration;
 import gg.warcraft.legends.api.shop.config.ShopConfiguration;
 import gg.warcraft.legends.api.shop.config.ShopItemConfiguration;
+import gg.warcraft.legends.api.shop.config.SpecializationConfiguration;
 import gg.warcraft.legends.app.ai.npc.config.JacksonNpcConfiguration;
 import gg.warcraft.legends.app.ai.npc.config.JacksonNpcsConfiguration;
 import gg.warcraft.legends.app.item.config.JacksonAttributeRollConfiguration;
@@ -31,6 +32,7 @@ import gg.warcraft.legends.app.shop.config.JacksonMiniPetConfiguration;
 import gg.warcraft.legends.app.shop.config.JacksonPromotionConfiguration;
 import gg.warcraft.legends.app.shop.config.JacksonShopConfiguration;
 import gg.warcraft.legends.app.shop.config.JacksonShopItemConfiguration;
+import gg.warcraft.legends.app.shop.config.JacksonSpecializationConfiguration;
 
 public class LegendsMapperModule extends SimpleModule {
 
@@ -53,6 +55,7 @@ public class LegendsMapperModule extends SimpleModule {
         resolver.addMapping(DecorationPackConfiguration.class, JacksonDecorationPackConfiguration.class);
         resolver.addMapping(MiniPetConfiguration.class, JacksonMiniPetConfiguration.class);
         resolver.addMapping(PromotionConfiguration.class, JacksonPromotionConfiguration.class);
+        resolver.addMapping(SpecializationConfiguration.class, JacksonSpecializationConfiguration.class);
 
         // Equipment configuration
         resolver.addMapping(AttributeRollConfiguration.class, JacksonAttributeRollConfiguration.class);

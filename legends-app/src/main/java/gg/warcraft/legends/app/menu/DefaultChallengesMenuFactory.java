@@ -123,9 +123,9 @@ public class DefaultChallengesMenuFactory extends AbstractMenuFactory implements
     Button createChallengeButton(LegendsPlayer player, Challenge challenge) {
         ButtonBuilder builder = createSimpleButtonBuilder(ItemType.TNT, challenge.getName());
         int requiredAmount = challenge.getRequiredStatisticValue();
-        int currentAmount = Math.min(requiredAmount, player.getDataInt(challenge.getPlayerData().getKey()));
-        ColorCode color = currentAmount >= requiredAmount ? ColorCode.GREEN : ColorCode.WHITE;
-        builder.addTooltip(color.toString() + currentAmount + "/" + requiredAmount + " " +
+        int currentAmount = Math.min(requiredAmount, player.getStatistic(challenge.getStatistic().getKey()));
+        String colorCode = currentAmount >= requiredAmount ? ColorCode.GREEN.toString() : "";
+        builder.addTooltip(colorCode + currentAmount + "/" + requiredAmount + " " +
                 challenge.getStatistic().getName());
         if (currentAmount >= requiredAmount) {
             builder.addTooltip("");

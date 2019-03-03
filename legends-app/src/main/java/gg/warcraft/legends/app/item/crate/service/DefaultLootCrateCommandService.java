@@ -300,21 +300,21 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         DecorationPackId decorationPackId = DecorationPackId.valueOf(decorationPack.getId());
         ShopProfile profile = shopProfileQueryService.getProfile(playerId);
 
-        int duplicateCount = 0;
-        int reimbursement = 0;
+        float decorationCount = decorationPack.getDecorations().size();
+        float duplicateCount = 0;
         for (Decoration decoration : decorationPack.getDecorations()) {
             DecorationId decorationId = DecorationId.valueOf(decoration.getId());
             if (profile.hasDecoration(decorationId)) {
                 duplicateCount += 1;
-                reimbursement += (int) (decoration.getPrice() * 0.33);
             }
         }
+        float reimbursement = decorationPack.getPrice() * 0.33f * (duplicateCount / decorationCount);
 
         shopProfileCommandService.unlockDecorationPack(decorationPackId, playerId, false);
         sendUnlockedNotification(playerId, decorationPack.getName(), "Decoration Pack");
         if (duplicateCount > 0) {
-            playerCommandService.addCurrency(playerId, LegendsCurrency.FRAGMENTS, reimbursement);
-            sendPackReimbursementNotification(playerId, decorationPack.getName(), duplicateCount, reimbursement);
+            playerCommandService.addCurrency(playerId, LegendsCurrency.FRAGMENTS, (int) reimbursement);
+            sendPackReimbursementNotification(playerId, decorationPack.getName(), (int) duplicateCount, (int) reimbursement);
         }
         return true;
     }
@@ -405,20 +405,28 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         switch (dropType) {
             case CONSUMABLE:
                 success = awardRandomConsumable(playerId, dropRarity);
+                break;
             case EQUIPMENT:
                 success = awardRandomEquipment(playerId, dropRarity);
+                break;
             case EQUIPMENT_UPGRADE:
                 success = awardRandomEquipmentUpgrade(playerId, dropRarity);
+                break;
             case DECORATION:
                 success = awardRandomDecoration(playerId, dropRarity);
+                break;
             case DECORATION_PACK:
                 success = awardRandomDecorationPack(playerId, dropRarity);
+                break;
             case MINI_PET:
                 success = awardRandomMiniPet(playerId, dropRarity);
+                break;
             case SPECIALIZATION:
                 success = awardRandomSpecialization(playerId, dropRarity);
+                break;
             case GOLD:
                 success = awardGold(playerId, dropRarity);
+                break;
         }
 
         if (success) {

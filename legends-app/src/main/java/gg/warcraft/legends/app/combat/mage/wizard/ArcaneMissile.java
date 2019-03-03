@@ -50,7 +50,7 @@ public class ArcaneMissile extends AbstractAbility implements RangedAbility {
         Vector3f direction = caster.getEyeLocation().getDirection();
         Supplier<Location> targetSupplier = () -> {
             Entity target = entityQueryService.getEntity(rangedTarget.getId());
-            return target.getLocation();
+            return target.getEyeLocation();
         };
         float speed = snapshot.getFloat(AbilityConfigurationValue.SPEED);
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);

@@ -24,6 +24,10 @@ public class DamageHealingDoneTakenStatisticHandler {
 
     private void updateDamageDone(EntityDamageEvent event) {
         UUID entityId = event.getDamage().getSource().getEntityId();
+        if (entityId == null) {
+            return;
+        }
+
         LegendsPlayer player = playerQueryService.getPlayer(entityId);
         if (player == null) {
             return;

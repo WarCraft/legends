@@ -47,7 +47,7 @@ public class RankUpRewardHandler implements CommandHandler {
             int newRankUpRewardsClaimed = rankUpRewardsClaimed + 1;
             int prestigeAdjustedRewardsClaimed = newRankUpRewardsClaimed % 49;
             Map<LootCrateType, Integer> rewards = rankUpRewards.get(prestigeAdjustedRewardsClaimed);
-            if (rewards.isEmpty()) {
+            if (rewards == null || rewards.isEmpty()) { // TODO why was this be null?
                 rankUpRewardsClaimed = newRankUpRewardsClaimed;
                 continue;
             }

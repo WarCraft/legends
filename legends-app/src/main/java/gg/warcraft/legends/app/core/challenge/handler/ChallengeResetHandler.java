@@ -14,6 +14,7 @@ import gg.warcraft.monolith.api.core.event.DailyTickEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.UUID;
 
 public class ChallengeResetHandler {
@@ -37,8 +38,9 @@ public class ChallengeResetHandler {
     }
 
     private void resetDailies(UUID playerId, int currentNewYorkDay) {
-        LegendsStatistic.getDailies().forEach(daily ->
-                playerCommandService.setData(playerId, daily.getKey(), "0"));
+        EnumSet<LegendsStatistic> dailies = LegendsStatistic.getDailies();
+        playerCommandService.resetStatistics(playerId, dailies.toArray(new LegendsStatistic[]{}));
+
         Challenge.getDailies().forEach(daily ->
                 playerCommandService.setData(playerId, daily.getPlayerData().getKey(), null));
 
@@ -47,8 +49,9 @@ public class ChallengeResetHandler {
     }
 
     private void resetWarries(UUID playerId, int currentWarId) {
-        LegendsStatistic.getWarries().forEach(warry ->
-                playerCommandService.setData(playerId, warry.getKey(), "0"));
+        EnumSet<LegendsStatistic> warries = LegendsStatistic.getWarries();
+        playerCommandService.resetStatistics(playerId, warries.toArray(new LegendsStatistic[]{}));
+
         Challenge.getWarries().forEach(warry ->
                 playerCommandService.setData(playerId, warry.getPlayerData().getKey(), null));
 
