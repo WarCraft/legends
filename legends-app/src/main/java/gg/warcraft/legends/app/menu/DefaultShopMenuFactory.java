@@ -140,7 +140,8 @@ public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopM
                 int newCount = decorationCount - decorationsUnlocked;
                 String decorationPlural = newCount == 1 ? " new decoration" : " new decorations";
                 builder.addTooltip("This pack will unlock " + newCount + decorationPlural + " for you.");
-                builder.addTooltip("The price has been adjusted for those you have already unlocked.");
+                builder.addTooltip("The price has been adjusted for those you have");
+                builder.addTooltip("already unlocked.");
                 builder.addTooltip("");
                 builder.addTooltip(ColorCode.GREEN + "[SHIFT RIGHT CLICK] To unlock for " + price + " Fragments");
             } else {
