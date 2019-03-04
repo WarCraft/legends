@@ -5,7 +5,9 @@ import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.ShopMenuFactory;
+import gg.warcraft.legends.api.shop.Decoration;
 import gg.warcraft.legends.api.shop.DecorationId;
+import gg.warcraft.legends.api.shop.DecorationPack;
 import gg.warcraft.legends.api.shop.DecorationPackId;
 import gg.warcraft.legends.api.shop.MiniPetId;
 import gg.warcraft.legends.api.shop.PromotionId;
@@ -75,14 +77,24 @@ public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopM
         builder.addTooltip(item.getType().toString());
 
         boolean hasUnlocked;
+        boolean isDecorationPack = false;
+        int decorationCount = 0;
+        int decorationsUnlocked = 0;
         switch (item.getType()) {
             case DECORATION:
                 DecorationId decorationId = DecorationId.valueOf(item.getId());
                 hasUnlocked = profile.hasDecoration(decorationId);
                 break;
             case DECORATION_PACK:
-                // TODO
-                hasUnlocked = false;
+                isDecorationPack = true;
+                DecorationPack pack = (DecorationPack) item;
+                decorationCount = pack.getDecorations().size();
+                decorationsUnlocked = (int) pack.getDecorations().stream()
+                        .map(Decoration::getId)
+                        .map(DecorationId::valueOf)
+                        .filter(profile::hasDecoration)
+                        .count();
+                hasUnlocked = decorationCount == decorationsUnlocked;
                 break;
             case MINI_PET:
                 MiniPetId miniPetId = MiniPetId.valueOf(item.getId());
@@ -104,12 +116,23 @@ public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopM
         boolean hasFavor = item.getPrice() <= player.getFragments();
 
         builder.addTooltip("");
-        if (hasUnlocked) {
-            builder.addTooltip("You already have this item unlocked.");
-        } else if (hasFavor) {
-            builder.addTooltip(ColorCode.GREEN + "[SHIFT RIGHT CLICK] To unlock for " + item.getPrice() + " Fragments");
+        if (!isDecorationPack) {
+            if (hasUnlocked) {
+                builder.addTooltip("You already have this item unlocked.");
+            } else if (hasFavor) {
+                builder.addTooltip(ColorCode.GREEN + "[SHIFT RIGHT CLICK] To unlock for " + item.getPrice() + " Fragments");
+            } else {
+                builder.addTooltip(ColorCode.RED + "Costs " + item.getPrice() + " Fragments to unlock");
+            }
         } else {
-            builder.addTooltip(ColorCode.RED + "Costs " + item.getPrice() + " Fragments to unlock");
+            int price = item.getPrice() - ((int) (item.getPrice() * 0.33f * ((float) decorationsUnlocked / (float) decorationCount)));
+            if (hasUnlocked) {
+                builder.addTooltip("You already have this item unlocked.");
+            } else if (hasFavor) {
+                builder.addTooltip(ColorCode.GREEN + "[SHIFT RIGHT CLICK] To unlock for " + price + " Fragments");
+            } else {
+                builder.addTooltip(ColorCode.RED + "Costs " + price + " Fragments to unlock");
+            }
         }
 
         builder.withAction(click -> {

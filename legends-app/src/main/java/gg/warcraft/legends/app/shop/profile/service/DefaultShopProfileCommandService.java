@@ -4,12 +4,14 @@ import com.google.inject.Inject;
 import gg.warcraft.legends.api.entity.player.LegendsCurrency;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.legends.api.shop.Decoration;
 import gg.warcraft.legends.api.shop.DecorationId;
 import gg.warcraft.legends.api.shop.DecorationPack;
 import gg.warcraft.legends.api.shop.DecorationPackId;
 import gg.warcraft.legends.api.shop.MiniPetId;
 import gg.warcraft.legends.api.shop.PromotionId;
 import gg.warcraft.legends.api.shop.ShopItem;
+import gg.warcraft.legends.api.shop.ShopItemType;
 import gg.warcraft.legends.api.shop.SpecializationId;
 import gg.warcraft.legends.api.shop.profile.ShopProfile;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileCommandService;
@@ -41,11 +43,23 @@ public class DefaultShopProfileCommandService implements ShopProfileCommandServi
     @Override
     public void takePayment(ShopItem item, UUID playerId) {
         LegendsPlayer player = legendsPlayerQueryService.getPlayer(playerId);
+        ShopProfile profile = shopProfileRepository.getProfile(playerId);
         int fragments = player.getFragments();
-        int cost = 0; //item.getCost();
-        if (fragments < cost) {
-            throw new IllegalStateException("Attempted to unlock " + item.getName() + " for player " + playerId +
-                    ", but player does not have enough moon fragments!");
+        int cost;
+        if (item.getType() == ShopItemType.DECORATION_PACK) {
+            DecorationPack pack = (DecorationPack) item;
+            int alreadyUnlocked = (int) pack.getDecorations().stream()
+                    .map(Decoration::getId)
+                    .map(DecorationId::valueOf)
+                    .filter(profile::hasDecoration)
+                    .count();
+            cost = item.getPrice() - ((int) (item.getPrice() * 0.33f * ((float) alreadyUnlocked / (float) pack.getDecorations().size())));
+        } else {
+            cost = item.getPrice();
+        }
+        if (fragments <= cost) {
+            throw new IllegalStateException("Attempted to take payment for " + item.getName() + " for player " +
+                    playerId + ", but player does not have enough fragments!");
         }
         playerCommandService.removeCurrency(playerId, LegendsCurrency.FRAGMENTS, cost);
     }
