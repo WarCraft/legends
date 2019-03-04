@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import gg.warcraft.combat.api.specialization.service.SpecializationCommandService;
 import gg.warcraft.legends.api.entity.player.LegendsCurrency;
 import gg.warcraft.legends.api.menu.AdminMenuFactory;
+import gg.warcraft.legends.app.shop.handler.ShopCycleHandler;
 import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
@@ -29,6 +30,7 @@ public class FishCommandHandler implements CommandHandler {
     private final BlockBackupQueryService blockBackupQueryService;
     private final BlockBackupCommandService blockBackupCommandService;
     private final MenuCommandService menuCommandService;
+    private final ShopCycleHandler shopCycleHandler;
     private final AdminMenuFactory adminMenuFactory;
     private final PersistenceCache persistenceCache;
 
@@ -39,6 +41,7 @@ public class FishCommandHandler implements CommandHandler {
                               BlockBackupQueryService blockBackupQueryService,
                               BlockBackupCommandService blockBackupCommandService,
                               MenuCommandService menuCommandService,
+                              ShopCycleHandler shopCycleHandler,
                               AdminMenuFactory adminMenuFactory, PersistenceCache persistenceCache) {
         this.authorizationService = authorizationService;
         this.playerCommandService = playerCommandService;
@@ -47,6 +50,7 @@ public class FishCommandHandler implements CommandHandler {
         this.blockBackupQueryService = blockBackupQueryService;
         this.blockBackupCommandService = blockBackupCommandService;
         this.menuCommandService = menuCommandService;
+        this.shopCycleHandler = shopCycleHandler;
         this.adminMenuFactory = adminMenuFactory;
         this.persistenceCache = persistenceCache;
     }
@@ -105,6 +109,11 @@ public class FishCommandHandler implements CommandHandler {
         return true;
     }
 
+    boolean onCycleShopCommand() {
+        shopCycleHandler.onDailyTickEvent(null); // TODO move cycle method into command service
+        return true;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, List<String> arguments) {
         if (sender.isPlayer() && !authorizationService.isDev(sender.getPlayerId())) {
@@ -129,6 +138,8 @@ public class FishCommandHandler implements CommandHandler {
                 return onCurrencyCommand(LegendsCurrency.FRAGMENTS, subArguments);
             case "clearcache":
                 return onClearCacheCommand(subArguments);
+            case "cycleshop":
+                return onCycleShopCommand();
             default:
                 return false;
         }

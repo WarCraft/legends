@@ -1,25 +1,37 @@
 package gg.warcraft.legends.app.shop.service;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.shop.ShopItem;
 import gg.warcraft.legends.api.shop.ShopItemType;
 import gg.warcraft.legends.api.shop.service.ShopRepository;
+import gg.warcraft.monolith.api.core.PersistenceService;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Singleton
 public class DefaultShopRepository implements ShopRepository {
+    private static final String AVAILABLE_ITEMS_KEY = "shop:availableitems";
+
+    private final PersistenceService persistenceService;
     private final Map<String, ShopItem> items;
     private final Map<ShopItemType, Map<ItemRarity, List<ShopItem>>> itemsByType;
+    private final List<ShopItem> availableItems;
 
-    public DefaultShopRepository() {
+    @Inject
+    public DefaultShopRepository(PersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
         this.items = new HashMap<>();
         this.itemsByType = new HashMap<>();
+        this.availableItems = persistenceService.getList(AVAILABLE_ITEMS_KEY).stream()
+                .map(this::getItem)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -34,6 +46,11 @@ public class DefaultShopRepository implements ShopRepository {
     }
 
     @Override
+    public List<ShopItem> getAvailableItems() {
+        return new ArrayList<>(availableItems);
+    }
+
+    @Override
     public void save(ShopItem item) {
         items.put(item.getId(), item);
         Map<ItemRarity, List<ShopItem>> itemsOfType =
@@ -41,5 +58,16 @@ public class DefaultShopRepository implements ShopRepository {
         List<ShopItem> itemsOfTypeAndRarity =
                 itemsOfType.computeIfAbsent(item.getRarity(), key -> new ArrayList<>());
         itemsOfTypeAndRarity.add(item);
+    }
+
+    @Override
+    public void saveAvailableItems(List<ShopItem> items) {
+        List<String> availableItemIds = items.stream()
+                .map(ShopItem::getId)
+                .collect(Collectors.toList());
+        persistenceService.setList(AVAILABLE_ITEMS_KEY, availableItemIds);
+
+        availableItems.clear();
+        availableItems.addAll(items);
     }
 }

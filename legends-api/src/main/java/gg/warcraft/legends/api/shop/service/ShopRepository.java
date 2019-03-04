@@ -12,5 +12,9 @@ public interface ShopRepository {
 
     List<ShopItem> getItemsOfType(ShopItemType type, ItemRarity rarity);
 
+    List<ShopItem> getAvailableItems();
+
     void save(ShopItem item);
+
+    void saveAvailableItems(List<ShopItem> items);
 }
