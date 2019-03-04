@@ -141,27 +141,41 @@ public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopM
             }
 
             if (click.isShiftRightClick()) {
+                ShopProfile currentProfile = shopProfileQueryService.getProfile(player.getId());
                 if (hasFavor) {
                     switch (item.getType()) {
                         case DECORATION:
                             DecorationId decorationId = DecorationId.valueOf(item.getId());
-                            shopProfileCommandService.unlockDecoration(decorationId, player.getId(), true);
+                            if (!currentProfile.hasDecoration(decorationId)) {
+                                shopProfileCommandService.unlockDecoration(decorationId, player.getId(), true);
+                                showMenu(createShopMenu(player.getId()), player.getId());
+                            }
                             break;
                         case DECORATION_PACK:
                             DecorationPackId decorationPackId = DecorationPackId.valueOf(item.getId());
                             shopProfileCommandService.unlockDecorationPack(decorationPackId, player.getId(), true);
+                            showMenu(createShopMenu(player.getId()), player.getId());
                             break;
                         case MINI_PET:
                             MiniPetId miniPetId = MiniPetId.valueOf(item.getId());
-                            shopProfileCommandService.unlockMiniPet(miniPetId, player.getId(), true);
+                            if (!currentProfile.hasMiniPet(miniPetId)) {
+                                shopProfileCommandService.unlockMiniPet(miniPetId, player.getId(), true);
+                                showMenu(createShopMenu(player.getId()), player.getId());
+                            }
                             break;
                         case SPECIALIZATION:
                             SpecializationId specializationId = SpecializationId.valueOf(item.getId());
-                            shopProfileCommandService.unlockSpecialization(specializationId, player.getId(), true);
+                            if (!currentProfile.hasSpecialization(specializationId)) {
+                                shopProfileCommandService.unlockSpecialization(specializationId, player.getId(), true);
+                                showMenu(createShopMenu(player.getId()), player.getId());
+                            }
                             break;
                         case PROMOTION:
                             PromotionId promotionId = PromotionId.valueOf(item.getId());
-                            shopProfileCommandService.unlockPromotion(promotionId, player.getId(), true);
+                            if (!currentProfile.hasPromotion(promotionId)) {
+                                shopProfileCommandService.unlockPromotion(promotionId, player.getId(), true);
+                                showMenu(createShopMenu(player.getId()), player.getId());
+                            }
                             break;
                     }
                 }
