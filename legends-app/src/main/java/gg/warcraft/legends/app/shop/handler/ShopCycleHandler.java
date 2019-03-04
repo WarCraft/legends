@@ -8,6 +8,8 @@ import gg.warcraft.legends.api.shop.ShopItemType;
 import gg.warcraft.legends.api.shop.service.ShopRepository;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.core.event.DailyTickEvent;
+import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
+import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,11 +27,16 @@ public class ShopCycleHandler {
     }
 
     private final ShopRepository shopRepository;
+    private final PlayerCommandService playerCommandService;
+    private final PlayerQueryService playerQueryService;
     private final Random random;
 
     @Inject
-    public ShopCycleHandler(ShopRepository shopRepository, TaskService taskService, Random random) {
+    public ShopCycleHandler(ShopRepository shopRepository, PlayerCommandService playerCommandService,
+                            PlayerQueryService playerQueryService, TaskService taskService, Random random) {
         this.shopRepository = shopRepository;
+        this.playerCommandService = playerCommandService;
+        this.playerQueryService = playerQueryService;
         this.random = random;
 
         taskService.runNextTick(() -> {
@@ -97,5 +104,7 @@ public class ShopCycleHandler {
     @Subscribe
     public void onDailyTickEvent(DailyTickEvent event) {
         cycleItems();
+        playerQueryService.getOnlinePlayers().forEach(player ->
+                playerCommandService.sendNotification(player.getId(), "The daily items in the shop have updated."));
     }
 }

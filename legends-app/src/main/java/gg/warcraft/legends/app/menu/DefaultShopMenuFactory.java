@@ -17,6 +17,7 @@ import gg.warcraft.legends.api.shop.profile.ShopProfile;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileCommandService;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
 import gg.warcraft.legends.api.shop.service.ShopRepository;
+import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
@@ -33,6 +34,7 @@ import java.util.UUID;
 
 public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopMenuFactory {
     private final LegendsPlayerQueryService playerQueryService;
+    private final PlayerCommandService playerCommandService;
     private final ShopProfileCommandService shopProfileCommandService;
     private final ShopProfileQueryService shopProfileQueryService;
     private final ShopRepository shopRepository;
@@ -40,6 +42,7 @@ public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopM
 
     @Inject
     public DefaultShopMenuFactory(MenuCommandService menuCommandService,
+                                  PlayerCommandService playerCommandService,
                                   LegendsPlayerQueryService playerQueryService,
                                   ShopProfileCommandService shopProfileCommandService,
                                   ShopProfileQueryService shopProfileQueryService,
@@ -49,6 +52,7 @@ public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopM
                                   MainMenuFactory mainMenuFactory) {
         super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
         this.playerQueryService = playerQueryService;
+        this.playerCommandService = playerCommandService;
         this.shopProfileCommandService = shopProfileCommandService;
         this.shopProfileQueryService = shopProfileQueryService;
         this.shopRepository = shopRepository;
@@ -162,18 +166,21 @@ public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopM
                             DecorationId decorationId = DecorationId.valueOf(item.getId());
                             if (!currentProfile.hasDecoration(decorationId)) {
                                 shopProfileCommandService.unlockDecoration(decorationId, player.getId(), true);
+                                playerCommandService.sendNotification(player.getId(), "You successfully purchased " + item.getName());
                                 showMenu(createShopMenu(player.getId()), player.getId());
                             }
                             break;
                         case DECORATION_PACK:
                             DecorationPackId decorationPackId = DecorationPackId.valueOf(item.getId());
                             shopProfileCommandService.unlockDecorationPack(decorationPackId, player.getId(), true);
+                            playerCommandService.sendNotification(player.getId(), "You successfully purchased " + item.getName());
                             showMenu(createShopMenu(player.getId()), player.getId());
                             break;
                         case MINI_PET:
                             MiniPetId miniPetId = MiniPetId.valueOf(item.getId());
                             if (!currentProfile.hasMiniPet(miniPetId)) {
                                 shopProfileCommandService.unlockMiniPet(miniPetId, player.getId(), true);
+                                playerCommandService.sendNotification(player.getId(), "You successfully purchased " + item.getName());
                                 showMenu(createShopMenu(player.getId()), player.getId());
                             }
                             break;
@@ -181,6 +188,7 @@ public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopM
                             SpecializationId specializationId = SpecializationId.valueOf(item.getId());
                             if (!currentProfile.hasSpecialization(specializationId)) {
                                 shopProfileCommandService.unlockSpecialization(specializationId, player.getId(), true);
+                                playerCommandService.sendNotification(player.getId(), "You successfully purchased " + item.getName());
                                 showMenu(createShopMenu(player.getId()), player.getId());
                             }
                             break;
@@ -188,6 +196,7 @@ public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopM
                             PromotionId promotionId = PromotionId.valueOf(item.getId());
                             if (!currentProfile.hasPromotion(promotionId)) {
                                 shopProfileCommandService.unlockPromotion(promotionId, player.getId(), true);
+                                playerCommandService.sendNotification(player.getId(), "You successfully purchased " + item.getName());
                                 showMenu(createShopMenu(player.getId()), player.getId());
                             }
                             break;
