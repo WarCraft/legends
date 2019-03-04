@@ -6,6 +6,7 @@ import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.shop.ShopItem;
 import gg.warcraft.legends.api.shop.ShopItemType;
 import gg.warcraft.legends.api.shop.service.ShopRepository;
+import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.core.event.DailyTickEvent;
 
 import java.util.ArrayList;
@@ -27,13 +28,15 @@ public class ShopCycleHandler {
     private final Random random;
 
     @Inject
-    public ShopCycleHandler(ShopRepository shopRepository, Random random) {
+    public ShopCycleHandler(ShopRepository shopRepository, TaskService taskService, Random random) {
         this.shopRepository = shopRepository;
         this.random = random;
 
-        if (shopRepository.getAvailableItems().isEmpty()) {
-            cycleItems();
-        }
+        taskService.runNextTick(() -> {
+            if (shopRepository.getAvailableItems().isEmpty()) {
+                cycleItems();
+            }
+        });
     }
 
     private ShopItemType getRandomPremiumType() {
@@ -63,6 +66,9 @@ public class ShopCycleHandler {
     }
 
     private ShopItem getRandomItem(List<ShopItem> items) {
+        if (items.isEmpty()) {
+            return null;
+        }
         return items.get(random.nextInt(items.size()));
     }
 
@@ -72,13 +78,17 @@ public class ShopCycleHandler {
         for (int i = 0; i < 5; i += 1) {
             List<ShopItem> list = shopRepository.getItemsOfType(getRandomPremiumType(), getRandomPremiumRarity());
             ShopItem item = getRandomItem(list);
-            newItems.add(item);
+            if (item != null) {
+                newItems.add(item);
+            }
         }
 
         for (int i = 0; i < 5; i += 1) {
             List<ShopItem> list = shopRepository.getItemsOfType(getRandomCommonType(), getRandomCommonRarity());
             ShopItem item = getRandomItem(list);
-            newItems.add(item);
+            if (item != null) {
+                newItems.add(item);
+            }
         }
 
         shopRepository.saveAvailableItems(newItems);

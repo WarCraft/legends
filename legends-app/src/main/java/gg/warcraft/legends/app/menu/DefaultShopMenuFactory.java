@@ -73,7 +73,15 @@ public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopM
     }
 
     Button createItemButton(ShopItem item, LegendsPlayer player, ShopProfile profile) {
-        ButtonBuilder builder = createSimpleButtonBuilder(item.getIcon(), item.getName());
+        ButtonBuilder builder;
+        if (item.getIcon() != null) {
+            builder = createSimpleButtonBuilder(item.getIcon(), item.getRarity().getColor() + item.getName());
+        } else if (item.getSkull() != null) {
+            builder = createSkullButtonBuilder(item.getSkull(), item.getRarity().getColor() + item.getName());
+        } else {
+            throw new IllegalArgumentException("Failed to create shop button for item with no icon/skull: " + item.getId());
+        }
+
         builder.addTooltip(item.getType().toString());
 
         boolean hasUnlocked;
@@ -129,6 +137,11 @@ public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopM
             if (hasUnlocked) {
                 builder.addTooltip("You already have this item unlocked.");
             } else if (hasFavor) {
+                int newCount = decorationCount - decorationsUnlocked;
+                String decorationPlural = newCount == 1 ? " new decoration" : " new decorations";
+                builder.addTooltip("This pack will unlock " + newCount + decorationPlural + " for you.");
+                builder.addTooltip("The price has been adjusted for those you have already unlocked.");
+                builder.addTooltip("");
                 builder.addTooltip(ColorCode.GREEN + "[SHIFT RIGHT CLICK] To unlock for " + price + " Fragments");
             } else {
                 builder.addTooltip(ColorCode.RED + "Costs " + price + " Fragments to unlock");

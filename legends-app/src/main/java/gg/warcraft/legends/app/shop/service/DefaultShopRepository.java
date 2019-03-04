@@ -7,12 +7,14 @@ import gg.warcraft.legends.api.shop.ShopItem;
 import gg.warcraft.legends.api.shop.ShopItemType;
 import gg.warcraft.legends.api.shop.service.ShopRepository;
 import gg.warcraft.monolith.api.core.PersistenceService;
+import gg.warcraft.monolith.api.core.TaskService;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -25,13 +27,17 @@ public class DefaultShopRepository implements ShopRepository {
     private final List<ShopItem> availableItems;
 
     @Inject
-    public DefaultShopRepository(PersistenceService persistenceService) {
+    public DefaultShopRepository(PersistenceService persistenceService, TaskService taskService) {
         this.persistenceService = persistenceService;
         this.items = new HashMap<>();
         this.itemsByType = new HashMap<>();
-        this.availableItems = persistenceService.getList(AVAILABLE_ITEMS_KEY).stream()
-                .map(this::getItem)
-                .collect(Collectors.toList());
+        this.availableItems = new ArrayList<>();
+
+        taskService.runNextTick(() ->
+                availableItems.addAll(persistenceService.getList(AVAILABLE_ITEMS_KEY).stream()
+                        .map(this::getItem)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList())));
     }
 
     @Override

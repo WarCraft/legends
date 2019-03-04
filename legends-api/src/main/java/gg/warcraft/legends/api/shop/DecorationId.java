@@ -371,5 +371,13 @@ public enum DecorationId {
     NETHERRACK,
     OBSIDIAN,
     RED_NETHER_BRICK,
-    SOUL_SAND
+    SOUL_SAND,
+
+    // Mob pack
+    MOB_HEAD_SKELETON,
+    MOB_HEAD_WITHER_SKELETON,
+    MOB_HEAD_ZOMBIE,
+    MOB_HEAD_HUMAN,
+    MOB_HEAD_CREEPER,
+    MOB_HEAD_DRAGON
 }
