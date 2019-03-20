@@ -10,6 +10,7 @@ import gg.warcraft.legends.api.entity.player.LegendsPlayerData;
 import gg.warcraft.legends.api.entity.player.LegendsStatistic;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.core.event.DailyTickEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 
@@ -21,14 +22,17 @@ public class ChallengeResetHandler {
     private final LegendsPlayerQueryService playerQueryService;
     private final LegendsPlayerCommandService playerCommandService;
     private final GameQueryService gameQueryService;
+    private final TaskService taskService;
 
     @Inject
     public ChallengeResetHandler(LegendsPlayerQueryService playerQueryService,
                                  LegendsPlayerCommandService playerCommandService,
-                                 GameQueryService gameQueryService) {
+                                 GameQueryService gameQueryService,
+                                 TaskService taskService) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.gameQueryService = gameQueryService;
+        this.taskService = taskService;
     }
 
     private int getCurrentNewYorkDay() {
@@ -89,14 +93,18 @@ public class ChallengeResetHandler {
 
     @Subscribe
     public void onDailyTickEvent(DailyTickEvent event) {
-        int currentNewYorkDay = getCurrentNewYorkDay();
-        playerQueryService.getOnlinePlayers().forEach(player ->
-                resetDailies(player.getId(), currentNewYorkDay));
+        taskService.runNextTick(() -> {
+            int currentNewYorkDay = getCurrentNewYorkDay();
+            playerQueryService.getOnlinePlayers().forEach(player ->
+                    resetDailies(player.getId(), currentNewYorkDay));
+        });
     }
 
     @Subscribe
     public void onWarStartedEvent(WarStartedEvent event) {
-        playerQueryService.getOnlinePlayers().forEach(player ->
-                resetWarries(player.getId(), event.getGameId()));
+        taskService.runNextTick(() -> {
+            playerQueryService.getOnlinePlayers().forEach(player ->
+                    resetWarries(player.getId(), event.getGameId()));
+        });
     }
 }
