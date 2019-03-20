@@ -63,6 +63,7 @@ import gg.warcraft.legends.app.item.equipment.handler.EquipmentUpgradeUseHandler
 import gg.warcraft.legends.app.item.handler.EquipmentAttributesHandler;
 import gg.warcraft.legends.app.menu.handler.MenuCommandHandler;
 import gg.warcraft.legends.app.misc.SpydeyBot;
+import gg.warcraft.legends.app.shop.handler.ShopCycleHandler;
 import gg.warcraft.legends.app.shop.profile.handler.ShopProfileInitializationHandler;
 import gg.warcraft.legends.spigot.OLD.combat.HunterPetListener;
 import gg.warcraft.legends.spigot.OLD.combat.PersonalScoreboardHandler;
@@ -223,6 +224,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         EquipmentUpgradeUseHandler equipmentUpgradeUseHandler = injector.getInstance(EquipmentUpgradeUseHandler.class);
         eventService.subscribe(equipmentUpgradeUseHandler);
+
+        ShopCycleHandler shopCycleHandler = injector.getInstance(ShopCycleHandler.class);
+        eventService.subscribe(shopCycleHandler);
 
         // Player ranks
         PlayerRankChangeHandler playerRankChangeHandler = injector.getInstance(PlayerRankChangeHandler.class);

@@ -224,7 +224,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         UUID playerId = player.getId();
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.ENCHANTED_GOLD_APPLE, "WarCraft: Shop");
         builder.addTooltip("To go even further beyond in supporting the");
-        builder.addTooltip("server the WarCraft: Shop has six different");
+        builder.addTooltip("server the WarCraft: Shop has ten different");
         builder.addTooltip("items for sale every day. These items can");
         builder.addTooltip("be bought with Fragments which are available");
         builder.addTooltip("from the web shop at " + YELLOW + "shop.warcraft.gg");

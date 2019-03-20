@@ -3,6 +3,7 @@ package gg.warcraft.legends.app.shop.profile.persistence;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,10 +24,10 @@ public class ShopProfileItem {
                            @JsonProperty("specializations") Set<String> specializations) {
         this.playerId = playerId;
         this.grandfathered = grandfathered;
-        this.decorations = decorations;
-        this.miniPets = miniPets;
-        this.promotions = promotions;
-        this.specializations = specializations;
+        this.decorations = decorations != null ? decorations : Collections.emptySet();
+        this.miniPets = miniPets != null ? miniPets : Collections.emptySet();
+        this.promotions = promotions != null ? promotions : Collections.emptySet();
+        this.specializations = specializations != null ? specializations : Collections.emptySet();
     }
 
     public UUID getPlayerId() {
