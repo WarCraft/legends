@@ -1,4 +1,4 @@
-package gg.warcraft.legends.app.core.handler;
+package gg.warcraft.legends.app.leaderboard.handler;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -6,7 +6,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Singleton;
-import gg.warcraft.legends.api.core.Leaderboard;
+import gg.warcraft.legends.api.core.leaderboard.Leaderboard;
 import gg.warcraft.legends.app.core.persistence.LeaderboardEntryItem;
 import gg.warcraft.monolith.api.core.JsonMapper;
 import gg.warcraft.monolith.api.core.PersistenceService;
@@ -74,7 +74,7 @@ public class LeaderboardPublishingHandler implements Runnable {
     public void run() {
         Leaderboard current = null;
         int gameId = 0;
-        SortedMap<String, Double> ranks = persistenceService.getSortedSet(current.getPersistenceKey() + gameId);
+        SortedMap<String, Double> ranks = persistenceService.getSortedSet(current.getKey() + gameId);
 
         List<LeaderboardEntryItem> entries = ranks.entrySet().stream()
                 .map(entry -> {
