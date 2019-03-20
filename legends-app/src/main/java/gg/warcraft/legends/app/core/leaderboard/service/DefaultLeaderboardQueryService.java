@@ -8,10 +8,10 @@ import gg.warcraft.legends.api.entity.player.LegendsStatistic;
 import gg.warcraft.monolith.api.core.PersistenceService;
 import gg.warcraft.monolith.api.util.TimeUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DefaultLeaderboardQueryService extends AbstractLeaderboardService implements LeaderboardQueryService {
     private final PersistenceService persistenceService;
@@ -25,15 +25,15 @@ public class DefaultLeaderboardQueryService extends AbstractLeaderboardService i
     }
 
     @Override
-    public Map.Entry<UUID, Integer> getLeader(LegendsStatistic statistic) {
+    public List<UUID> getLeaders(LegendsStatistic statistic, int count) {
         String leaderboardKey = getLeaderboardKey(statistic);
-        SortedMap<String, Double> leader = persistenceService.getSortedSet(leaderboardKey, 0, 1);
-        if (leader == null || leader.isEmpty()) {
+        SortedMap<String, Double> leaders = persistenceService.getSortedSet(leaderboardKey, 0, count);
+        if (leaders == null || leaders.isEmpty()) {
             return null;
         }
 
-        UUID playerId = UUID.fromString(leader.firstKey());
-        int value = Integer.parseInt(leader.get(leader.firstKey()).toString());
-        return new HashMap.SimpleEntry<>(playerId, value);
+        return leaders.entrySet().stream()
+                .map(leader -> UUID.fromString(leader.getKey()))
+                .collect(Collectors.toList());
     }
 }
