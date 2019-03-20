@@ -68,6 +68,15 @@ public enum LegendsStatistic implements Statistic {
     ALLTIME_KEEPS_NEUTRALIZED("All-time Keeps Neutralized", "alltimeKeepsNeutralized"),
     ALLTIME_KEEPS_DEFENDED("All-time Keeps Defended", "alltimeKeepsDefended"),
 
+    // Currency Statistics
+    DAILY_FAVOR_GAINED("Daily Favor Gained", "dailyFavorGained"),
+    WARRY_FAVOR_GAINED("War Favor Gained", "warFavorGained"),
+    ALLTIME_FAVOR_GAINED("All-time Favor Gained", "alltimeFavorGained"),
+
+    DAILY_GOLD_GAINED("Daily Gold Gained", "dailyGoldGained"),
+    WARRY_GOLD_GAINED("War Gold Gained", "warGoldGained"),
+    ALLTIME_GOLD_GAINED("All-time Gold Gained", "alltimeGoldGained"),
+
     // Misc Statistics
     DAILY_TIME_PLAYED("Daily Time Played", "dailyTimePlayed"),
     WARRY_TIME_PLAYED("War Time Played", "warryTimePlayed"),
