@@ -63,6 +63,7 @@ import gg.warcraft.legends.app.entity.player.statistic.handler.ResourcesGathered
 import gg.warcraft.legends.app.item.crate.handler.LootCrateUseHandler;
 import gg.warcraft.legends.app.item.equipment.handler.EquipmentUpgradeUseHandler;
 import gg.warcraft.legends.app.item.handler.EquipmentAttributesHandler;
+import gg.warcraft.legends.app.item.handler.MobDropHandler;
 import gg.warcraft.legends.app.menu.handler.MenuCommandHandler;
 import gg.warcraft.legends.app.misc.SpydeyBot;
 import gg.warcraft.legends.app.shop.handler.ShopCycleHandler;
@@ -137,8 +138,6 @@ public class LegendsPlugin extends JavaPlugin {
 
         LootCrateCommandService lootCrateCommandService = injector.getInstance(LootCrateCommandService.class);
         lootCrateCommandService.readConfiguration(serverConfiguration);
-
-
     }
 
     void loadNpcsConfiguration() {
@@ -337,6 +336,10 @@ public class LegendsPlugin extends JavaPlugin {
 
         FishCommandHandler fishCommandHandler = injector.getInstance(FishCommandHandler.class);
         commandCommandService.createCommand("fish", Collections.emptyList(), fishCommandHandler);
+
+        MobDropHandler mobDropHandler = injector.getInstance(MobDropHandler.class);
+        commandCommandService.createCommand("dropitems", Collections.emptyList(), mobDropHandler);
+        eventService.subscribe(mobDropHandler);
     }
 
     // TODO remove all this code and any classes from the spigotOLD package
