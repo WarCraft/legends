@@ -31,7 +31,11 @@ public class DefaultLegendsPlayerQueryService implements LegendsPlayerQueryServi
     @Override
     public LegendsPlayer getPlayer(UUID playerId) {
         Player player = playerQueryService.getPlayer(playerId);
-        return legendsEntityFactory.createLegendsPlayer(player);
+        if (player != null) {
+            return legendsEntityFactory.createLegendsPlayer(player);
+        }
+
+        return null;
     }
 
     @Override
