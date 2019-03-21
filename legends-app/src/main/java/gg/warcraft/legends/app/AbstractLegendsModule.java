@@ -13,6 +13,8 @@ import gg.warcraft.legends.api.core.challenge.service.ChallengeRepository;
 import gg.warcraft.legends.api.core.game.service.GameCommandService;
 import gg.warcraft.legends.api.core.game.service.GameQueryService;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
+import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardCommandService;
+import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardQueryService;
 import gg.warcraft.legends.api.core.service.SpawnLocationRepository;
 import gg.warcraft.legends.api.entity.LegendsEntityFactory;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
@@ -100,6 +102,8 @@ import gg.warcraft.legends.app.core.challenge.service.DefaultChallengeRepository
 import gg.warcraft.legends.app.core.game.service.DefaultGameCommandService;
 import gg.warcraft.legends.app.core.game.service.DefaultGameQueryService;
 import gg.warcraft.legends.app.core.game.service.DefaultGameRepository;
+import gg.warcraft.legends.app.core.leaderboard.service.DefaultLeaderboardCommandService;
+import gg.warcraft.legends.app.core.leaderboard.service.DefaultLeaderboardQueryService;
 import gg.warcraft.legends.app.core.service.DefaultSpawnLocationRepository;
 import gg.warcraft.legends.app.entity.player.SimpleLegendsPlayer;
 import gg.warcraft.legends.app.entity.player.rank.handler.PrestigeAttributesHandler;
@@ -235,6 +239,13 @@ public abstract class AbstractLegendsModule extends PrivateModule {
 
         bind(GameRepository.class).to(DefaultGameRepository.class);
         expose(GameRepository.class);
+
+        // Leaderboards
+        bind(LeaderboardCommandService.class).to(DefaultLeaderboardCommandService.class);
+        expose(LeaderboardCommandService.class);
+
+        bind(LeaderboardQueryService.class).to(DefaultLeaderboardQueryService.class);
+        expose(LeaderboardQueryService.class);
     }
 
     private void configureEntity() {
