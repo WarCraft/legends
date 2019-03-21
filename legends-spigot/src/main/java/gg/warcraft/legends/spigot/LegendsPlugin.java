@@ -44,6 +44,8 @@ import gg.warcraft.legends.app.core.handler.PlayerCountMetricHandler;
 import gg.warcraft.legends.app.core.handler.PlayerSpawnHandler;
 import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
 import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
+import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardRewardHandler;
+import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardUpdateHandler;
 import gg.warcraft.legends.app.core.tutorial.handler.TutorialCommandHandler;
 import gg.warcraft.legends.app.core.tutorial.handler.TutorialStepHandler;
 import gg.warcraft.legends.app.entity.player.handler.GoldCommandHandler;
@@ -311,6 +313,13 @@ public class LegendsPlugin extends JavaPlugin {
 
         ChallengeCompletionHandler challengeCompletionHandler = injector.getInstance(ChallengeCompletionHandler.class);
         eventService.subscribe(challengeCompletionHandler);
+
+        // Leaderboards
+        LeaderboardUpdateHandler leaderboardUpdateHandler = injector.getInstance(LeaderboardUpdateHandler.class);
+        eventService.subscribe(leaderboardUpdateHandler);
+
+        LeaderboardRewardHandler leaderboardRewardHandler = injector.getInstance(LeaderboardRewardHandler.class);
+        eventService.subscribe(leaderboardRewardHandler);
     }
 
     void initializeLegendsCommands() {

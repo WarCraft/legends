@@ -43,21 +43,28 @@ public class LeaderboardRewardHandler {
             for (int i = 1; i <= 3; i += 1) {
                 UUID playerId = leaders.get(i - 1);
                 Item crates;
+                String placing;
                 switch (i) {
                     case 1:
                         crates = legendCrate.withStackSize(1);
+                        placing = "first";
                         break;
                     case 2:
                         crates = warCrate.withStackSize(2);
+                        placing = "second";
                         break;
                     case 3:
                         crates = warCrate.withStackSize(1);
+                        placing = "third";
                         break;
                     default:
-                        crates = warCrate.withStackSize(0);
+                        crates = null;
+                        placing = null;
                         break;
                 }
                 playerCommandService.giveItem(playerId, crates, false);
+                playerCommandService.sendNotification(playerId, "You received " + crates.getStackSize() + " " +
+                        crates.getName() + " for finishing " + placing + " on the " + daily.getName() + " Leaderboard!");
             }
         });
     }
@@ -69,39 +76,52 @@ public class LeaderboardRewardHandler {
             for (int i = 1; i <= 9; i += 1) {
                 UUID playerId = leaders.get(i - 1);
                 Item crates;
+                String placing;
                 switch (i) {
                     case 1:
                         crates = titanCrate.withStackSize(3);
+                        placing = "first";
                         break;
                     case 2:
                         crates = titanCrate.withStackSize(2);
+                        placing = "second";
                         break;
                     case 3:
                         crates = titanCrate.withStackSize(1);
+                        placing = "third";
                         break;
                     case 4:
                         crates = legendCrate.withStackSize(3);
+                        placing = "fourth";
                         break;
                     case 5:
                         crates = legendCrate.withStackSize(2);
+                        placing = "fifth";
                         break;
                     case 6:
                         crates = legendCrate.withStackSize(1);
+                        placing = "sixth";
                         break;
                     case 7:
                         crates = warCrate.withStackSize(3);
+                        placing = "seventh";
                         break;
                     case 8:
                         crates = warCrate.withStackSize(2);
+                        placing = "eighth";
                         break;
                     case 9:
                         crates = warCrate.withStackSize(1);
+                        placing = "ninth";
                         break;
                     default:
-                        crates = warCrate.withStackSize(0);
+                        crates = null;
+                        placing = null;
                         break;
                 }
                 playerCommandService.giveItem(playerId, crates, false);
+                playerCommandService.sendNotification(playerId, "You received " + crates.getStackSize() + " " +
+                        crates.getName() + " for finishing " + placing + " on the " + warry.getName() + " Leaderboard!");
             }
         });
     }
