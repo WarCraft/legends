@@ -16,7 +16,6 @@ import gg.warcraft.legends.app.core.leaderboard.MojangTextures;
 import gg.warcraft.monolith.api.core.JsonMapper;
 import gg.warcraft.monolith.api.core.PersistenceService;
 import gg.warcraft.monolith.api.core.TaskService;
-import gg.warcraft.monolith.api.util.TimeUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -41,9 +40,9 @@ public class DefaultLeaderboardCommandService extends AbstractLeaderboardService
     @Inject
     public DefaultLeaderboardCommandService(GameQueryService gameQueryService,
                                             PersistenceService persistenceService,
-                                            TaskService taskService, TimeUtils timeUtils,
+                                            TaskService taskService,
                                             @JsonMapper ObjectMapper jsonMapper) {
-        super(gameQueryService, timeUtils);
+        super(gameQueryService);
         this.persistenceService = persistenceService;
         this.taskService = taskService;
         this.jsonMapper = jsonMapper;

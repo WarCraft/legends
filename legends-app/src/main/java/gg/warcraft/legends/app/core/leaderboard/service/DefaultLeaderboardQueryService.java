@@ -6,7 +6,6 @@ import gg.warcraft.legends.api.core.leaderboard.service.AbstractLeaderboardServi
 import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardQueryService;
 import gg.warcraft.legends.api.entity.player.LegendsStatistic;
 import gg.warcraft.monolith.api.core.PersistenceService;
-import gg.warcraft.monolith.api.util.TimeUtils;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -18,9 +17,8 @@ public class DefaultLeaderboardQueryService extends AbstractLeaderboardService i
 
     @Inject
     public DefaultLeaderboardQueryService(GameQueryService gameQueryService,
-                                          PersistenceService persistenceService,
-                                          TimeUtils timeUtils) {
-        super(gameQueryService, timeUtils);
+                                          PersistenceService persistenceService) {
+        super(gameQueryService);
         this.persistenceService = persistenceService;
     }
 
