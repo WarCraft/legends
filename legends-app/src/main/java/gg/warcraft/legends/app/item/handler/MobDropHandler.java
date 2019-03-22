@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import gg.warcraft.combat.api.specialization.Specialization;
 import gg.warcraft.legends.api.combat.LegendsSpecialization;
 import gg.warcraft.legends.api.combat.LegendsSpecializationType;
+import gg.warcraft.legends.api.combat.service.WhoDamagedWhoRepository;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
@@ -38,6 +39,7 @@ public class MobDropHandler implements CommandHandler {
     private final LegendsPlayerQueryService playerQueryService;
     private final LegendsPlayerCommandService playerCommandService;
     private final WorldCommandService worldCommandService;
+    private final WhoDamagedWhoRepository whoDamagedWhoRepository;
     private final EquipmentGeneratorFactory equipmentGeneratorFactory;
     private final LocationFactory locationFactory;
     private final Random random;
@@ -49,12 +51,14 @@ public class MobDropHandler implements CommandHandler {
     public MobDropHandler(LegendsPlayerQueryService playerQueryService,
                           LegendsPlayerCommandService playerCommandService,
                           WorldCommandService worldCommandService,
+                          WhoDamagedWhoRepository whoDamagedWhoRepository,
                           EquipmentGeneratorFactory equipmentGeneratorFactory,
                           LocationFactory locationFactory,
                           Random random, @PluginLogger Logger pluginLogger) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.worldCommandService = worldCommandService;
+        this.whoDamagedWhoRepository = whoDamagedWhoRepository;
         this.equipmentGeneratorFactory = equipmentGeneratorFactory;
         this.locationFactory = locationFactory;
         this.random = random;
@@ -103,7 +107,7 @@ public class MobDropHandler implements CommandHandler {
         }
 
         EquipmentGenerator equipmentGenerator = equipmentGeneratorFactory.createEquipmentGenerator();
-        Set<UUID> damagers = DamageService.getInstance().getDamagers(mobId);
+        Set<UUID> damagers = whoDamagedWhoRepository.getDamagers(mobId);
         damagers.forEach(damagerId -> {
             LegendsPlayer damager = playerQueryService.getPlayer(damagerId);
             if (damager == null) {
@@ -121,7 +125,7 @@ public class MobDropHandler implements CommandHandler {
             if (specializationType == null) {
                 pluginLogger.warning("Failed to drop random equipment for player " + damagerId +
                         ", could not determine specialization type for " + specialization.getName());
-                return false;
+                return;
             }
 
             Item drop = equipmentGenerator.generate(specializationType, team);
