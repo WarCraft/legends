@@ -8,6 +8,7 @@ import gg.warcraft.legends.api.ai.npc.service.NpcCommandService;
 import gg.warcraft.legends.api.ai.npc.service.NpcQueryService;
 import gg.warcraft.legends.api.ai.npc.service.NpcRepository;
 import gg.warcraft.legends.api.combat.passive.PassiveFactory;
+import gg.warcraft.legends.api.combat.service.WhoDamagedWhoRepository;
 import gg.warcraft.legends.api.core.MetricsService;
 import gg.warcraft.legends.api.core.challenge.service.ChallengeRepository;
 import gg.warcraft.legends.api.core.game.service.GameCommandService;
@@ -90,6 +91,7 @@ import gg.warcraft.legends.app.combat.ranger.effect.FocusEffect;
 import gg.warcraft.legends.app.combat.ranger.effect.RangerEffectFactory;
 import gg.warcraft.legends.app.combat.ranger.status.FocusStatusEffect;
 import gg.warcraft.legends.app.combat.ranger.status.RangerStatusEffectFactory;
+import gg.warcraft.legends.app.combat.service.DefaultWhoDamagedWhoRepository;
 import gg.warcraft.legends.app.combat.warrior.effect.GrudgeEffect;
 import gg.warcraft.legends.app.combat.warrior.effect.HamstringEffect;
 import gg.warcraft.legends.app.combat.warrior.effect.StandYourGroundEffect;
@@ -177,6 +179,9 @@ public abstract class AbstractLegendsModule extends PrivateModule {
     }
 
     private void configureCombat() {
+        bind(WhoDamagedWhoRepository.class).to(DefaultWhoDamagedWhoRepository.class);
+        expose(WhoDamagedWhoRepository.class);
+
         install(new FactoryModuleBuilder()
                 .implement(StatusEffect.class, Names.named("attributes"), AttributesPassive.class)
                 .implement(StatusEffect.class, Names.named("crit"), CritPassive.class)

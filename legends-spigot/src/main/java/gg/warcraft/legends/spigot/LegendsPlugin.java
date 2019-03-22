@@ -27,6 +27,7 @@ import gg.warcraft.legends.app.ai.npc.handler.TargetDummyDamageHandler;
 import gg.warcraft.legends.app.combat.LegendsCombatConfiguration;
 import gg.warcraft.legends.app.combat.handler.ArrowDistributionHandler;
 import gg.warcraft.legends.app.combat.handler.ArrowPickupHandler;
+import gg.warcraft.legends.app.combat.handler.WhoDamagedWhoHandler;
 import gg.warcraft.legends.app.combat.passive.handler.PassiveAssignmentHandler;
 import gg.warcraft.legends.app.combat.ranger.marksman.FocusHandler;
 import gg.warcraft.legends.app.config.LegendsMapperModule;
@@ -214,6 +215,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         FocusHandler focusHandler = injector.getInstance(FocusHandler.class);
         eventService.subscribe(focusHandler);
+
+        WhoDamagedWhoHandler whoDamagedWhoHandler = injector.getInstance(WhoDamagedWhoHandler.class);
+        eventService.subscribe(whoDamagedWhoHandler);
 
         // Shop
         ShopProfileInitializationHandler shopProfileInitializationHandler =
