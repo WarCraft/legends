@@ -2,8 +2,10 @@ dependencies {
     api project(':legends-app')
 
     repositories {
+        maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url 'http://repo.md-5.net/content/groups/public' }
-        maven { url 'https://repo.parallelblock.com/repository/maven-public/' }
+        maven { url 'http://repo.dmulloy2.net/nexus/repository/public' }
     }
 
     shadow('org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT') { exclude group: '*' }
