@@ -11,17 +11,14 @@ commands:
   return:
   spawn:
 
-  kit:
-  gold:
-  givegold:
   vote:
 
-# staff commands
+  # staff commands
   mspawn:
   skirmish:
   build:
 
-# dev commands
+  # dev commands
   restoreall:
   fvel:
   fvar:
@@ -29,8 +26,6 @@ commands:
   treb:
   #bomb:
 
-# shortcuts
+  # shortcuts
   shop:
 
-# mythicmob commands
-  dropitems:
