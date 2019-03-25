@@ -61,6 +61,7 @@ import gg.warcraft.legends.app.entity.player.statistic.handler.KillDeathStatisti
 import gg.warcraft.legends.app.entity.player.statistic.handler.LootCrateStatisticHandler;
 import gg.warcraft.legends.app.entity.player.statistic.handler.ObjectiveStatisticHandler;
 import gg.warcraft.legends.app.entity.player.statistic.handler.ResourcesGatheredStatisticHandler;
+import gg.warcraft.legends.app.entity.player.statistic.handler.TimePlayedStatisticHandler;
 import gg.warcraft.legends.app.item.crate.handler.LootCrateUseHandler;
 import gg.warcraft.legends.app.item.equipment.handler.EquipmentUpgradeUseHandler;
 import gg.warcraft.legends.app.item.handler.EquipmentAttributesHandler;
@@ -267,6 +268,9 @@ public class LegendsPlugin extends JavaPlugin {
         LootCrateStatisticHandler lootCrateStatisticHandler =
                 injector.getInstance(LootCrateStatisticHandler.class);
         eventService.subscribe(lootCrateStatisticHandler);
+
+        TimePlayedStatisticHandler timePlayedStatisticHandler = injector.getInstance(TimePlayedStatisticHandler.class);
+        eventService.subscribe(timePlayedStatisticHandler);
 
         // Player inspect
         PlayerInspectHandler playerInspectHandler = injector.getInstance(PlayerInspectHandler.class);
