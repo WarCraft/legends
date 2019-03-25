@@ -133,6 +133,10 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
     public Item generate(LegendsSpecializationType specialization, EquipmentType type, LegendsTeam team) {
         float rarityRoll = random.nextFloat() * 100;
         ItemRarity itemRarity = equipmentConfiguration.getItemRarities().floorEntry(rarityRoll).getValue();
+        if (itemRarity == ItemRarity.ANCIENT) {
+            // TODO remove when ancient items are supported
+            itemRarity = ItemRarity.LEGENDARY;
+        }
         return generate(specialization, type, itemRarity, team);
     }
 
