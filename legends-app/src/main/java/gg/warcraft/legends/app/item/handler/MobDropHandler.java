@@ -16,7 +16,6 @@ import gg.warcraft.legends.api.item.equipment.EquipmentGeneratorFactory;
 import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
-import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.event.ItemPrePickupEvent;
 import gg.warcraft.monolith.api.util.TimeUtils;
@@ -32,7 +31,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 public class MobDropHandler implements CommandHandler {
     private static final int RESERVE_DURATION = TimeUtils.MILLIS_PER_MINUTE;
@@ -44,7 +42,6 @@ public class MobDropHandler implements CommandHandler {
     private final EquipmentGeneratorFactory equipmentGeneratorFactory;
     private final LocationFactory locationFactory;
     private final Random random;
-    private final Logger pluginLogger;
     private final Map<UUID, UUID> reservedFor;
     private final Map<UUID, Long> reservedUntil;
 
@@ -55,7 +52,7 @@ public class MobDropHandler implements CommandHandler {
                           WhoDamagedWhoRepository whoDamagedWhoRepository,
                           EquipmentGeneratorFactory equipmentGeneratorFactory,
                           LocationFactory locationFactory,
-                          Random random, @PluginLogger Logger pluginLogger) {
+                          Random random) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.worldCommandService = worldCommandService;
@@ -63,7 +60,6 @@ public class MobDropHandler implements CommandHandler {
         this.equipmentGeneratorFactory = equipmentGeneratorFactory;
         this.locationFactory = locationFactory;
         this.random = random;
-        this.pluginLogger = pluginLogger;
         this.reservedFor = new HashMap<>();
         this.reservedUntil = new HashMap<>();
     }
@@ -124,7 +120,7 @@ public class MobDropHandler implements CommandHandler {
                 }
             }
             if (specializationType == null) {
-                pluginLogger.warning("Failed to drop random equipment for player " + damagerId +
+                System.out.println("Failed to drop random equipment for player " + damagerId +
                         ", could not determine specialization type for " + specialization.getName());
                 return;
             }
@@ -161,7 +157,6 @@ public class MobDropHandler implements CommandHandler {
                     LegendsStatistic.WARRY_MONSTER_KILLS, LegendsStatistic.ALLTIME_MONSTER_KILLS);
         });
 
-        whoDamagedWhoRepository.resetDamagers(mobId);
         return true;
     }
 
