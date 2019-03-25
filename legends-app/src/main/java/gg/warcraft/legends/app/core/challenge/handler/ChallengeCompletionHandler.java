@@ -49,6 +49,10 @@ public class ChallengeCompletionHandler {
 
     @Subscribe
     public void onPlayerStatisticChangedEvent(PlayerStatisticChangedEvent event) {
+        if (!(event.getStatistic() instanceof LegendsStatistic)) {
+            return;
+        }
+
         UUID playerId = event.getPlayerId();
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
         LegendsStatistic statistic = (LegendsStatistic) event.getStatistic();

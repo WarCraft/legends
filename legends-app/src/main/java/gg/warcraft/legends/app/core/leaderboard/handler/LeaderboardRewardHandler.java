@@ -40,6 +40,10 @@ public class LeaderboardRewardHandler {
     public void onDailyTickEvent(DailyTickEvent event) {
         LegendsStatistic.getDailies().forEach(daily -> {
             List<UUID> leaders = leaderboardQueryService.getLeaders(daily, 3);
+            if (leaders.isEmpty()) {
+                return;
+            }
+
             for (int i = 1; i <= 3; i += 1) {
                 UUID playerId = leaders.get(i - 1);
                 Item crates;
