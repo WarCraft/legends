@@ -8,6 +8,7 @@ import gg.warcraft.legends.api.combat.LegendsSpecializationType;
 import gg.warcraft.legends.api.combat.service.WhoDamagedWhoRepository;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
+import gg.warcraft.legends.api.entity.player.LegendsStatistic;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
@@ -155,7 +156,12 @@ public class MobDropHandler implements CommandHandler {
                 reservedFor.put(secondDroppedItemId, damagerId);
                 reservedUntil.put(secondDroppedItemId, System.currentTimeMillis() + RESERVE_DURATION);
             }
+
+            playerCommandService.increaseStatistics(damagerId, 1, LegendsStatistic.DAILY_MONSTER_KILLS,
+                    LegendsStatistic.WARRY_MONSTER_KILLS, LegendsStatistic.ALLTIME_MONSTER_KILLS);
         });
+
+        whoDamagedWhoRepository.resetDamagers(mobId);
         return true;
     }
 
