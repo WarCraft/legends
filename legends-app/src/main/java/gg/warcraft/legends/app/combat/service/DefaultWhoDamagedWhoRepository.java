@@ -1,5 +1,6 @@
 package gg.warcraft.legends.app.combat.service;
 
+import com.google.inject.Singleton;
 import gg.warcraft.legends.api.combat.service.WhoDamagedWhoRepository;
 
 import java.util.Collections;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+@Singleton
 public class DefaultWhoDamagedWhoRepository implements WhoDamagedWhoRepository {
     private final Map<UUID, Set<UUID>> damagers;
 
