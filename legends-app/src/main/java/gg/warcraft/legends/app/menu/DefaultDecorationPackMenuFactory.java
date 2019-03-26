@@ -84,7 +84,10 @@ public class DefaultDecorationPackMenuFactory extends AbstractMenuFactory implem
     public Menu createDecorationItemsMenu(UUID playerId, DecorationPackId decorationPackId) {
         DecorationPack pack = shopQueryService.getDecorationPack(decorationPackId.toString());
         List<Decoration> decorations = pack.getDecorations();
-        int rowCount = Math.max(2, decorations.size() / 7); // 9 buttons per row minus 2 padding on the left is 7 per row
+        int rowCount = 2;
+        if (decorations.size() > 14) {
+            rowCount = (int) Math.ceil(decorations.size() / 7f);
+        }
         MenuSize menuSize = MenuSize.fromRows(rowCount);
 
         ShopProfile profile = shopProfileQueryService.getProfile(playerId);
