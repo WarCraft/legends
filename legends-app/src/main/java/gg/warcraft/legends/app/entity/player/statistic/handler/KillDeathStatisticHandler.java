@@ -33,6 +33,10 @@ public class KillDeathStatisticHandler {
                 LegendsStatistic.WARRY_DEATHS, LegendsStatistic.ALLTIME_DEATHS);
 
         UUID attackerId = event.getDamage().getSource().getEntityId();
+        if (attackerId == null) {
+            return;
+        }
+
         LegendsPlayer attackingPlayer = playerQueryService.getPlayer(attackerId);
         if (attackingPlayer != null) {
             playerCommandService.increaseStatistics(attackerId, 1, LegendsStatistic.DAILY_KILLS,

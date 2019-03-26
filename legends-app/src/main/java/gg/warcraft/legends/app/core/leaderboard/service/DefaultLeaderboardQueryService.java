@@ -7,6 +7,7 @@ import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardQueryService;
 import gg.warcraft.legends.api.entity.player.LegendsStatistic;
 import gg.warcraft.monolith.api.core.PersistenceService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class DefaultLeaderboardQueryService extends AbstractLeaderboardService i
         String leaderboardKey = getLeaderboardKey(statistic);
         SortedMap<String, Double> leaders = persistenceService.getSortedSet(leaderboardKey, 0, count);
         if (leaders == null || leaders.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
 
         return leaders.entrySet().stream()
