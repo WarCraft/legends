@@ -98,7 +98,6 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
             blockBackupCommandService.restoreBlockBackup(totemBlockBackupId);
         }, snapshot.getDuration());
 
-
         // TODO play cast sound
     }
 
