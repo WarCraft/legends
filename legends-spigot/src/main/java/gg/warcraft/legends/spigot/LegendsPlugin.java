@@ -81,6 +81,7 @@ import gg.warcraft.legends.spigot.core.handler.OnePointEightPvPInitializationHan
 import gg.warcraft.legends.spigot.core.handler.SpigotScoreboardHandler;
 import gg.warcraft.monolith.api.Monolith;
 import gg.warcraft.monolith.api.MonolithPluginUtils;
+import gg.warcraft.monolith.api.combat.CombatFactory;
 import gg.warcraft.monolith.api.command.service.CommandCommandService;
 import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.core.TaskService;
@@ -359,9 +360,10 @@ public class LegendsPlugin extends JavaPlugin {
         TaskService taskService = injector.getInstance(TaskService.class);
         TimeUtils timeUtils = injector.getInstance(TimeUtils.class);
         EventService eventService = injector.getInstance(EventService.class);
+        CombatFactory combatFactory = injector.getInstance(CombatFactory.class);
 
         HunterPetListener hunterPetListener = new HunterPetListener(getServer(), legendsPlayerQueryService,
-                teamCommandService, combatPetFactory, taskService, timeUtils);
+                teamCommandService, combatPetFactory, taskService, timeUtils, combatFactory);
         eventService.subscribe(hunterPetListener);
         getServer().getPluginManager().registerEvents(hunterPetListener, this);
 

@@ -7,10 +7,13 @@ import gg.warcraft.legends.api.ai.CombatPetFactory;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.monolith.api.combat.CombatFactory;
 import gg.warcraft.monolith.api.combat.CombatSource;
+import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.core.event.ServerShutdownEvent;
 import gg.warcraft.monolith.api.entity.event.EntityDamageEvent;
+import gg.warcraft.monolith.api.entity.event.EntityPreDamageEvent;
 import gg.warcraft.monolith.api.entity.event.EntityTeamChangedEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerDisconnectEvent;
@@ -35,8 +38,11 @@ import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class HunterPetListener implements Listener {
@@ -47,29 +53,41 @@ public class HunterPetListener implements Listener {
     private final LegendsPlayerQueryService legendsPlayerQueryService;
     private final TeamCommandService teamCommandService;
     private final CombatPetFactory combatPetFactory;
+    private final CombatFactory combatFactory;
     private final TaskService taskService;
     private final TimeUtils timeUtils;
 
+    final Map<UUID, Tameable> uuidToTameable;
     final Map<UUID, Tameable> pets;
     final Map<Tameable, UUID> petToOwner;
+    final Map<Tameable, UUID> targets;
+    final Map<UUID, Set<Tameable>> targetToPets;
 
     public HunterPetListener(Server server, LegendsPlayerQueryService legendsPlayerQueryService,
                              TeamCommandService teamCommandService, CombatPetFactory combatPetFactory,
-                             TaskService taskService, TimeUtils timeUtils) {
+                             TaskService taskService, TimeUtils timeUtils, CombatFactory combatFactory) {
         this.server = server;
         this.legendsPlayerQueryService = legendsPlayerQueryService;
         this.teamCommandService = teamCommandService;
         this.combatPetFactory = combatPetFactory;
         this.taskService = taskService;
         this.timeUtils = timeUtils;
+        this.combatFactory = combatFactory;
+        this.uuidToTameable = new HashMap<>();
         this.pets = new HashMap<>();
         this.petToOwner = new HashMap<>();
+        this.targets = new HashMap<>();
+        this.targetToPets = new HashMap<>();
     }
 
     private void spawnPet(LegendsPlayer player) {
         Tameable pet = null;
         Player spigotPlayer = server.getPlayer(player.getId());
         Specialization specialization = player.getSpecialization();
+        if (specialization == null) {
+            return;
+        }
+
         switch (specialization.getName()) {
             case "Marksman":
             case "Hunter":
@@ -80,6 +98,7 @@ public class HunterPetListener implements Listener {
                         Wolf wolf = (Wolf) world.spawnEntity(spigotPlayer.getLocation(), EntityType.WOLF);
                         wolf.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(BASE_PET_HEALTH);
                         wolf.setHealth(BASE_PET_HEALTH);
+                        wolf.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(2);
                         combatPetFactory.create(wolf.getUniqueId(), spigotPlayer.getUniqueId());
                         pet = wolf;
                         teamCommandService.setTeam(LegendsTeam.HUMAN, wolf.getUniqueId());
@@ -90,6 +109,7 @@ public class HunterPetListener implements Listener {
                         Wolf wolf = (Wolf) world.spawnEntity(spigotPlayer.getLocation(), EntityType.WOLF);
                         wolf.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(BASE_PET_HEALTH);
                         wolf.setHealth(BASE_PET_HEALTH);
+                        wolf.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(2);
                         combatPetFactory.create(wolf.getUniqueId(), spigotPlayer.getUniqueId());
                         pet = wolf;
                         teamCommandService.setTeam(LegendsTeam.ORC, wolf.getUniqueId());
@@ -105,6 +125,7 @@ public class HunterPetListener implements Listener {
         }
 
         pet.setOwner(spigotPlayer);
+        uuidToTameable.put(pet.getUniqueId(), pet);
         pets.put(player.getId(), pet);
         petToOwner.put(pet, player.getId());
     }
@@ -112,8 +133,13 @@ public class HunterPetListener implements Listener {
     private void removePet(UUID playerId) {
         Tameable pet = pets.remove(playerId);
         if (pet != null) {
+            uuidToTameable.remove(pet.getUniqueId());
             pet.remove();
             petToOwner.remove(pet);
+            UUID target = targets.remove(pet);
+            if (target != null) {
+                targetToPets.get(target).remove(pet);
+            }
         }
     }
 
@@ -184,6 +210,31 @@ public class HunterPetListener implements Listener {
     }
 
     @Subscribe
+    public void onEntityPreDamageEvent(EntityPreDamageEvent event) {
+        CombatSource source = event.getDamage().getSource();
+        if (source == null) {
+            return;
+        }
+
+        UUID attackerId = source.getEntityId();
+        if (attackerId == null) {
+            return;
+        }
+
+        Tameable pet = pets.get(attackerId);
+        if (pet == null) {
+            Tameable attackingPet = uuidToTameable.get(attackerId);
+            if (attackingPet != null) {
+                UUID attackingOwner = petToOwner.get(attackingPet);
+                CombatSource ownerSource = combatFactory.createCombatSource("Pet", attackingOwner);
+                CombatValue ownerDamage = combatFactory.createCombatValue(event.getDamage().getBaseValue(),
+                        event.getDamage().getModifiers(), ownerSource);
+                event.setDamage(ownerDamage);
+            }
+        }
+    }
+
+    @Subscribe
     public void onEntityDamageEvent(EntityDamageEvent event) {
         CombatSource source = event.getDamage().getSource();
         if (source == null) {
@@ -204,11 +255,27 @@ public class HunterPetListener implements Listener {
 
             Player spigotAttackedPlayer = server.getPlayer(attackedPlayer.getId());
             ((Wolf) pet).setTarget(spigotAttackedPlayer);
+            UUID previousTarget = targets.put(pet, spigotAttackedPlayer.getUniqueId());
+            if (previousTarget != spigotAttackedPlayer.getUniqueId()) {
+                if (previousTarget != null) {
+                    Set<Tameable> previousTargetPets = targetToPets.computeIfAbsent(previousTarget, id -> new HashSet<>());
+                    previousTargetPets.remove(pet);
+                }
+                Set<Tameable> petsWithTarget = targetToPets.computeIfAbsent(spigotAttackedPlayer.getUniqueId(), id -> new HashSet<>());
+                petsWithTarget.add(pet);
+            }
         }
     }
 
     @EventHandler
     public void onEntityDeathEvent(EntityDeathEvent event) {
+        Set<Tameable> petsWithTarget = targetToPets.getOrDefault(event.getEntity().getUniqueId(), Collections.emptySet());
+        petsWithTarget.forEach(pet -> {
+            Wolf wolfPet = ((Wolf) pet);
+            wolfPet.setTarget(null);
+            targets.remove(wolfPet);
+        });
+
         if (!(event.getEntity() instanceof Tameable)) {
             return;
         }
