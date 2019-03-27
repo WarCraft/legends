@@ -16,7 +16,7 @@ import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 
 import java.util.UUID;
 
-public class AttributesPassive extends AbstractRacialPassive implements CombatStatusEffect {
+public class AttributesPassive extends AbstractLegendsPassive implements CombatStatusEffect {
     private static final String EFFECT_NAME = "Attributes";
 
     private final EntityQueryService entityQueryService;

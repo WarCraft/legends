@@ -16,7 +16,7 @@ import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import java.util.Random;
 import java.util.UUID;
 
-public class CritPassive extends AbstractRacialPassive implements CombatStatusEffect {
+public class CritPassive extends AbstractLegendsPassive implements CombatStatusEffect {
     private static final String EFFECT_NAME = "Crit";
     private static final float DEFAULT_CRIT = 5;
     private static final float CRIT_MODIFIER = 1; // a modifier of 1 means double damage (value is additive)
