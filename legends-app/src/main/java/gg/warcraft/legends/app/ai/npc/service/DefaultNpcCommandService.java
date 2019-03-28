@@ -6,6 +6,7 @@ import gg.warcraft.legends.api.ai.npc.Npc;
 import gg.warcraft.legends.api.ai.npc.NpcType;
 import gg.warcraft.legends.api.ai.npc.config.NpcConfiguration;
 import gg.warcraft.legends.api.ai.npc.menu.BlueprintVendorDialogFactory;
+import gg.warcraft.legends.api.ai.npc.menu.ClassTrainerDialogFactory;
 import gg.warcraft.legends.api.ai.npc.service.NpcCommandService;
 import gg.warcraft.legends.api.ai.npc.service.NpcRepository;
 import gg.warcraft.legends.app.ai.npc.SimpleNpc;
@@ -27,6 +28,7 @@ public class DefaultNpcCommandService implements NpcCommandService {
     private final LocationFactory locationFactory;
     private final NpcFactory npcFactory;
     private final BlueprintVendorDialogFactory blueprintVendorDialogFactory;
+    private final ClassTrainerDialogFactory classTrainerDialogFactory;
     private final Logger pluginLogger;
 
     @Inject
@@ -36,6 +38,7 @@ public class DefaultNpcCommandService implements NpcCommandService {
                                     LocationFactory locationFactory,
                                     NpcFactory npcFactory,
                                     BlueprintVendorDialogFactory blueprintVendorDialogFactory,
+                                    ClassTrainerDialogFactory classTrainerDialogFactory,
                                     @PluginLogger Logger pluginLogger) {
         this.npcRepository = npcRepository;
         this.entityCommandService = entityCommandService;
@@ -43,6 +46,7 @@ public class DefaultNpcCommandService implements NpcCommandService {
         this.locationFactory = locationFactory;
         this.npcFactory = npcFactory;
         this.blueprintVendorDialogFactory = blueprintVendorDialogFactory;
+        this.classTrainerDialogFactory = classTrainerDialogFactory;
         this.pluginLogger = pluginLogger;
     }
 
@@ -56,7 +60,7 @@ public class DefaultNpcCommandService implements NpcCommandService {
         UUID npcId = entityCommandService.spawnEntity(entityType, location);
         npcFactory.create(npcId, name);
 
-        Npc npc = new SimpleNpc(npcId, type);
+        Npc npc = new SimpleNpc(npcId, type, name);
         npcRepository.save(npc);
     }
 
@@ -73,6 +77,10 @@ public class DefaultNpcCommandService implements NpcCommandService {
             case BLUEPRINT_VENDOR:
                 Menu blueprintMenu = blueprintVendorDialogFactory.createBlueprintVendorDialog(playerId);
                 menuCommandService.showMenu(blueprintMenu, playerId);
+                break;
+            case CLASS_TRAINER:
+                Menu classTrainerMenu = classTrainerDialogFactory.createClassTrainerDialog(playerId, npc.getName());
+                menuCommandService.showMenu(classTrainerMenu, playerId);
                 break;
         }
     }

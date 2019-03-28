@@ -8,10 +8,12 @@ import java.util.UUID;
 public class SimpleNpc implements Npc {
     private final UUID id;
     private final NpcType type;
+    private final String name;
 
-    public SimpleNpc(UUID id, NpcType type) {
+    public SimpleNpc(UUID id, NpcType type, String name) {
         this.id = id;
         this.type = type;
+        this.name = name;
     }
 
     @Override
@@ -22,5 +24,10 @@ public class SimpleNpc implements Npc {
     @Override
     public NpcType getType() {
         return type;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

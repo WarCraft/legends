@@ -7,4 +7,6 @@ public interface Npc {
     UUID getId();
 
     NpcType getType();
+
+    String getName();
 }

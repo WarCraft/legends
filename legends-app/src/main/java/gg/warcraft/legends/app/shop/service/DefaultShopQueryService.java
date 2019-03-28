@@ -8,6 +8,7 @@ import gg.warcraft.legends.api.shop.MiniPet;
 import gg.warcraft.legends.api.shop.Promotion;
 import gg.warcraft.legends.api.shop.ShopItem;
 import gg.warcraft.legends.api.shop.ShopItemType;
+import gg.warcraft.legends.api.shop.Specialization;
 import gg.warcraft.legends.api.shop.service.ShopQueryService;
 import gg.warcraft.legends.api.shop.service.ShopRepository;
 
@@ -71,6 +72,15 @@ public class DefaultShopQueryService implements ShopQueryService {
         ShopItem item = getItem(id);
         if (item instanceof Promotion) {
             return (Promotion) item;
+        }
+        return null;
+    }
+
+    @Override
+    public Specialization getSpecialization(String id) {
+        ShopItem item = getItem(id);
+        if (item instanceof Promotion) {
+            return (Specialization) item;
         }
         return null;
     }

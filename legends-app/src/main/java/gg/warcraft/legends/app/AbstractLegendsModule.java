@@ -4,6 +4,7 @@ import com.google.inject.PrivateModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Names;
 import gg.warcraft.legends.api.ai.npc.menu.BlueprintVendorDialogFactory;
+import gg.warcraft.legends.api.ai.npc.menu.ClassTrainerDialogFactory;
 import gg.warcraft.legends.api.ai.npc.service.NpcCommandService;
 import gg.warcraft.legends.api.ai.npc.service.NpcQueryService;
 import gg.warcraft.legends.api.ai.npc.service.NpcRepository;
@@ -71,6 +72,7 @@ import gg.warcraft.legends.api.shop.service.ShopCommandService;
 import gg.warcraft.legends.api.shop.service.ShopQueryService;
 import gg.warcraft.legends.api.shop.service.ShopRepository;
 import gg.warcraft.legends.app.ai.npc.menu.DefaultBlueprintVendorDialogFactory;
+import gg.warcraft.legends.app.ai.npc.menu.DefaultClassTrainerDialogFactory;
 import gg.warcraft.legends.app.ai.npc.service.DefaultNpcCommandService;
 import gg.warcraft.legends.app.ai.npc.service.DefaultNpcQueryService;
 import gg.warcraft.legends.app.ai.npc.service.DefaultNpcRepository;
@@ -176,6 +178,9 @@ public abstract class AbstractLegendsModule extends PrivateModule {
 
         bind(NpcRepository.class).to(DefaultNpcRepository.class);
         expose(NpcRepository.class);
+
+        bind(ClassTrainerDialogFactory.class).to(DefaultClassTrainerDialogFactory.class);
+        expose(ClassTrainerDialogFactory.class);
     }
 
     private void configureCombat() {

@@ -7,6 +7,7 @@ import gg.warcraft.legends.api.shop.MiniPet;
 import gg.warcraft.legends.api.shop.Promotion;
 import gg.warcraft.legends.api.shop.ShopItem;
 import gg.warcraft.legends.api.shop.ShopItemType;
+import gg.warcraft.legends.api.shop.Specialization;
 
 public interface ShopQueryService {
 
@@ -21,4 +22,6 @@ public interface ShopQueryService {
     MiniPet getMiniPet(String id);
 
     Promotion getPromotion(String id);
+
+    Specialization getSpecialization(String id);
 }
