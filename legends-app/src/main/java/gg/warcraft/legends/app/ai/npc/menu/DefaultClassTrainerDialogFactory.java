@@ -86,6 +86,7 @@ public class DefaultClassTrainerDialogFactory extends AbstractMenuFactory implem
 
                     playerCommandService.removeCurrency(playerId, LegendsCurrency.FAVOR, 15000);
                     shopProfileCommandService.unlockSpecialization(specializationId, playerId, false);
+                    closeMenu(playerId);
                     playerCommandService.sendNotification(playerId, "You have unlocked the " + specializationName + "!");
                 }
             });
@@ -236,7 +237,7 @@ public class DefaultClassTrainerDialogFactory extends AbstractMenuFactory implem
                 builder.addButton(2, createArmsmasterButton(playerId));
                 builder.addButton(3, createBerserkerButton(playerId));
                 break;
-            case "Hunter Trainer":
+            case "Ranger Trainer":
                 builder.addButton(2, createHunterButton(playerId));
                 builder.addButton(3, createMarksmanButton(playerId));
                 break;

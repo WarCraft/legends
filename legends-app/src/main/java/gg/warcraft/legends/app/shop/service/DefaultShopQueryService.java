@@ -79,7 +79,7 @@ public class DefaultShopQueryService implements ShopQueryService {
     @Override
     public Specialization getSpecialization(String id) {
         ShopItem item = getItem(id);
-        if (item instanceof Promotion) {
+        if (item instanceof Specialization) {
             return (Specialization) item;
         }
         return null;
