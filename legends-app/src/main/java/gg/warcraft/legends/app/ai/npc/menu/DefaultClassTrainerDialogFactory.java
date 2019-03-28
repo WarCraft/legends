@@ -73,24 +73,24 @@ public class DefaultClassTrainerDialogFactory extends AbstractMenuFactory implem
         ShopProfile shopProfile = shopProfileQueryService.getProfile(playerId);
         if (!shopProfile.hasSpecialization(specializationId)) {
             builder.addTooltip(BLUE + "[SHIFT RIGHT CLICK] to unlock the " + specializationName);
-            builder.addTooltip(BLUE + "for 5000 favor.");
+            builder.addTooltip(BLUE + "for 15000 favor.");
 
             builder.withAction(click -> {
                 if (click.isShiftRightClick()) {
                     LegendsPlayer player = playerQueryService.getPlayer(playerId);
-                    if (player.getFavor() < 5000) {
-                        playerCommandService.sendNotification(playerId, "You need at least 5000 favor to unlock this class.");
+                    if (player.getFavor() < 15000) {
+                        playerCommandService.sendNotification(playerId, "You need at least 15000 favor to unlock this class.");
                         closeMenu(playerId);
                         return;
                     }
 
-                    playerCommandService.removeCurrency(playerId, LegendsCurrency.FAVOR, 5000);
+                    playerCommandService.removeCurrency(playerId, LegendsCurrency.FAVOR, 15000);
                     shopProfileCommandService.unlockSpecialization(specializationId, playerId, false);
                     playerCommandService.sendNotification(playerId, "You have unlocked the " + specializationName + "!");
                 }
             });
         } else {
-            builder.addTooltip("You already know all this trainer has to teach.");
+            builder.addTooltip("You already have this class unlocked.");
         }
         return builder.build();
     }
@@ -98,42 +98,131 @@ public class DefaultClassTrainerDialogFactory extends AbstractMenuFactory implem
     private Button createArmsmasterButton(UUID playerId) {
         Specialization specialization = shopQueryService.getSpecialization(SpecializationId.ARMSMASTER.name());
         final List<String> lore = new ArrayList<>();
-
+        lore.add("Armsmasters wield a sword and a shield.");
+        lore.add("Their skills focus on control and defense.");
+        lore.add("");
+        lore.add(ColorCode.YELLOW + "[Left click] Melee");
+        lore.add("A normal Minecraft melee swing.");
+        lore.add(ColorCode.YELLOW + "[Right click] Hamstring");
+        lore.add("Damage your enemy and slow them for a");
+        lore.add("short duration.");
+        lore.add(ColorCode.YELLOW + "[Shift left click] Slam");
+        lore.add("An overpowering blow that damages the");
+        lore.add("target, knocks them back, and makes");
+        lore.add("them nauseous for a moderate duration.");
+        lore.add(ColorCode.YELLOW + "[Shift right click] Stand Your Ground");
+        lore.add("Bunker down to greatly increase all of your");
+        lore.add("resistances for a moderate duration.");
         return createSpecializationButton(playerId, specialization, lore);
     }
 
     private Button createBerserkerButton(UUID playerId) {
         Specialization specialization = shopQueryService.getSpecialization(SpecializationId.BERSERKER.name());
         final List<String> lore = new ArrayList<>();
-
+        lore.add("Berserkers wield an axe and the skulls");
+        lore.add("of their enemies. Their skills focus on");
+        lore.add("damage and recovering health.");
+        lore.add("");
+        lore.add(ColorCode.YELLOW + "[Left click] Melee");
+        lore.add("A normal Minecraft melee swing.");
+        lore.add(ColorCode.YELLOW + "[Right click] Maul");
+        lore.add("Maul your enemy for damage and receive");
+        lore.add("absorption for a short duration.");
+        lore.add(ColorCode.YELLOW + "[Shift left click] Grudge");
+        lore.add("Mark a player with your grudge for a");
+        lore.add("moderate duration. Any attacks made");
+        lore.add("against them heal you a little bit.");
+        lore.add(ColorCode.YELLOW + "[Shift right click] Shatter");
+        lore.add("Slam down into the ground in front of");
+        lore.add("you, damaging enemies while throwing");
+        lore.add("them into the air and making them");
+        lore.add("nauseous for a moderate duration.");
         return createSpecializationButton(playerId, specialization, lore);
     }
 
     private Button createHunterButton(UUID playerId) {
         Specialization specialization = shopQueryService.getSpecialization(SpecializationId.HUNTER.name());
         final List<String> lore = new ArrayList<>();
-
+        lore.add("Hunters use bow and arrow. Their skills");
+        lore.add("offer damage, control, and mobility.");
+        lore.add("");
+        lore.add(ColorCode.YELLOW + "[Left click] Toxic Arrow");
+        lore.add("Fire a poisoned arrow damaging your target");
+        lore.add("and applying poison for a short duration.");
+        lore.add(ColorCode.YELLOW + "[Right click] Shoot");
+        lore.add("A normal Minecraft bow shot.");
+        lore.add(ColorCode.YELLOW + "[Shift left click] Trap");
+        lore.add("Place a trap at your feet which roots");
+        lore.add("any enemies that trigger it.");
+        lore.add(ColorCode.YELLOW + "[Shift right click] Disengage");
+        lore.add("Leap backwards a sizable distance.");
         return createSpecializationButton(playerId, specialization, lore);
     }
 
     private Button createMarksmanButton(UUID playerId) {
         Specialization specialization = shopQueryService.getSpecialization(SpecializationId.MARKSMAN.name());
         final List<String> lore = new ArrayList<>();
-
+        lore.add("Marksmen use bow and arrow. Their skills");
+        lore.add("focus on damage while sacrificing mobility.");
+        lore.add("");
+        lore.add(ColorCode.YELLOW + "[Left click] Power Shot");
+        lore.add("Fire a high velocity shot dealing damage");
+        lore.add("and knocking back your target.");
+        lore.add(ColorCode.YELLOW + "[Right click] Shoot");
+        lore.add("A normal Minecraft bow shot.");
+        lore.add(ColorCode.YELLOW + "[Shift left click] Focus");
+        lore.add("Focus your vision and greatly increase");
+        lore.add("your damage while becoming immobile");
+        lore.add("(cast again to cancel).");
+        lore.add(ColorCode.YELLOW + "[Shift right click] Sneak");
+        lore.add("Gain a speed boost and hide in plain");
+        lore.add("sight, becoming invisible to enemies.");
         return createSpecializationButton(playerId, specialization, lore);
     }
 
     private Button createTempestButton(UUID playerId) {
         Specialization specialization = shopQueryService.getSpecialization(SpecializationId.TEMPEST.name());
         final List<String> lore = new ArrayList<>();
-
+        lore.add("Tempests wield a staff (hoe). Their");
+        lore.add("skills offer large area damage.");
+        lore.add("");
+        lore.add(ColorCode.YELLOW + "[Left click] Fireball");
+        lore.add("Fling a ball of fire at your target");
+        lore.add("dealing damage and setting them on fire");
+        lore.add(ColorCode.YELLOW + "[Right click] Bolt");
+        lore.add("Call down lightning at your targeted");
+        lore.add("location damaging nearby enemies.");
+        lore.add(ColorCode.YELLOW + "[Shift left click] Hail Blast");
+        lore.add("Blast an icy torrent in front of you");
+        lore.add("damaging and slowing enemies.");
+        lore.add(ColorCode.YELLOW + "[Shift right click] Molten Storm");
+        lore.add("Conjure a storm of molten rocks at your");
+        lore.add("targeted location. Each fireball damages");
+        lore.add("and briefly sets enemies on fire.");
         return createSpecializationButton(playerId, specialization, lore);
     }
 
     private Button createWizardButton(UUID playerId) {
         Specialization specialization = shopQueryService.getSpecialization(SpecializationId.WIZARD.name());
         final List<String> lore = new ArrayList<>();
-
+        lore.add("Tempests wield wand (stick) and book. Their");
+        lore.add("skills focus on area control, and mobility.");
+        lore.add("");
+        lore.add(ColorCode.YELLOW + "[Left click] Fireball");
+        lore.add("Fling a ball of fire at your target");
+        lore.add("dealing damage and setting them on fire");
+        lore.add(ColorCode.YELLOW + "[Right click] Arcane Missile");
+        lore.add("Cast an arcane missile damaging nearby");
+        lore.add("enemies on impact.");
+        lore.add(ColorCode.YELLOW + "[Shift left click] Teleport");
+        lore.add("Teleport to your targeted location, releasing");
+        lore.add("an arcane explosion around you on arrival");
+        lore.add("damaging and slowing nearby enemies.");
+        lore.add(ColorCode.YELLOW + "[Shift right click] Mass Piggify");
+        lore.add("Conjure chaotic energies at your targeted");
+        lore.add("location, which after a short delay force");
+        lore.add("your enemies to ride uncontrollable pigs");
+        lore.add("making them nauseous.");
         return createSpecializationButton(playerId, specialization, lore);
     }
 

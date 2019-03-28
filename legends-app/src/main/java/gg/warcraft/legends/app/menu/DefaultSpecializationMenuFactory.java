@@ -146,8 +146,21 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
 
     Button createArmsmasterButton(LegendsPlayer player, String cooldown) {
         List<String> lore = new ArrayList<>();
-        lore.add("Armsmasters wield sword and board. Their");
-        lore.add("skills focus on control and defense.");
+        lore.add("Armsmasters wield a sword and a shield.");
+        lore.add("Their skills focus on control and defense.");
+        lore.add("");
+        lore.add(ColorCode.YELLOW + "[Left click] Melee");
+        lore.add("A normal Minecraft melee swing.");
+        lore.add(ColorCode.YELLOW + "[Right click] Hamstring");
+        lore.add("Damage your enemy and slow them for a");
+        lore.add("short duration.");
+        lore.add(ColorCode.YELLOW + "[Shift left click] Slam");
+        lore.add("An overpowering blow that damages the");
+        lore.add("target, knocks them back, and makes");
+        lore.add("them nauseous for a moderate duration.");
+        lore.add(ColorCode.YELLOW + "[Shift right click] Stand Your Ground");
+        lore.add("Bunker down to greatly increase all of your");
+        lore.add("resistances for a moderate duration.");
         return createSpecializationButton(player, LegendsSpecialization.ARMSMASTER, ItemType.WOOD_SWORD,
                 lore, cooldown);
     }
@@ -157,6 +170,21 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
         lore.add("Berserkers wield an axe and the skulls");
         lore.add("of their enemies. Their skills focus on");
         lore.add("damage and recovering health.");
+        lore.add("");
+        lore.add(ColorCode.YELLOW + "[Left click] Melee");
+        lore.add("A normal Minecraft melee swing.");
+        lore.add(ColorCode.YELLOW + "[Right click] Maul");
+        lore.add("Maul your enemy for damage and receive");
+        lore.add("absorption for a short duration.");
+        lore.add(ColorCode.YELLOW + "[Shift left click] Grudge");
+        lore.add("Mark a player with your grudge for a");
+        lore.add("moderate duration. Any attacks made");
+        lore.add("against them heal you a little bit.");
+        lore.add(ColorCode.YELLOW + "[Shift right click] Shatter");
+        lore.add("Slam down into the ground in front of");
+        lore.add("you, damaging enemies while throwing");
+        lore.add("them into the air and making them");
+        lore.add("nauseous for a moderate duration.");
         return createSpecializationButton(player, LegendsSpecialization.BERSERKER, ItemType.WOOD_AXE,
                 lore, cooldown);
     }
@@ -165,6 +193,17 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
         List<String> lore = new ArrayList<>();
         lore.add("Hunters use bow and arrow. Their skills");
         lore.add("offer damage, control, and mobility.");
+        lore.add("");
+        lore.add(ColorCode.YELLOW + "[Left click] Toxic Arrow");
+        lore.add("Fire a poisoned arrow damaging your target");
+        lore.add("and applying poison for a short duration.");
+        lore.add(ColorCode.YELLOW + "[Right click] Shoot");
+        lore.add("A normal Minecraft bow shot.");
+        lore.add(ColorCode.YELLOW + "[Shift left click] Trap");
+        lore.add("Place a trap at your feet which roots");
+        lore.add("any enemies that trigger it.");
+        lore.add(ColorCode.YELLOW + "[Shift right click] Disengage");
+        lore.add("Leap backwards a sizable distance.");
         return createSpecializationButton(player, LegendsSpecialization.HUNTER, ItemType.BOW,
                 lore, cooldown);
     }
@@ -173,6 +212,19 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
         List<String> lore = new ArrayList<>();
         lore.add("Marksmen use bow and arrow. Their skills");
         lore.add("focus on damage while sacrificing mobility.");
+        lore.add("");
+        lore.add(ColorCode.YELLOW + "[Left click] Power Shot");
+        lore.add("Fire a high velocity shot dealing damage");
+        lore.add("and knocking back your target.");
+        lore.add(ColorCode.YELLOW + "[Right click] Shoot");
+        lore.add("A normal Minecraft bow shot.");
+        lore.add(ColorCode.YELLOW + "[Shift left click] Focus");
+        lore.add("Focus your vision and greatly increase");
+        lore.add("your damage while becoming immobile");
+        lore.add("(cast again to cancel).");
+        lore.add(ColorCode.YELLOW + "[Shift right click] Sneak");
+        lore.add("Gain a speed boost and hide in plain");
+        lore.add("sight, becoming invisible to enemies.");
         return createSpecializationButton(player, LegendsSpecialization.MARKSMAN, ItemType.BOW,
                 lore, cooldown);
     }
@@ -181,14 +233,44 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
         List<String> lore = new ArrayList<>();
         lore.add("Tempests wield a staff (hoe). Their");
         lore.add("skills offer large area damage.");
+        lore.add("");
+        lore.add(ColorCode.YELLOW + "[Left click] Fireball");
+        lore.add("Fling a ball of fire at your target");
+        lore.add("dealing damage and setting them on fire");
+        lore.add(ColorCode.YELLOW + "[Right click] Bolt");
+        lore.add("Call down lightning at your targeted");
+        lore.add("location damaging nearby enemies.");
+        lore.add(ColorCode.YELLOW + "[Shift left click] Hail Blast");
+        lore.add("Blast an icy torrent in front of you");
+        lore.add("damaging and slowing enemies.");
+        lore.add(ColorCode.YELLOW + "[Shift right click] Molten Storm");
+        lore.add("Conjure a storm of molten rocks at your");
+        lore.add("targeted location. Each fireball damages");
+        lore.add("and briefly sets enemies on fire.");
         return createSpecializationButton(player, LegendsSpecialization.TEMPEST, ItemType.WOOD_HOE,
                 lore, cooldown);
     }
 
     Button createWizardButton(LegendsPlayer player, String cooldown) {
         List<String> lore = new ArrayList<>();
-        lore.add("Wizards carry a wand (stick) and book. Their");
-        lore.add("skills focus on area control and mobility.");
+        lore.add("Tempests wield wand (stick) and book. Their");
+        lore.add("skills focus on area control, and mobility.");
+        lore.add("");
+        lore.add(ColorCode.YELLOW + "[Left click] Fireball");
+        lore.add("Fling a ball of fire at your target");
+        lore.add("dealing damage and setting them on fire");
+        lore.add(ColorCode.YELLOW + "[Right click] Arcane Missile");
+        lore.add("Cast an arcane missile damaging nearby");
+        lore.add("enemies on impact.");
+        lore.add(ColorCode.YELLOW + "[Shift left click] Teleport");
+        lore.add("Teleport to your targeted location, releasing");
+        lore.add("an arcane explosion around you on arrival");
+        lore.add("damaging and slowing nearby enemies.");
+        lore.add(ColorCode.YELLOW + "[Shift right click] Mass Piggify");
+        lore.add("Conjure chaotic energies at your targeted");
+        lore.add("location, which after a short delay force");
+        lore.add("your enemies to ride uncontrollable pigs");
+        lore.add("making them nauseous.");
         return createSpecializationButton(player, LegendsSpecialization.WIZARD, ItemType.STICK,
                 lore, cooldown);
     }
