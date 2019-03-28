@@ -91,7 +91,7 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
                 .toLocation()
                 .add(0.5f, 0.5f, 0.5f);
 
-        worldCommandService.setBlockType(casterLocationBlock, BlockType.REDSTONE_TORCH_ON);
+        worldCommandService.setBlockType(totemBlock, BlockType.REDSTONE_TORCH_ON);
         this.task = taskService.runTask(this, timeUtils.oneTick(), snapshot.getDuration("period"));
         taskService.runLater(() -> {
             task.cancel();
@@ -139,6 +139,11 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
 
     @Override
     public boolean onMiss(Entity entity) {
+        return false;
+    }
+
+    @Override
+    public boolean onGrounded(Location location) {
         return false;
     }
 }
