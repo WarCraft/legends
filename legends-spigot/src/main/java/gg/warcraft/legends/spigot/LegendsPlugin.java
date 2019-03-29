@@ -11,7 +11,7 @@ import gg.warcraft.legends.api.config.ServerConfiguration;
 import gg.warcraft.legends.api.core.game.Game;
 import gg.warcraft.legends.api.core.game.service.GameCommandService;
 import gg.warcraft.legends.api.core.game.service.GameQueryService;
-import gg.warcraft.legends.api.core.service.SpawnLocationRepository;
+import gg.warcraft.legends.api.core.service.SpawnRepository;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.rank.service.RankCommandService;
 import gg.warcraft.legends.api.entity.player.rank.service.RankRepository;
@@ -122,10 +122,10 @@ public class LegendsPlugin extends JavaPlugin {
         ServerConfiguration serverConfiguration = pluginUtils.loadConfiguration("REMOTE", "legends/server.yml", "",
                 ServerConfiguration.class, legendsMapperModule);
 
-        SpawnLocationRepository spawnLocationRepository = injector.getInstance(SpawnLocationRepository.class);
+        SpawnRepository spawnRepository = injector.getInstance(SpawnRepository.class);
         serverConfiguration.getSpawnLocations().forEach((team, location) -> {
             OrientedLocation spawn = locationFactory.createOrientedLocation(location);
-            spawnLocationRepository.save(team, spawn);
+            spawnRepository.save(team, spawn);
         });
 
         RankCommandService rankCommandService = injector.getInstance(RankCommandService.class);

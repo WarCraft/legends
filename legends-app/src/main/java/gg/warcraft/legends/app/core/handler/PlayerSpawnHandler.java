@@ -2,7 +2,7 @@ package gg.warcraft.legends.app.core.handler;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import gg.warcraft.legends.api.core.service.SpawnLocationRepository;
+import gg.warcraft.legends.api.core.service.SpawnRepository;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.monolith.api.entity.EntityType;
@@ -18,23 +18,23 @@ import java.util.UUID;
 public class PlayerSpawnHandler {
     private final LegendsPlayerQueryService legendsPlayerQueryService;
     private final EntityCommandService entityCommandService;
-    private final SpawnLocationRepository spawnLocationRepository;
+    private final SpawnRepository spawnRepository;
     private final DirectionUtils directionUtils;
 
     @Inject
     public PlayerSpawnHandler(LegendsPlayerQueryService legendsPlayerQueryService,
                               EntityCommandService entityCommandService,
-                              SpawnLocationRepository spawnLocationRepository,
+                              SpawnRepository spawnRepository,
                               DirectionUtils directionUtils) {
         this.legendsPlayerQueryService = legendsPlayerQueryService;
         this.entityCommandService = entityCommandService;
-        this.spawnLocationRepository = spawnLocationRepository;
+        this.spawnRepository = spawnRepository;
         this.directionUtils = directionUtils;
     }
 
     private void teleport(UUID playerId) {
         LegendsPlayer player = legendsPlayerQueryService.getPlayer(playerId);
-        OrientedLocation spawn = spawnLocationRepository.getSpawn(player.getTeam());
+        OrientedLocation spawn = spawnRepository.getSpawn(player.getTeam());
         Direction direction = directionUtils.toDirection(spawn.getYaw());
         entityCommandService.teleport(playerId, spawn, direction);
     }

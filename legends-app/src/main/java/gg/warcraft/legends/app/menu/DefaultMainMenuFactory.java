@@ -241,11 +241,11 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     Button createTeleportButton(LegendsPlayer player) {
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.FLINT, "Monolith Shard");
         builder.addTooltip("A pitch black splinter that is said to have");
-        builder.addTooltip("once been part of The Monolith. It can take");
-        builder.addTooltip("you back to where The Monolith's power was");
-        builder.addTooltip("once at its strongest.");
+        builder.addTooltip("been part of The Monolith. It can take you");
+        builder.addTooltip("back to where The Monolith's power was once");
+        builder.addTooltip("at its strongest.");
         builder.addTooltip("");
-        builder.addTooltip("[CLICK] To view teleport locations");
+        builder.addTooltip("[CLICK] To warp to your spawn");
 
         builder.withAction(action -> {
 

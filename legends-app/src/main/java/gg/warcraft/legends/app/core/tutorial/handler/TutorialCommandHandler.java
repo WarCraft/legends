@@ -2,7 +2,7 @@ package gg.warcraft.legends.app.core.tutorial.handler;
 
 import com.google.inject.Inject;
 import gg.warcraft.combat.api.specialization.service.SpecializationCommandService;
-import gg.warcraft.legends.api.core.service.SpawnLocationRepository;
+import gg.warcraft.legends.api.core.service.SpawnRepository;
 import gg.warcraft.legends.api.core.tutorial.TutorialStep;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
@@ -27,7 +27,7 @@ public class TutorialCommandHandler implements CommandHandler {
     private final TeamCommandService teamCommandService;
     private final SpecializationCommandService specializationCommandService;
     private final DirectionUtils directionUtils;
-    private final SpawnLocationRepository spawnLocationRepository;
+    private final SpawnRepository spawnRepository;
 
     @Inject
     public TutorialCommandHandler(LegendsPlayerQueryService playerQueryService,
@@ -35,7 +35,7 @@ public class TutorialCommandHandler implements CommandHandler {
                                   EntityCommandService entityCommandService,
                                   TeamCommandService teamCommandService,
                                   SpecializationCommandService specializationCommandService,
-                                  SpawnLocationRepository spawnLocationRepository,
+                                  SpawnRepository spawnRepository,
                                   DirectionUtils directionUtils) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
@@ -43,7 +43,7 @@ public class TutorialCommandHandler implements CommandHandler {
         this.teamCommandService = teamCommandService;
         this.specializationCommandService = specializationCommandService;
         this.directionUtils = directionUtils;
-        this.spawnLocationRepository = spawnLocationRepository;
+        this.spawnRepository = spawnRepository;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class TutorialCommandHandler implements CommandHandler {
                         return true;
                 }
                 playerCommandService.setTutorialStep(playerId, TutorialStep.DONE);
-                OrientedLocation spawn = spawnLocationRepository.getSpawn(player.getTeam());
+                OrientedLocation spawn = spawnRepository.getSpawn(player.getTeam());
                 Direction direction = directionUtils.toDirection(spawn.getYaw());
                 entityCommandService.teleport(playerId, spawn, direction);
                 return true;
