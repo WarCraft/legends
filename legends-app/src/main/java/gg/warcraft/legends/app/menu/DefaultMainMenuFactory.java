@@ -1,6 +1,8 @@
 package gg.warcraft.legends.app.menu;
 
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.core.service.SpawnCommandService;
+import gg.warcraft.legends.api.core.service.SpawnQueryService;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
@@ -26,6 +28,7 @@ import gg.warcraft.monolith.api.menu.MenuSize;
 import gg.warcraft.monolith.api.menu.service.MenuCommandService;
 import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.StringUtils;
+import gg.warcraft.monolith.api.util.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +41,8 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     private final LegendsPlayerQueryService legendsPlayerQueryService;
     private final CommandCommandService commandCommandService;
     private final MenuCommandService menuCommandService;
+    private final SpawnQueryService spawnQueryService;
+    private final SpawnCommandService spawnCommandService;
     private final MenuBuilderFactory menuBuilderFactory;
     private final ButtonBuilderFactory buttonBuilderFactory;
     private final SpecializationMenuFactory specializationMenuFactory;
@@ -48,20 +53,27 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     private final ShopMenuFactory shopMenuFactory;
     private final HelpMenuFactory helpMenuFactory;
     private final StringUtils stringUtils;
+    private final TimeUtils timeUtils;
 
     @Inject
     public DefaultMainMenuFactory(LegendsPlayerQueryService legendsPlayerQueryService,
                                   CommandCommandService commandCommandService,
-                                  MenuCommandService menuCommandService, MenuBuilderFactory menuBuilderFactory,
+                                  MenuCommandService menuCommandService,
+                                  SpawnQueryService spawnQueryService,
+                                  SpawnCommandService spawnCommandService,
+                                  MenuBuilderFactory menuBuilderFactory,
                                   ButtonBuilderFactory buttonBuilderFactory,
                                   SpecializationMenuFactory specializationMenuFactory,
                                   DailyLoginMenuFactory dailyLoginMenuFactory, TeamMenuFactory teamMenuFactory,
                                   CollectablesMenuFactory collectablesMenuFactory,
                                   ChallengesMenuFactory challengesMenuFactory, ShopMenuFactory shopMenuFactory,
-                                  HelpMenuFactory helpMenuFactory, StringUtils stringUtils) {
+                                  HelpMenuFactory helpMenuFactory, StringUtils stringUtils,
+                                  TimeUtils timeUtils) {
         this.legendsPlayerQueryService = legendsPlayerQueryService;
         this.commandCommandService = commandCommandService;
         this.menuCommandService = menuCommandService;
+        this.spawnCommandService = spawnCommandService;
+        this.spawnQueryService = spawnQueryService;
         this.menuBuilderFactory = menuBuilderFactory;
         this.buttonBuilderFactory = buttonBuilderFactory;
         this.specializationMenuFactory = specializationMenuFactory;
@@ -72,6 +84,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         this.shopMenuFactory = shopMenuFactory;
         this.helpMenuFactory = helpMenuFactory;
         this.stringUtils = stringUtils;
+        this.timeUtils = timeUtils;
     }
 
     List<String> createCombatView(LegendsPlayer player) {
@@ -239,16 +252,28 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     }
 
     Button createTeleportButton(LegendsPlayer player) {
+        UUID playerId = player.getId();
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.FLINT, "Monolith Shard");
         builder.addTooltip("A pitch black splinter that is said to have");
         builder.addTooltip("been part of The Monolith. It can take you");
         builder.addTooltip("back to where The Monolith's power was once");
         builder.addTooltip("at its strongest.");
         builder.addTooltip("");
-        builder.addTooltip("[CLICK] To warp to your spawn");
+
+        long cooldown = spawnQueryService.getCooldown(playerId);
+        if (cooldown >= System.currentTimeMillis()) {
+            String timeToGo = timeUtils.getTimeToGoUntil(cooldown);
+            builder.addTooltip(ColorCode.RED + timeToGo + " minutes cooldown remaining");
+        } else {
+            builder.addTooltip(ColorCode.GREEN + "[CLICK] To warp to your spawn");
+        }
 
         builder.withAction(action -> {
-
+            long updatedCooldown = spawnQueryService.getCooldown(playerId);
+            if (updatedCooldown < System.currentTimeMillis()) {
+                spawnCommandService.warp(playerId);
+                menuCommandService.closeMenu(playerId);
+            }
         });
         return builder.build();
     }

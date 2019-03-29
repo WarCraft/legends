@@ -17,6 +17,8 @@ import gg.warcraft.legends.api.core.game.service.GameQueryService;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
 import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardCommandService;
 import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardQueryService;
+import gg.warcraft.legends.api.core.service.SpawnCommandService;
+import gg.warcraft.legends.api.core.service.SpawnQueryService;
 import gg.warcraft.legends.api.core.service.SpawnRepository;
 import gg.warcraft.legends.api.entity.LegendsEntityFactory;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
@@ -109,6 +111,8 @@ import gg.warcraft.legends.app.core.game.service.DefaultGameQueryService;
 import gg.warcraft.legends.app.core.game.service.DefaultGameRepository;
 import gg.warcraft.legends.app.core.leaderboard.service.DefaultLeaderboardCommandService;
 import gg.warcraft.legends.app.core.leaderboard.service.DefaultLeaderboardQueryService;
+import gg.warcraft.legends.app.core.service.DefaultSpawnCommandService;
+import gg.warcraft.legends.app.core.service.DefaultSpawnQueryService;
 import gg.warcraft.legends.app.core.service.DefaultSpawnRepository;
 import gg.warcraft.legends.app.entity.player.SimpleLegendsPlayer;
 import gg.warcraft.legends.app.entity.player.rank.handler.PrestigeAttributesHandler;
@@ -236,11 +240,18 @@ public abstract class AbstractLegendsModule extends PrivateModule {
     }
 
     private void configureCore() {
+        bind(MetricsService.class).to(AwsMetricsService.class);
+        expose(MetricsService.class);
+
+        // Spawn
         bind(SpawnRepository.class).to(DefaultSpawnRepository.class);
         expose(SpawnRepository.class);
 
-        bind(MetricsService.class).to(AwsMetricsService.class);
-        expose(MetricsService.class);
+        bind(SpawnQueryService.class).to(DefaultSpawnQueryService.class);
+        expose(SpawnQueryService.class);
+
+        bind(SpawnCommandService.class).to(DefaultSpawnCommandService.class);
+        expose(SpawnCommandService.class);
 
         // Game bindings
         bind(GameCommandService.class).to(DefaultGameCommandService.class);
