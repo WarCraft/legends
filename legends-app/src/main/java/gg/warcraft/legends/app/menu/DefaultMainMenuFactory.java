@@ -272,7 +272,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         UUID playerId = player.getId();
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.CHEST, "Item Storage");
         builder.addTooltip("It is possible to recieve rewards while offline,");
-        builder.addTooltip("such as winning a daily leaderboard. Any such items");
+        builder.addTooltip("such as winning a daily leaderboard. These items");
         builder.addTooltip("can be claimed at any time from this menu.");
         builder.addTooltip("");
 
