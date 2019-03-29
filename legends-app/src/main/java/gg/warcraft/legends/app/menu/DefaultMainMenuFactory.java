@@ -261,7 +261,8 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         builder.addTooltip("");
 
         long cooldown = spawnQueryService.getCooldown(playerId);
-        if (cooldown >= System.currentTimeMillis()) {
+        long now = System.currentTimeMillis();
+        if (cooldown >= now) {
             String timeToGo = timeUtils.getTimeToGoUntil(cooldown);
             builder.addTooltip(ColorCode.RED + timeToGo + " cooldown remaining");
         } else {

@@ -29,6 +29,7 @@ public class DefaultSpawnCommandService implements SpawnCommandService {
     private final SpawnRepository spawnRepository;
     private final TaskService taskService;
     private final Duration warpDuration;
+    private final Duration warpEffectDuration;
     private final PotionEffect warpConfusion;
 
     @Inject
@@ -44,13 +45,15 @@ public class DefaultSpawnCommandService implements SpawnCommandService {
         this.spawnRepository = spawnRepository;
         this.taskService = taskService;
         this.warpDuration = timeUtils.createDurationInSeconds(WARP_DURATION_SECONDS);
+        this.warpEffectDuration = timeUtils.createDurationInSeconds(WARP_DURATION_SECONDS + 4);
         this.warpConfusion = combatFactory.createPotionEffect(PotionEffectType.CONFUSION,
-                0, warpDuration);
+                0, warpEffectDuration);
     }
 
     @Override
     public void warp(UUID playerId) {
         entityCommandService.addPotionEffect(playerId, warpConfusion);
+        entityCommandService.freeze(playerId, warpDuration);
         playerCommandService.sendNotification(playerId,
                 "You can feel The Monolith's energy reaching out for you as it pulls you into The Realm's Weave.");
 

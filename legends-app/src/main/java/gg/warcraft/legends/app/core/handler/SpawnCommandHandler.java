@@ -37,7 +37,8 @@ public class SpawnCommandHandler implements CommandHandler {
 
         UUID playerId = sender.getPlayerId();
         long cooldown = spawnQueryService.getCooldown(playerId);
-        if (cooldown >= System.currentTimeMillis()) {
+        long now = System.currentTimeMillis();
+        if (cooldown >= now) {
             String timeToGo = timeUtils.getTimeToGoUntil(cooldown);
             playerCommandService.sendNotification(playerId,
                     "You can return to spawn in " + timeToGo + ".");
