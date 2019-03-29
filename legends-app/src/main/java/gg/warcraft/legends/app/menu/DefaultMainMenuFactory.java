@@ -6,6 +6,7 @@ import gg.warcraft.legends.api.core.service.SpawnQueryService;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
+import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.menu.ChallengesMenuFactory;
 import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
@@ -15,9 +16,14 @@ import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.ShopMenuFactory;
 import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
 import gg.warcraft.legends.api.menu.TeamMenuFactory;
+import gg.warcraft.legends.app.menu.task.ItemClaimTask;
 import gg.warcraft.monolith.api.command.service.CommandCommandService;
+import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.attribute.Attributes;
+import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.item.service.ItemStorageCommandService;
+import gg.warcraft.monolith.api.item.service.ItemStorageQueryService;
 import gg.warcraft.monolith.api.menu.Button;
 import gg.warcraft.monolith.api.menu.ButtonBuilder;
 import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
@@ -38,11 +44,14 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     private static final String YELLOW = ColorCode.YELLOW.toString();
     private static final String GRAY = ColorCode.GRAY.toString();
 
-    private final LegendsPlayerQueryService legendsPlayerQueryService;
+    private final LegendsPlayerQueryService playerQueryService;
+    private final LegendsPlayerCommandService playerCommandService;
     private final CommandCommandService commandCommandService;
     private final MenuCommandService menuCommandService;
     private final SpawnQueryService spawnQueryService;
     private final SpawnCommandService spawnCommandService;
+    private final ItemStorageQueryService itemStorageQueryService;
+    private final ItemStorageCommandService itemStorageCommandService;
     private final MenuBuilderFactory menuBuilderFactory;
     private final ButtonBuilderFactory buttonBuilderFactory;
     private final SpecializationMenuFactory specializationMenuFactory;
@@ -54,27 +63,34 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     private final HelpMenuFactory helpMenuFactory;
     private final StringUtils stringUtils;
     private final TimeUtils timeUtils;
+    private final TaskService taskService;
 
     @Inject
-    public DefaultMainMenuFactory(LegendsPlayerQueryService legendsPlayerQueryService,
+    public DefaultMainMenuFactory(LegendsPlayerQueryService playerQueryService,
+                                  LegendsPlayerCommandService playerCommandService,
                                   CommandCommandService commandCommandService,
                                   MenuCommandService menuCommandService,
                                   SpawnQueryService spawnQueryService,
                                   SpawnCommandService spawnCommandService,
                                   MenuBuilderFactory menuBuilderFactory,
+                                  ItemStorageCommandService itemStorageCommandService,
+                                  ItemStorageQueryService itemStorageQueryService,
                                   ButtonBuilderFactory buttonBuilderFactory,
                                   SpecializationMenuFactory specializationMenuFactory,
                                   DailyLoginMenuFactory dailyLoginMenuFactory, TeamMenuFactory teamMenuFactory,
                                   CollectablesMenuFactory collectablesMenuFactory,
                                   ChallengesMenuFactory challengesMenuFactory, ShopMenuFactory shopMenuFactory,
-                                  HelpMenuFactory helpMenuFactory, StringUtils stringUtils,
+                                  HelpMenuFactory helpMenuFactory, StringUtils stringUtils, TaskService taskService,
                                   TimeUtils timeUtils) {
-        this.legendsPlayerQueryService = legendsPlayerQueryService;
+        this.playerQueryService = playerQueryService;
+        this.playerCommandService = playerCommandService;
         this.commandCommandService = commandCommandService;
         this.menuCommandService = menuCommandService;
         this.spawnCommandService = spawnCommandService;
         this.spawnQueryService = spawnQueryService;
         this.menuBuilderFactory = menuBuilderFactory;
+        this.itemStorageCommandService = itemStorageCommandService;
+        this.itemStorageQueryService = itemStorageQueryService;
         this.buttonBuilderFactory = buttonBuilderFactory;
         this.specializationMenuFactory = specializationMenuFactory;
         this.dailyLoginMenuFactory = dailyLoginMenuFactory;
@@ -84,6 +100,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         this.shopMenuFactory = shopMenuFactory;
         this.helpMenuFactory = helpMenuFactory;
         this.stringUtils = stringUtils;
+        this.taskService = taskService;
         this.timeUtils = timeUtils;
     }
 
@@ -251,6 +268,32 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         return builder.build();
     }
 
+    Button createItemStorageButton(LegendsPlayer player) {
+        UUID playerId = player.getId();
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.CHEST, "Item Storage");
+        builder.addTooltip("It is possible to recieve rewards while offline,");
+        builder.addTooltip("such as winning a daily leaderboard. Any such items");
+        builder.addTooltip("can be claimed at any time from this menu.");
+        builder.addTooltip("");
+
+        List<Item> storedItems = itemStorageQueryService.getStoredItems(playerId);
+        if (storedItems.isEmpty()) {
+            builder.addTooltip("There are no items currently waiting for you");
+        } else {
+            builder.addTooltip("You have " + storedItems.size() + " items waiting for you.");
+            builder.addTooltip("[CLICK] To receive your items");
+
+            ItemClaimTask itemClaimTask = new ItemClaimTask(itemStorageQueryService,
+                    itemStorageCommandService, playerQueryService, playerCommandService,
+                    taskService, playerId);
+            taskService.runNextTick(itemClaimTask);
+
+            menuCommandService.closeMenu(playerId);
+        }
+
+        return builder.build();
+    }
+
     Button createTeleportButton(LegendsPlayer player) {
         UUID playerId = player.getId();
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.FLINT, "Monolith Shard");
@@ -296,7 +339,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
 
     @Override
     public Menu createMainMenu(UUID playerId) {
-        LegendsPlayer player = legendsPlayerQueryService.getPlayer(playerId);
+        LegendsPlayer player = playerQueryService.getPlayer(playerId);
         MenuBuilder builder = menuBuilderFactory.createMenuBuilder("WarCraft: Legends", MenuSize.ONE_ROW);
         builder.addButton(0, createPlayerButton(player));
         builder.addButton(1, createDailyLoginButton(player));
@@ -304,7 +347,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         builder.addButton(3, createCollectablesButton(player));
         builder.addButton(4, createShopButton(player));
         // empty slot 5
-        // empty slot 6
+        builder.addButton(6, createItemStorageButton(player));
         builder.addButton(7, createTeleportButton(player));
         builder.addButton(8, createHelpButton(player));
         return builder.build();
