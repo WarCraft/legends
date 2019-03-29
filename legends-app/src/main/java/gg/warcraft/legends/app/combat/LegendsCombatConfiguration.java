@@ -4,6 +4,8 @@ import com.google.inject.Inject;
 import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.legends.app.combat.mage.Fireball;
 import gg.warcraft.legends.app.combat.mage.FireballFactory;
+import gg.warcraft.legends.app.combat.mage.human.Barrier;
+import gg.warcraft.legends.app.combat.mage.human.BarrierFactory;
 import gg.warcraft.legends.app.combat.mage.orc.FlameTotem;
 import gg.warcraft.legends.app.combat.mage.orc.FlameTotemFactory;
 import gg.warcraft.legends.app.combat.mage.tempest.Bolt;
@@ -59,6 +61,8 @@ public class LegendsCombatConfiguration {
         // Wizard
         abilityCommandService.registerRangedAbility("Arcane Missile", ArcaneMissile.class, ArcaneMissileFactory.class);
         abilityCommandService.registerRangedAbility("Teleport", Teleport.class, TeleportFactory.class);
+        // Human
+        abilityCommandService.registerRangedAbility("Barrier", Barrier.class, BarrierFactory.class);
         // Orc
         abilityCommandService.registerRangedAbility("Flame Totem", FlameTotem.class, FlameTotemFactory.class);
     }
