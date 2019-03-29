@@ -10,6 +10,8 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.monolith.api.combat.CombatFactory;
 import gg.warcraft.monolith.api.combat.CombatSource;
 import gg.warcraft.monolith.api.combat.value.CombatValue;
+import gg.warcraft.monolith.api.combat.value.CombatValueModifier;
+import gg.warcraft.monolith.api.combat.value.CombatValueModifierType;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.core.event.ServerShutdownEvent;
 import gg.warcraft.monolith.api.entity.event.EntityDamageEvent;
@@ -41,6 +43,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -227,8 +230,12 @@ public class HunterPetListener implements Listener {
             if (attackingPet != null) {
                 UUID attackingOwner = petToOwner.get(attackingPet);
                 CombatSource ownerSource = combatFactory.createCombatSource("Pet", attackingOwner);
+                CombatValueModifier petDamageLimiter = combatFactory.createCombatValueModifier(
+                        CombatValueModifierType.OVERRIDE, 2f, ownerSource);
+                List<CombatValueModifier> newModifiers = event.getDamage().getModifiers();
+                newModifiers.add(petDamageLimiter);
                 CombatValue ownerDamage = combatFactory.createCombatValue(event.getDamage().getBaseValue(),
-                        event.getDamage().getModifiers(), ownerSource);
+                        newModifiers, ownerSource);
                 event.setDamage(ownerDamage);
             }
         }
