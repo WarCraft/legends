@@ -32,7 +32,7 @@ public class LastStand extends AbstractAbility implements RangedAbility {
         statusCommandService.addStatusEffect(effect, getCasterId());
 
         Player player = playerQueryService.getPlayer(getCasterId());
-        worldCommandService.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, SoundCategory.HOSTILE, 1, 1);
+        worldCommandService.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, SoundCategory.HOSTILE, 1, 1);
     }
 
     @Override

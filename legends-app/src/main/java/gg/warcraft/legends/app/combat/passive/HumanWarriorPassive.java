@@ -2,6 +2,7 @@ package gg.warcraft.legends.app.combat.passive;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.ability.Ability;
 import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.monolith.api.entity.event.EntityPreFatalDamageEvent;
 
@@ -22,6 +23,9 @@ public class HumanWarriorPassive extends AbstractRacialPassive {
 
     @Override
     public void onEntityPreFatalDamageEvent(EntityPreFatalDamageEvent event) {
-        abilityCommandService.castAbility(ABILITY_NAME, getEntityId(), null);
+        Ability ability = abilityCommandService.castAbility(ABILITY_NAME, getEntityId(), null);
+        if (ability != null) {
+            event.cancel();
+        }
     }
 }
