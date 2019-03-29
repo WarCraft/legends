@@ -77,6 +77,7 @@ import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozle;
 import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozleFactory;
 import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozleHandler;
 import gg.warcraft.legends.spigot.OLD.shop.SpigotMiniPetFactory;
+import gg.warcraft.legends.spigot.core.handler.CraftPreventionHandler;
 import gg.warcraft.legends.spigot.core.handler.OnePointEightPvPInitializationHandler;
 import gg.warcraft.legends.spigot.core.handler.SpigotScoreboardHandler;
 import gg.warcraft.monolith.api.Monolith;
@@ -361,6 +362,8 @@ public class LegendsPlugin extends JavaPlugin {
         TimeUtils timeUtils = injector.getInstance(TimeUtils.class);
         EventService eventService = injector.getInstance(EventService.class);
         CombatFactory combatFactory = injector.getInstance(CombatFactory.class);
+
+        eventService.subscribe(new CraftPreventionHandler());
 
         HunterPetListener hunterPetListener = new HunterPetListener(getServer(), legendsPlayerQueryService,
                 teamCommandService, combatPetFactory, taskService, timeUtils, combatFactory);
