@@ -42,6 +42,7 @@ import gg.warcraft.legends.app.core.game.handler.ObjectiveAnnouncementHandler;
 import gg.warcraft.legends.app.core.game.handler.SkirmishRewardHandler;
 import gg.warcraft.legends.app.core.handler.CombatLoggingHandler;
 import gg.warcraft.legends.app.core.handler.FishCommandHandler;
+import gg.warcraft.legends.app.core.handler.KitCommandHandler;
 import gg.warcraft.legends.app.core.handler.PlayerCountMetricHandler;
 import gg.warcraft.legends.app.core.handler.PlayerSpawnHandler;
 import gg.warcraft.legends.app.core.handler.SpawnCommandHandler;
@@ -359,6 +360,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         SpawnCommandHandler spawnCommandHandler = injector.getInstance(SpawnCommandHandler.class);
         commandCommandService.createCommand("spawn", Lists.newArrayList("return"), spawnCommandHandler);
+
+        KitCommandHandler kitCommandHandler = injector.getInstance(KitCommandHandler.class);
+        commandCommandService.createCommand("kit", Collections.emptyList(), kitCommandHandler);
     }
 
     // TODO remove all this code and any classes from the spigotOLD package
