@@ -99,6 +99,7 @@ import gg.warcraft.legends.app.combat.warrior.effect.HamstringEffect;
 import gg.warcraft.legends.app.combat.warrior.effect.StandYourGroundEffect;
 import gg.warcraft.legends.app.combat.warrior.effect.WarriorEffectFactory;
 import gg.warcraft.legends.app.combat.warrior.status.GrudgeStatusEffect;
+import gg.warcraft.legends.app.combat.warrior.status.LastStandStatusEffect;
 import gg.warcraft.legends.app.combat.warrior.status.StandYourGroundStatusEffect;
 import gg.warcraft.legends.app.combat.warrior.status.WarriorStatusEffectFactory;
 import gg.warcraft.legends.app.core.AwsMetricsService;
@@ -229,6 +230,7 @@ public abstract class AbstractLegendsModule extends PrivateModule {
         install(new FactoryModuleBuilder()
                 .implement(StatusEffect.class, Names.named("grudge"), GrudgeStatusEffect.class)
                 .implement(StatusEffect.class, Names.named("standYourGround"), StandYourGroundStatusEffect.class)
+                .implement(StatusEffect.class, Names.named("lastStand"), LastStandStatusEffect.class)
                 .build(WarriorStatusEffectFactory.class));
         expose(WarriorStatusEffectFactory.class);
     }

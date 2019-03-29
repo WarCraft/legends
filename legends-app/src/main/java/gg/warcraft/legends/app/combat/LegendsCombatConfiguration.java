@@ -42,6 +42,8 @@ import gg.warcraft.legends.app.combat.warrior.berserker.Maul;
 import gg.warcraft.legends.app.combat.warrior.berserker.MaulFactory;
 import gg.warcraft.legends.app.combat.warrior.berserker.Shatter;
 import gg.warcraft.legends.app.combat.warrior.berserker.ShatterFactory;
+import gg.warcraft.legends.app.combat.warrior.human.LastStand;
+import gg.warcraft.legends.app.combat.warrior.human.LastStandFactory;
 
 public class LegendsCombatConfiguration {
 
@@ -87,5 +89,7 @@ public class LegendsCombatConfiguration {
         abilityCommandService.registerMeleeAbility("Grudge", Grudge.class, GrudgeFactory.class);
         abilityCommandService.registerMeleeAbility("Maul", Maul.class, MaulFactory.class);
         abilityCommandService.registerRangedAbility("Shatter", Shatter.class, ShatterFactory.class);
+        // Human
+        abilityCommandService.registerRangedAbility("Last Stand", LastStand.class, LastStandFactory.class);
     }
 }

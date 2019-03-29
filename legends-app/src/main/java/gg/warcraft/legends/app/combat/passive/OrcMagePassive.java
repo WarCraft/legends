@@ -14,7 +14,8 @@ public class OrcMagePassive extends AbstractRacialPassive {
     private final AbilityCommandService abilityCommandService;
 
     @Inject
-    public OrcMagePassive(AbilityCommandService abilityCommandService, @Assisted UUID entityId) {
+    public OrcMagePassive(AbilityCommandService abilityCommandService,
+                          @Assisted UUID entityId) {
         super(entityId, NAME, null);
         this.abilityCommandService = abilityCommandService;
     }

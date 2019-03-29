@@ -16,4 +16,7 @@ public interface WarriorStatusEffectFactory {
 
     @Named("standYourGround")
     StatusEffect createStandYourGroundStatusEffect(UUID entityId, Duration duration);
+
+    @Named("lastStand")
+    StatusEffect createLastStandStatusEffect(UUID entityId, Duration duration);
 }
