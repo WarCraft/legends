@@ -1,6 +1,7 @@
 package gg.warcraft.legends.app.combat.mage.orc.handler;
 
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
 import gg.warcraft.combat.api.ability.event.AbilityPreCastEvent;
 import gg.warcraft.monolith.api.combat.CombatFactory;
 import gg.warcraft.monolith.api.combat.CombatSource;
@@ -14,6 +15,7 @@ public class FlameTotemDamageLimitationHandler implements CombatSource {
 
     private final CombatValueModifier modifier;
 
+    @Inject
     public FlameTotemDamageLimitationHandler(CombatFactory combatFactory) {
         this.modifier = combatFactory.createCombatValueModifier(
                 CombatValueModifierType.OVERRIDE, 2f, this);
