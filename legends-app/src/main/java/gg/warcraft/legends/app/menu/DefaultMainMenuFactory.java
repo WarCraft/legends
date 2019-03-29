@@ -273,7 +273,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.CHEST, "Item Storage");
         builder.addTooltip("It is possible to recieve rewards while offline,");
         builder.addTooltip("such as winning a daily leaderboard. These items");
-        builder.addTooltip("can be claimed at any time from this menu.");
+        builder.addTooltip("can be claimed from this menu at any time.");
         builder.addTooltip("");
 
         List<Item> storedItems = itemStorageQueryService.getStoredItems(playerId);
