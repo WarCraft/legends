@@ -15,6 +15,7 @@ import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 import gg.warcraft.monolith.api.item.Item;
+import gg.warcraft.monolith.api.item.ItemBuilderFactory;
 import gg.warcraft.monolith.api.item.ItemType;
 
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class KitCommandHandler implements CommandHandler {
     private final Item kitSword;
     private final Item kitAxe;
     private final Item kitBow;
+    private final Item kitArrow;
     private final Item kitHoe;
     private final Item kitStick;
 
@@ -40,7 +42,8 @@ public class KitCommandHandler implements CommandHandler {
     public KitCommandHandler(PlayerQueryService playerQueryService,
                              PlayerCommandService playerCommandService,
                              SpecializationQueryService specializationQueryService,
-                             EquipmentBuilderFactory equipmentBuilderFactory) {
+                             EquipmentBuilderFactory equipmentBuilderFactory,
+                             ItemBuilderFactory itemBuilderFactory) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.specializationQueryService = specializationQueryService;
@@ -79,6 +82,8 @@ public class KitCommandHandler implements CommandHandler {
                 ItemType.BOW, ItemRarity.COMMON, "Beginner's Bow")
                 .withAttributes(kitAttributes)
                 .build();
+        this.kitArrow = itemBuilderFactory.createItemBuilder(
+                ItemType.ARROW, "Arrow").build();
         this.kitHoe = equipmentBuilderFactory.createEquipmentBuilder(
                 ItemType.WOOD_HOE, ItemRarity.COMMON, "Beginner's Staff")
                 .withAttributes(kitAttributes)
@@ -132,6 +137,7 @@ public class KitCommandHandler implements CommandHandler {
             case "Hunter":
             case "Marksman":
                 playerCommandService.giveItem(playerId, kitBow, false);
+                playerCommandService.giveItem(playerId, kitArrow, false);
                 break;
             case "Tempest":
                 playerCommandService.giveItem(playerId, kitHoe, false);
