@@ -28,6 +28,7 @@ import gg.warcraft.legends.app.combat.LegendsCombatConfiguration;
 import gg.warcraft.legends.app.combat.handler.ArrowDistributionHandler;
 import gg.warcraft.legends.app.combat.handler.ArrowPickupHandler;
 import gg.warcraft.legends.app.combat.handler.WhoDamagedWhoHandler;
+import gg.warcraft.legends.app.combat.mage.orc.handler.FlameTotemDamageLimitationHandler;
 import gg.warcraft.legends.app.combat.passive.handler.PassiveAssignmentHandler;
 import gg.warcraft.legends.app.combat.ranger.marksman.FocusHandler;
 import gg.warcraft.legends.app.config.LegendsMapperModule;
@@ -221,6 +222,10 @@ public class LegendsPlugin extends JavaPlugin {
 
         WhoDamagedWhoHandler whoDamagedWhoHandler = injector.getInstance(WhoDamagedWhoHandler.class);
         eventService.subscribe(whoDamagedWhoHandler);
+
+        FlameTotemDamageLimitationHandler flameTotemDamageLimitationHandler =
+                injector.getInstance(FlameTotemDamageLimitationHandler.class);
+        eventService.subscribe(flameTotemDamageLimitationHandler);
 
         // Shop
         ShopProfileInitializationHandler shopProfileInitializationHandler =
