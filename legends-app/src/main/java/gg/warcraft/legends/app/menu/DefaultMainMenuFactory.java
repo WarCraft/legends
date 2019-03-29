@@ -263,7 +263,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         long cooldown = spawnQueryService.getCooldown(playerId);
         if (cooldown >= System.currentTimeMillis()) {
             String timeToGo = timeUtils.getTimeToGoUntil(cooldown);
-            builder.addTooltip(ColorCode.RED + timeToGo + " minutes cooldown remaining");
+            builder.addTooltip(ColorCode.RED + timeToGo + " cooldown remaining");
         } else {
             builder.addTooltip(ColorCode.GREEN + "[CLICK] To warp to your spawn");
         }

@@ -8,8 +8,6 @@ main: gg.warcraft.legends.spigot.LegendsPlugin
 depend: ["WarCraft_Monolith", "WarCraft_Chat", "WarCraft_Combat", "WarCraft_Siege", MythicMobs]
 
 commands:
-  return:
-  spawn:
 
   vote:
 

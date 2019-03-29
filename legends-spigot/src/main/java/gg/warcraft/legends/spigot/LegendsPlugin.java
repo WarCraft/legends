@@ -44,6 +44,7 @@ import gg.warcraft.legends.app.core.handler.CombatLoggingHandler;
 import gg.warcraft.legends.app.core.handler.FishCommandHandler;
 import gg.warcraft.legends.app.core.handler.PlayerCountMetricHandler;
 import gg.warcraft.legends.app.core.handler.PlayerSpawnHandler;
+import gg.warcraft.legends.app.core.handler.SpawnCommandHandler;
 import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
 import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardRewardHandler;
@@ -355,6 +356,9 @@ public class LegendsPlugin extends JavaPlugin {
         MobDropHandler mobDropHandler = injector.getInstance(MobDropHandler.class);
         commandCommandService.createCommand("dropitems", Collections.emptyList(), mobDropHandler);
         eventService.subscribe(mobDropHandler);
+
+        SpawnCommandHandler spawnCommandHandler = injector.getInstance(SpawnCommandHandler.class);
+        commandCommandService.createCommand("spawn", Lists.newArrayList("return"), spawnCommandHandler);
     }
 
     // TODO remove all this code and any classes from the spigotOLD package
