@@ -32,7 +32,7 @@ public class OrcWarriorPassive extends AbstractRacialPassive implements CombatSt
         super(entityId, NAME, null);
         this.entityCommandService = entityCommandService;
         Duration forever = timeUtils.createDurationInTicks(Integer.MAX_VALUE);
-        this.potionEffect = combatFactory.createPotionEffect(PotionEffectType.INCREASE_DAMAGE, 0, forever);
+        this.potionEffect = combatFactory.createVisiblePotionEffect(PotionEffectType.INCREASE_DAMAGE, 0, forever);
         this.modifier = combatFactory.createCombatValueModifier(CombatValueModifierType.PERCENT, 0.15f, this);
     }
 
