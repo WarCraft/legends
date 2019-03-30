@@ -11,6 +11,7 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
+import gg.warcraft.monolith.api.command.service.CommandCommandService;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
 import gg.warcraft.monolith.api.world.Direction;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class TutorialCommandHandler implements CommandHandler {
     private final LegendsPlayerQueryService playerQueryService;
     private final LegendsPlayerCommandService playerCommandService;
+    private final CommandCommandService commandCommandService;
     private final EntityCommandService entityCommandService;
     private final TeamCommandService teamCommandService;
     private final SpecializationCommandService specializationCommandService;
@@ -33,12 +35,14 @@ public class TutorialCommandHandler implements CommandHandler {
     public TutorialCommandHandler(LegendsPlayerQueryService playerQueryService,
                                   LegendsPlayerCommandService playerCommandService,
                                   EntityCommandService entityCommandService,
+                                  CommandCommandService commandCommandService,
                                   TeamCommandService teamCommandService,
                                   SpecializationCommandService specializationCommandService,
                                   SpawnRepository spawnRepository,
                                   DirectionUtils directionUtils) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
+        this.commandCommandService = commandCommandService;
         this.entityCommandService = entityCommandService;
         this.teamCommandService = teamCommandService;
         this.specializationCommandService = specializationCommandService;
@@ -71,6 +75,7 @@ public class TutorialCommandHandler implements CommandHandler {
                 if (!arguments.isEmpty()) {
                     String argument = arguments.get(0);
                     specializationCommandService.setSpecialization(argument, playerId);
+                    commandCommandService.dispatchCommandFor("kit", playerId);
                 }
                 return true;
             case "skiptutorial":
