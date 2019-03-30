@@ -25,6 +25,7 @@ import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.BlockType;
+import gg.warcraft.monolith.api.world.block.BlockTypeUtils;
 import gg.warcraft.monolith.api.world.block.BlockUtils;
 import gg.warcraft.monolith.api.world.block.backup.service.BlockBackupCommandService;
 import gg.warcraft.monolith.api.world.location.BlockLocation;
@@ -64,6 +65,7 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
                       WorldCommandService worldCommandService, BlockBackupCommandService blockBackupCommandService,
                       TaskService taskService, MovementFactory movementFactory, HitboxFactory hitboxFactory,
                       MageEffectFactory mageEffectFactory, BlockUtils blockUtils, TimeUtils timeUtils,
+                      BlockTypeUtils blockTypeUtils,
                       @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                       @Assisted("target") @Nullable Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
         super(caster.getId(), snapshot);
@@ -86,16 +88,22 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
                 .findFirst();
         Block totemBlock = spawnBlockOptional.orElse(casterLocationBlock);
         BlockLocation totemLocation = totemBlock.getLocation();
-        UUID totemBlockBackupId = blockBackupCommandService.createBlockBackup(totemLocation);
+        UUID totemBlockBackupId = blockTypeUtils.getLiquids().contains(totemBlock.getType())
+                ? blockBackupCommandService.createBlockBackup(totemLocation)
+                : null;
+        if (totemBlockBackupId != null) {
+            worldCommandService.setBlockType(totemBlock, BlockType.REDSTONE_TORCH_ON);
+        }
         this.totemLocation = totemLocation
                 .toLocation()
                 .add(0.5f, 0.5f, 0.5f);
 
-        worldCommandService.setBlockType(totemBlock, BlockType.REDSTONE_TORCH_ON);
         this.task = taskService.runTask(this, timeUtils.oneTick(), snapshot.getDuration("period"));
         taskService.runLater(() -> {
             task.cancel();
-            blockBackupCommandService.restoreBlockBackup(totemBlockBackupId);
+            if (totemBlockBackupId != null) {
+                blockBackupCommandService.restoreBlockBackup(totemBlockBackupId);
+            }
         }, snapshot.getDuration());
 
         // TODO play cast sound
