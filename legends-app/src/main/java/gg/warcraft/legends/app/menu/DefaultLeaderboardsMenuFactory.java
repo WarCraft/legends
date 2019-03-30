@@ -121,16 +121,21 @@ public class DefaultLeaderboardsMenuFactory extends AbstractMenuFactory implemen
         return builder.build();
     }
 
-    Button createLeaderboardButton(LegendsStatistic statistic) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, statistic.getName());
+    Button createLeaderboardButton(LegendsStatistic statistic, LegendsPlayer player) {
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BANNER, statistic.getName());
 
         Map<UUID, Integer> leaders = leaderboardQueryService.getLeaders(statistic, 10);
         int position = 1;
         for (Map.Entry<UUID, Integer> leader : leaders.entrySet()) {
-            Player player = playerQueryService.getPlayer(leader.getKey());
+            Player leaderPlayer = playerQueryService.getPlayer(leader.getKey());
             builder.addTooltip(ColorCode.YELLOW.toString() + position + "." +
-                    " " + player.getName() + " (" + leader.getValue() + ")");
+                    " " + leaderPlayer.getName() + " (" + leader.getValue() + ")");
             position += 1;
+        }
+
+        if (!leaders.keySet().contains(player.getId())) {
+            builder.addTooltip("");
+            builder.addTooltip("??. " + player.getName() + " (" + player.getStatistic(statistic.getKey()) + ")");
         }
 
         return builder.build();
@@ -139,11 +144,24 @@ public class DefaultLeaderboardsMenuFactory extends AbstractMenuFactory implemen
     @Override
     public Menu createDailyLeaderboardsMenu(UUID playerId) {
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        MenuBuilder builder = createMenuBuilder("Daily Leaderboards", MenuSize.ONE_ROW);
+        MenuBuilder builder = createMenuBuilder("Daily Leaderboards", MenuSize.TWO_ROWS);
 
         builder.addButton(0, createDailyInfoButton());
-
-        builder.addButton(8, createBackButton(playerId, leaderboardsMenuFactory::createLeaderboardsMenu));
+        builder.addButton(2, createLeaderboardButton(LegendsStatistic.DAILY_KILLS, player));
+        builder.addButton(3, createLeaderboardButton(LegendsStatistic.DAILY_DAMAGE_DONE, player));
+        builder.addButton(4, createLeaderboardButton(LegendsStatistic.DAILY_MONSTER_KILLS, player));
+        builder.addButton(5, createLeaderboardButton(LegendsStatistic.DAILY_RESOURCES_GATHERED, player));
+        builder.addButton(6, createLeaderboardButton(LegendsStatistic.DAILY_TIME_PLAYED, player));
+        builder.addButton(7, createLeaderboardButton(LegendsStatistic.DAILY_FAVOR_GAINED, player));
+        builder.addButton(8, createLeaderboardButton(LegendsStatistic.DAILY_GOLD_GAINED, player));
+        builder.addButton(11, createLeaderboardButton(LegendsStatistic.DAILY_CAMPS_CAPTURED, player));
+        builder.addButton(12, createLeaderboardButton(LegendsStatistic.DAILY_CAMPS_DEFENDED, player));
+        builder.addButton(13, createLeaderboardButton(LegendsStatistic.DAILY_OUTPOSTS_CAPTURED, player));
+        builder.addButton(14, createLeaderboardButton(LegendsStatistic.DAILY_OUTPOSTS_DEFENDED, player));
+        builder.addButton(15, createLeaderboardButton(LegendsStatistic.DAILY_KEEPS_CAPTURED, player));
+        builder.addButton(16, createLeaderboardButton(LegendsStatistic.DAILY_KEEPS_DEFENDED, player));
+        builder.addButton(17, createLeaderboardButton(LegendsStatistic.DAILY_CRATES_OPENED, player));
+        builder.addButton(9, createBackButton(playerId, leaderboardsMenuFactory::createLeaderboardsMenu));
 
         return builder.build();
     }
@@ -151,11 +169,24 @@ public class DefaultLeaderboardsMenuFactory extends AbstractMenuFactory implemen
     @Override
     public Menu createWarLeaderboardsMenu(UUID playerId) {
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        MenuBuilder builder = createMenuBuilder("War Leaderboards", MenuSize.ONE_ROW);
+        MenuBuilder builder = createMenuBuilder("War Leaderboards", MenuSize.TWO_ROWS);
 
-        builder.addButton(0, createWarInfoButton());
-
-        builder.addButton(8, createBackButton(playerId, leaderboardsMenuFactory::createLeaderboardsMenu));
+        builder.addButton(0, createDailyInfoButton());
+        builder.addButton(2, createLeaderboardButton(LegendsStatistic.WARRY_KILLS, player));
+        builder.addButton(3, createLeaderboardButton(LegendsStatistic.WARRY_DAMAGE_DONE, player));
+        builder.addButton(4, createLeaderboardButton(LegendsStatistic.WARRY_MONSTER_KILLS, player));
+        builder.addButton(5, createLeaderboardButton(LegendsStatistic.WARRY_RESOURCES_GATHERED, player));
+        builder.addButton(6, createLeaderboardButton(LegendsStatistic.WARRY_TIME_PLAYED, player));
+        builder.addButton(7, createLeaderboardButton(LegendsStatistic.WARRY_FAVOR_GAINED, player));
+        builder.addButton(8, createLeaderboardButton(LegendsStatistic.WARRY_GOLD_GAINED, player));
+        builder.addButton(11, createLeaderboardButton(LegendsStatistic.WARRY_CAMPS_CAPTURED, player));
+        builder.addButton(12, createLeaderboardButton(LegendsStatistic.WARRY_CAMPS_DEFENDED, player));
+        builder.addButton(13, createLeaderboardButton(LegendsStatistic.WARRY_OUTPOSTS_CAPTURED, player));
+        builder.addButton(14, createLeaderboardButton(LegendsStatistic.WARRY_OUTPOSTS_DEFENDED, player));
+        builder.addButton(15, createLeaderboardButton(LegendsStatistic.WARRY_KEEPS_CAPTURED, player));
+        builder.addButton(16, createLeaderboardButton(LegendsStatistic.WARRY_KEEPS_DEFENDED, player));
+        builder.addButton(17, createLeaderboardButton(LegendsStatistic.WARRY_CRATES_OPENED, player));
+        builder.addButton(9, createBackButton(playerId, leaderboardsMenuFactory::createLeaderboardsMenu));
 
         return builder.build();
     }
@@ -163,11 +194,24 @@ public class DefaultLeaderboardsMenuFactory extends AbstractMenuFactory implemen
     @Override
     public Menu createAlltimeLeaderboardsMenu(UUID playerId) {
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        MenuBuilder builder = createMenuBuilder("All-time Leaderboards", MenuSize.ONE_ROW);
+        MenuBuilder builder = createMenuBuilder("All-time Leaderboards", MenuSize.TWO_ROWS);
 
-        builder.addButton(0, createAlltimeInfoButton());
-
-        builder.addButton(8, createBackButton(playerId, leaderboardsMenuFactory::createLeaderboardsMenu));
+        builder.addButton(0, createDailyInfoButton());
+        builder.addButton(2, createLeaderboardButton(LegendsStatistic.ALLTIME_KILLS, player));
+        builder.addButton(3, createLeaderboardButton(LegendsStatistic.ALLTIME_DAMAGE_DONE, player));
+        builder.addButton(4, createLeaderboardButton(LegendsStatistic.ALLTIME_MONSTER_KILLS, player));
+        builder.addButton(5, createLeaderboardButton(LegendsStatistic.ALLTIME_RESOURCES_GATHERED, player));
+        builder.addButton(6, createLeaderboardButton(LegendsStatistic.ALLTIME_TIME_PLAYED, player));
+        builder.addButton(7, createLeaderboardButton(LegendsStatistic.ALLTIME_FAVOR_GAINED, player));
+        builder.addButton(8, createLeaderboardButton(LegendsStatistic.ALLTIME_GOLD_GAINED, player));
+        builder.addButton(11, createLeaderboardButton(LegendsStatistic.ALLTIME_CAMPS_CAPTURED, player));
+        builder.addButton(12, createLeaderboardButton(LegendsStatistic.ALLTIME_CAMPS_DEFENDED, player));
+        builder.addButton(13, createLeaderboardButton(LegendsStatistic.ALLTIME_OUTPOSTS_CAPTURED, player));
+        builder.addButton(14, createLeaderboardButton(LegendsStatistic.ALLTIME_OUTPOSTS_DEFENDED, player));
+        builder.addButton(15, createLeaderboardButton(LegendsStatistic.ALLTIME_KEEPS_CAPTURED, player));
+        builder.addButton(16, createLeaderboardButton(LegendsStatistic.ALLTIME_KEEPS_DEFENDED, player));
+        builder.addButton(17, createLeaderboardButton(LegendsStatistic.ALLTIME_CRATES_OPENED, player));
+        builder.addButton(9, createBackButton(playerId, leaderboardsMenuFactory::createLeaderboardsMenu));
 
         return builder.build();
     }
