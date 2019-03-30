@@ -12,13 +12,14 @@ import java.util.stream.Collectors;
 public enum Challenge {
     // Daily Challenges
     DAILY_KILLS("Daily Kills", LegendsPlayerData.DAILY_KILLS_CHALLENGE, LegendsStatistic.DAILY_KILLS, 3, 75),
-
     DAILY_DAMAGE_DONE("Daily Damage Done", LegendsPlayerData.DAILY_DAMAGE_DONE_CHALLENGE, LegendsStatistic.DAILY_DAMAGE_DONE, 50, 75),
-    DAILY_HEALING_DONE("Daily Healing Done", LegendsPlayerData.DAILY_HEALING_DONE_CHALLENGE, LegendsStatistic.DAILY_HEALING_DONE, 20, 75),
 
     DAILY_CAMPS_CAPTURED("Daily Camps Captured", LegendsPlayerData.DAILY_CAMPS_CAPTURED_CHALLENGE, LegendsStatistic.DAILY_CAMPS_CAPTURED, 1, 75),
     DAILY_OUTPOSTS_CAPTURED("Daily Outposts Captured", LegendsPlayerData.DAILY_OUTPOSTS_CAPTURED_CHALLENGE, LegendsStatistic.DAILY_OUTPOSTS_CAPTURED, 1, 75),
     DAILY_KEEPS_CAPTURED("Daily Keeps Captured", LegendsPlayerData.DAILY_KEEPS_CAPTURED_CHALLENGE, LegendsStatistic.DAILY_KEEPS_CAPTURED, 1, 75),
+
+    DAILY_GOLD_GAINED("Daily Gold Gained", LegendsPlayerData.DAILY_GOLD_GAINED_CHALLENGE, LegendsStatistic.DAILY_GOLD_GAINED, 150, 75),
+    DAILY_FAVOR_GAINED("Daily Favor Gained", LegendsPlayerData.DAILY_FAVOR_GAINED_CHALLENGE, LegendsStatistic.DAILY_FAVOR_GAINED, 300, 75),
 
     DAILY_TIME_PLAYED("Daily Time Played", LegendsPlayerData.DAILY_TIME_PLAYED_CHALLENGE, LegendsStatistic.DAILY_TIME_PLAYED, 1800, 75),
     DAILY_MONSTER_KILLS("Daily Monster Kills", LegendsPlayerData.DAILY_MONSTER_KILLS_CHALLENGE, LegendsStatistic.DAILY_MONSTER_KILLS, 10, 75),
@@ -27,13 +28,14 @@ public enum Challenge {
 
     // War Challenges
     WARRY_KILLS("War Kills", LegendsPlayerData.WARRY_KILLS_CHALLENGE, LegendsStatistic.WARRY_KILLS, 25, 600),
-
     WARRY_DAMAGE_DONE("War Damage Done", LegendsPlayerData.WARRY_DAMAGE_DONE_CHALLENGE, LegendsStatistic.WARRY_DAMAGE_DONE, 500, 600),
-    WARRY_HEALING_DONE("War Healing Done", LegendsPlayerData.WARRY_HEALING_DONE_CHALLENGE, LegendsStatistic.WARRY_HEALING_DONE, 200, 600),
 
     WARRY_CAMPS_CAPTURED("War Camps Captured", LegendsPlayerData.WARRY_CAMPS_CAPTURED_CHALLENGE, LegendsStatistic.WARRY_CAMPS_CAPTURED, 5, 600),
     WARRY_OUTPOSTS_CAPTURED("War Outposts Captured", LegendsPlayerData.WARRY_OUTPOSTS_CAPTURED_CHALLENGE, LegendsStatistic.WARRY_OUTPOSTS_CAPTURED, 3, 600),
     WARRY_KEEPS_CAPTURED("War Keeps Captured", LegendsPlayerData.WARRY_KEEPS_CAPTURED_CHALLENGE, LegendsStatistic.WARRY_KEEPS_CAPTURED, 2, 600),
+
+    WARRY_GOLD_GAINED("War Gold Gained", LegendsPlayerData.WARRY_GOLD_GAINED_CHALLENGE, LegendsStatistic.WARRY_GOLD_GAINED, 1500, 600),
+    WARRY_FAVOR_GAINED("War Favor Gained", LegendsPlayerData.WARRY_FAVOR_GAINED_CHALLENGE, LegendsStatistic.WARRY_FAVOR_GAINED, 6000, 600),
 
     WARRY_TIME_PLAYED("War Time Played", LegendsPlayerData.WARRY_TIME_PLAYED_CHALLENGE, LegendsStatistic.WARRY_TIME_PLAYED, 18000, 600),
     WARRY_MONSTER_KILLS("War Monster Kills", LegendsPlayerData.WARRY_MONSTER_KILLS_CHALLENGE, LegendsStatistic.WARRY_MONSTER_KILLS, 100, 600),
@@ -154,6 +156,8 @@ public enum Challenge {
     ALLTIME_CRATES_OPENED_4("All-time Crates Opened", LegendsPlayerData.ALLTIME_CRATES_OPENED_4_CHALLENGE, LegendsStatistic.ALLTIME_CRATES_OPENED, 10000, 1000),
     ALLTIME_CRATES_OPENED_5("All-time Crates Opened", LegendsPlayerData.ALLTIME_CRATES_OPENED_5_CHALLENGE, LegendsStatistic.ALLTIME_CRATES_OPENED, 100000, 10000),
     ALLTIME_CRATES_OPENED_6("All-time Crates Opened", LegendsPlayerData.ALLTIME_CRATES_OPENED_6_CHALLENGE, LegendsStatistic.ALLTIME_CRATES_OPENED, 1000000, 100000),
+
+    // TODO currency challenges?
 
     // Special Challenges
     SPECIAL_KILLS("1337", LegendsPlayerData.SPECIAL_KILLS_CHALLENGE, LegendsStatistic.ALLTIME_KILLS, 1337, 5000),

@@ -9,13 +9,14 @@ public enum LegendsPlayerData {
 
     // Daily Challenges
     DAILY_KILLS_CHALLENGE("challengeDailyKills"),
-
     DAILY_DAMAGE_DONE_CHALLENGE("challengeDailyDamageDone"),
-    DAILY_HEALING_DONE_CHALLENGE("challengeDailyHealingDone"),
 
     DAILY_CAMPS_CAPTURED_CHALLENGE("challengeDailyCampsCaptured"),
     DAILY_OUTPOSTS_CAPTURED_CHALLENGE("challengeDailyOutpostsCaptured"),
     DAILY_KEEPS_CAPTURED_CHALLENGE("challengeDailyKeepsCaptured"),
+
+    DAILY_GOLD_GAINED_CHALLENGE("challengeDailyGoldGained"),
+    DAILY_FAVOR_GAINED_CHALLENGE("challengeDailyFavorGained"),
 
     DAILY_TIME_PLAYED_CHALLENGE("challengeDailyTimePlayed"),
     DAILY_MONSTER_KILLS_CHALLENGE("challengeDailyMonsterKills"),
@@ -24,13 +25,14 @@ public enum LegendsPlayerData {
 
     //War Challenges
     WARRY_KILLS_CHALLENGE("challengeWarKills"),
-
     WARRY_DAMAGE_DONE_CHALLENGE("challengeWarDamageDone"),
-    WARRY_HEALING_DONE_CHALLENGE("challengeWarHealingDone"),
 
     WARRY_CAMPS_CAPTURED_CHALLENGE("challengeWarCampsCaptured"),
     WARRY_OUTPOSTS_CAPTURED_CHALLENGE("challengeWarOutpostsCaptured"),
     WARRY_KEEPS_CAPTURED_CHALLENGE("challengeWarKeepsCaptured"),
+
+    WARRY_GOLD_GAINED_CHALLENGE("challengeWarGoldGained"),
+    WARRY_FAVOR_GAINED_CHALLENGE("challengeWarFavorGained"),
 
     WARRY_TIME_PLAYED_CHALLENGE("challengeWarTimePlayed"),
     WARRY_MONSTER_KILLS_CHALLENGE("challengeWarMonsterKills"),
