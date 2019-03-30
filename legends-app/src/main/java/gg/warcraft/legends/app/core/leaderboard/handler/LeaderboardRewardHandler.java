@@ -12,7 +12,9 @@ import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 import gg.warcraft.monolith.api.item.Item;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class LeaderboardRewardHandler {
@@ -39,7 +41,8 @@ public class LeaderboardRewardHandler {
     @Subscribe
     public void onDailyTickEvent(DailyTickEvent event) {
         LegendsStatistic.getDailies().forEach(daily -> {
-            List<UUID> leaders = leaderboardQueryService.getLeaders(daily, 3);
+            Set<UUID> leaderIdSet = leaderboardQueryService.getLeaders(daily, 3).keySet();
+            List<UUID> leaders = new ArrayList<>(leaderIdSet);
             if (leaders.isEmpty()) {
                 return;
             }
@@ -76,7 +79,8 @@ public class LeaderboardRewardHandler {
     @Subscribe
     public void onWarFinishedEvent(WarFinishedEvent event) {
         LegendsStatistic.getWarries().forEach(warry -> {
-            List<UUID> leaders = leaderboardQueryService.getLeaders(warry, 9);
+            Set<UUID> leaderIdSet = leaderboardQueryService.getLeaders(warry, 9).keySet();
+            List<UUID> leaders = new ArrayList<>(leaderIdSet);
             for (int i = 1; i <= 9; i += 1) {
                 UUID playerId = leaders.get(i - 1);
                 Item crates;
