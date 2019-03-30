@@ -77,7 +77,9 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
 
     Button createInfoButton(Specialization specialization) {
         ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Choosing a specialization");
-        String specializationName = specialization.getName();
+        String specializationName = specialization == null
+                ? "Beginner"
+                : specialization.getName();
         String specializationPrefix = stringUtils.isVowel(specializationName.charAt(0)) ? "an " : "a ";
         builder.addTooltip("You are currently fighting as " + specializationPrefix);
         builder.addTooltip(YELLOW + specializationName);

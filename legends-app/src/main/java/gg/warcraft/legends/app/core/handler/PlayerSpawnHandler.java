@@ -11,6 +11,7 @@ import gg.warcraft.monolith.api.entity.event.EntityTeamChangedEvent;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.Direction;
 import gg.warcraft.monolith.api.world.DirectionUtils;
+import gg.warcraft.monolith.api.world.WorldType;
 import gg.warcraft.monolith.api.world.location.OrientedLocation;
 
 import java.util.UUID;
@@ -42,14 +43,20 @@ public class PlayerSpawnHandler {
     @Subscribe
     public void onPlayerRespawnEvent(EntitySpawnEvent event) {
         if (event.getEntityType() == EntityType.PLAYER) {
-            teleport(event.getEntityId());
+            LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getEntityId());
+            if (player.getLocation().getWorld().getType() == WorldType.OVERWORLD) {
+                teleport(event.getEntityId());
+            }
         }
     }
 
     @Subscribe
     public void onPlayerTeamChangedEvent(EntityTeamChangedEvent event) {
         if (event.getEntityType() == EntityType.PLAYER) {
-            teleport(event.getEntityId());
+            LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getEntityId());
+            if (player.getLocation().getWorld().getType() == WorldType.OVERWORLD) {
+                teleport(event.getEntityId());
+            }
         }
     }
 }

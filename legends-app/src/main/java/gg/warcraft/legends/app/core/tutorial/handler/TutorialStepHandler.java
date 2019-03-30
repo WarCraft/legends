@@ -13,6 +13,9 @@ import gg.warcraft.legends.api.shop.profile.service.ShopProfileCommandService;
 import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
+import gg.warcraft.monolith.api.core.TaskService;
+import gg.warcraft.monolith.api.entity.EntityType;
+import gg.warcraft.monolith.api.entity.event.EntityRespawnEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.Direction;
@@ -46,6 +49,7 @@ public class TutorialStepHandler implements CommandHandler {
     private final ShopProfileCommandService shopProfileCommandService;
     private final DirectionUtils directionUtils;
     private final SpawnRepository spawnRepository;
+    private final TaskService taskService;
 
     private Location startLocation;
     private Direction startOrientation;
@@ -67,13 +71,15 @@ public class TutorialStepHandler implements CommandHandler {
                                ShopProfileCommandService shopProfileCommandService,
                                SpawnRepository spawnRepository,
                                DirectionUtils directionUtils,
-                               LocationFactory locationFactory) {
+                               LocationFactory locationFactory,
+                               TaskService taskService) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.entityCommandService = entityCommandService;
         this.shopProfileCommandService = shopProfileCommandService;
         this.spawnRepository = spawnRepository;
         this.directionUtils = directionUtils;
+        this.taskService = taskService;
 
         this.startLocation = locationFactory.createLocation(WorldType.THE_END, 196.5f, 163f, -19.5f);
         this.startOrientation = Direction.EAST;
@@ -89,6 +95,34 @@ public class TutorialStepHandler implements CommandHandler {
         this.finaleOrientation = Direction.EAST;
     }
 
+    private void teleportToStep(UUID playerId, TutorialStep step) {
+        if (step == null) {
+            entityCommandService.teleport(playerId, startLocation, startOrientation);
+            return;
+        }
+
+        switch (step) {
+            case START:
+                entityCommandService.teleport(playerId, startLocation, startOrientation);
+                break;
+            case RACE:
+                entityCommandService.teleport(playerId, raceLocation, raceOrientation);
+                break;
+            case CLASS:
+                entityCommandService.teleport(playerId, classLocation, classOrientation);
+                break;
+            case GATHERING:
+                entityCommandService.teleport(playerId, gatheringLocation, gatheringOrientation);
+                break;
+            case SIEGE:
+                entityCommandService.teleport(playerId, siegeLocation, siegeOrientation);
+                break;
+            case FINALE:
+                entityCommandService.teleport(playerId, finaleLocation, finaleOrientation);
+                break;
+        }
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, List<String> arguments) {
         if (!sender.isPlayer()) {
@@ -101,16 +135,15 @@ public class TutorialStepHandler implements CommandHandler {
         switch (player.getTutorialStep()) {
             case START:
                 nextStep = TutorialStep.RACE;
-                entityCommandService.teleport(playerId, raceLocation, raceOrientation);
                 break;
             case RACE:
-                if (player.getTeam() == LegendsTeam.WAYFARER) {
+                LegendsTeam team = player.getTeam();
+                if (team == null || team == LegendsTeam.WAYFARER) {
                     playerCommandService.sendNotification(playerId,
                             "Please choose a race by right clicking on one of the signs before continuing.");
                     return true;
                 }
                 nextStep = TutorialStep.CLASS;
-                entityCommandService.teleport(playerId, classLocation, classOrientation);
                 break;
             case CLASS:
                 if (player.getSpecialization() == null) {
@@ -119,15 +152,12 @@ public class TutorialStepHandler implements CommandHandler {
                     return true;
                 }
                 nextStep = TutorialStep.GATHERING;
-                entityCommandService.teleport(playerId, gatheringLocation, gatheringOrientation);
                 break;
             case GATHERING:
                 nextStep = TutorialStep.SIEGE;
-                entityCommandService.teleport(playerId, siegeLocation, siegeOrientation);
                 break;
             case SIEGE:
                 nextStep = TutorialStep.FINALE;
-                entityCommandService.teleport(playerId, finaleLocation, finaleOrientation);
                 break;
             case FINALE:
                 nextStep = TutorialStep.DONE;
@@ -149,6 +179,7 @@ public class TutorialStepHandler implements CommandHandler {
 
         if (nextStep != null) {
             playerCommandService.setTutorialStep(playerId, nextStep);
+            teleportToStep(playerId, nextStep);
         }
         return true;
     }
@@ -158,8 +189,24 @@ public class TutorialStepHandler implements CommandHandler {
         UUID playerId = event.getPlayerId();
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
         TutorialStep currentStep = player.getTutorialStep();
-        if (currentStep == TutorialStep.START) {
-            entityCommandService.teleport(playerId, startLocation, startOrientation);
+        if (currentStep != TutorialStep.DONE) {
+            if (currentStep == null) {
+                playerCommandService.setTutorialStep(playerId, TutorialStep.START);
+            }
+            taskService.runNextTick(() -> teleportToStep(playerId, currentStep));
+        }
+    }
+
+    @Subscribe
+    public void onPlayerRespawnEvent(EntityRespawnEvent event) {
+        if (event.getEntityType() == EntityType.PLAYER) {
+            UUID playerId = event.getEntityId();
+            LegendsPlayer player = playerQueryService.getPlayer(playerId);
+            TutorialStep currentStep = player.getTutorialStep();
+            if (currentStep != TutorialStep.DONE) {
+                teleportToStep(playerId, currentStep);
+                entityCommandService.teleport(playerId, startLocation, startOrientation);
+            }
         }
     }
 }

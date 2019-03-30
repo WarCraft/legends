@@ -31,8 +31,12 @@ public class PlayerInspectHandler {
         UUID inspectingPlayerId = event.getPlayerId();
         LegendsPlayer inspectingPlayer = legendsPlayerQueryService.getPlayer(inspectingPlayerId);
         if (inspectingPlayer.isSneaking()) {
-            String team = inspectedPlayer.getTeam().getName();
-            String specialization = inspectedPlayer.getSpecialization().getName();
+            String team = inspectedPlayer.getTeam() == null
+                    ? "Wayfarer"
+                    : inspectedPlayer.getTeam().getName();
+            String specialization = inspectedPlayer.getSpecialization() == null
+                    ? "Beginner"
+                    : inspectedPlayer.getSpecialization().getName();
             int level = inspectedPlayer.getRank().getLevel();
             String message = "You are looking at " + inspectedPlayer.getName() + ", a level " +
                     level + " " + team + " " + specialization;

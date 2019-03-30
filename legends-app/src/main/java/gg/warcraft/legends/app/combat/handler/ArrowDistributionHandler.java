@@ -47,8 +47,8 @@ public class ArrowDistributionHandler {
     @Subscribe
     public void onPlayerSpecializationChangedEvent(PlayerSpecializationChangedEvent event) {
         switch (event.getNewSpecialization().getPermission()) {
-            case "legends.marksman":
-            case "legends.hunter":
+            case "warcraft.marksman":
+            case "warcraft.hunter":
                 UUID playerId = event.getPlayerId();
                 Player player = playerQueryService.getPlayer(playerId);
                 if (!player.getInventory().contains(ItemType.ARROW)) {

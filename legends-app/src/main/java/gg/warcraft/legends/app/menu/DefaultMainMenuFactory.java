@@ -1,9 +1,11 @@
 package gg.warcraft.legends.app.menu;
 
 import com.google.inject.Inject;
+import gg.warcraft.combat.api.specialization.Specialization;
 import gg.warcraft.legends.api.core.service.SpawnCommandService;
 import gg.warcraft.legends.api.core.service.SpawnQueryService;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
+import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.rank.Rank;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
@@ -110,11 +112,15 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
 
     List<String> createCombatView(LegendsPlayer player) {
         List<String> combatView = new ArrayList<>();
-        String specialization = player.getSpecialization().getName();
+        Specialization spec = player.getSpecialization();
+        String specialization = spec == null
+                ? "Beginner"
+                : spec.getName();
         String specializationPrefix = stringUtils.isVowel(specialization.charAt(0)) ? "an " : "a ";
-        String team = player.getTeam() == null
+        LegendsTeam teamm = player.getTeam();
+        String team = teamm == null
                 ? "Wayfarers"
-                : player.getTeam().getPlural();
+                : teamm.getPlural();
         combatView.add("You are currently " + specializationPrefix + YELLOW + specialization);
         combatView.add("fighting for the " + YELLOW + team);
         return combatView;
@@ -184,7 +190,8 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         builder.addTooltip("[LEFT CLICK] To change your class");
         builder.addTooltip("[RIGHT CLICK] To change your race");
         if (player.getRankUpRewardsClaimed() < player.getRank().getLevel()) {
-            builder.addTooltip("");
+            if (!(player.getRankUpRewardsClaimed() == 0 && player.getRank().getLevel() == 1))
+                builder.addTooltip("");
             builder.addTooltip(ColorCode.GREEN + "[SHIFT RIGHT CLICK] To claim your rank up rewards");
         }
 

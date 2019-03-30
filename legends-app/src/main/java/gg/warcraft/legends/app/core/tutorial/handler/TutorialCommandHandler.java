@@ -48,7 +48,7 @@ public class TutorialCommandHandler implements CommandHandler {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, List<String> arguments) {
-        if (!sender.isPlayer() || arguments.isEmpty()) {
+        if (!sender.isPlayer()) {
             return false;
         }
 
@@ -56,19 +56,29 @@ public class TutorialCommandHandler implements CommandHandler {
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
         TutorialStep currentStep = player.getTutorialStep();
         if (currentStep == TutorialStep.DONE) {
-            return false;
+            return true;
         }
 
-        String argument = arguments.get(0);
         switch (label) {
             case "setracetutorial":
-                LegendsTeam race = LegendsTeam.valueOf(argument);
-                teamCommandService.setTeam(race, playerId);
+                if (!arguments.isEmpty()) {
+                    String argument = arguments.get(0);
+                    LegendsTeam race = LegendsTeam.valueOf(argument);
+                    teamCommandService.setTeam(race, playerId);
+                }
                 return true;
             case "setclasstutorial":
-                specializationCommandService.setSpecialization(argument, playerId);
+                if (!arguments.isEmpty()) {
+                    String argument = arguments.get(0);
+                    specializationCommandService.setSpecialization(argument, playerId);
+                }
                 return true;
             case "skiptutorial":
+                if (currentStep == null) {
+                    playerCommandService.sendNotification(playerId,
+                            "Please finish the race and class steps before skipping the rest of the tutorial.");
+                    return true;
+                }
                 switch (currentStep) {
                     case START:
                     case RACE:
