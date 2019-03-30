@@ -2,15 +2,17 @@ package gg.warcraft.legends.app.core.leaderboard.service;
 
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.core.game.service.GameQueryService;
+import gg.warcraft.legends.api.core.leaderboard.LeaderboardEntry;
 import gg.warcraft.legends.api.core.leaderboard.service.AbstractLeaderboardService;
 import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardQueryService;
 import gg.warcraft.legends.api.entity.player.LegendsStatistic;
+import gg.warcraft.legends.app.core.leaderboard.SimpleLeaderboardEntry;
 import gg.warcraft.monolith.api.core.PersistenceService;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.UUID;
 
 public class DefaultLeaderboardQueryService extends AbstractLeaderboardService implements LeaderboardQueryService {
@@ -24,18 +26,22 @@ public class DefaultLeaderboardQueryService extends AbstractLeaderboardService i
     }
 
     @Override
-    public Map<UUID, Integer> getLeaders(LegendsStatistic statistic, int count) {
+    public List<LeaderboardEntry> getLeaders(LegendsStatistic statistic, int count) {
         String leaderboardKey = getLeaderboardKey(statistic);
-        SortedMap<String, Double> leaders = persistenceService.getSortedSet(leaderboardKey, 0, count);
+        Map<String, Double> leaders = persistenceService.getSortedSet(leaderboardKey, 0, count);
         if (leaders == null || leaders.isEmpty()) {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
 
-        Map<UUID, Integer> result = new LinkedHashMap<>();
-        leaders.entrySet().forEach(leader -> {
-            UUID leaderId = UUID.fromString(leader.getKey());
-            result.put(leaderId, leader.getValue().intValue());
-        });
+        List<LeaderboardEntry> result = new ArrayList<>();
+        int rank = 1;
+        for (Map.Entry<String, Double> entry : leaders.entrySet()) {
+            UUID playerId = UUID.fromString(entry.getKey());
+            LeaderboardEntry leaderboardEntry = new SimpleLeaderboardEntry(
+                    playerId, rank, entry.getValue().intValue());
+            result.add(leaderboardEntry);
+            rank += 1;
+        }
         return result;
     }
 }

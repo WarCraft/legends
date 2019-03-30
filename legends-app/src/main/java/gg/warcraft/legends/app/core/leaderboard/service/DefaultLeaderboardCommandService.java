@@ -25,7 +25,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.util.Base64;
 import java.util.List;
-import java.util.SortedMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -58,7 +58,7 @@ public class DefaultLeaderboardCommandService extends AbstractLeaderboardService
     @Override
     public void publishLeaderboard(LegendsStatistic statistic) {
         String leaderboardKey = getLeaderboardKey(statistic);
-        SortedMap<String, Double> ranks = persistenceService.getSortedSet(leaderboardKey);
+        Map<String, Double> ranks = persistenceService.getSortedSet(leaderboardKey);
 
         taskService.runNextTickAsync(() -> {
             List<LeaderboardEntry> entries = ranks.entrySet().stream()

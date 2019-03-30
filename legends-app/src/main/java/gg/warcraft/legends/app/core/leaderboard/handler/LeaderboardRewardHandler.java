@@ -3,6 +3,7 @@ package gg.warcraft.legends.app.core.leaderboard.handler;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.core.game.event.WarFinishedEvent;
+import gg.warcraft.legends.api.core.leaderboard.LeaderboardEntry;
 import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardQueryService;
 import gg.warcraft.legends.api.entity.player.LegendsStatistic;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
@@ -12,10 +13,9 @@ import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 import gg.warcraft.monolith.api.item.Item;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class LeaderboardRewardHandler {
     private final LeaderboardQueryService leaderboardQueryService;
@@ -41,8 +41,9 @@ public class LeaderboardRewardHandler {
     @Subscribe
     public void onDailyTickEvent(DailyTickEvent event) {
         LegendsStatistic.getDailies().forEach(daily -> {
-            Set<UUID> leaderIdSet = leaderboardQueryService.getLeaders(daily, 3).keySet();
-            List<UUID> leaders = new ArrayList<>(leaderIdSet);
+            List<UUID> leaders = leaderboardQueryService.getLeaders(daily, 3).stream()
+                    .map(LeaderboardEntry::getPlayerId)
+                    .collect(Collectors.toList());
             if (leaders.isEmpty()) {
                 return;
             }
@@ -79,8 +80,9 @@ public class LeaderboardRewardHandler {
     @Subscribe
     public void onWarFinishedEvent(WarFinishedEvent event) {
         LegendsStatistic.getWarries().forEach(warry -> {
-            Set<UUID> leaderIdSet = leaderboardQueryService.getLeaders(warry, 9).keySet();
-            List<UUID> leaders = new ArrayList<>(leaderIdSet);
+            List<UUID> leaders = leaderboardQueryService.getLeaders(warry, 9).stream()
+                    .map(LeaderboardEntry::getPlayerId)
+                    .collect(Collectors.toList());
             for (int i = 1; i <= 9; i += 1) {
                 UUID playerId = leaders.get(i - 1);
                 Item crates;

@@ -1,6 +1,7 @@
 package gg.warcraft.legends.app.menu;
 
 import com.google.inject.Inject;
+import gg.warcraft.legends.api.core.leaderboard.LeaderboardEntry;
 import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardQueryService;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.LegendsStatistic;
@@ -20,7 +21,9 @@ import gg.warcraft.monolith.api.menu.MenuSize;
 import gg.warcraft.monolith.api.menu.service.MenuCommandService;
 import gg.warcraft.monolith.api.util.ColorCode;
 
-import java.util.Map;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class DefaultLeaderboardsMenuFactory extends AbstractMenuFactory implements LeaderboardsMenuFactory {
@@ -124,16 +127,16 @@ public class DefaultLeaderboardsMenuFactory extends AbstractMenuFactory implemen
     Button createLeaderboardButton(LegendsStatistic statistic, LegendsPlayer player) {
         ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BANNER, statistic.getName());
 
-        Map<UUID, Integer> leaders = leaderboardQueryService.getLeaders(statistic, 10);
-        int position = 1;
-        for (Map.Entry<UUID, Integer> leader : leaders.entrySet()) {
-            Player leaderPlayer = playerQueryService.getPlayer(leader.getKey());
-            builder.addTooltip(ColorCode.YELLOW.toString() + position + "." +
-                    " " + leaderPlayer.getName() + " (" + leader.getValue() + ")");
-            position += 1;
+        List<LeaderboardEntry> leaders = leaderboardQueryService.getLeaders(statistic, 10);
+        Set<UUID> leaderIds = new HashSet<>();
+        for (LeaderboardEntry leaderboardEntry : leaders) {
+            Player leaderPlayer = playerQueryService.getPlayer(leaderboardEntry.getPlayerId());
+            builder.addTooltip(ColorCode.YELLOW.toString() + leaderboardEntry.getRank() + "." +
+                    " " + leaderPlayer.getName() + " (" + leaderboardEntry.getScore() + ")");
+            leaderIds.add(leaderboardEntry.getPlayerId());
         }
 
-        if (!leaders.keySet().contains(player.getId())) {
+        if (!leaderIds.contains(player.getId())) {
             builder.addTooltip("");
             builder.addTooltip("??. " + player.getName() + " (" + player.getStatistic(statistic.getKey()) + ")");
         }
