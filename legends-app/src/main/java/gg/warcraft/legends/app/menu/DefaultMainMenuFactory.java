@@ -12,6 +12,7 @@ import gg.warcraft.legends.api.menu.ChallengesMenuFactory;
 import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
 import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
 import gg.warcraft.legends.api.menu.HelpMenuFactory;
+import gg.warcraft.legends.api.menu.LeaderboardsMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.ShopMenuFactory;
 import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
@@ -59,6 +60,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     private final DailyLoginMenuFactory dailyLoginMenuFactory;
     private final CollectablesMenuFactory collectablesMenuFactory;
     private final ChallengesMenuFactory challengesMenuFactory;
+    private final LeaderboardsMenuFactory leaderboardsMenuFactory;
     private final ShopMenuFactory shopMenuFactory;
     private final HelpMenuFactory helpMenuFactory;
     private final StringUtils stringUtils;
@@ -79,6 +81,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
                                   SpecializationMenuFactory specializationMenuFactory,
                                   DailyLoginMenuFactory dailyLoginMenuFactory, TeamMenuFactory teamMenuFactory,
                                   CollectablesMenuFactory collectablesMenuFactory,
+                                  LeaderboardsMenuFactory leaderboardsMenuFactory,
                                   ChallengesMenuFactory challengesMenuFactory, ShopMenuFactory shopMenuFactory,
                                   HelpMenuFactory helpMenuFactory, StringUtils stringUtils, TaskService taskService,
                                   TimeUtils timeUtils) {
@@ -97,6 +100,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         this.teamMenuFactory = teamMenuFactory;
         this.collectablesMenuFactory = collectablesMenuFactory;
         this.challengesMenuFactory = challengesMenuFactory;
+        this.leaderboardsMenuFactory = leaderboardsMenuFactory;
         this.shopMenuFactory = shopMenuFactory;
         this.helpMenuFactory = helpMenuFactory;
         this.stringUtils = stringUtils;
@@ -268,6 +272,23 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         return builder.build();
     }
 
+    Button createLeaderboardsButton(LegendsPlayer player) {
+        UUID playerId = player.getId();
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.BANNER, "Leaderboards");
+        builder.addTooltip("Your actions on the server do not go unnoticed.");
+        builder.addTooltip("The Titans keep track of all the greatest warriors");
+        builder.addTooltip("and reward those who finish first, second, or third");
+        builder.addTooltip("on any of the daily, war, and all-time leaderboard!");
+        builder.addTooltip("");
+        builder.addTooltip("[CLICK] To view the leaderboards");
+
+        builder.withAction(action -> {
+            Menu menu = leaderboardsMenuFactory.createLeaderboardsMenu(playerId);
+            menuCommandService.showMenu(menu, playerId);
+        });
+        return builder.build();
+    }
+
     Button createItemStorageButton(LegendsPlayer player) {
         UUID playerId = player.getId();
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.CHEST, "Item Storage");
@@ -346,7 +367,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         builder.addButton(2, createChallengesButton(player));
         builder.addButton(3, createCollectablesButton(player));
         builder.addButton(4, createShopButton(player));
-        // empty slot 5
+        builder.addButton(5, createLeaderboardsButton(player));
         builder.addButton(6, createItemStorageButton(player));
         builder.addButton(7, createTeleportButton(player));
         builder.addButton(8, createHelpButton(player));
