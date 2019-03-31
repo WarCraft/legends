@@ -82,19 +82,21 @@ public class ShopCycleHandler {
     private void cycleItems() {
         List<ShopItem> newItems = new ArrayList<>();
 
-        for (int i = 0; i < 5; i += 1) {
+        for (int i = 0; i < 5; ) {
             List<ShopItem> list = shopRepository.getItemsOfType(getRandomPremiumType(), getRandomPremiumRarity());
             ShopItem item = getRandomItem(list);
             if (item != null) {
                 newItems.add(item);
+                i += 1;
             }
         }
 
-        for (int i = 0; i < 5; i += 1) {
+        for (int i = 0; i < 5; ) {
             List<ShopItem> list = shopRepository.getItemsOfType(getRandomCommonType(), getRandomCommonRarity());
             ShopItem item = getRandomItem(list);
             if (item != null) {
                 newItems.add(item);
+                i += 1;
             }
         }
 
