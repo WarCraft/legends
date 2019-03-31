@@ -14,6 +14,7 @@ import gg.warcraft.monolith.api.command.CommandSender;
 import gg.warcraft.monolith.api.command.service.CommandCommandService;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
+import gg.warcraft.monolith.api.util.StringUtils;
 import gg.warcraft.monolith.api.world.Direction;
 import gg.warcraft.monolith.api.world.DirectionUtils;
 import gg.warcraft.monolith.api.world.location.OrientedLocation;
@@ -30,6 +31,7 @@ public class TutorialCommandHandler implements CommandHandler {
     private final SpecializationCommandService specializationCommandService;
     private final DirectionUtils directionUtils;
     private final SpawnRepository spawnRepository;
+    private final StringUtils stringUtils;
 
     @Inject
     public TutorialCommandHandler(LegendsPlayerQueryService playerQueryService,
@@ -39,7 +41,8 @@ public class TutorialCommandHandler implements CommandHandler {
                                   TeamCommandService teamCommandService,
                                   SpecializationCommandService specializationCommandService,
                                   SpawnRepository spawnRepository,
-                                  DirectionUtils directionUtils) {
+                                  DirectionUtils directionUtils,
+                                  StringUtils stringUtils) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.commandCommandService = commandCommandService;
@@ -48,6 +51,7 @@ public class TutorialCommandHandler implements CommandHandler {
         this.specializationCommandService = specializationCommandService;
         this.directionUtils = directionUtils;
         this.spawnRepository = spawnRepository;
+        this.stringUtils = stringUtils;
     }
 
     @Override
@@ -68,6 +72,10 @@ public class TutorialCommandHandler implements CommandHandler {
                 if (!arguments.isEmpty()) {
                     String argument = arguments.get(0);
                     LegendsTeam race = LegendsTeam.valueOf(argument);
+                    String prefix = stringUtils.isVowel(argument.charAt(0))
+                            ? "an "
+                            : "a ";
+                    playerCommandService.sendNotification(playerId, "You are now " + prefix + argument + ".");
                     teamCommandService.setTeam(race, playerId);
                 }
                 return true;
@@ -75,6 +83,10 @@ public class TutorialCommandHandler implements CommandHandler {
                 if (!arguments.isEmpty()) {
                     String argument = arguments.get(0);
                     specializationCommandService.setSpecialization(argument, playerId);
+                    String prefix = stringUtils.isVowel(argument.charAt(0))
+                            ? "an "
+                            : "a ";
+                    playerCommandService.sendNotification(playerId, "You are now " + prefix + argument + ".");
                     commandCommandService.dispatchCommandFor("kit", playerId);
                 }
                 return true;
