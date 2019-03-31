@@ -22,6 +22,8 @@ public interface ServerConfiguration {
 
     Map<String, Integer> getObjectivePoints();
 
+    Map<String, Integer> getObjectiveCrates();
+
     int getFavorPlayerKill();
 
     int getFavorEliteMobKill();

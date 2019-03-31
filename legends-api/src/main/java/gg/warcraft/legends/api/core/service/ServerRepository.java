@@ -13,4 +13,6 @@ public interface ServerRepository {
     int getFavorMobKill();
 
     int getObjectivePoints(String objectiveType);
+
+    int getObjectiveCrates(String objectiveType);
 }

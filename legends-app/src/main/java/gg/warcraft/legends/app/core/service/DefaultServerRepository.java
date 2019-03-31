@@ -12,6 +12,7 @@ public class DefaultServerRepository implements ServerRepository {
     private int favorEliteMobKill;
     private int favorMobKill;
     private Map<String, Integer> objectivePoints;
+    private Map<String, Integer> objectiveCrates;
 
     @Override
     public void read(ServerConfiguration configuration) {
@@ -19,6 +20,7 @@ public class DefaultServerRepository implements ServerRepository {
         this.favorEliteMobKill = configuration.getFavorEliteMobKill();
         this.favorMobKill = configuration.getFavorMobKill();
         this.objectivePoints = configuration.getObjectivePoints();
+        this.objectiveCrates = configuration.getObjectiveCrates();
     }
 
     @Override
@@ -39,5 +41,10 @@ public class DefaultServerRepository implements ServerRepository {
     @Override
     public int getObjectivePoints(String objectiveType) {
         return objectivePoints.getOrDefault(objectiveType, 0);
+    }
+
+    @Override
+    public int getObjectiveCrates(String objectiveType) {
+        return objectiveCrates.getOrDefault(objectiveType, 0);
     }
 }
