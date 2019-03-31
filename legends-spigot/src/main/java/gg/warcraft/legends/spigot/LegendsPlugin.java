@@ -40,6 +40,7 @@ import gg.warcraft.legends.app.core.game.handler.GameObjectivesAndPointsHandler;
 import gg.warcraft.legends.app.core.game.handler.GameTimerHandler;
 import gg.warcraft.legends.app.core.game.handler.ObjectiveAnnouncementHandler;
 import gg.warcraft.legends.app.core.game.handler.SkirmishRewardHandler;
+import gg.warcraft.legends.app.core.handler.CaptureAndKillRewardHandler;
 import gg.warcraft.legends.app.core.handler.CombatLoggingHandler;
 import gg.warcraft.legends.app.core.handler.FishCommandHandler;
 import gg.warcraft.legends.app.core.handler.KitCommandHandler;
@@ -232,6 +233,9 @@ public class LegendsPlugin extends JavaPlugin {
         FlameTotemDamageLimitationHandler flameTotemDamageLimitationHandler =
                 injector.getInstance(FlameTotemDamageLimitationHandler.class);
         eventService.subscribe(flameTotemDamageLimitationHandler);
+
+        CaptureAndKillRewardHandler captureAndKillRewardHandler = injector.getInstance(CaptureAndKillRewardHandler.class);
+        eventService.subscribe(captureAndKillRewardHandler);
 
         // Shop
         ShopProfileInitializationHandler shopProfileInitializationHandler =
