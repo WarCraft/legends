@@ -129,7 +129,9 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
         }
 
         boolean isLocked = !shopProfileQueryService.getProfile(player.getId()).hasSpecialization(specializationId);
-        boolean canSwitch = !player.getSpecialization().getName().equals(specializationName);
+        Specialization playerSpecialization = player.getSpecialization();
+        boolean canSwitch = playerSpecialization == null
+                || !playerSpecialization.getName().equals(specializationName);
 
         ButtonBuilder builder = createSimpleButtonBuilder(icon, specializationName);
         lore.forEach(builder::addTooltip);
