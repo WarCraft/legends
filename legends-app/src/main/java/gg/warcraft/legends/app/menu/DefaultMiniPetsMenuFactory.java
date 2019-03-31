@@ -94,14 +94,20 @@ public class DefaultMiniPetsMenuFactory extends AbstractMenuFactory implements M
     @Override
     public Menu createMiniPetsMenu(UUID playerId) {
         ShopProfile shopProfile = shopProfileQueryService.getProfile(playerId);
-        MenuBuilder builder = createMenuBuilder("Mini Pets", MenuSize.ONE_ROW);
+        MenuBuilder builder = createMenuBuilder("Mini Pets", MenuSize.TWO_ROWS);
         builder.addButton(0, createInfoButton());
-        builder.addButton(2, createPetButton(MiniPetId.COW, shopProfile));
+        builder.addButton(2, createPetButton(MiniPetId.BAT, shopProfile));
         builder.addButton(3, createPetButton(MiniPetId.CHICKEN, shopProfile));
-        builder.addButton(4, createPetButton(MiniPetId.PIG, shopProfile));
-        builder.addButton(5, createPetButton(MiniPetId.SHEEP, shopProfile));
-        builder.addButton(7, createDismissButton(playerId));
-        builder.addButton(8, createBackButton(playerId, collectablesMenuFactory::createCollectablesMenu));
+        builder.addButton(4, createPetButton(MiniPetId.COW, shopProfile));
+        builder.addButton(5, createPetButton(MiniPetId.LLAMA, shopProfile));
+        builder.addButton(6, createPetButton(MiniPetId.OCELOT, shopProfile));
+        builder.addButton(7, createPetButton(MiniPetId.PIG, shopProfile));
+        builder.addButton(8, createPetButton(MiniPetId.RABBIT, shopProfile));
+        builder.addButton(11, createPetButton(MiniPetId.SHEEP, shopProfile));
+        builder.addButton(12, createPetButton(MiniPetId.SILVERFISH, shopProfile));
+        builder.addButton(13, createPetButton(MiniPetId.WOLF, shopProfile));
+        builder.addButton(14, createDismissButton(playerId));
+        builder.addButton(9, createBackButton(playerId, collectablesMenuFactory::createCollectablesMenu));
         return builder.build();
     }
 }

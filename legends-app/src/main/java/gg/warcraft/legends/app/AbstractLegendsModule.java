@@ -17,6 +17,7 @@ import gg.warcraft.legends.api.core.game.service.GameQueryService;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
 import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardCommandService;
 import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardQueryService;
+import gg.warcraft.legends.api.core.service.ServerRepository;
 import gg.warcraft.legends.api.core.service.SpawnCommandService;
 import gg.warcraft.legends.api.core.service.SpawnQueryService;
 import gg.warcraft.legends.api.core.service.SpawnRepository;
@@ -112,6 +113,7 @@ import gg.warcraft.legends.app.core.game.service.DefaultGameQueryService;
 import gg.warcraft.legends.app.core.game.service.DefaultGameRepository;
 import gg.warcraft.legends.app.core.leaderboard.service.DefaultLeaderboardCommandService;
 import gg.warcraft.legends.app.core.leaderboard.service.DefaultLeaderboardQueryService;
+import gg.warcraft.legends.app.core.service.DefaultServerRepository;
 import gg.warcraft.legends.app.core.service.DefaultSpawnCommandService;
 import gg.warcraft.legends.app.core.service.DefaultSpawnQueryService;
 import gg.warcraft.legends.app.core.service.DefaultSpawnRepository;
@@ -242,6 +244,9 @@ public abstract class AbstractLegendsModule extends PrivateModule {
     }
 
     private void configureCore() {
+        bind(ServerRepository.class).to(DefaultServerRepository.class);
+        expose(ServerRepository.class);
+
         bind(MetricsService.class).to(AwsMetricsService.class);
         expose(MetricsService.class);
 

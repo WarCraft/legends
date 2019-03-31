@@ -6,9 +6,10 @@ import gg.warcraft.combat.api.specialization.Specialization;
 import gg.warcraft.combat.api.specialization.event.PlayerSpecializationChangedEvent;
 import gg.warcraft.combat.api.specialization.service.SpecializationQueryService;
 import gg.warcraft.legends.api.combat.passive.PassiveFactory;
+import gg.warcraft.legends.api.entity.player.LegendsPlayer;
+import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
-import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 import gg.warcraft.monolith.api.entity.status.Status;
 import gg.warcraft.monolith.api.entity.status.StatusEffect;
 import gg.warcraft.monolith.api.entity.status.service.StatusCommandService;
@@ -22,7 +23,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class PassiveAssignmentHandler {
-    private final PlayerQueryService playerQueryService;
+    private final LegendsPlayerQueryService playerQueryService;
     private final StatusQueryService statusQueryService;
     private final StatusCommandService statusCommandService;
     private final SpecializationQueryService specializationQueryService;
@@ -30,7 +31,7 @@ public class PassiveAssignmentHandler {
     private final Map<String, Function<UUID, StatusEffect>> passives;
 
     @Inject
-    public PassiveAssignmentHandler(PlayerQueryService playerQueryService, StatusQueryService statusQueryService,
+    public PassiveAssignmentHandler(LegendsPlayerQueryService playerQueryService, StatusQueryService statusQueryService,
                                     StatusCommandService statusCommandService, PassiveFactory passiveFactory,
                                     SpecializationQueryService specializationQueryService) {
         this.playerQueryService = playerQueryService;
@@ -74,7 +75,7 @@ public class PassiveAssignmentHandler {
     @Subscribe
     public void onPlayerConnectEvent(PlayerConnectEvent event) {
         UUID playerId = event.getPlayerId();
-        Player player = playerQueryService.getPlayer(playerId);
+        LegendsPlayer player = playerQueryService.getPlayer(playerId);
         Status status = statusQueryService.getStatus(playerId);
         removePassives(status, type -> true);
 
@@ -84,7 +85,7 @@ public class PassiveAssignmentHandler {
         StatusEffect critPassive = passiveFactory.createCritPassive(playerId);
         statusCommandService.addStatusEffect(critPassive, playerId);
 
-        Specialization specialization = specializationQueryService.getSpecialization(playerId);
+        Specialization specialization = player.getSpecialization();
         assignRacialPassive(player.getTeam(), specialization, playerId);
     }
 

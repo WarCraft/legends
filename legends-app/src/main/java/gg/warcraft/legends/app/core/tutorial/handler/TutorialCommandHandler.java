@@ -76,7 +76,7 @@ public class TutorialCommandHandler implements CommandHandler {
                             ? "an "
                             : "a ";
                     playerCommandService.sendNotification(playerId, "You are now " + prefix + argument + ".");
-                    teamCommandService.setTeam(race, playerId);
+                    playerCommandService.setTeam(playerId, race);
                 }
                 return true;
             case "setclasstutorial":

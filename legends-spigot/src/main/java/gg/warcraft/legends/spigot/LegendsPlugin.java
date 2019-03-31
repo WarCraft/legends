@@ -2,7 +2,6 @@ package gg.warcraft.legends.spigot;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Injector;
-import gg.warcraft.combat.api.ability.config.service.AbilityConfigurationQueryService;
 import gg.warcraft.combat.api.ability.service.AbilityCommandService;
 import gg.warcraft.legends.api.ai.CombatPetFactory;
 import gg.warcraft.legends.api.ai.npc.config.NpcsConfiguration;
@@ -11,6 +10,7 @@ import gg.warcraft.legends.api.config.ServerConfiguration;
 import gg.warcraft.legends.api.core.game.Game;
 import gg.warcraft.legends.api.core.game.service.GameCommandService;
 import gg.warcraft.legends.api.core.game.service.GameQueryService;
+import gg.warcraft.legends.api.core.service.ServerRepository;
 import gg.warcraft.legends.api.core.service.SpawnRepository;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.rank.service.RankCommandService;
@@ -89,6 +89,7 @@ import gg.warcraft.monolith.api.combat.CombatFactory;
 import gg.warcraft.monolith.api.command.service.CommandCommandService;
 import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.core.TaskService;
+import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.Direction;
@@ -145,6 +146,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         LootCrateCommandService lootCrateCommandService = injector.getInstance(LootCrateCommandService.class);
         lootCrateCommandService.readConfiguration(serverConfiguration);
+
+        ServerRepository serverRepository = injector.getInstance(ServerRepository.class);
+        serverRepository.read(serverConfiguration);
     }
 
     void loadNpcsConfiguration() {
@@ -368,8 +372,7 @@ public class LegendsPlugin extends JavaPlugin {
     // TODO remove all this code and any classes from the spigotOLD package
     void initializeOLDHACK() {
         LegendsPlayerQueryService legendsPlayerQueryService = injector.getInstance(LegendsPlayerQueryService.class);
-        AbilityConfigurationQueryService abilityConfigurationQueryService = injector.getInstance(AbilityConfigurationQueryService.class);
-        TeamCommandService teamCommandService = injector.getInstance(TeamCommandService.class);
+        EntityCommandService entityCommandService = injector.getInstance(EntityCommandService.class);
         CombatPetFactory combatPetFactory = injector.getInstance(CombatPetFactory.class);
         TaskService taskService = injector.getInstance(TaskService.class);
         TimeUtils timeUtils = injector.getInstance(TimeUtils.class);
@@ -379,7 +382,7 @@ public class LegendsPlugin extends JavaPlugin {
         eventService.subscribe(new CraftPreventionHandler());
 
         HunterPetListener hunterPetListener = new HunterPetListener(getServer(), legendsPlayerQueryService,
-                teamCommandService, combatPetFactory, taskService, timeUtils, combatFactory);
+                entityCommandService, combatPetFactory, taskService, timeUtils, combatFactory);
         eventService.subscribe(hunterPetListener);
         getServer().getPluginManager().registerEvents(hunterPetListener, this);
 

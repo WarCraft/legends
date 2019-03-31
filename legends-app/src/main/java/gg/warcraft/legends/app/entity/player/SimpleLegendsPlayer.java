@@ -2,6 +2,7 @@ package gg.warcraft.legends.app.entity.player;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import gg.warcraft.combat.api.CombatPlayerData;
 import gg.warcraft.combat.api.specialization.Specialization;
 import gg.warcraft.combat.api.specialization.service.SpecializationQueryService;
 import gg.warcraft.legends.api.core.tutorial.TutorialStep;
@@ -80,7 +81,8 @@ public class SimpleLegendsPlayer implements LegendsPlayer, PlayerDecorator {
 
     @Override
     public Specialization getSpecialization() {
-        return specializationQueryService.getSpecialization(getId());
+        String specializationName = getData(CombatPlayerData.SPECIALIZATION.getKey());
+        return specializationQueryService.getSpecialization(specializationName);
     }
 
     @Override

@@ -105,7 +105,7 @@ public class DefaultPromotionsMenuFactory extends AbstractMenuFactory implements
         ShopProfile shopProfile = shopProfileQueryService.getProfile(playerId);
         MenuBuilder builder = createMenuBuilder("Promotions", MenuSize.ONE_ROW);
         builder.addButton(0, createInfoButton());
-        builder.addButton(2, createPromotionButton(PromotionId.FOUR_YEAR_OLD_CAKE, shopProfile));
+        builder.addButton(2, createPromotionButton(PromotionId.FIVE_YEAR_OLD_CAKE, shopProfile));
         builder.addButton(8, createBackButton(playerId, collectablesMenuFactory::createCollectablesMenu));
         return builder.build();
     }
