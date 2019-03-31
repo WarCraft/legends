@@ -206,7 +206,7 @@ public class DefaultClassTrainerDialogFactory extends AbstractMenuFactory implem
     private Button createWizardButton(UUID playerId) {
         Specialization specialization = shopQueryService.getSpecialization(SpecializationId.WIZARD.name());
         final List<String> lore = new ArrayList<>();
-        lore.add("Tempests wield wand (stick) and book. Their");
+        lore.add("Wizards wield wand (stick) and book. Their");
         lore.add("skills focus on area control, and mobility.");
         lore.add("");
         lore.add(ColorCode.YELLOW + "[Left click] Fireball");
@@ -219,11 +219,11 @@ public class DefaultClassTrainerDialogFactory extends AbstractMenuFactory implem
         lore.add("Teleport to your targeted location, releasing");
         lore.add("an arcane explosion around you on arrival");
         lore.add("damaging and slowing nearby enemies.");
-        lore.add(ColorCode.YELLOW + "[Shift right click] Mass Piggify");
+        lore.add(ColorCode.YELLOW + "[Shift right click] Mass Bamboozle");
         lore.add("Conjure chaotic energies at your targeted");
-        lore.add("location, which after a short delay force");
-        lore.add("your enemies to ride uncontrollable pigs");
-        lore.add("making them nauseous.");
+        lore.add("location, which after a short delay turns");
+        lore.add("your enemies to into uncontrollable animals");
+        lore.add("while making them nauseous.");
         return createSpecializationButton(playerId, specialization, lore);
     }
 
