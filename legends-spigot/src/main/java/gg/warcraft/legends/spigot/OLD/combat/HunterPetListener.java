@@ -19,7 +19,7 @@ import gg.warcraft.monolith.api.entity.event.EntityPreDamageEvent;
 import gg.warcraft.monolith.api.entity.event.EntityTeamChangedEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerDisconnectEvent;
-import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
+import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -54,7 +54,7 @@ public class HunterPetListener implements Listener {
 
     private final Server server;
     private final LegendsPlayerQueryService legendsPlayerQueryService;
-    private final TeamCommandService teamCommandService;
+    private final EntityCommandService entityCommandService;
     private final CombatPetFactory combatPetFactory;
     private final CombatFactory combatFactory;
     private final TaskService taskService;
@@ -67,11 +67,11 @@ public class HunterPetListener implements Listener {
     final Map<UUID, Set<Tameable>> targetToPets;
 
     public HunterPetListener(Server server, LegendsPlayerQueryService legendsPlayerQueryService,
-                             TeamCommandService teamCommandService, CombatPetFactory combatPetFactory,
+                             EntityCommandService entityCommandService, CombatPetFactory combatPetFactory,
                              TaskService taskService, TimeUtils timeUtils, CombatFactory combatFactory) {
         this.server = server;
         this.legendsPlayerQueryService = legendsPlayerQueryService;
-        this.teamCommandService = teamCommandService;
+        this.entityCommandService = entityCommandService;
         this.combatPetFactory = combatPetFactory;
         this.taskService = taskService;
         this.timeUtils = timeUtils;
@@ -104,7 +104,8 @@ public class HunterPetListener implements Listener {
                         wolf.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(2);
                         combatPetFactory.create(wolf.getUniqueId(), spigotPlayer.getUniqueId());
                         pet = wolf;
-                        teamCommandService.setTeam(LegendsTeam.HUMAN, wolf.getUniqueId());
+
+                        entityCommandService.setTeam(wolf.getUniqueId(), LegendsTeam.HUMAN);
                     }
                     break;
                     case ORC: {
@@ -115,8 +116,8 @@ public class HunterPetListener implements Listener {
                         wolf.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(2);
                         combatPetFactory.create(wolf.getUniqueId(), spigotPlayer.getUniqueId());
                         pet = wolf;
-                        teamCommandService.setTeam(LegendsTeam.ORC, wolf.getUniqueId());
 
+                        entityCommandService.setTeam(wolf.getUniqueId(), LegendsTeam.ORC);
                         DisguiseAPI.disguiseToAll(pet, orcPetDisguise);
                     }
                     break;

@@ -4,6 +4,9 @@ import com.google.inject.Inject;
 import gg.warcraft.combat.api.specialization.Specialization;
 import gg.warcraft.combat.api.specialization.service.SpecializationQueryService;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
+import gg.warcraft.legends.api.entity.player.LegendsPlayer;
+import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
+import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.item.equipment.EquipmentBuilderFactory;
 import gg.warcraft.monolith.api.command.Command;
@@ -11,9 +14,6 @@ import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
 import gg.warcraft.monolith.api.entity.Equipment;
 import gg.warcraft.monolith.api.entity.EquipmentSlot;
-import gg.warcraft.monolith.api.entity.player.Player;
-import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
 import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemBuilderFactory;
 import gg.warcraft.monolith.api.item.ItemType;
@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public class KitCommandHandler implements CommandHandler {
-    private final PlayerQueryService playerQueryService;
-    private final PlayerCommandService playerCommandService;
+    private final LegendsPlayerQueryService playerQueryService;
+    private final LegendsPlayerCommandService playerCommandService;
     private final SpecializationQueryService specializationQueryService;
     private final Item kitHelmet;
     private final Item kitChestplate;
@@ -39,8 +39,8 @@ public class KitCommandHandler implements CommandHandler {
     private final Item kitStick;
 
     @Inject
-    public KitCommandHandler(PlayerQueryService playerQueryService,
-                             PlayerCommandService playerCommandService,
+    public KitCommandHandler(LegendsPlayerQueryService playerQueryService,
+                             LegendsPlayerCommandService playerCommandService,
                              SpecializationQueryService specializationQueryService,
                              EquipmentBuilderFactory equipmentBuilderFactory,
                              ItemBuilderFactory itemBuilderFactory) {
@@ -101,7 +101,7 @@ public class KitCommandHandler implements CommandHandler {
         }
 
         UUID playerId = sender.getPlayerId();
-        Player player = playerQueryService.getPlayer(playerId);
+        LegendsPlayer player = playerQueryService.getPlayer(playerId);
         Equipment equipment = player.getEquipment();
         if (equipment.getSlot(EquipmentSlot.HEAD) == null) {
             playerCommandService.setEquipment(playerId, EquipmentSlot.HEAD, kitHelmet);
@@ -122,7 +122,7 @@ public class KitCommandHandler implements CommandHandler {
             return true;
         }
 
-        Specialization specialization = specializationQueryService.getSpecialization(playerId);
+        Specialization specialization = player.getSpecialization();
         if (specialization == null) {
             return true;
         }
