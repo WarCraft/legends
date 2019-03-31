@@ -14,14 +14,12 @@ import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
 import gg.warcraft.monolith.api.core.TaskService;
-import gg.warcraft.monolith.api.entity.EntityType;
-import gg.warcraft.monolith.api.entity.event.EntityRespawnEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
+import gg.warcraft.monolith.api.entity.player.event.PlayerPreRespawnEvent;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.Direction;
 import gg.warcraft.monolith.api.world.DirectionUtils;
 import gg.warcraft.monolith.api.world.WorldType;
-import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.location.LocationFactory;
 import gg.warcraft.monolith.api.world.location.OrientedLocation;
 
@@ -51,18 +49,12 @@ public class TutorialStepHandler implements CommandHandler {
     private final SpawnRepository spawnRepository;
     private final TaskService taskService;
 
-    private Location startLocation;
-    private Direction startOrientation;
-    private Location raceLocation;
-    private Direction raceOrientation;
-    private Location classLocation;
-    private Direction classOrientation;
-    private Location gatheringLocation;
-    private Direction gatheringOrientation;
-    private Location siegeLocation;
-    private Direction siegeOrientation;
-    private Location finaleLocation;
-    private Direction finaleOrientation;
+    private OrientedLocation startLocation;
+    private OrientedLocation raceLocation;
+    private OrientedLocation classLocation;
+    private OrientedLocation gatheringLocation;
+    private OrientedLocation siegeLocation;
+    private OrientedLocation finaleLocation;
 
     @Inject
     public TutorialStepHandler(LegendsPlayerQueryService playerQueryService,
@@ -81,44 +73,73 @@ public class TutorialStepHandler implements CommandHandler {
         this.directionUtils = directionUtils;
         this.taskService = taskService;
 
-        this.startLocation = locationFactory.createLocation(WorldType.THE_END, 196.5f, 163f, -19.5f);
-        this.startOrientation = Direction.EAST;
-        this.raceLocation = locationFactory.createLocation(WorldType.THE_END, 253.5f, 174f, 92.5f);
-        this.raceOrientation = Direction.EAST;
-        this.classLocation = locationFactory.createLocation(WorldType.THE_END, 357.5f, 191f, 34.5f);
-        this.classOrientation = Direction.EAST;
-        this.gatheringLocation = locationFactory.createLocation(WorldType.THE_END, 203.5f, 180f, -138.5f);
-        this.gatheringOrientation = Direction.SOUTH;
-        this.siegeLocation = locationFactory.createLocation(WorldType.THE_END, 288.5f, 165f, -191.5f);
-        this.siegeOrientation = Direction.EAST;
-        this.finaleLocation = locationFactory.createLocation(WorldType.THE_END, 414.5f, 178f, -112.5f);
-        this.finaleOrientation = Direction.EAST;
+        this.startLocation = locationFactory
+                .createLocation(WorldType.THE_END, 196.5f, 163f, -19.5f)
+                .withDirection(directionUtils.toVector(Direction.EAST));
+        this.raceLocation = locationFactory
+                .createLocation(WorldType.THE_END, 253.5f, 174f, 92.5f)
+                .withDirection(directionUtils.toVector(Direction.EAST));
+        this.classLocation = locationFactory
+                .createLocation(WorldType.THE_END, 357.5f, 191f, 34.5f)
+                .withDirection(directionUtils.toVector(Direction.EAST));
+        this.gatheringLocation = locationFactory
+                .createLocation(WorldType.THE_END, 203.5f, 180f, -138.5f)
+                .withDirection(directionUtils.toVector(Direction.SOUTH));
+        this.siegeLocation = locationFactory
+                .createLocation(WorldType.THE_END, 288.5f, 165f, -191.5f)
+                .withDirection(directionUtils.toVector(Direction.EAST));
+        this.finaleLocation = locationFactory
+                .createLocation(WorldType.THE_END, 414.5f, 178f, -112.5f)
+                .withDirection(directionUtils.toVector(Direction.EAST));
+    }
+
+    private OrientedLocation getLocationForStep(TutorialStep step) {
+        if (step == null) {
+            return startLocation;
+        }
+
+        switch (step) {
+            case START:
+                return startLocation;
+            case RACE:
+                return raceLocation;
+            case CLASS:
+                return classLocation;
+            case GATHERING:
+                return gatheringLocation;
+            case SIEGE:
+                return siegeLocation;
+            case FINALE:
+                return finaleLocation;
+            default:
+                return startLocation;
+        }
     }
 
     private void teleportToStep(UUID playerId, TutorialStep step) {
         if (step == null) {
-            entityCommandService.teleport(playerId, startLocation, startOrientation);
+            entityCommandService.teleport(playerId, startLocation, Direction.EAST);
             return;
         }
 
         switch (step) {
             case START:
-                entityCommandService.teleport(playerId, startLocation, startOrientation);
+                entityCommandService.teleport(playerId, startLocation, Direction.EAST);
                 break;
             case RACE:
-                entityCommandService.teleport(playerId, raceLocation, raceOrientation);
+                entityCommandService.teleport(playerId, raceLocation, Direction.EAST);
                 break;
             case CLASS:
-                entityCommandService.teleport(playerId, classLocation, classOrientation);
+                entityCommandService.teleport(playerId, classLocation, Direction.EAST);
                 break;
             case GATHERING:
-                entityCommandService.teleport(playerId, gatheringLocation, gatheringOrientation);
+                entityCommandService.teleport(playerId, gatheringLocation, Direction.SOUTH);
                 break;
             case SIEGE:
-                entityCommandService.teleport(playerId, siegeLocation, siegeOrientation);
+                entityCommandService.teleport(playerId, siegeLocation, Direction.EAST);
                 break;
             case FINALE:
-                entityCommandService.teleport(playerId, finaleLocation, finaleOrientation);
+                entityCommandService.teleport(playerId, finaleLocation, Direction.EAST);
                 break;
         }
     }
@@ -198,15 +219,14 @@ public class TutorialStepHandler implements CommandHandler {
     }
 
     @Subscribe
-    public void onPlayerRespawnEvent(EntityRespawnEvent event) {
-        if (event.getEntityType() == EntityType.PLAYER) {
-            UUID playerId = event.getEntityId();
-            LegendsPlayer player = playerQueryService.getPlayer(playerId);
-            TutorialStep currentStep = player.getTutorialStep();
-            if (currentStep != TutorialStep.DONE) {
-                teleportToStep(playerId, currentStep);
-                entityCommandService.teleport(playerId, startLocation, startOrientation);
-            }
+    public void onPlayerRespawnEvent(PlayerPreRespawnEvent event) {
+        UUID playerId = event.getPlayerId();
+        LegendsPlayer player = playerQueryService.getPlayer(playerId);
+        TutorialStep currentStep = player.getTutorialStep();
+
+        if (currentStep != TutorialStep.DONE) {
+            OrientedLocation teleportLocation = getLocationForStep(currentStep);
+            event.setLocation(teleportLocation);
         }
     }
 }
