@@ -22,6 +22,12 @@ public interface ServerConfiguration {
 
     Map<String, Integer> getObjectivePoints();
 
+    int getFavorPlayerKill();
+
+    int getFavorEliteMobKill();
+
+    int getFavorMobKill();
+
     List<LootCrateConfiguration> getLootCrates();
 
     Map<Integer, Map<LootCrateType, Integer>> getRankUpRewards();

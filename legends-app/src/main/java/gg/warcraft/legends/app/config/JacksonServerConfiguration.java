@@ -21,6 +21,9 @@ public class JacksonServerConfiguration implements ServerConfiguration {
     private final List<String> orcRankSuffixes;
     private final List<Integer> rankFavorTable;
     private final Map<String, Integer> objectivePoints;
+    private final int favorPlayerKill;
+    private final int favorEliteMobKill;
+    private final int favorMobKill;
     private final List<LootCrateConfiguration> lootCrates;
     private final Map<Integer, Map<LootCrateType, Integer>> rankUpRewards;
 
@@ -31,6 +34,9 @@ public class JacksonServerConfiguration implements ServerConfiguration {
                                       @JsonProperty("orcRankSuffixes") List<String> orcRankSuffixes,
                                       @JsonProperty("rankFavorTable") List<Integer> rankFavorTable,
                                       @JsonProperty("objectivePoints") Map<String, Integer> objectivePoints,
+                                      @JsonProperty("favorPlayerKill") int favorPlayerKill,
+                                      @JsonProperty("favorEliteMobKill") int favorEliteMobKill,
+                                      @JsonProperty("favorMobKill") int favorMobKill,
                                       @JsonProperty("lootCrates") List<LootCrateConfiguration> lootCrates,
                                       @JsonProperty("rankUpRewards") Map<Integer, Map<LootCrateType, Integer>> rankUpRewards) {
         this.spawnLocations = spawnLocations;
@@ -39,6 +45,9 @@ public class JacksonServerConfiguration implements ServerConfiguration {
         this.orcRankSuffixes = orcRankSuffixes;
         this.rankFavorTable = rankFavorTable;
         this.objectivePoints = objectivePoints;
+        this.favorPlayerKill = favorPlayerKill;
+        this.favorEliteMobKill = favorEliteMobKill;
+        this.favorMobKill = favorMobKill;
         this.lootCrates = lootCrates;
         this.rankUpRewards = rankUpRewards;
     }
@@ -71,6 +80,21 @@ public class JacksonServerConfiguration implements ServerConfiguration {
     @Override
     public Map<String, Integer> getObjectivePoints() {
         return new HashMap<>(objectivePoints);
+    }
+
+    @Override
+    public int getFavorPlayerKill() {
+        return favorPlayerKill;
+    }
+
+    @Override
+    public int getFavorEliteMobKill() {
+        return favorEliteMobKill;
+    }
+
+    @Override
+    public int getFavorMobKill() {
+        return favorMobKill;
     }
 
     @Override

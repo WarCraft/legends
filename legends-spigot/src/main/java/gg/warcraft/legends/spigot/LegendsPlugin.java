@@ -11,6 +11,7 @@ import gg.warcraft.legends.api.config.ServerConfiguration;
 import gg.warcraft.legends.api.core.game.Game;
 import gg.warcraft.legends.api.core.game.service.GameCommandService;
 import gg.warcraft.legends.api.core.game.service.GameQueryService;
+import gg.warcraft.legends.api.core.service.ServerRepository;
 import gg.warcraft.legends.api.core.service.SpawnRepository;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.entity.player.rank.service.RankCommandService;
@@ -145,6 +146,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         LootCrateCommandService lootCrateCommandService = injector.getInstance(LootCrateCommandService.class);
         lootCrateCommandService.readConfiguration(serverConfiguration);
+
+        ServerRepository serverRepository = injector.getInstance(ServerRepository.class);
+        serverRepository.read(serverConfiguration);
     }
 
     void loadNpcsConfiguration() {

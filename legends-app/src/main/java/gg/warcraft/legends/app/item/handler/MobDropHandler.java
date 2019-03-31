@@ -137,6 +137,11 @@ public class MobDropHandler implements CommandHandler {
                     List<UUID> secondDroppedItemIds = worldCommandService.dropItemsAt(Collections.singletonList(secondDrop), dropLocation);
                     secondDroppedItemId = secondDroppedItemIds.get(0);
                 }
+                playerCommandService.addFavor(damagerId, 2);
+                playerCommandService.sendNotification(damagerId, "You gained 2 favor.");
+            } else {
+                playerCommandService.addFavor(damagerId, 1);
+                playerCommandService.sendNotification(damagerId, "You gained 1 favor.");
             }
 
             int goldDropped = getGoldAmount(mobType);
