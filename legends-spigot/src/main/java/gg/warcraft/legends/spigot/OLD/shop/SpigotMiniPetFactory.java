@@ -29,14 +29,24 @@ public class SpigotMiniPetFactory implements MiniPetFactory {
 
     org.bukkit.entity.EntityType mapEntityType(EntityType type) {
         switch (type) {
-            case COW:
-                return org.bukkit.entity.EntityType.COW;
             case CHICKEN:
                 return org.bukkit.entity.EntityType.CHICKEN;
+            case COW:
+                return org.bukkit.entity.EntityType.COW;
+            case LLAMA:
+                return org.bukkit.entity.EntityType.LLAMA;
+            case OCELOT:
+                return org.bukkit.entity.EntityType.OCELOT;
             case PIG:
                 return org.bukkit.entity.EntityType.PIG;
+            case RABBIT:
+                return org.bukkit.entity.EntityType.RABBIT;
             case SHEEP:
                 return org.bukkit.entity.EntityType.SHEEP;
+            case SILVERFISH:
+                return org.bukkit.entity.EntityType.SILVERFISH;
+            case WOLF:
+                return org.bukkit.entity.EntityType.WOLF;
             default:
                 throw new IllegalArgumentException("Mini pet type " + type + " isn't supported yet in MiniPetFactory hack");
         }
