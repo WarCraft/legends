@@ -282,7 +282,7 @@ public class DefaultGameCommandService implements GameCommandService {
         Skirmish skirmish = (Skirmish) gameRepository.getActiveGame();
 
         Set<LegendsTeam> winners = computeWinners(skirmish.getPoints());
-        if (winners.size() != 1) {
+        if (winners.size() > 1 && skirmish.getPoints().get(winners.iterator().next()) != 0) {
             // wait with ending skirmish until 1 team gets ahead in points
             return;
         }
@@ -294,11 +294,16 @@ public class DefaultGameCommandService implements GameCommandService {
         gameRepository.save(updatedSkirmish);
         War currentWar = (War) gameRepository.getCurrentWar();
 
-        LegendsTeam winner = winners.iterator().next();
-        Map<LegendsTeam, Integer> newScore = currentWar.getWarScore();
-        int currentScore = newScore.getOrDefault(winner, 0);
-        newScore.put(winner, currentScore + SKIRMISH_WINNER_SCORE);
-        gameRepository.save(currentWar);
+        LegendsTeam winner = null;
+        if (winners.isEmpty() || skirmish.getPoints().get(winners.iterator().next()) == 0) {
+            // don't delay skirmish end if no one is playing
+        } else {
+            winner = winners.iterator().next();
+            Map<LegendsTeam, Integer> newScore = currentWar.getWarScore();
+            int currentScore = newScore.getOrDefault(winner, 0);
+            newScore.put(winner, currentScore + SKIRMISH_WINNER_SCORE);
+            gameRepository.save(currentWar);
+        }
 
         gameRepository.saveActiveGame(currentWar.getId());
 
