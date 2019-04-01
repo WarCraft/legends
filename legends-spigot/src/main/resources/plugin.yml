@@ -8,22 +8,4 @@ main: gg.warcraft.legends.spigot.LegendsPlugin
 depend: ["WarCraft_Monolith", "WarCraft_Chat", "WarCraft_Combat", "WarCraft_Siege", MythicMobs]
 
 commands:
-
   vote:
-
-  # staff commands
-  mspawn:
-  skirmish:
-  build:
-
-  # dev commands
-  restoreall:
-  fvel:
-  fvar:
-
-  treb:
-  #bomb:
-
-  # shortcuts
-  shop:
-

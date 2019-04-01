@@ -48,6 +48,7 @@ import gg.warcraft.legends.app.core.handler.PlayerCountMetricHandler;
 import gg.warcraft.legends.app.core.handler.PlayerSpawnHandler;
 import gg.warcraft.legends.app.core.handler.SpawnCommandHandler;
 import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
+import gg.warcraft.legends.app.core.handler.TrebCommandHandler;
 import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardRewardHandler;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardUpdateHandler;
@@ -72,6 +73,7 @@ import gg.warcraft.legends.app.item.handler.EquipmentAttributesHandler;
 import gg.warcraft.legends.app.item.handler.MobDropHandler;
 import gg.warcraft.legends.app.menu.handler.MenuCommandHandler;
 import gg.warcraft.legends.app.misc.SpydeyBot;
+import gg.warcraft.legends.app.shop.handler.ShopCommandHandler;
 import gg.warcraft.legends.app.shop.handler.ShopCycleHandler;
 import gg.warcraft.legends.app.shop.profile.handler.ShopProfileInitializationHandler;
 import gg.warcraft.legends.spigot.OLD.combat.HunterPetListener;
@@ -371,6 +373,12 @@ public class LegendsPlugin extends JavaPlugin {
 
         KitCommandHandler kitCommandHandler = injector.getInstance(KitCommandHandler.class);
         commandCommandService.createCommand("kit", Collections.emptyList(), kitCommandHandler);
+
+        ShopCommandHandler shopCommandHandler = injector.getInstance(ShopCommandHandler.class);
+        commandCommandService.createCommand("shop", Collections.emptyList(), shopCommandHandler);
+
+        TrebCommandHandler trebCommandHandler = injector.getInstance(TrebCommandHandler.class);
+        commandCommandService.createCommand("treb", Collections.emptyList(), trebCommandHandler);
     }
 
     // TODO remove all this code and any classes from the spigotOLD package
