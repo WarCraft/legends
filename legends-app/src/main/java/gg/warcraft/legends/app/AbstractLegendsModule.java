@@ -155,6 +155,7 @@ import gg.warcraft.legends.app.menu.DefaultPromotionsMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultShopMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultSpecializationMenuFactory;
 import gg.warcraft.legends.app.menu.DefaultTeamMenuFactory;
+import gg.warcraft.legends.app.shop.handler.ShopCommandHandler;
 import gg.warcraft.legends.app.shop.profile.service.DefaultShopProfileCommandService;
 import gg.warcraft.legends.app.shop.profile.service.DefaultShopProfileQueryService;
 import gg.warcraft.legends.app.shop.profile.service.DefaultShopProfileRepository;
@@ -404,6 +405,9 @@ public abstract class AbstractLegendsModule extends PrivateModule {
     }
 
     private void configureShop() {
+        bind(ShopCommandHandler.class);
+        expose(ShopCommandHandler.class);
+
         // Shop bindings
         bind(ShopCommandService.class).to(DefaultShopCommandService.class);
         expose(ShopCommandService.class);

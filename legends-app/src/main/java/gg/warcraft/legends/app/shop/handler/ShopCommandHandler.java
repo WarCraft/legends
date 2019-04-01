@@ -5,6 +5,7 @@ import gg.warcraft.legends.api.entity.player.LegendsCurrency;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilder;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
+import gg.warcraft.legends.api.shop.PromotionId;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileCommandService;
 import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
@@ -40,9 +41,12 @@ public class ShopCommandHandler implements CommandHandler {
             UUID actualPlayerId = UUID.fromString(playerId);
             if (actualAmount < 0) {
                 pluginLogger.warning("Fragments purchase of " + -actualAmount + " got removed from " + playerId);
-                playerCommandService.revokeCurrency(actualPlayerId, LegendsCurrency.FRAGMENTS, -actualAmount);
+                playerCommandService.revokeCurrency(actualPlayerId, LegendsCurrency.FRAGMENTS, actualAmount);
             } else {
                 playerCommandService.addCurrency(actualPlayerId, LegendsCurrency.FRAGMENTS, actualAmount);
+                if (actualAmount == 5000) {
+                    shopProfileCommandService.unlockPromotion(PromotionId.FIVE_YEAR_OLD_CAKE, UUID.fromString(playerId), false);
+                }
             }
             return true;
         } catch (Exception ex) {
@@ -72,7 +76,7 @@ public class ShopCommandHandler implements CommandHandler {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, List<String> arguments) {
-        if (sender.isPlayer()) {
+        if (!sender.isConsole()) {
             return false;
         }
 
@@ -86,7 +90,7 @@ public class ShopCommandHandler implements CommandHandler {
                     return false;
                 }
                 return handleFragments(arguments.get(1), arguments.get(2));
-            case "crate":
+            case "crates":
                 if (arguments.size() != 3) {
                     return false;
                 }
