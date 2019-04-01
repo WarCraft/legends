@@ -222,7 +222,7 @@ public class DefaultClassTrainerDialogFactory extends AbstractMenuFactory implem
         lore.add(ColorCode.YELLOW + "[Shift right click] Mass Bamboozle");
         lore.add("Conjure chaotic energies at your targeted");
         lore.add("location, which after a short delay turns");
-        lore.add("your enemies to into uncontrollable animals");
+        lore.add("your enemies into uncontrollable animals");
         lore.add("while making them nauseous.");
         return createSpecializationButton(playerId, specialization, lore);
     }
