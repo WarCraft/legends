@@ -18,7 +18,6 @@ import gg.warcraft.legends.api.item.crate.LootCrateDropTable;
 import gg.warcraft.legends.api.item.crate.LootCrateDropType;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.legends.api.item.crate.config.LootCrateDropTableConfiguration;
-import gg.warcraft.legends.api.item.crate.event.LootCrateOpenedEvent;
 import gg.warcraft.legends.api.item.crate.service.LootCrateCommandService;
 import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
@@ -39,7 +38,6 @@ import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
 import gg.warcraft.legends.api.shop.service.ShopQueryService;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrate;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateDropTable;
-import gg.warcraft.legends.app.item.crate.event.SimpleLootCrateOpenedEvent;
 import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.item.Item;
@@ -427,11 +425,6 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
             case GOLD:
                 success = awardGold(playerId, dropRarity);
                 break;
-        }
-
-        if (success) {
-            LootCrateOpenedEvent event = new SimpleLootCrateOpenedEvent(playerId);
-            eventService.publish(event);
         }
 
         return success;

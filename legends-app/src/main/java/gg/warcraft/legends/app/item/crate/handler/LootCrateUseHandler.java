@@ -7,7 +7,10 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.item.crate.LootCrateReader;
 import gg.warcraft.legends.api.item.crate.LootCrateReaderFactory;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
+import gg.warcraft.legends.api.item.crate.event.LootCrateOpenedEvent;
 import gg.warcraft.legends.api.item.crate.service.LootCrateCommandService;
+import gg.warcraft.legends.app.item.crate.event.SimpleLootCrateOpenedEvent;
+import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.entity.event.EntityPreInteractEvent;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
@@ -26,6 +29,7 @@ public class LootCrateUseHandler {
     private final PlayerCommandService playerCommandService;
     private final LegendsPlayerQueryService playerQueryService;
     private final LootCrateReaderFactory lootCrateReaderFactory;
+    private final EventService eventService;
     private final Logger pluginLogger;
 
     @Inject
@@ -33,11 +37,13 @@ public class LootCrateUseHandler {
                                PlayerCommandService playerCommandService,
                                LegendsPlayerQueryService playerQueryService,
                                LootCrateReaderFactory lootCrateReaderFactory,
+                               EventService eventService,
                                @PluginLogger Logger pluginLogger) {
         this.lootCrateCommandService = lootCrateCommandService;
         this.playerCommandService = playerCommandService;
         this.playerQueryService = playerQueryService;
         this.lootCrateReaderFactory = lootCrateReaderFactory;
+        this.eventService = eventService;
         this.pluginLogger = pluginLogger;
     }
 
@@ -64,6 +70,8 @@ public class LootCrateUseHandler {
             for (int i = 0; i < ITEMS_PER_CRATE; i += 1) {
                 lootCrateCommandService.openCrate(playerId, crateType);
             }
+            LootCrateOpenedEvent event = new SimpleLootCrateOpenedEvent(playerId);
+            eventService.publish(event);
         } else {
             playerCommandService.sendNotification(playerId, "Please make sure you have at least " + ITEMS_PER_CRATE +
                     " empty slots in your inventory before opening a Loot Crate.");
