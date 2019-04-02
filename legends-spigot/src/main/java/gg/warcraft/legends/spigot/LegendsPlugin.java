@@ -359,7 +359,7 @@ public class LegendsPlugin extends JavaPlugin {
         commandCommandService.createCommand("pet", Lists.newArrayList("pets", "minipet", "minipets", "mp"), menuCommandHandler);
 
         GoldCommandHandler goldCommandHandler = injector.getInstance(GoldCommandHandler.class);
-        commandCommandService.createCommand("gold", Collections.emptyList(), goldCommandHandler);
+        commandCommandService.createCommand("gold", Lists.newArrayList("money", "bal", "balance"), goldCommandHandler);
 
         FishCommandHandler fishCommandHandler = injector.getInstance(FishCommandHandler.class);
         commandCommandService.createCommand("fish", Collections.emptyList(), fishCommandHandler);
@@ -435,7 +435,7 @@ public class LegendsPlugin extends JavaPlugin {
         TutorialCommandHandler tutorialCommandHandler = injector.getInstance(TutorialCommandHandler.class);
         commandCommandService.createCommand("setracetutorial", Collections.emptyList(), tutorialCommandHandler);
         commandCommandService.createCommand("setclasstutorial", Collections.emptyList(), tutorialCommandHandler);
-        commandCommandService.createCommand("skiptutorial", Collections.emptyList(), tutorialCommandHandler);
+        commandCommandService.createCommand("skiptutorial", Collections.singletonList("end"), tutorialCommandHandler);
 
         // Siege weapon
         SiegeWeaponFactory siegeWeaponFactory = injector.getInstance(SiegeWeaponFactory.class);
