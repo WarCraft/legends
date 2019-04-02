@@ -58,9 +58,9 @@ public class DefaultMiniPetsMenuFactory extends AbstractMenuFactory implements M
         return builder.build();
     }
 
-    Button createPetButton(MiniPetId miniPetId, ShopProfile shopProfile) {
-        UUID playerId = shopProfile.getPlayerId();
-        boolean hasUnlocked = shopProfile.hasMiniPet(miniPetId);
+    Button createPetButton(MiniPetId miniPetId, ShopProfile profile) {
+        UUID playerId = profile.getPlayerId();
+        boolean hasUnlocked = profile.isGrandfathered() || profile.hasMiniPet(miniPetId);
         MiniPet miniPet = shopQueryService.getMiniPet(miniPetId.toString());
         ButtonBuilder builder = createSkullButtonBuilder(miniPet.getSkull(), miniPet.getName());
         miniPet.getLore().forEach(builder::addTooltip);

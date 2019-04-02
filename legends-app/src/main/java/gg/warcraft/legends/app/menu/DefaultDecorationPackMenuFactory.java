@@ -60,7 +60,7 @@ public class DefaultDecorationPackMenuFactory extends AbstractMenuFactory implem
 
     Button createDecorationButton(Decoration decoration, ShopProfile profile) {
         DecorationId decorationId = DecorationId.valueOf(decoration.getId());
-        boolean hasDecoration = profile.hasDecoration(decorationId);
+        boolean hasDecoration = profile.isGrandfathered() || profile.hasDecoration(decorationId);
 
         ButtonBuilder builder = createSimpleButtonBuilder(decoration.getIcon(), decoration.getName());
         builder.withTooltip(decoration.getLore());
