@@ -236,7 +236,8 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         String rank = player.getRank().getColor() + player.getRank().getFormattedName();
         ItemType rankIcon = getRankIcon(rank);
         int level = player.getRank().getLevel();
-        int levelUpPercentage = (int) (((float) player.getLifetimeFavor() / (float) player.getRank().getRequiredFavor()) * 100);
+        int levelUpPercentage = (int) (((float) (player.getLifetimeFavor() - player.getRank().getFavor()) /
+                (float) player.getRank().getRequiredFavor()) * 100);
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(rankIcon, "Level & Rank");
         builder.addTooltip("Rank text");
         builder.addTooltip("");
@@ -422,22 +423,24 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
 
     Button createDailyVoteButton(LegendsPlayer player) {
         UUID playerId = player.getId();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.MAP, "Daily Votes");
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.PAPER, "Daily Votes");
         builder.addTooltip("Votes text placeholder");
         builder.addTooltip("");
-        builder.addTooltip("Websites:");
-        builder.addTooltip(ColorCode.YELLOW + "http://link1");
-        builder.addTooltip(ColorCode.YELLOW + "http://link2");
-        builder.addTooltip(ColorCode.YELLOW + "http://link3");
-        builder.addTooltip(ColorCode.YELLOW + "http://link4");
+        builder.addTooltip(ColorCode.WHITE + "Websites:");
+        builder.addTooltip(ColorCode.YELLOW + "minecraft-server-list.com");
+        builder.addTooltip(ColorCode.YELLOW + "minecraftservers.org");
+        builder.addTooltip(ColorCode.YELLOW + "minecraft-server.net");
+        builder.addTooltip(ColorCode.YELLOW + "minecraft-mp.com");
+        builder.addTooltip(ColorCode.YELLOW + "minecraftservers.biz");
         builder.addTooltip("");
-        builder.addTooltip("[CLICK] To paste these links to your chat");
+        builder.addTooltip("[CLICK] To paste the links into your chat");
 
         builder.withAction(action -> {
-            playerCommandService.sendNotification(playerId, "http://link1");
-            playerCommandService.sendNotification(playerId, "http://link2");
-            playerCommandService.sendNotification(playerId, "http://link3");
-            playerCommandService.sendNotification(playerId, "http://link4");
+            playerCommandService.sendNotification(playerId, "https://minecraft-server-list.com/server/423343/vote/");
+            playerCommandService.sendNotification(playerId, "https://minecraftservers.org/vote/257786/");
+            playerCommandService.sendNotification(playerId, "https://minecraft-server.net/vote/warcraftgg/");
+            playerCommandService.sendNotification(playerId, "https://minecraft-mp.com/server/192075/vote/");
+            playerCommandService.sendNotification(playerId, "https://minecraftservers.biz/servers/106701/");
             menuCommandService.closeMenu(playerId);
         });
         return builder.build();
