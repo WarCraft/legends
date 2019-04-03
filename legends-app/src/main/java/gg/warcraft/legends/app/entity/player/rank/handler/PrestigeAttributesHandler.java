@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class PrestigeAttributesHandler {
-    private static final List<Integer> attributeModifierValues;
+    public static final List<Integer> attributeModifierValues;
 
     static {
         attributeModifierValues = new ArrayList<>();
