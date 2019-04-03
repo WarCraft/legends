@@ -111,33 +111,33 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     List<String> createAttributesView(LegendsPlayer player) {
         Attributes attributes = player.getAttributes();
         List<String> attributesView = new ArrayList<>();
-        attributesView.add("Attributes:");
+        attributesView.add(ColorCode.WHITE + "Attributes:");
         int strength = (int) attributes.getValue(LegendsAttribute.STRENGTH);
         if (strength != 0) {
-            attributesView.add(YELLOW + strength + GRAY + " Strength");
+            attributesView.add(YELLOW + strength + " Strength");
         }
         int dexterity = (int) attributes.getValue(LegendsAttribute.DEXTERITY);
         if (dexterity != 0) {
-            attributesView.add(YELLOW + dexterity + GRAY + " Dexterity");
+            attributesView.add(YELLOW + dexterity + " Dexterity");
         }
         int intelligence = (int) attributes.getValue(LegendsAttribute.INTELLIGENCE);
         if (intelligence != 0) {
-            attributesView.add(YELLOW + intelligence + GRAY + " Intelligence");
+            attributesView.add(YELLOW + intelligence + " Intelligence");
         }
         int vitality = (int) attributes.getValue(LegendsAttribute.VITALITY);
         if (vitality != 0) {
-            attributesView.add(YELLOW + vitality + GRAY + " Vitality");
+            attributesView.add(YELLOW + vitality + " Vitality");
         }
         int crit = (int) attributes.getValue(LegendsAttribute.CRIT);
         if (crit != 0) {
-            attributesView.add(YELLOW + crit + GRAY + " Crit");
+            attributesView.add(YELLOW + crit + " Crit");
         }
         return attributesView;
     }
 
     List<String> createCurrenciesView(LegendsPlayer player) {
         List<String> currenciesView = new ArrayList<>();
-        currenciesView.add("Currencies:");
+        currenciesView.add(ColorCode.WHITE + "Currencies:");
         int gold = player.getGold();
         currenciesView.add(YELLOW + gold + " Gold");
         int favor = player.getFavor();
@@ -151,6 +151,8 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         UUID playerId = player.getId();
         String playerName = player.getName();
         ButtonBuilder builder = buttonBuilderFactory.createSkullButtonBuilder(playerName, playerName);
+        builder.addTooltip("This is you!");
+        builder.addTooltip("");
         createAttributesView(player).forEach(builder::addTooltip);
         builder.addTooltip("");
         createCurrenciesView(player).forEach(builder::addTooltip);
@@ -167,12 +169,6 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
             if (action.isShiftRightClick()) {
                 commandCommandService.dispatchCommandFor("claimrankuprewards", playerId);
                 menuCommandService.closeMenu(playerId);
-            } else if (action.isLeftClick()) {
-                Menu menu = specializationMenuFactory.createSpecializationMenu(playerId);
-                menuCommandService.showMenu(menu, playerId);
-            } else if (action.isRightClick()) {
-                Menu menu = teamMenuFactory.createTeamMenu(playerId);
-                menuCommandService.showMenu(menu, playerId);
             }
         });
         return builder.build();
@@ -187,6 +183,8 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         if (prestige == 0) {
             if (attributeValue > 0) {
                 passivesView.add(ColorCode.YELLOW + "+" + attributeValue + " Vitality");
+            } else {
+                passivesView.add("None");
             }
         } else if (prestige == 1) {
             passivesView.add(ColorCode.YELLOW + "+10 Vitality");
@@ -213,12 +211,33 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         return passivesView;
     }
 
+    ItemType getRankIcon(String rank) {
+        if (rank.contains("Wood")) {
+            return ItemType.OAK_WOOD_PLANK;
+        } else if (rank.contains("Stone")) {
+            return ItemType.STONE;
+        } else if (rank.contains("Iron")) {
+            return ItemType.IRON_BLOCK;
+        } else if (rank.contains("Gold")) {
+            return ItemType.GOLD_BLOCK;
+        } else if (rank.contains("Emerald")) {
+            return ItemType.EMERALD_BLOCK;
+        } else if (rank.contains("Diamond")) {
+            return ItemType.DIAMOND_BLOCK;
+        } else if (rank.contains("Obsidian")) {
+            return ItemType.OBSIDIAN;
+        } else {
+            return ItemType.OAK_WOOD_PLANK;
+        }
+    }
+
     Button createRankButton(LegendsPlayer player) {
         UUID playerId = player.getId();
-        String rank = player.getRank().getFormattedName();
+        String rank = player.getRank().getColor() + player.getRank().getFormattedName();
+        ItemType rankIcon = getRankIcon(rank);
         int level = player.getRank().getLevel();
-        int levelUpPercentage = player.getLifetimeFavor() / player.getRank().getRequiredFavor();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.DIAMOND_SWORD, "Level & Rank");
+        int levelUpPercentage = (int) (((float) player.getLifetimeFavor() / (float) player.getRank().getRequiredFavor()) * 100);
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(rankIcon, "Level & Rank");
         builder.addTooltip("Rank text");
         builder.addTooltip("");
         builder.addTooltip(ColorCode.WHITE + "Current level:");
@@ -227,7 +246,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         builder.addTooltip(ColorCode.WHITE + "Current Rank:");
         builder.addTooltip(rank);
         builder.addTooltip("");
-        builder.addTooltip(ColorCode.WHITE + "Active passives:");
+        builder.addTooltip(ColorCode.WHITE + "Rank passives:");
         createRankPassivesView(level).forEach(builder::addTooltip);
         return builder.build();
     }
@@ -278,17 +297,27 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     }
 
     Button createClassButton(LegendsPlayer player) {
+        UUID playerId = player.getId();
         String specialization = player.getSpecialization() != null
                 ? player.getSpecialization().getName()
                 : "Wayfarer";
+        ItemType icon = player.getSpecialization() != null
+                ? player.getSpecialization().getValidMainhands().iterator().next()
+                : ItemType.WOOD_SWORD;
         String specializationPrefix = stringUtils.isVowel(specialization.charAt(0)) ? "an " : "a ";
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.SHIELD, "Class");
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(icon, "Class");
         builder.addTooltip("You are currently fighting as " + specializationPrefix + YELLOW + specialization);
         builder.addTooltip("");
         builder.addTooltip(ColorCode.WHITE + "Abilities:");
         createAbilitiesView(specialization).forEach(builder::addTooltip);
         builder.addTooltip("");
-        builder.addTooltip("[CLICK] To view all classes");
+        builder.addTooltip("[CLICK] To browse all classes in more detail");
+        builder.addTooltip("or to change your class");
+
+        builder.withAction(click -> {
+            Menu menu = specializationMenuFactory.createSpecializationMenu(playerId);
+            menuCommandService.showMenu(menu, playerId);
+        });
         return builder.build();
     }
 
@@ -350,10 +379,11 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     }
 
     Button createRaceButton(LegendsPlayer player) {
+        UUID playerId = player.getId();
         String team = player.getTeam() != null
                 ? player.getTeam().getPlural()
                 : "Wayfarers";
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.SHIELD, "Race");
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.ARMOR_STAND, "Race");
         builder.addTooltip("You are currently fighting for the " + YELLOW + team);
         builder.addTooltip("");
         builder.addTooltip(ColorCode.WHITE + "Racial passive:");
@@ -362,13 +392,19 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
                 : "Wayfarer";
         createRacialPassivesView(team, specialization).forEach(builder::addTooltip);
         builder.addTooltip("");
-        builder.addTooltip("[CLICK] To view all races");
+        builder.addTooltip("[CLICK] To browse all races in more detail");
+        builder.addTooltip("or to change your race");
+
+        builder.withAction(click -> {
+            Menu menu = teamMenuFactory.createTeamMenu(playerId);
+            menuCommandService.showMenu(menu, playerId);
+        });
         return builder.build();
     }
 
     Button createDailyLoginButton(LegendsPlayer player) {
         UUID playerId = player.getId();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.CAKE, "Daily Login");
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.CLOCK, "Daily Login");
         builder.addTooltip("Every day you get a reward just for logging");
         builder.addTooltip("in to the server! The more often you log in,");
         builder.addTooltip("the more interesting the rewards get. And do");
@@ -386,7 +422,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
 
     Button createDailyVoteButton(LegendsPlayer player) {
         UUID playerId = player.getId();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.CAKE, "Daily Votes");
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.MAP, "Daily Votes");
         builder.addTooltip("Votes text placeholder");
         builder.addTooltip("");
         builder.addTooltip("Websites:");
@@ -398,8 +434,11 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         builder.addTooltip("[CLICK] To paste these links to your chat");
 
         builder.withAction(action -> {
-            Menu menu = dailyLoginMenuFactory.createDailyLoginMenu(playerId);
-            menuCommandService.showMenu(menu, playerId);
+            playerCommandService.sendNotification(playerId, "http://link1");
+            playerCommandService.sendNotification(playerId, "http://link2");
+            playerCommandService.sendNotification(playerId, "http://link3");
+            playerCommandService.sendNotification(playerId, "http://link4");
+            menuCommandService.closeMenu(playerId);
         });
         return builder.build();
     }
@@ -559,10 +598,10 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         builder.addButton(10, createDailyVoteButton(player));
         builder.addButton(11, createChallengesButton(player));
 
-        builder.addButton(13, createCollectablesButton(player));
-        builder.addButton(14, createLeaderboardsButton(player));
+        builder.addButton(14, createCollectablesButton(player));
+        builder.addButton(15, createLeaderboardsButton(player));
 
-        builder.addButton(16, createShopButton(player));
+        builder.addButton(17, createShopButton(player));
         return builder.build();
     }
 }
