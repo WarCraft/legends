@@ -237,7 +237,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         ItemType rankIcon = getRankIcon(rank);
         int level = player.getRank().getLevel();
         int levelUpPercentage = (int) (((float) (player.getLifetimeFavor() - player.getRank().getFavor()) /
-                (float) player.getRank().getRequiredFavor()) * 100);
+                (float) player.getRank().getRequiredFavor() - player.getRank().getFavor()) * 100);
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(rankIcon, "Level & Rank");
         builder.addTooltip("Rank text");
         builder.addTooltip("");
