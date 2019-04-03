@@ -328,20 +328,14 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
             case "Humans":
                 switch (specialization) {
                     case "Armsmaster":
-                        passivesView.add(ColorCode.YELLOW + "Last Stand");
-                        return passivesView;
                     case "Berserker":
                         passivesView.add(ColorCode.YELLOW + "Last Stand");
                         return passivesView;
                     case "Hunter":
-                        passivesView.add(ColorCode.YELLOW + "Wolf Pet");
-                        return passivesView;
                     case "Marksman":
                         passivesView.add(ColorCode.YELLOW + "Wolf Pet");
                         return passivesView;
                     case "Tempest":
-                        passivesView.add(ColorCode.YELLOW + "Barrier");
-                        return passivesView;
                     case "Wizard":
                         passivesView.add(ColorCode.YELLOW + "Barrier");
                         return passivesView;
@@ -352,20 +346,14 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
             case "Orcs":
                 switch (specialization) {
                     case "Armsmaster":
-                        passivesView.add(ColorCode.YELLOW + "Bloodlust");
-                        return passivesView;
                     case "Berserker":
                         passivesView.add(ColorCode.YELLOW + "Bloodlust");
                         return passivesView;
                     case "Hunter":
-                        passivesView.add(ColorCode.YELLOW + "Pig Pet");
-                        return passivesView;
                     case "Marksman":
                         passivesView.add(ColorCode.YELLOW + "Pig Pet");
                         return passivesView;
                     case "Tempest":
-                        passivesView.add(ColorCode.YELLOW + "Flame Totem");
-                        return passivesView;
                     case "Wizard":
                         passivesView.add(ColorCode.YELLOW + "Flame Totem");
                         return passivesView;
