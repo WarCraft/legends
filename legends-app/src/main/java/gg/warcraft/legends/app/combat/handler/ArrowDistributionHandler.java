@@ -36,11 +36,12 @@ public class ArrowDistributionHandler {
             UUID playerId = event.getShooterId();
             if (playerId != null) {
                 Player player = playerQueryService.getPlayer(playerId);
-                if (player != null
-                        && !player.getInventory().contains(ItemType.ARROW)
-                        && player.getInventory().getSpace() > 0) {
-                    Item arrow = itemBuilderFactory.createItemBuilder(ItemType.ARROW, "Arrow").build();
-                    taskService.runNextTick(() -> playerCommandService.giveItem(playerId, arrow, false));
+                if (player != null) {
+                    if (player.getInventory().getSpace() > 0
+                            || player.getInventory().contains(ItemType.ARROW)) {
+                        Item arrow = itemBuilderFactory.createItemBuilder(ItemType.ARROW, "Arrow").build();
+                        taskService.runNextTick(() -> playerCommandService.giveItem(playerId, arrow, false));
+                    }
                 }
             }
         }
