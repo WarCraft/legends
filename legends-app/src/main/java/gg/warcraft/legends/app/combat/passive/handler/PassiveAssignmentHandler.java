@@ -4,10 +4,10 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import gg.warcraft.combat.api.specialization.Specialization;
 import gg.warcraft.combat.api.specialization.event.PlayerSpecializationChangedEvent;
-import gg.warcraft.combat.api.specialization.service.SpecializationQueryService;
 import gg.warcraft.legends.api.combat.passive.PassiveFactory;
 import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
+import gg.warcraft.monolith.api.entity.event.EntityTeamChangedEvent;
 import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 import gg.warcraft.monolith.api.entity.status.Status;
@@ -26,18 +26,17 @@ public class PassiveAssignmentHandler {
     private final LegendsPlayerQueryService playerQueryService;
     private final StatusQueryService statusQueryService;
     private final StatusCommandService statusCommandService;
-    private final SpecializationQueryService specializationQueryService;
     private final PassiveFactory passiveFactory;
     private final Map<String, Function<UUID, StatusEffect>> passives;
 
     @Inject
-    public PassiveAssignmentHandler(LegendsPlayerQueryService playerQueryService, StatusQueryService statusQueryService,
-                                    StatusCommandService statusCommandService, PassiveFactory passiveFactory,
-                                    SpecializationQueryService specializationQueryService) {
+    public PassiveAssignmentHandler(LegendsPlayerQueryService playerQueryService,
+                                    StatusQueryService statusQueryService,
+                                    StatusCommandService statusCommandService,
+                                    PassiveFactory passiveFactory) {
         this.playerQueryService = playerQueryService;
         this.statusQueryService = statusQueryService;
         this.statusCommandService = statusCommandService;
-        this.specializationQueryService = specializationQueryService;
         this.passiveFactory = passiveFactory;
 
         Map<String, Function<UUID, StatusEffect>> passives = new HashMap<>();
@@ -90,9 +89,29 @@ public class PassiveAssignmentHandler {
     }
 
     @Subscribe
+    public void onPlayerRaceChangedEvent(EntityTeamChangedEvent event) {
+        UUID playerId = event.getEntityId();
+        LegendsPlayer player = playerQueryService.getPlayer(playerId);
+        if (player == null) {
+            return;
+        }
+
+        Status status = statusQueryService.getStatus(playerId);
+        removePassives(status, "legends.racial"::equals);
+
+        Team newTeam = event.getNewTeam();
+        Specialization specialization = player.getSpecialization();
+        assignRacialPassive(newTeam, specialization, playerId);
+    }
+
+    @Subscribe
     public void onPlayerSpecializationChangedEvent(PlayerSpecializationChangedEvent event) {
         UUID playerId = event.getPlayerId();
         Player player = playerQueryService.getPlayer(playerId);
+        if (player == null) {
+            return;
+        }
+
         Status status = statusQueryService.getStatus(playerId);
         removePassives(status, "legends.racial"::equals);
 
