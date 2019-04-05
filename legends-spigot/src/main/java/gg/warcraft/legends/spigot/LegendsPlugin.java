@@ -382,7 +382,7 @@ public class LegendsPlugin extends JavaPlugin {
         commandCommandService.createCommand("shop", Collections.emptyList(), shopCommandHandler);
 
         TrebCommandHandler trebCommandHandler = injector.getInstance(TrebCommandHandler.class);
-        commandCommandService.createCommand("treb", Collections.emptyList(), trebCommandHandler);
+        commandCommandService.createCommand("treb", Lists.newArrayList("trebuchet"), trebCommandHandler);
     }
 
     // TODO remove all this code and any classes from the spigotOLD package
