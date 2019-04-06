@@ -14,12 +14,14 @@ import gg.warcraft.monolith.api.combat.value.CombatValueModifier;
 import gg.warcraft.monolith.api.combat.value.CombatValueModifierType;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.core.event.ServerShutdownEvent;
+import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.event.EntityDamageEvent;
 import gg.warcraft.monolith.api.entity.event.EntityPreDamageEvent;
 import gg.warcraft.monolith.api.entity.event.EntityTeamChangedEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerDisconnectEvent;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -29,6 +31,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wolf;
@@ -48,12 +51,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import static gg.warcraft.monolith.api.entity.EntityType.PLAYER;
+
 public class HunterPetListener implements Listener {
     private static final int BASE_PET_HEALTH = 40;
     private static final MobDisguise orcPetDisguise = new MobDisguise(DisguiseType.PIG);
 
     private final Server server;
-    private final LegendsPlayerQueryService legendsPlayerQueryService;
+    private final LegendsPlayerQueryService playerQueryService;
+    private final EntityQueryService entityQueryService;
     private final EntityCommandService entityCommandService;
     private final CombatPetFactory combatPetFactory;
     private final CombatFactory combatFactory;
@@ -61,25 +67,27 @@ public class HunterPetListener implements Listener {
     private final TimeUtils timeUtils;
 
     final Map<UUID, Tameable> uuidToTameable;
-    final Map<UUID, Tameable> pets;
+    final Map<UUID, Tameable> ownerToPet;
     final Map<Tameable, UUID> petToOwner;
-    final Map<Tameable, UUID> targets;
+    final Map<Tameable, UUID> petsToTarget;
     final Map<UUID, Set<Tameable>> targetToPets;
 
-    public HunterPetListener(Server server, LegendsPlayerQueryService legendsPlayerQueryService,
+    public HunterPetListener(Server server, LegendsPlayerQueryService playerQueryService,
+                             EntityQueryService entityQueryService,
                              EntityCommandService entityCommandService, CombatPetFactory combatPetFactory,
                              TaskService taskService, TimeUtils timeUtils, CombatFactory combatFactory) {
         this.server = server;
-        this.legendsPlayerQueryService = legendsPlayerQueryService;
+        this.playerQueryService = playerQueryService;
         this.entityCommandService = entityCommandService;
+        this.entityQueryService = entityQueryService;
         this.combatPetFactory = combatPetFactory;
         this.taskService = taskService;
         this.timeUtils = timeUtils;
         this.combatFactory = combatFactory;
         this.uuidToTameable = new HashMap<>();
-        this.pets = new HashMap<>();
+        this.ownerToPet = new HashMap<>();
         this.petToOwner = new HashMap<>();
-        this.targets = new HashMap<>();
+        this.petsToTarget = new HashMap<>();
         this.targetToPets = new HashMap<>();
     }
 
@@ -130,17 +138,17 @@ public class HunterPetListener implements Listener {
 
         pet.setOwner(spigotPlayer);
         uuidToTameable.put(pet.getUniqueId(), pet);
-        pets.put(player.getId(), pet);
+        ownerToPet.put(player.getId(), pet);
         petToOwner.put(pet, player.getId());
     }
 
     private void removePet(UUID playerId) {
-        Tameable pet = pets.remove(playerId);
+        Tameable pet = ownerToPet.remove(playerId);
         if (pet != null) {
             uuidToTameable.remove(pet.getUniqueId());
             pet.remove();
             petToOwner.remove(pet);
-            UUID target = targets.remove(pet);
+            UUID target = petsToTarget.remove(pet);
             if (target != null) {
                 targetToPets.get(target).remove(pet);
             }
@@ -153,7 +161,7 @@ public class HunterPetListener implements Listener {
 
     @Subscribe
     public void onPlayerConnectEvent(PlayerConnectEvent event) {
-        LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getPlayerId());
+        LegendsPlayer player = playerQueryService.getPlayer(event.getPlayerId());
         if (!raceOrSpecIsNull(player)) {
             spawnPet(player);
         }
@@ -166,11 +174,11 @@ public class HunterPetListener implements Listener {
 
     @Subscribe
     public void onPlayerTeamChangedEvent(EntityTeamChangedEvent event) {
-        if (event.getEntityType() != gg.warcraft.monolith.api.entity.EntityType.PLAYER) {
+        if (event.getEntityType() != PLAYER) {
             return;
         }
 
-        LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getEntityId());
+        LegendsPlayer player = playerQueryService.getPlayer(event.getEntityId());
         System.out.println("Player changed race");
 
         if (raceOrSpecIsNull(player)) {
@@ -189,7 +197,7 @@ public class HunterPetListener implements Listener {
 
     @Subscribe
     public void onPlayerSpecializationChangedEvent(PlayerSpecializationChangedEvent event) {
-        LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getPlayerId());
+        LegendsPlayer player = playerQueryService.getPlayer(event.getPlayerId());
         System.out.println("Player changed spec");
         if (raceOrSpecIsNull(player)) {
             System.out.println("Race or spec was null");
@@ -203,7 +211,7 @@ public class HunterPetListener implements Listener {
         switch (player.getSpecialization().getName()) {
             case "Marksman":
             case "Hunter":
-                if (!pets.containsKey(player.getId())) {
+                if (!ownerToPet.containsKey(player.getId())) {
                     spawnPet(player);
                 }
                 break;
@@ -225,7 +233,7 @@ public class HunterPetListener implements Listener {
             return;
         }
 
-        Tameable pet = pets.get(attackerId);
+        Tameable pet = ownerToPet.get(attackerId);
         if (pet == null) {
             Tameable attackingPet = uuidToTameable.get(attackerId);
             if (attackingPet != null) {
@@ -254,22 +262,39 @@ public class HunterPetListener implements Listener {
             return;
         }
 
-        Tameable pet = pets.get(attackerId);
+        Tameable pet = ownerToPet.get(attackerId);
         if (pet instanceof Wolf) {
-            LegendsPlayer attackedPlayer = legendsPlayerQueryService.getPlayer(event.getEntityId());
-            if (attackedPlayer == null) {
+            UUID attackedId = event.getEntityId();
+            LivingEntity spigotTarget = null;
+            if (event.getEntityType() == PLAYER) {
+                LegendsPlayer attackedPlayer = playerQueryService.getPlayer(attackedId);
+                LegendsPlayer petOwner = playerQueryService.getPlayer(attackerId);
+                if (attackedPlayer.getTeam() != petOwner.getTeam()) {
+                    spigotTarget = server.getPlayer(attackedId);
+                }
+            } else {
+                Entity attackedEntity = entityQueryService.getEntity(attackedId);
+                if (attackedEntity != null) {
+                    org.bukkit.entity.Entity spigotEntity = server.getEntity(attackedId);
+                    if (spigotEntity instanceof LivingEntity) {
+                        spigotTarget = (LivingEntity) spigotEntity;
+                    }
+                }
+            }
+
+            if (spigotTarget == null) {
                 return;
             }
 
-            Player spigotAttackedPlayer = server.getPlayer(attackedPlayer.getId());
-            ((Wolf) pet).setTarget(spigotAttackedPlayer);
-            UUID previousTarget = targets.put(pet, spigotAttackedPlayer.getUniqueId());
-            if (previousTarget != spigotAttackedPlayer.getUniqueId()) {
+
+            ((Wolf) pet).setTarget(spigotTarget);
+            UUID previousTarget = petsToTarget.put(pet, spigotTarget.getUniqueId());
+            if (previousTarget != spigotTarget.getUniqueId()) {
                 if (previousTarget != null) {
                     Set<Tameable> previousTargetPets = targetToPets.computeIfAbsent(previousTarget, id -> new HashSet<>());
                     previousTargetPets.remove(pet);
                 }
-                Set<Tameable> petsWithTarget = targetToPets.computeIfAbsent(spigotAttackedPlayer.getUniqueId(), id -> new HashSet<>());
+                Set<Tameable> petsWithTarget = targetToPets.computeIfAbsent(spigotTarget.getUniqueId(), id -> new HashSet<>());
                 petsWithTarget.add(pet);
             }
         }
@@ -281,7 +306,7 @@ public class HunterPetListener implements Listener {
         petsWithTarget.forEach(pet -> {
             Wolf wolfPet = ((Wolf) pet);
             wolfPet.setTarget(null);
-            targets.remove(wolfPet);
+            petsToTarget.remove(wolfPet);
         });
 
         if (!(event.getEntity() instanceof Tameable)) {
@@ -290,7 +315,7 @@ public class HunterPetListener implements Listener {
 
         UUID petOwnerId = petToOwner.get((Tameable) event.getEntity());
         if (petOwnerId != null) {
-            LegendsPlayer petOwner = legendsPlayerQueryService.getPlayer(petOwnerId);
+            LegendsPlayer petOwner = playerQueryService.getPlayer(petOwnerId);
             if (petOwner != null) {
                 taskService.runLater(() -> spawnPet(petOwner), timeUtils.createDurationInSeconds(30));
             }
@@ -303,7 +328,7 @@ public class HunterPetListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerTeleportEvent(PlayerTeleportEvent event) {
-        Tameable pet = pets.get(event.getPlayer().getUniqueId());
+        Tameable pet = ownerToPet.get(event.getPlayer().getUniqueId());
         if (pet != null && !pet.isDead()) {
             taskService.runNextTick(() -> pet.teleport(event.getPlayer().getLocation()));
         }
@@ -324,14 +349,14 @@ public class HunterPetListener implements Listener {
     public void onPlayerGameModeChangeEvent(PlayerGameModeChangeEvent event) {
         removePet(event.getPlayer().getUniqueId());
         if (event.getNewGameMode() == GameMode.SURVIVAL) {
-            LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getPlayer().getUniqueId());
+            LegendsPlayer player = playerQueryService.getPlayer(event.getPlayer().getUniqueId());
             spawnPet(player);
         }
     }
 
     @Subscribe
     public void onServerShutdownEvent(ServerShutdownEvent event) {
-        pets.values().forEach(Tameable::remove);
+        ownerToPet.values().forEach(Tameable::remove);
     }
 
     // TODO tp out of range pets back to owner via pet.getEntity().teleport(AbstractLocation)
