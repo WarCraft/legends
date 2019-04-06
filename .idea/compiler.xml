@@ -2,6 +2,12 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="gg.warcraft.legends-api.main" target="1.8" />
+      <module name="gg.warcraft.legends-api.test" target="1.8" />
+      <module name="gg.warcraft.legends-app.main" target="1.8" />
+      <module name="gg.warcraft.legends-app.test" target="1.8" />
+      <module name="gg.warcraft.legends-spigot.main" target="1.8" />
+      <module name="gg.warcraft.legends-spigot.test" target="1.8" />
       <module name="legends-api_main" target="1.8" />
       <module name="legends-api_test" target="1.8" />
       <module name="legends-app_main" target="1.8" />

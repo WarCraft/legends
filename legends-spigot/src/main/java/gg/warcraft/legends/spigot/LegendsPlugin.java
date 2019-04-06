@@ -40,16 +40,7 @@ import gg.warcraft.legends.app.core.game.handler.GameObjectivesAndPointsHandler;
 import gg.warcraft.legends.app.core.game.handler.GameTimerHandler;
 import gg.warcraft.legends.app.core.game.handler.ObjectiveAnnouncementHandler;
 import gg.warcraft.legends.app.core.game.handler.SkirmishRewardHandler;
-import gg.warcraft.legends.app.core.handler.CaptureAndKillRewardHandler;
-import gg.warcraft.legends.app.core.handler.CombatLoggingHandler;
-import gg.warcraft.legends.app.core.handler.FishCommandHandler;
-import gg.warcraft.legends.app.core.handler.KitCommandHandler;
-import gg.warcraft.legends.app.core.handler.PlayerCountMetricHandler;
-import gg.warcraft.legends.app.core.handler.PlayerSpawnHandler;
-import gg.warcraft.legends.app.core.handler.SpawnCommandHandler;
-import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
-import gg.warcraft.legends.app.core.handler.TrebCommandHandler;
-import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
+import gg.warcraft.legends.app.core.handler.*;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardRewardHandler;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardUpdateHandler;
 import gg.warcraft.legends.app.core.tutorial.handler.TutorialCommandHandler;
@@ -351,6 +342,10 @@ public class LegendsPlugin extends JavaPlugin {
 
         LeaderboardRewardHandler leaderboardRewardHandler = injector.getInstance(LeaderboardRewardHandler.class);
         eventService.subscribe(leaderboardRewardHandler);
+
+        // Gathering
+        CapturedGatheringRestrictionHandler capturedGatheringRestrictionHandler = injector.getInstance(CapturedGatheringRestrictionHandler.class);
+        eventService.subscribe(capturedGatheringRestrictionHandler);
     }
 
     void initializeLegendsCommands() {
