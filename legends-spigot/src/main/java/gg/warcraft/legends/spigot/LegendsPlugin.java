@@ -94,6 +94,7 @@ import gg.warcraft.monolith.api.command.service.CommandCommandService;
 import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.Direction;
@@ -387,8 +388,9 @@ public class LegendsPlugin extends JavaPlugin {
 
     // TODO remove all this code and any classes from the spigotOLD package
     void initializeOLDHACK() {
-        LegendsPlayerQueryService legendsPlayerQueryService = injector.getInstance(LegendsPlayerQueryService.class);
+        LegendsPlayerQueryService playerQueryService = injector.getInstance(LegendsPlayerQueryService.class);
         EntityCommandService entityCommandService = injector.getInstance(EntityCommandService.class);
+        EntityQueryService entityQueryService = injector.getInstance(EntityQueryService.class);
         CombatPetFactory combatPetFactory = injector.getInstance(CombatPetFactory.class);
         TaskService taskService = injector.getInstance(TaskService.class);
         TimeUtils timeUtils = injector.getInstance(TimeUtils.class);
@@ -397,7 +399,7 @@ public class LegendsPlugin extends JavaPlugin {
 
         eventService.subscribe(new CraftPreventionHandler());
 
-        HunterPetListener hunterPetListener = new HunterPetListener(getServer(), legendsPlayerQueryService,
+        HunterPetListener hunterPetListener = new HunterPetListener(getServer(), playerQueryService, entityQueryService,
                 entityCommandService, combatPetFactory, taskService, timeUtils, combatFactory);
         eventService.subscribe(hunterPetListener);
         getServer().getPluginManager().registerEvents(hunterPetListener, this);
@@ -406,10 +408,10 @@ public class LegendsPlugin extends JavaPlugin {
         eventService.subscribe(spigotMiniPetFactory);
 
         PersonalScoreboardHandler personalScoreboardHandler = new PersonalScoreboardHandler(eventService, getServer(),
-                this, legendsPlayerQueryService, taskService, timeUtils);
+                this, playerQueryService, taskService, timeUtils);
         eventService.subscribe(personalScoreboardHandler);
 
-        RangerOnlyBowHandler rangerOnlyBowHandler = new RangerOnlyBowHandler(legendsPlayerQueryService);
+        RangerOnlyBowHandler rangerOnlyBowHandler = new RangerOnlyBowHandler(playerQueryService);
         getServer().getPluginManager().registerEvents(rangerOnlyBowHandler, this);
 
         SpydeyBot spyBot = injector.getInstance(SpydeyBot.class);
