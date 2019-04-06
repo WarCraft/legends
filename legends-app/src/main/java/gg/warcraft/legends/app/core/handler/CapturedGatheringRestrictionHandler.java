@@ -32,8 +32,8 @@ public class CapturedGatheringRestrictionHandler {
         this.gatheringSpotOccupierRepository = gatheringSpotOccupierRepository;
         this.playerCommandService = playerCommandService;
         taskService.runNextTick(() ->
-            objectiveQueryService.getObjectives().forEach(objective ->
-                gatheringSpotOccupierRepository.setTeamFor(objective.getId(), (LegendsTeam) objective.getOccupiers()))
+                objectiveQueryService.getObjectives().forEach(objective ->
+                        gatheringSpotOccupierRepository.setTeamFor(objective.getId(), (LegendsTeam) objective.getOccupiers()))
         );
     }
 
