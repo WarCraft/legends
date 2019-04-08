@@ -6,6 +6,7 @@ public enum LegendsPlayerData {
     RANK_UP_REWARDS_CLAIMED("rankRewardsClaimed"),
     LAST_DAILY_RESET("lastDailyReset"),
     LAST_WARRY_RESET("lastWarryReset"),
+    LAUNCH_REWARDS_COMMAND("launchRewardsCommand"),
 
     // Daily Challenges
     DAILY_KILLS_CHALLENGE("challengeDailyKills"),

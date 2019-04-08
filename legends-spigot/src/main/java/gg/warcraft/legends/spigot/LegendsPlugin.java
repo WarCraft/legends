@@ -26,6 +26,7 @@ import gg.warcraft.legends.app.ai.npc.handler.NpcPersistenceHandler;
 import gg.warcraft.legends.app.ai.npc.handler.TargetDummyDamageHandler;
 import gg.warcraft.legends.app.combat.LegendsCombatConfiguration;
 import gg.warcraft.legends.app.combat.handler.ArrowDistributionHandler;
+import gg.warcraft.legends.app.combat.handler.ArrowFriendlyFireHandler;
 import gg.warcraft.legends.app.combat.handler.ArrowPickupHandler;
 import gg.warcraft.legends.app.combat.handler.WhoDamagedWhoHandler;
 import gg.warcraft.legends.app.combat.mage.orc.handler.FlameTotemDamageLimitationHandler;
@@ -40,7 +41,18 @@ import gg.warcraft.legends.app.core.game.handler.GameObjectivesAndPointsHandler;
 import gg.warcraft.legends.app.core.game.handler.GameTimerHandler;
 import gg.warcraft.legends.app.core.game.handler.ObjectiveAnnouncementHandler;
 import gg.warcraft.legends.app.core.game.handler.SkirmishRewardHandler;
-import gg.warcraft.legends.app.core.handler.*;
+import gg.warcraft.legends.app.core.handler.CaptureAndKillRewardHandler;
+import gg.warcraft.legends.app.core.handler.CapturedGatheringRestrictionHandler;
+import gg.warcraft.legends.app.core.handler.CombatLoggingHandler;
+import gg.warcraft.legends.app.core.handler.FishCommandHandler;
+import gg.warcraft.legends.app.core.handler.KitCommandHandler;
+import gg.warcraft.legends.app.core.handler.LaunchRewardsCommandHandler;
+import gg.warcraft.legends.app.core.handler.PlayerCountMetricHandler;
+import gg.warcraft.legends.app.core.handler.PlayerSpawnHandler;
+import gg.warcraft.legends.app.core.handler.SpawnCommandHandler;
+import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
+import gg.warcraft.legends.app.core.handler.TrebCommandHandler;
+import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardRewardHandler;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardUpdateHandler;
 import gg.warcraft.legends.app.core.tutorial.handler.TutorialCommandHandler;
@@ -232,6 +244,9 @@ public class LegendsPlugin extends JavaPlugin {
         CaptureAndKillRewardHandler captureAndKillRewardHandler = injector.getInstance(CaptureAndKillRewardHandler.class);
         eventService.subscribe(captureAndKillRewardHandler);
 
+        ArrowFriendlyFireHandler arrowFriendlyFireHandler = injector.getInstance(ArrowFriendlyFireHandler.class);
+        eventService.subscribe(arrowFriendlyFireHandler);
+
         // Shop
         ShopProfileInitializationHandler shopProfileInitializationHandler =
                 injector.getInstance(ShopProfileInitializationHandler.class);
@@ -379,6 +394,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         TrebCommandHandler trebCommandHandler = injector.getInstance(TrebCommandHandler.class);
         commandCommandService.createCommand("treb", Lists.newArrayList("trebuchet"), trebCommandHandler);
+
+        LaunchRewardsCommandHandler launchRewardsCommandHandler = injector.getInstance(LaunchRewardsCommandHandler.class);
+        commandCommandService.createCommand("ilovewarcraft", Collections.emptyList(), launchRewardsCommandHandler);
     }
 
     // TODO remove all this code and any classes from the spigotOLD package
