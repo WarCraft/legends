@@ -42,7 +42,6 @@ import gg.warcraft.legends.app.core.game.handler.GameTimerHandler;
 import gg.warcraft.legends.app.core.game.handler.ObjectiveAnnouncementHandler;
 import gg.warcraft.legends.app.core.game.handler.SkirmishRewardHandler;
 import gg.warcraft.legends.app.core.handler.CaptureAndKillRewardHandler;
-import gg.warcraft.legends.app.core.handler.CapturedGatheringRestrictionHandler;
 import gg.warcraft.legends.app.core.handler.CombatLoggingHandler;
 import gg.warcraft.legends.app.core.handler.FishCommandHandler;
 import gg.warcraft.legends.app.core.handler.KitCommandHandler;
@@ -359,8 +358,9 @@ public class LegendsPlugin extends JavaPlugin {
         eventService.subscribe(leaderboardRewardHandler);
 
         // Gathering
-        CapturedGatheringRestrictionHandler capturedGatheringRestrictionHandler = injector.getInstance(CapturedGatheringRestrictionHandler.class);
-        eventService.subscribe(capturedGatheringRestrictionHandler);
+        // TODO re-enable
+        // CapturedGatheringRestrictionHandler capturedGatheringRestrictionHandler = injector.getInstance(CapturedGatheringRestrictionHandler.class);
+        // eventService.subscribe(capturedGatheringRestrictionHandler);
     }
 
     void initializeLegendsCommands() {
