@@ -448,13 +448,13 @@ public class LegendsPlugin extends JavaPlugin {
         EventService eventService = injector.getInstance(EventService.class);
 
         TutorialStepHandler tutorialStepHandler = injector.getInstance(TutorialStepHandler.class);
-        commandCommandService.createCommand("next", Collections.emptyList(), tutorialStepHandler);
+        commandCommandService.createCommand("next", Lists.newArrayList("end"), tutorialStepHandler);
         eventService.subscribe(tutorialStepHandler);
 
         TutorialCommandHandler tutorialCommandHandler = injector.getInstance(TutorialCommandHandler.class);
         commandCommandService.createCommand("setracetutorial", Collections.emptyList(), tutorialCommandHandler);
         commandCommandService.createCommand("setclasstutorial", Collections.emptyList(), tutorialCommandHandler);
-        commandCommandService.createCommand("skiptutorial", Lists.newArrayList("end", "skip"), tutorialCommandHandler);
+        commandCommandService.createCommand("skiptutorial", Lists.newArrayList("skip"), tutorialCommandHandler);
 
         // Siege weapon
         SiegeWeaponFactory siegeWeaponFactory = injector.getInstance(SiegeWeaponFactory.class);
