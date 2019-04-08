@@ -31,6 +31,7 @@ import gg.warcraft.monolith.api.world.location.BlockLocation;
 import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -44,6 +45,7 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
     private final EntityCommandService entityCommandService;
     private final WorldCommandService worldCommandService;
     private final BlockSpoofingCommandService blockSpoofingCommandService;
+    private final TaskService taskService;
     private final BlockLocation blockLocation;
     private final UUID[] spoofedPlayerIds;
     private final UUID projectileId;
@@ -62,6 +64,7 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
         this.entityCommandService = entityCommandService;
         this.worldCommandService = worldCommandService;
         this.blockSpoofingCommandService = blockSpoofingCommandService;
+        this.taskService = taskService;
 
         this.blockLocation = caster.getLocation().toBlockLocation();
         Block currentBlock = worldQueryService.getBlockAt(blockLocation);
@@ -94,10 +97,18 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
 
     @Override
     public boolean onHit(Entity entity) {
+        UUID entityId = entity.getId();
+        Location startLocation = entity.getLocation();
         PotionEffect poison = getSnapshot().getPotionEffect(PotionEffectType.POISON);
         Duration rootDuration = getSnapshot().getDuration("root-duration");
-        entityCommandService.addPotionEffect(entity.getId(), poison);
-        entityCommandService.freeze(entity.getId(), rootDuration);
+        entityCommandService.addPotionEffect(entityId, poison);
+        entityCommandService.freeze(entityId, rootDuration);
+
+        // yeet-into-space fix
+        taskService.runNextTick(() -> {
+            entityCommandService.teleport(entityId, startLocation);
+            entityCommandService.setVelocity(entityId, new Vector3f());
+        });
 
         cancel();
         worldCommandService.playSound(entity.getLocation(), TRIGGER_SOUND, SOUND_CATEGORY, 1, 1);
