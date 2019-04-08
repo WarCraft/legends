@@ -246,18 +246,12 @@ public class DefaultGameCommandService implements GameCommandService {
         int currentScore = newScore.getOrDefault(winner, 0);
         newScore.put(winner, currentScore + DAILY_WINNER_SCORE);
 
-        Map<String, LegendsTeam> newObjectives = new HashMap<>();
-        objectiveQueryService.getObjectives().forEach(objective -> {
-            newObjectives.put(objective.getId(), null);
-            objectiveCommandService.setOccupiers(objective.getId(), null);
-        });
         Map<LegendsTeam, Integer> newPoints = new HashMap<>();
         Arrays.stream(LegendsTeam.values()).forEach(team -> newPoints.put(team, 0));
 
         War updatedWar = war.getCopyer()
                 .withWarScore(newScore)
                 .withDailyPoints(newDailyPoints)
-                .withObjectives(newObjectives)
                 .withPoints(newPoints)
                 .copy();
         gameRepository.save(updatedWar);
