@@ -89,6 +89,7 @@ import gg.warcraft.legends.spigot.OLD.shop.SpigotMiniPetFactory;
 import gg.warcraft.legends.spigot.core.handler.CraftPreventionHandler;
 import gg.warcraft.legends.spigot.core.handler.OnePointEightPvPInitializationHandler;
 import gg.warcraft.legends.spigot.core.handler.SpigotScoreboardHandler;
+import gg.warcraft.legends.spigot.core.handler.VoteHandler;
 import gg.warcraft.monolith.api.Monolith;
 import gg.warcraft.monolith.api.MonolithPluginUtils;
 import gg.warcraft.monolith.api.combat.CombatFactory;
@@ -206,6 +207,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         PlayerCurrencyEventHandler playerCurrencyEventHandler = injector.getInstance(PlayerCurrencyEventHandler.class);
         eventService.subscribe(playerCurrencyEventHandler);
+
+        VoteHandler voteHandler = injector.getInstance(VoteHandler.class);
+        eventService.subscribe(voteHandler);
 
         // AI
         NpcInteractHandler npcInteractHandler = injector.getInstance(NpcInteractHandler.class);

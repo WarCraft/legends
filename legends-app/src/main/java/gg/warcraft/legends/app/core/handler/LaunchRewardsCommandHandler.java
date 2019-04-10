@@ -72,7 +72,7 @@ public class LaunchRewardsCommandHandler implements CommandHandler {
         playerCommandService.sendNotification(playerId, "You received 3 War Crates.");
         playerCommandService.sendNotification(playerId, "You received 2 Legend Crates.");
         playerCommandService.sendNotification(playerId, "You received a Titan Crate.");
-        playerCommandService.sendNotification(playerId, "You received a Five Year Old Cake.");
+        playerCommandService.sendNotification(playerId, "You unlocked the Five Year Old Cake. You can equip it from your /me > collectables > promotions menu.");
         return true;
     }
 }
