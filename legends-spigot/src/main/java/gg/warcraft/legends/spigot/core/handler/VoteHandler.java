@@ -1,6 +1,5 @@
 package gg.warcraft.legends.spigot.core.handler;
 
-import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
@@ -10,10 +9,12 @@ import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.item.Item;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.UUID;
 
-public class VoteHandler {
+public class VoteHandler implements Listener {
     private final PlayerCommandService playerCommandService;
     private final Server server;
     private final Item voteCrate;
@@ -27,7 +28,7 @@ public class VoteHandler {
         this.voteCrate = lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.VOTE_CRATE).build();
     }
 
-    @Subscribe
+    @EventHandler
     public void onVoteEvent(VotifierEvent event) {
         Vote vote = event.getVote();
         Player player = server.getPlayer(vote.getUsername());

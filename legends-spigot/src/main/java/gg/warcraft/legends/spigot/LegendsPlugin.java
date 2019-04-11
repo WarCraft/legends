@@ -209,7 +209,7 @@ public class LegendsPlugin extends JavaPlugin {
         eventService.subscribe(playerCurrencyEventHandler);
 
         VoteHandler voteHandler = injector.getInstance(VoteHandler.class);
-        eventService.subscribe(voteHandler);
+        getServer().getPluginManager().registerEvents(voteHandler, this);
 
         // AI
         NpcInteractHandler npcInteractHandler = injector.getInstance(NpcInteractHandler.class);
