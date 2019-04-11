@@ -52,6 +52,7 @@ import gg.warcraft.legends.app.core.handler.SpawnCommandHandler;
 import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
 import gg.warcraft.legends.app.core.handler.TrebCommandHandler;
 import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
+import gg.warcraft.legends.app.core.handler.VoteCommandHandler;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardRewardHandler;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardUpdateHandler;
 import gg.warcraft.legends.app.core.tutorial.handler.TutorialCommandHandler;
@@ -401,6 +402,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         LaunchRewardsCommandHandler launchRewardsCommandHandler = injector.getInstance(LaunchRewardsCommandHandler.class);
         commandCommandService.createCommand("ilovewarcraft", Collections.emptyList(), launchRewardsCommandHandler);
+
+        VoteCommandHandler voteCommandHandler = injector.getInstance(VoteCommandHandler.class);
+        commandCommandService.createCommand("vote", Collections.emptyList(), voteCommandHandler);
     }
 
     // TODO remove all this code and any classes from the spigotOLD package
