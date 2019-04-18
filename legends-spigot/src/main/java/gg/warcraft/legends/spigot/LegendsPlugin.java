@@ -90,6 +90,7 @@ import gg.warcraft.legends.spigot.OLD.shop.SpigotMiniPetFactory;
 import gg.warcraft.legends.spigot.core.handler.CraftPreventionHandler;
 import gg.warcraft.legends.spigot.core.handler.OnePointEightPvPInitializationHandler;
 import gg.warcraft.legends.spigot.core.handler.SpigotScoreboardHandler;
+import gg.warcraft.legends.spigot.core.handler.UniversalDroppedItemHandler;
 import gg.warcraft.legends.spigot.core.handler.VoteHandler;
 import gg.warcraft.monolith.api.Monolith;
 import gg.warcraft.monolith.api.MonolithPluginUtils;
@@ -211,6 +212,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         VoteHandler voteHandler = injector.getInstance(VoteHandler.class);
         getServer().getPluginManager().registerEvents(voteHandler, this);
+
+        UniversalDroppedItemHandler universalDroppedItemHandler = new UniversalDroppedItemHandler();
+        getServer().getPluginManager().registerEvents(universalDroppedItemHandler, this);
 
         // AI
         NpcInteractHandler npcInteractHandler = injector.getInstance(NpcInteractHandler.class);
