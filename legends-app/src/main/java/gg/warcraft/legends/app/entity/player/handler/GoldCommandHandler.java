@@ -72,8 +72,8 @@ public class GoldCommandHandler implements CommandHandler {
 
         playerCommandService.removeCurrency(player.getId(), LegendsCurrency.GOLD, goldToGive);
         playerCommandService.addCurrency(targetPlayerId, LegendsCurrency.GOLD, goldToGive);
-        playerCommandService.sendNotification(player.getId(), "You've given " + goldToGive + " to " + targetPlayerName);
-        playerCommandService.sendNotification(targetPlayerId, "You received " + goldToGive + " from " + player.getName());
+        playerCommandService.sendNotification(player.getId(), "You've given " + goldToGive + " gold to " + targetPlayerName);
+        playerCommandService.sendNotification(targetPlayerId, "You received " + goldToGive + " gold from " + player.getName());
         return true;
     }
 
