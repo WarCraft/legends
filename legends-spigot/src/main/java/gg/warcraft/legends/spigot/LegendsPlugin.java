@@ -88,6 +88,7 @@ import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozleFactory;
 import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozleHandler;
 import gg.warcraft.legends.spigot.OLD.shop.SpigotMiniPetFactory;
 import gg.warcraft.legends.spigot.core.handler.CraftPreventionHandler;
+import gg.warcraft.legends.spigot.core.handler.FreezeCommandHandler;
 import gg.warcraft.legends.spigot.core.handler.OnePointEightPvPInitializationHandler;
 import gg.warcraft.legends.spigot.core.handler.SpigotScoreboardHandler;
 import gg.warcraft.legends.spigot.core.handler.UniversalDroppedItemHandler;
@@ -409,6 +410,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         VoteCommandHandler voteCommandHandler = injector.getInstance(VoteCommandHandler.class);
         commandCommandService.createCommand("vote", Collections.emptyList(), voteCommandHandler);
+
+        FreezeCommandHandler freezeCommandHandler = injector.getInstance(FreezeCommandHandler.class);
+        commandCommandService.createCommand("freeze", Lists.newArrayList("unfreeze"), freezeCommandHandler);
     }
 
     // TODO remove all this code and any classes from the spigotOLD package
