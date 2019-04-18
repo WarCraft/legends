@@ -51,6 +51,7 @@ import gg.warcraft.legends.app.core.handler.PlayerSpawnHandler;
 import gg.warcraft.legends.app.core.handler.SpawnCommandHandler;
 import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
 import gg.warcraft.legends.app.core.handler.TrebCommandHandler;
+import gg.warcraft.legends.app.core.handler.TutorialPvpHandler;
 import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
 import gg.warcraft.legends.app.core.handler.VoteCommandHandler;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardRewardHandler;
@@ -255,6 +256,9 @@ public class LegendsPlugin extends JavaPlugin {
 
         ArrowFriendlyFireHandler arrowFriendlyFireHandler = injector.getInstance(ArrowFriendlyFireHandler.class);
         eventService.subscribe(arrowFriendlyFireHandler);
+
+        TutorialPvpHandler tutorialPvpHandler = injector.getInstance(TutorialPvpHandler.class);
+        eventService.subscribe(tutorialPvpHandler);
 
         // Shop
         ShopProfileInitializationHandler shopProfileInitializationHandler =
