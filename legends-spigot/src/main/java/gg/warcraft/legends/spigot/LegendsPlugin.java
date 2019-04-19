@@ -215,7 +215,7 @@ public class LegendsPlugin extends JavaPlugin {
         VoteHandler voteHandler = injector.getInstance(VoteHandler.class);
         getServer().getPluginManager().registerEvents(voteHandler, this);
 
-        UniversalDroppedItemHandler universalDroppedItemHandler = new UniversalDroppedItemHandler();
+        UniversalDroppedItemHandler universalDroppedItemHandler = injector.getInstance(UniversalDroppedItemHandler.class);
         getServer().getPluginManager().registerEvents(universalDroppedItemHandler, this);
 
         // AI
