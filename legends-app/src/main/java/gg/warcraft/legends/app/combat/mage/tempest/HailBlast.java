@@ -51,7 +51,7 @@ public class HailBlast extends AbstractAbility implements RangedAbility {
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
 
         OrientedLocation origin = caster.getEyeLocation();
-        Vector3f direction = caster.getEyeLocation().getDirection();
+        Vector3f direction = caster.getEyeLocation().toDirection();
         Vector3f velocity = direction.mul(speed);
         Movement movement = movementFactory.createLinearMovement(origin, velocity, range);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());

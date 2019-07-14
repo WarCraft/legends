@@ -28,7 +28,7 @@ public class SupernovaProjectile extends SimpleMonolithAbility implements Monoli
     public SupernovaProjectile(EntityService entityService, MonolithEntity caster, double radius) {
         super(caster);
         Location location = caster.getEyeLocation();
-        Vector direction = caster.getEyeLocation().getDirection();
+        Vector direction = caster.getEyeLocation().toDirection();
         this.movement = new LinearMovement(location, direction, MAX_DISTANCE);
         Hitbox hitbox = new SphericalHitbox(entityService, radius, entity -> entity != caster);
         MonolithProjectile projectile = new MonolithProjectile(movement, hitbox);

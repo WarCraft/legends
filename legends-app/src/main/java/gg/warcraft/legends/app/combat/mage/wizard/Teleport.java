@@ -22,6 +22,7 @@ import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.BlockTypeUtils;
 import gg.warcraft.monolith.api.world.location.BlockLocation;
 import gg.warcraft.monolith.api.world.location.Location;
+import gg.warcraft.monolith.api.world.location.LocationFactory;
 import gg.warcraft.monolith.api.world.location.OrientedLocation;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
@@ -42,6 +43,7 @@ public class Teleport extends AbstractAbility implements RangedAbility {
     public Teleport(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
                     WorldQueryService worldQueryService, WorldCommandService worldCommandService,
                     MovementFactory movementFactory, HitboxFactory hitboxFactory, BlockTypeUtils blockTypeUtils,
+                    LocationFactory locationFactory,
                     @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                     @Assisted("target") @Nullable Entity rangedTarget, @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
@@ -56,9 +58,13 @@ public class Teleport extends AbstractAbility implements RangedAbility {
         BlockLocation relativeLocation = targetLocation.add(0, 1, 0);
         Block relative = worldQueryService.getBlockAt(relativeLocation);
         if (blockTypeUtils.getNonSolids().contains(relative.getType())) {
-            teleportLocation = relativeLocation.toLocation()
-                    .add(0.5f, 0, 0.5f)
-                    .withDirection(caster.getEyeLocation().getDirection());
+            teleportLocation = locationFactory.createOrientedLocation(
+                    relativeLocation.getWorld(),
+                    relativeLocation.getX(),
+                    relativeLocation.getY(),
+                    relativeLocation.getZ(),
+                    caster.getEyeLocation().toDirection()
+            ).add(0.5f, 0, 0.5f);
         } else {
             Vector3f targetToCaster = targetLocation.toLocation().toVector().sub(originalLocation.toVector());
             targetToCaster.normalize();
@@ -66,9 +72,13 @@ public class Teleport extends AbstractAbility implements RangedAbility {
                     .add(0.5f, 0.5f, 0.5f)
                     .add(targetToCaster)
                     .toBlockLocation();
-            teleportLocation = adjustedLocation.toLocation()
-                    .add(0.5f, 1, 0.5f)
-                    .withDirection(caster.getEyeLocation().getDirection());
+            teleportLocation = locationFactory.createOrientedLocation(
+                    adjustedLocation.getWorld(),
+                    adjustedLocation.getX(),
+                    adjustedLocation.getY(),
+                    adjustedLocation.getZ(),
+                    caster.getEyeLocation().toDirection()
+            ).add(0.5f, 1, 0.5f);
         }
 
         entityCommandService.teleport(caster.getId(), teleportLocation);

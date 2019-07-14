@@ -19,7 +19,7 @@ import gg.warcraft.monolith.api.entity.player.event.PlayerPreRespawnEvent;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.Direction;
 import gg.warcraft.monolith.api.world.DirectionUtils;
-import gg.warcraft.monolith.api.world.WorldType;
+import gg.warcraft.monolith.api.world.World;
 import gg.warcraft.monolith.api.world.location.LocationFactory;
 import gg.warcraft.monolith.api.world.location.OrientedLocation;
 
@@ -74,23 +74,23 @@ public class TutorialStepHandler implements CommandHandler {
         this.taskService = taskService;
 
         this.startLocation = locationFactory
-                .createLocation(WorldType.THE_END, 196.5f, 163f, -19.5f)
-                .withDirection(directionUtils.toVector(Direction.EAST));
+                .createOrientedLocation(World.THE_END, 196.5f, 163f, -19.5f,
+                        directionUtils.toVector(Direction.EAST));
         this.raceLocation = locationFactory
-                .createLocation(WorldType.THE_END, 253.5f, 174f, 92.5f)
-                .withDirection(directionUtils.toVector(Direction.EAST));
+                .createOrientedLocation(World.THE_END, 253.5f, 174f, 92.5f,
+                        directionUtils.toVector(Direction.EAST));
         this.classLocation = locationFactory
-                .createLocation(WorldType.THE_END, 357.5f, 191f, 34.5f)
-                .withDirection(directionUtils.toVector(Direction.EAST));
+                .createOrientedLocation(World.THE_END, 357.5f, 191f, 34.5f,
+                        directionUtils.toVector(Direction.EAST));
         this.gatheringLocation = locationFactory
-                .createLocation(WorldType.THE_END, 203.5f, 180f, -138.5f)
-                .withDirection(directionUtils.toVector(Direction.SOUTH));
+                .createOrientedLocation(World.THE_END, 203.5f, 180f, -138.5f,
+                        directionUtils.toVector(Direction.SOUTH));
         this.siegeLocation = locationFactory
-                .createLocation(WorldType.THE_END, 288.5f, 165f, -191.5f)
-                .withDirection(directionUtils.toVector(Direction.EAST));
+                .createOrientedLocation(World.THE_END, 288.5f, 165f, -191.5f,
+                        directionUtils.toVector(Direction.EAST));
         this.finaleLocation = locationFactory
-                .createLocation(WorldType.THE_END, 414.5f, 178f, -112.5f)
-                .withDirection(directionUtils.toVector(Direction.EAST));
+                .createOrientedLocation(World.THE_END, 414.5f, 178f, -112.5f,
+                        directionUtils.toVector(Direction.EAST));
     }
 
     private OrientedLocation getLocationForStep(TutorialStep step) {

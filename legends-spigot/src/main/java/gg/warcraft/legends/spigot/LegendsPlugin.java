@@ -36,24 +36,8 @@ import gg.warcraft.legends.app.config.LegendsMapperModule;
 import gg.warcraft.legends.app.core.challenge.handler.ChallengeCompletionHandler;
 import gg.warcraft.legends.app.core.challenge.handler.ChallengeCycleHandler;
 import gg.warcraft.legends.app.core.challenge.handler.ChallengeResetHandler;
-import gg.warcraft.legends.app.core.game.handler.DailySkirmishHandler;
-import gg.warcraft.legends.app.core.game.handler.GameObjectivesAndPointsHandler;
-import gg.warcraft.legends.app.core.game.handler.GameTimerHandler;
-import gg.warcraft.legends.app.core.game.handler.ObjectiveAnnouncementHandler;
-import gg.warcraft.legends.app.core.game.handler.SkirmishRewardHandler;
-import gg.warcraft.legends.app.core.handler.CaptureAndKillRewardHandler;
-import gg.warcraft.legends.app.core.handler.CombatLoggingHandler;
-import gg.warcraft.legends.app.core.handler.FishCommandHandler;
-import gg.warcraft.legends.app.core.handler.KitCommandHandler;
-import gg.warcraft.legends.app.core.handler.LaunchRewardsCommandHandler;
-import gg.warcraft.legends.app.core.handler.PlayerCountMetricHandler;
-import gg.warcraft.legends.app.core.handler.PlayerSpawnHandler;
-import gg.warcraft.legends.app.core.handler.SpawnCommandHandler;
-import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
-import gg.warcraft.legends.app.core.handler.TrebCommandHandler;
-import gg.warcraft.legends.app.core.handler.TutorialPvpHandler;
-import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
-import gg.warcraft.legends.app.core.handler.VoteCommandHandler;
+import gg.warcraft.legends.app.core.game.handler.*;
+import gg.warcraft.legends.app.core.handler.*;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardRewardHandler;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardUpdateHandler;
 import gg.warcraft.legends.app.core.tutorial.handler.TutorialCommandHandler;
@@ -65,13 +49,7 @@ import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangeHandle
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangedHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PrestigeAttributesHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.RankUpRewardHandler;
-import gg.warcraft.legends.app.entity.player.statistic.handler.CurrencyStatisticHandler;
-import gg.warcraft.legends.app.entity.player.statistic.handler.DamageHealingDoneTakenStatisticHandler;
-import gg.warcraft.legends.app.entity.player.statistic.handler.KillDeathStatisticHandler;
-import gg.warcraft.legends.app.entity.player.statistic.handler.LootCrateStatisticHandler;
-import gg.warcraft.legends.app.entity.player.statistic.handler.ObjectiveStatisticHandler;
-import gg.warcraft.legends.app.entity.player.statistic.handler.ResourcesGatheredStatisticHandler;
-import gg.warcraft.legends.app.entity.player.statistic.handler.TimePlayedStatisticHandler;
+import gg.warcraft.legends.app.entity.player.statistic.handler.*;
 import gg.warcraft.legends.app.item.crate.handler.LootCrateUseHandler;
 import gg.warcraft.legends.app.item.equipment.handler.EquipmentUpgradeUseHandler;
 import gg.warcraft.legends.app.item.handler.EquipmentAttributesHandler;
@@ -88,12 +66,7 @@ import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozle;
 import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozleFactory;
 import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozleHandler;
 import gg.warcraft.legends.spigot.OLD.shop.SpigotMiniPetFactory;
-import gg.warcraft.legends.spigot.core.handler.CraftPreventionHandler;
-import gg.warcraft.legends.spigot.core.handler.FreezeCommandHandler;
-import gg.warcraft.legends.spigot.core.handler.OnePointEightPvPInitializationHandler;
-import gg.warcraft.legends.spigot.core.handler.SpigotScoreboardHandler;
-import gg.warcraft.legends.spigot.core.handler.UniversalDroppedItemHandler;
-import gg.warcraft.legends.spigot.core.handler.VoteHandler;
+import gg.warcraft.legends.spigot.core.handler.*;
 import gg.warcraft.monolith.api.Monolith;
 import gg.warcraft.monolith.api.MonolithPluginUtils;
 import gg.warcraft.monolith.api.combat.CombatFactory;
@@ -105,7 +78,7 @@ import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.Direction;
-import gg.warcraft.monolith.api.world.WorldType;
+import gg.warcraft.monolith.api.world.World;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.box.BoundingBlockBox;
 import gg.warcraft.monolith.api.world.block.box.BoundingBlockBoxFactory;
@@ -481,16 +454,16 @@ public class LegendsPlugin extends JavaPlugin {
         SiegeWeaponRepository siegeWeaponRepository = injector.getInstance(SiegeWeaponRepository.class);
         WorldQueryService worldQueryService = injector.getInstance(WorldQueryService.class);
 
-        Block loadBlock = worldQueryService.getBlockAt(WorldType.THE_END, 294, 164, -193);
-        Block turnLeftBlock = worldQueryService.getBlockAt(WorldType.THE_END, 293, 165, -198);
-        Block turnRightBlock = worldQueryService.getBlockAt(WorldType.THE_END, 295, 165, -198);
-        Block chargeBlock = worldQueryService.getBlockAt(WorldType.THE_END, 294, 165, -197);
-        Block fireBlock = worldQueryService.getBlockAt(WorldType.THE_END, 294, 166, -197);
-        Block projectileOriginBlock = worldQueryService.getBlockAt(WorldType.THE_END, 294, 176, -206);
+        Block loadBlock = worldQueryService.getBlockAt(World.THE_END, 294, 164, -193);
+        Block turnLeftBlock = worldQueryService.getBlockAt(World.THE_END, 293, 165, -198);
+        Block turnRightBlock = worldQueryService.getBlockAt(World.THE_END, 295, 165, -198);
+        Block chargeBlock = worldQueryService.getBlockAt(World.THE_END, 294, 165, -197);
+        Block fireBlock = worldQueryService.getBlockAt(World.THE_END, 294, 166, -197);
+        Block projectileOriginBlock = worldQueryService.getBlockAt(World.THE_END, 294, 176, -206);
 
         BoundingBlockBoxFactory boundingBlockBoxFactory = injector.getInstance(BoundingBlockBoxFactory.class);
         BoundingBlockBox tutorialTrebuchetBoundingBox = boundingBlockBoxFactory.createBoundingBlockBox(
-                WorldType.THE_END, new Vector3i(291, 164, -206), new Vector3i(296, 176, -193));
+                World.THE_END, new Vector3i(291, 164, -206), new Vector3i(296, 176, -193));
 
         SiegeWeapon tutorialTrebuchet = siegeWeaponFactory.createTrebuchet(Direction.NORTH,
                 tutorialTrebuchetBoundingBox.stream().collect(Collectors.toSet()),

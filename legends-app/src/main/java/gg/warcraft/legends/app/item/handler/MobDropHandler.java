@@ -19,18 +19,12 @@ import gg.warcraft.monolith.api.command.CommandSender;
 import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.event.ItemPrePickupEvent;
 import gg.warcraft.monolith.api.util.TimeUtils;
-import gg.warcraft.monolith.api.world.WorldType;
+import gg.warcraft.monolith.api.world.World;
 import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.location.LocationFactory;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class MobDropHandler implements CommandHandler {
     private static final int RESERVE_DURATION = TimeUtils.MILLIS_PER_MINUTE;
@@ -126,7 +120,7 @@ public class MobDropHandler implements CommandHandler {
             }
 
             Item drop = equipmentGenerator.generate(specializationType, team);
-            Location dropLocation = locationFactory.createLocation(WorldType.OVERWORLD, x, y, z);
+            Location dropLocation = locationFactory.createLocation(World.OVERWORLD, x, y, z);
             List<UUID> droppedItemIds = worldCommandService.dropItemsAt(Collections.singletonList(drop), dropLocation);
             UUID droppedItemId = droppedItemIds.get(0);
 

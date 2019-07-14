@@ -46,7 +46,7 @@ public class Fireball extends AbstractAbility implements RangedAbility {
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
         Location location = caster.getEyeLocation();
         float speed = snapshot.getFloat(AbilityConfigurationValue.SPEED);
-        Vector3f direction = caster.getEyeLocation().getDirection();
+        Vector3f direction = caster.getEyeLocation().toDirection();
         Vector3f velocity = direction.mul(speed);
         Movement movement = movementFactory.createLinearMovement(location, velocity, MAX_DISTANCE);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());

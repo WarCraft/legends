@@ -33,7 +33,7 @@ public class Slam extends AbstractAbility implements MeleeAbility {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
         this.worldCommandService = worldCommandService;
-        this.direction = caster.getEyeLocation().getDirection();
+        this.direction = caster.getEyeLocation().toDirection();
     }
 
     @Override
