@@ -192,7 +192,7 @@ public class DefaultGameCommandService implements GameCommandService {
             if (occupiers != null) {
                 newObjectives.put(objective.getId(), occupiers);
 
-                int currentPoints = newPoints.get(occupiers);
+                int currentPoints = newPoints.getOrDefault(occupiers, 0);
                 String objectiveType = objective.getType();
                 int objectiveTypePoints = gameRepository.getCapturePoints(objectiveType);
                 newPoints.put(occupiers, currentPoints + objectiveTypePoints);

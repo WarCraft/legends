@@ -5,6 +5,7 @@ import gg.warcraft.legends.api.core.game.GameType;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.monolith.api.util.Duration;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractGame implements Game {
@@ -39,7 +40,10 @@ public abstract class AbstractGame implements Game {
 
     @Override
     public Map<LegendsTeam, Integer> getPoints() {
-        return points;
+        if(points != null) {
+            return points;
+        }
+        return new HashMap<>();
     }
 
     @Override
