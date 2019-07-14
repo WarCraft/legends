@@ -21,10 +21,15 @@ import gg.warcraft.monolith.api.item.event.ItemPrePickupEvent;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.World;
 import gg.warcraft.monolith.api.world.location.Location;
-import gg.warcraft.monolith.api.world.location.LocationFactory;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 
 public class MobDropHandler implements CommandHandler {
     private static final int RESERVE_DURATION = TimeUtils.MILLIS_PER_MINUTE;
@@ -34,7 +39,6 @@ public class MobDropHandler implements CommandHandler {
     private final WorldCommandService worldCommandService;
     private final WhoDamagedWhoRepository whoDamagedWhoRepository;
     private final EquipmentGeneratorFactory equipmentGeneratorFactory;
-    private final LocationFactory locationFactory;
     private final Random random;
     private final Map<UUID, UUID> reservedFor;
     private final Map<UUID, Long> reservedUntil;
@@ -45,14 +49,12 @@ public class MobDropHandler implements CommandHandler {
                           WorldCommandService worldCommandService,
                           WhoDamagedWhoRepository whoDamagedWhoRepository,
                           EquipmentGeneratorFactory equipmentGeneratorFactory,
-                          LocationFactory locationFactory,
                           Random random) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.worldCommandService = worldCommandService;
         this.whoDamagedWhoRepository = whoDamagedWhoRepository;
         this.equipmentGeneratorFactory = equipmentGeneratorFactory;
-        this.locationFactory = locationFactory;
         this.random = random;
         this.reservedFor = new HashMap<>();
         this.reservedUntil = new HashMap<>();
@@ -120,7 +122,7 @@ public class MobDropHandler implements CommandHandler {
             }
 
             Item drop = equipmentGenerator.generate(specializationType, team);
-            Location dropLocation = locationFactory.createLocation(World.OVERWORLD, x, y, z);
+            Location dropLocation = new Location(World.OVERWORLD, x, y, z);
             List<UUID> droppedItemIds = worldCommandService.dropItemsAt(Collections.singletonList(drop), dropLocation);
             UUID droppedItemId = droppedItemIds.get(0);
 

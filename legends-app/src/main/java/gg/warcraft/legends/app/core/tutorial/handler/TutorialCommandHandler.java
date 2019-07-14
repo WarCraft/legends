@@ -17,7 +17,7 @@ import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
 import gg.warcraft.monolith.api.util.StringUtils;
 import gg.warcraft.monolith.api.world.Direction;
 import gg.warcraft.monolith.api.world.DirectionUtils;
-import gg.warcraft.monolith.api.world.location.OrientedLocation;
+import gg.warcraft.monolith.api.world.location.Location;
 
 import java.util.List;
 import java.util.UUID;
@@ -105,9 +105,9 @@ public class TutorialCommandHandler implements CommandHandler {
                         return true;
                 }
                 playerCommandService.setTutorialStep(playerId, TutorialStep.DONE);
-                OrientedLocation spawn = spawnRepository.getSpawn(player.getTeam());
-                Direction direction = directionUtils.toDirection(spawn.getYaw());
-                entityCommandService.teleport(playerId, spawn, direction);
+                Location spawn = spawnRepository.getSpawn(player.getTeam());
+                // TODO Direction direction = directionUtils.toDirection(spawn.getYaw());
+                entityCommandService.teleport(playerId, spawn, Direction.NORTH);
                 return true;
         }
         return false;

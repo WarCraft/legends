@@ -23,7 +23,7 @@ public class Disengage extends AbstractAbility implements MeleeAbility {
                      @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                      @Assisted("target") @Nullable Entity meleeTarget) {
         super(caster.getId(), snapshot);
-        Vector3f direction = caster.getEyeLocation().toDirection();
+        Vector3f direction = caster.getEyeOrientation().toVector();
         direction.y = 0;
         direction.mul(-1);
         float distance = snapshot.getFloat("distance");

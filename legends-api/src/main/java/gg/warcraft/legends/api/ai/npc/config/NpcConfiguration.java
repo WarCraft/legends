@@ -1,8 +1,8 @@
 package gg.warcraft.legends.api.ai.npc.config;
 
 import gg.warcraft.legends.api.ai.npc.NpcType;
-import gg.warcraft.monolith.api.config.LocationConfiguration;
 import gg.warcraft.monolith.api.entity.EntityType;
+import gg.warcraft.monolith.api.world.location.config.LocationConfig;
 
 public interface NpcConfiguration {
 
@@ -12,5 +12,5 @@ public interface NpcConfiguration {
 
     EntityType getEntityType();
 
-    LocationConfiguration getLocation();
+    LocationConfig getLocation();
 }

@@ -16,7 +16,6 @@ import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.menu.Menu;
 import gg.warcraft.monolith.api.menu.service.MenuCommandService;
 import gg.warcraft.monolith.api.world.location.Location;
-import gg.warcraft.monolith.api.world.location.LocationFactory;
 
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -25,7 +24,6 @@ public class DefaultNpcCommandService implements NpcCommandService {
     private final NpcRepository npcRepository;
     private final EntityCommandService entityCommandService;
     private final MenuCommandService menuCommandService;
-    private final LocationFactory locationFactory;
     private final NpcFactory npcFactory;
     private final BlueprintVendorDialogFactory blueprintVendorDialogFactory;
     private final ClassTrainerDialogFactory classTrainerDialogFactory;
@@ -35,7 +33,6 @@ public class DefaultNpcCommandService implements NpcCommandService {
     public DefaultNpcCommandService(NpcRepository npcRepository,
                                     EntityCommandService entityCommandService,
                                     MenuCommandService menuCommandService,
-                                    LocationFactory locationFactory,
                                     NpcFactory npcFactory,
                                     BlueprintVendorDialogFactory blueprintVendorDialogFactory,
                                     ClassTrainerDialogFactory classTrainerDialogFactory,
@@ -43,7 +40,6 @@ public class DefaultNpcCommandService implements NpcCommandService {
         this.npcRepository = npcRepository;
         this.entityCommandService = entityCommandService;
         this.menuCommandService = menuCommandService;
-        this.locationFactory = locationFactory;
         this.npcFactory = npcFactory;
         this.blueprintVendorDialogFactory = blueprintVendorDialogFactory;
         this.classTrainerDialogFactory = classTrainerDialogFactory;
@@ -55,7 +51,7 @@ public class DefaultNpcCommandService implements NpcCommandService {
         String name = configuration.getName();
         NpcType type = configuration.getType();
         EntityType entityType = configuration.getEntityType();
-        Location location = locationFactory.createLocation(configuration.getLocation());
+        Location location = Location.apply(configuration.getLocation());
 
         UUID npcId = entityCommandService.spawnEntity(entityType, location);
         npcFactory.create(npcId, name);

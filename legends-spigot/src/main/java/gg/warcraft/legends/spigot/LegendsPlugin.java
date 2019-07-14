@@ -36,8 +36,24 @@ import gg.warcraft.legends.app.config.LegendsMapperModule;
 import gg.warcraft.legends.app.core.challenge.handler.ChallengeCompletionHandler;
 import gg.warcraft.legends.app.core.challenge.handler.ChallengeCycleHandler;
 import gg.warcraft.legends.app.core.challenge.handler.ChallengeResetHandler;
-import gg.warcraft.legends.app.core.game.handler.*;
-import gg.warcraft.legends.app.core.handler.*;
+import gg.warcraft.legends.app.core.game.handler.DailySkirmishHandler;
+import gg.warcraft.legends.app.core.game.handler.GameObjectivesAndPointsHandler;
+import gg.warcraft.legends.app.core.game.handler.GameTimerHandler;
+import gg.warcraft.legends.app.core.game.handler.ObjectiveAnnouncementHandler;
+import gg.warcraft.legends.app.core.game.handler.SkirmishRewardHandler;
+import gg.warcraft.legends.app.core.handler.CaptureAndKillRewardHandler;
+import gg.warcraft.legends.app.core.handler.CombatLoggingHandler;
+import gg.warcraft.legends.app.core.handler.FishCommandHandler;
+import gg.warcraft.legends.app.core.handler.KitCommandHandler;
+import gg.warcraft.legends.app.core.handler.LaunchRewardsCommandHandler;
+import gg.warcraft.legends.app.core.handler.PlayerCountMetricHandler;
+import gg.warcraft.legends.app.core.handler.PlayerSpawnHandler;
+import gg.warcraft.legends.app.core.handler.SpawnCommandHandler;
+import gg.warcraft.legends.app.core.handler.TotalPointsMetricHandler;
+import gg.warcraft.legends.app.core.handler.TrebCommandHandler;
+import gg.warcraft.legends.app.core.handler.TutorialPvpHandler;
+import gg.warcraft.legends.app.core.handler.UniversalBlockBreakPlaceHandler;
+import gg.warcraft.legends.app.core.handler.VoteCommandHandler;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardRewardHandler;
 import gg.warcraft.legends.app.core.leaderboard.handler.LeaderboardUpdateHandler;
 import gg.warcraft.legends.app.core.tutorial.handler.TutorialCommandHandler;
@@ -49,7 +65,13 @@ import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangeHandle
 import gg.warcraft.legends.app.entity.player.rank.handler.PlayerRankChangedHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.PrestigeAttributesHandler;
 import gg.warcraft.legends.app.entity.player.rank.handler.RankUpRewardHandler;
-import gg.warcraft.legends.app.entity.player.statistic.handler.*;
+import gg.warcraft.legends.app.entity.player.statistic.handler.CurrencyStatisticHandler;
+import gg.warcraft.legends.app.entity.player.statistic.handler.DamageHealingDoneTakenStatisticHandler;
+import gg.warcraft.legends.app.entity.player.statistic.handler.KillDeathStatisticHandler;
+import gg.warcraft.legends.app.entity.player.statistic.handler.LootCrateStatisticHandler;
+import gg.warcraft.legends.app.entity.player.statistic.handler.ObjectiveStatisticHandler;
+import gg.warcraft.legends.app.entity.player.statistic.handler.ResourcesGatheredStatisticHandler;
+import gg.warcraft.legends.app.entity.player.statistic.handler.TimePlayedStatisticHandler;
 import gg.warcraft.legends.app.item.crate.handler.LootCrateUseHandler;
 import gg.warcraft.legends.app.item.equipment.handler.EquipmentUpgradeUseHandler;
 import gg.warcraft.legends.app.item.handler.EquipmentAttributesHandler;
@@ -66,7 +88,12 @@ import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozle;
 import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozleFactory;
 import gg.warcraft.legends.spigot.OLD.combat.mage.MassBamboozleHandler;
 import gg.warcraft.legends.spigot.OLD.shop.SpigotMiniPetFactory;
-import gg.warcraft.legends.spigot.core.handler.*;
+import gg.warcraft.legends.spigot.core.handler.CraftPreventionHandler;
+import gg.warcraft.legends.spigot.core.handler.FreezeCommandHandler;
+import gg.warcraft.legends.spigot.core.handler.OnePointEightPvPInitializationHandler;
+import gg.warcraft.legends.spigot.core.handler.SpigotScoreboardHandler;
+import gg.warcraft.legends.spigot.core.handler.UniversalDroppedItemHandler;
+import gg.warcraft.legends.spigot.core.handler.VoteHandler;
 import gg.warcraft.monolith.api.Monolith;
 import gg.warcraft.monolith.api.MonolithPluginUtils;
 import gg.warcraft.monolith.api.combat.CombatFactory;
@@ -82,8 +109,7 @@ import gg.warcraft.monolith.api.world.World;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.box.BoundingBlockBox;
 import gg.warcraft.monolith.api.world.block.box.BoundingBlockBoxFactory;
-import gg.warcraft.monolith.api.world.location.LocationFactory;
-import gg.warcraft.monolith.api.world.location.OrientedLocation;
+import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
 import gg.warcraft.siege.api.weapon.PersistentSiegeWeaponDecorator;
 import gg.warcraft.siege.api.weapon.SiegeWeapon;
@@ -105,7 +131,6 @@ public class LegendsPlugin extends JavaPlugin {
 
     void loadServerConfiguration() {
         MonolithPluginUtils pluginUtils = injector.getInstance(MonolithPluginUtils.class);
-        LocationFactory locationFactory = injector.getInstance(LocationFactory.class);
         LegendsMapperModule legendsMapperModule = new LegendsMapperModule();
 
         ServerConfiguration serverConfiguration = pluginUtils.loadConfiguration("REMOTE", "legends/server.yml", "",
@@ -113,7 +138,8 @@ public class LegendsPlugin extends JavaPlugin {
 
         SpawnRepository spawnRepository = injector.getInstance(SpawnRepository.class);
         serverConfiguration.getSpawnLocations().forEach((team, location) -> {
-            OrientedLocation spawn = locationFactory.createOrientedLocation(location);
+            Location spawn = Location.apply(location);
+            // TODO store orientation
             spawnRepository.save(team, spawn);
         });
 

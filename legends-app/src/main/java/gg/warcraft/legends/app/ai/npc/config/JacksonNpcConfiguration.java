@@ -4,20 +4,20 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gg.warcraft.legends.api.ai.npc.NpcType;
 import gg.warcraft.legends.api.ai.npc.config.NpcConfiguration;
-import gg.warcraft.monolith.api.config.LocationConfiguration;
 import gg.warcraft.monolith.api.entity.EntityType;
+import gg.warcraft.monolith.api.world.location.config.LocationConfig;
 
 public class JacksonNpcConfiguration implements NpcConfiguration {
     private final String name;
     private final NpcType type;
     private final EntityType entityType;
-    private final LocationConfiguration location;
+    private final LocationConfig location;
 
     @JsonCreator
     public JacksonNpcConfiguration(@JsonProperty("name") String name,
                                    @JsonProperty("type") NpcType type,
                                    @JsonProperty("entityType") EntityType entityType,
-                                   @JsonProperty("location") LocationConfiguration location) {
+                                   @JsonProperty("location") LocationConfig location) {
         this.name = name;
         this.type = type;
         this.entityType = entityType;
@@ -40,7 +40,7 @@ public class JacksonNpcConfiguration implements NpcConfiguration {
     }
 
     @Override
-    public LocationConfiguration getLocation() {
+    public LocationConfig getLocation() {
         return location;
     }
 }

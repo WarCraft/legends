@@ -24,7 +24,8 @@ import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
-import gg.warcraft.monolith.api.world.location.OrientedLocation;
+import gg.warcraft.monolith.api.world.location.Location;
+import gg.warcraft.monolith.api.world.location.Orientation;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import org.joml.Vector3f;
 
@@ -50,13 +51,14 @@ public class HailBlast extends AbstractAbility implements RangedAbility {
         float speed = snapshot.getFloat(AbilityConfigurationValue.SPEED);
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
 
-        OrientedLocation origin = caster.getEyeLocation();
-        Vector3f direction = caster.getEyeLocation().toDirection();
+        Location origin = caster.getEyeLocation();
+        Orientation orientation = caster.getEyeOrientation();
+        Vector3f direction = orientation.toVector();
         Vector3f velocity = direction.mul(speed);
         Movement movement = movementFactory.createLinearMovement(origin, velocity, range);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
 
-        Cancellable effect = mageEffectFactory.createHailBlastEffect(movement, origin.getPitch(), origin.getYaw());
+        Cancellable effect = mageEffectFactory.createHailBlastEffect(movement, orientation.getPitch(), orientation.getYaw());
         abilityCommandService.createProjectile(this, movement, hitbox, effect::cancel);
 
         worldCommandService.playSound(origin, CAST_SOUND, SOUND_CATEGORY, 1, 1);

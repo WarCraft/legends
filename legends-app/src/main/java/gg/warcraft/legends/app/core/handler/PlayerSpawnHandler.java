@@ -12,7 +12,7 @@ import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.Direction;
 import gg.warcraft.monolith.api.world.DirectionUtils;
 import gg.warcraft.monolith.api.world.World;
-import gg.warcraft.monolith.api.world.location.OrientedLocation;
+import gg.warcraft.monolith.api.world.location.Location;
 
 public class PlayerSpawnHandler {
     private final LegendsPlayerQueryService legendsPlayerQueryService;
@@ -35,7 +35,7 @@ public class PlayerSpawnHandler {
     public void onPlayerPreRespawnEvent(PlayerPreRespawnEvent event) {
         LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getPlayerId());
         if (player.getLocation().getWorld() == World.OVERWORLD) {
-            OrientedLocation spawn = spawnRepository.getSpawn(player.getTeam());
+            Location spawn = spawnRepository.getSpawn(player.getTeam());
             event.setLocation(spawn);
         }
     }
@@ -45,9 +45,9 @@ public class PlayerSpawnHandler {
         if (event.getEntityType() == EntityType.PLAYER) {
             LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getEntityId());
             if (player.getLocation().getWorld() == World.OVERWORLD) {
-                OrientedLocation spawn = spawnRepository.getSpawn(player.getTeam());
-                Direction direction = directionUtils.toDirection(spawn.getYaw());
-                entityCommandService.teleport(event.getEntityId(), spawn, direction);
+                Location spawn = spawnRepository.getSpawn(player.getTeam());
+                // TODO Direction direction = directionUtils.toDirection(spawn.getYaw());
+                entityCommandService.teleport(event.getEntityId(), spawn, Direction.NORTH);
             }
         }
     }

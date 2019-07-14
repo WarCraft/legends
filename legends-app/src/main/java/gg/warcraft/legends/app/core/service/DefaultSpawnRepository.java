@@ -3,7 +3,7 @@ package gg.warcraft.legends.app.core.service;
 import com.google.inject.Singleton;
 import gg.warcraft.legends.api.core.service.SpawnRepository;
 import gg.warcraft.legends.api.entity.LegendsTeam;
-import gg.warcraft.monolith.api.world.location.OrientedLocation;
+import gg.warcraft.monolith.api.world.location.Location;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Singleton
 public class DefaultSpawnRepository implements SpawnRepository {
-    private final Map<LegendsTeam, OrientedLocation> spawnLocations;
+    private final Map<LegendsTeam, Location> spawnLocations;
     private final Map<UUID, Long> cooldowns;
 
     public DefaultSpawnRepository() {
@@ -20,7 +20,7 @@ public class DefaultSpawnRepository implements SpawnRepository {
     }
 
     @Override
-    public OrientedLocation getSpawn(LegendsTeam team) {
+    public Location getSpawn(LegendsTeam team) {
         return spawnLocations.get(team);
     }
 
@@ -30,7 +30,7 @@ public class DefaultSpawnRepository implements SpawnRepository {
     }
 
     @Override
-    public void save(LegendsTeam team, OrientedLocation spawn) {
+    public void save(LegendsTeam team, Location spawn) {
         spawnLocations.put(team, spawn);
     }
 

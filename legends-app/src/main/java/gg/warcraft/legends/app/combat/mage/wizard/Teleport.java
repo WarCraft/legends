@@ -16,14 +16,13 @@ import gg.warcraft.monolith.api.combat.PotionEffectType;
 import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.world.DirectionUtils;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.BlockTypeUtils;
 import gg.warcraft.monolith.api.world.location.BlockLocation;
 import gg.warcraft.monolith.api.world.location.Location;
-import gg.warcraft.monolith.api.world.location.LocationFactory;
-import gg.warcraft.monolith.api.world.location.OrientedLocation;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
 import org.joml.Vector3f;
@@ -43,7 +42,7 @@ public class Teleport extends AbstractAbility implements RangedAbility {
     public Teleport(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
                     WorldQueryService worldQueryService, WorldCommandService worldCommandService,
                     MovementFactory movementFactory, HitboxFactory hitboxFactory, BlockTypeUtils blockTypeUtils,
-                    LocationFactory locationFactory,
+                    DirectionUtils directionUtils,
                     @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                     @Assisted("target") @Nullable Entity rangedTarget, @Assisted Block blockTarget) {
         super(caster.getId(), snapshot);
@@ -52,19 +51,20 @@ public class Teleport extends AbstractAbility implements RangedAbility {
         this.slow = getSnapshot().getPotionEffect(PotionEffectType.SLOW);
 
         Location originalLocation = caster.getLocation();
-        OrientedLocation teleportLocation;
+        Location teleportLocation;
+        Float teleportOrientation;
 
         BlockLocation targetLocation = blockTarget.getLocation();
         BlockLocation relativeLocation = targetLocation.add(0, 1, 0);
         Block relative = worldQueryService.getBlockAt(relativeLocation);
         if (blockTypeUtils.getNonSolids().contains(relative.getType())) {
-            teleportLocation = locationFactory.createOrientedLocation(
+            teleportLocation = new Location(
                     relativeLocation.getWorld(),
                     relativeLocation.getX(),
                     relativeLocation.getY(),
-                    relativeLocation.getZ(),
-                    caster.getEyeLocation().toDirection()
+                    relativeLocation.getZ()
             ).add(0.5f, 0, 0.5f);
+            teleportOrientation = caster.getEyeOrientation().getYaw();
         } else {
             Vector3f targetToCaster = targetLocation.toLocation().toVector().sub(originalLocation.toVector());
             targetToCaster.normalize();
@@ -72,22 +72,23 @@ public class Teleport extends AbstractAbility implements RangedAbility {
                     .add(0.5f, 0.5f, 0.5f)
                     .add(targetToCaster)
                     .toBlockLocation();
-            teleportLocation = locationFactory.createOrientedLocation(
+            teleportLocation = new Location(
                     adjustedLocation.getWorld(),
                     adjustedLocation.getX(),
                     adjustedLocation.getY(),
-                    adjustedLocation.getZ(),
-                    caster.getEyeLocation().toDirection()
+                    adjustedLocation.getZ()
             ).add(0.5f, 1, 0.5f);
+            teleportOrientation = caster.getEyeOrientation().getYaw();
         }
 
-        entityCommandService.teleport(caster.getId(), teleportLocation);
+        entityCommandService.teleport(caster.getId(), teleportLocation, directionUtils.toDirection(teleportOrientation));
         worldCommandService.playSound(originalLocation, CAST_SOUND, SOUND_CATEGORY, 1, 1);
 
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
         Movement movement = movementFactory.createOneOffMovement(teleportLocation);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
-        abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
+        abilityCommandService.createProjectile(this, movement, hitbox, () -> {
+        });
         worldCommandService.playSound(teleportLocation, HIT_SOUND, SOUND_CATEGORY, 1, 1);
     }
 

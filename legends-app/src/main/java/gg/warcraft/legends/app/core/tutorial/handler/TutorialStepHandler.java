@@ -20,8 +20,8 @@ import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.Direction;
 import gg.warcraft.monolith.api.world.DirectionUtils;
 import gg.warcraft.monolith.api.world.World;
-import gg.warcraft.monolith.api.world.location.LocationFactory;
-import gg.warcraft.monolith.api.world.location.OrientedLocation;
+import gg.warcraft.monolith.api.world.location.Location;
+import gg.warcraft.monolith.api.world.location.Orientation;
 
 import java.util.HashMap;
 import java.util.List;
@@ -49,12 +49,18 @@ public class TutorialStepHandler implements CommandHandler {
     private final SpawnRepository spawnRepository;
     private final TaskService taskService;
 
-    private OrientedLocation startLocation;
-    private OrientedLocation raceLocation;
-    private OrientedLocation classLocation;
-    private OrientedLocation gatheringLocation;
-    private OrientedLocation siegeLocation;
-    private OrientedLocation finaleLocation;
+    private Location startLocation;
+    private Orientation startOrientation;
+    private Location raceLocation;
+    private Orientation raceOrientation;
+    private Location classLocation;
+    private Orientation classOrientation;
+    private Location gatheringLocation;
+    private Orientation gatheringOrientation;
+    private Location siegeLocation;
+    private Orientation siegeOrientation;
+    private Location finaleLocation;
+    private Orientation finaleOrientation;
 
     @Inject
     public TutorialStepHandler(LegendsPlayerQueryService playerQueryService,
@@ -63,7 +69,6 @@ public class TutorialStepHandler implements CommandHandler {
                                ShopProfileCommandService shopProfileCommandService,
                                SpawnRepository spawnRepository,
                                DirectionUtils directionUtils,
-                               LocationFactory locationFactory,
                                TaskService taskService) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
@@ -73,34 +78,26 @@ public class TutorialStepHandler implements CommandHandler {
         this.directionUtils = directionUtils;
         this.taskService = taskService;
 
-        this.startLocation = locationFactory
-                .createOrientedLocation(World.THE_END, 196.5f, 163f, -19.5f,
-                        directionUtils.toVector(Direction.EAST));
-        this.raceLocation = locationFactory
-                .createOrientedLocation(World.THE_END, 253.5f, 174f, 92.5f,
-                        directionUtils.toVector(Direction.EAST));
-        this.classLocation = locationFactory
-                .createOrientedLocation(World.THE_END, 357.5f, 191f, 34.5f,
-                        directionUtils.toVector(Direction.EAST));
-        this.gatheringLocation = locationFactory
-                .createOrientedLocation(World.THE_END, 203.5f, 180f, -138.5f,
-                        directionUtils.toVector(Direction.SOUTH));
-        this.siegeLocation = locationFactory
-                .createOrientedLocation(World.THE_END, 288.5f, 165f, -191.5f,
-                        directionUtils.toVector(Direction.EAST));
-        this.finaleLocation = locationFactory
-                .createOrientedLocation(World.THE_END, 414.5f, 178f, -112.5f,
-                        directionUtils.toVector(Direction.EAST));
+        this.startLocation = new Location(World.THE_END, 196.5f, 163f, -19.5f);
+        this.startOrientation = Orientation.apply(directionUtils.toVector(Direction.EAST));
+        this.raceLocation = new Location(World.THE_END, 253.5f, 174f, 92.5f);
+        this.raceOrientation = Orientation.apply(directionUtils.toVector(Direction.EAST));
+        this.classLocation = new Location(World.THE_END, 357.5f, 191f, 34.5f);
+        this.classOrientation = Orientation.apply(directionUtils.toVector(Direction.EAST));
+        this.gatheringLocation = new Location(World.THE_END, 203.5f, 180f, -138.5f);
+        this.gatheringOrientation = Orientation.apply(directionUtils.toVector(Direction.SOUTH));
+        this.siegeLocation = new Location(World.THE_END, 288.5f, 165f, -191.5f);
+        this.siegeOrientation = Orientation.apply(directionUtils.toVector(Direction.EAST));
+        this.finaleLocation = new Location(World.THE_END, 414.5f, 178f, -112.5f);
+        this.finaleOrientation = Orientation.apply(directionUtils.toVector(Direction.EAST));
     }
 
-    private OrientedLocation getLocationForStep(TutorialStep step) {
+    private Location getLocationForStep(TutorialStep step) {
         if (step == null) {
             return startLocation;
         }
 
         switch (step) {
-            case START:
-                return startLocation;
             case RACE:
                 return raceLocation;
             case CLASS:
@@ -111,6 +108,7 @@ public class TutorialStepHandler implements CommandHandler {
                 return siegeLocation;
             case FINALE:
                 return finaleLocation;
+            case START:
             default:
                 return startLocation;
         }
@@ -182,9 +180,9 @@ public class TutorialStepHandler implements CommandHandler {
                 break;
             case FINALE:
                 nextStep = TutorialStep.DONE;
-                OrientedLocation spawn = spawnRepository.getSpawn(player.getTeam());
-                Direction direction = directionUtils.toDirection(spawn.getYaw());
-                entityCommandService.teleport(playerId, spawn, direction);
+                Location spawn = spawnRepository.getSpawn(player.getTeam());
+                // TODO Direction direction = directionUtils.toDirection(spawn.getYaw());
+                entityCommandService.teleport(playerId, spawn, Direction.NORTH);
 
                 // Unlock current player specialization
                 String specializationName = player.getSpecialization().getName();
@@ -225,7 +223,7 @@ public class TutorialStepHandler implements CommandHandler {
         TutorialStep currentStep = player.getTutorialStep();
 
         if (currentStep != TutorialStep.DONE) {
-            OrientedLocation teleportLocation = getLocationForStep(currentStep);
+            Location teleportLocation = getLocationForStep(currentStep);
             event.setLocation(teleportLocation);
         }
     }
