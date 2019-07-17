@@ -12,7 +12,7 @@ import gg.warcraft.monolith.api.effect.Particle;
 import gg.warcraft.monolith.api.effect.ParticleFactory;
 import gg.warcraft.monolith.api.effect.ParticleType;
 import gg.warcraft.monolith.api.util.Cancellable;
-import gg.warcraft.monolith.api.world.location.Location;
+import gg.warcraft.monolith.api.world.Location;
 
 import java.util.function.Supplier;
 

@@ -15,7 +15,7 @@ import gg.warcraft.monolith.api.entity.EntityType;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.menu.Menu;
 import gg.warcraft.monolith.api.menu.service.MenuCommandService;
-import gg.warcraft.monolith.api.world.location.Location;
+import gg.warcraft.monolith.api.world.Location;
 
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -51,7 +51,7 @@ public class DefaultNpcCommandService implements NpcCommandService {
         String name = configuration.getName();
         NpcType type = configuration.getType();
         EntityType entityType = configuration.getEntityType();
-        Location location = Location.apply(configuration.getLocation());
+        Location location = configuration.getLocation().toLocation();
 
         UUID npcId = entityCommandService.spawnEntity(entityType, location);
         npcFactory.create(npcId, name);

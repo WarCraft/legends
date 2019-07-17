@@ -20,20 +20,19 @@ import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.entity.team.Team;
+import gg.warcraft.monolith.api.math.Vector3f;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
+import gg.warcraft.monolith.api.world.BlockLocation;
+import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.BlockType;
 import gg.warcraft.monolith.api.world.block.BlockTypeUtils;
 import gg.warcraft.monolith.api.world.block.BlockUtils;
 import gg.warcraft.monolith.api.world.block.backup.service.BlockBackupCommandService;
-import gg.warcraft.monolith.api.world.location.BlockLocation;
-import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -122,8 +121,8 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
         Entity randomTarget = nearbyEntities.get(randomTargetNumber);
 
         Location targetLocation = randomTarget.getLocation().add(0, 0.5f, 0);
-        Vector3fc castDirection = targetLocation.sub(totemLocation).toVector().normalize();
-        Vector3fc halfCastDirection = castDirection.mul(0.5f, new Vector3f());
+        Vector3f castDirection = targetLocation.sub(totemLocation).getTranslation().normalize();
+        Vector3f halfCastDirection = castDirection.mul(0.5f);
         Location fireballOrigin = totemLocation.add(halfCastDirection);
 
         float radius = getSnapshot().getFloat(AbilityConfigurationValue.RADIUS);

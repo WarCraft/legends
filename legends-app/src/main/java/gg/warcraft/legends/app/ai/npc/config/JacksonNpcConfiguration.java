@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import gg.warcraft.legends.api.ai.npc.NpcType;
 import gg.warcraft.legends.api.ai.npc.config.NpcConfiguration;
 import gg.warcraft.monolith.api.entity.EntityType;
-import gg.warcraft.monolith.api.world.location.config.LocationConfig;
+import gg.warcraft.monolith.api.world.config.LocationConfig;
 
 public class JacksonNpcConfiguration implements NpcConfiguration {
     private final String name;

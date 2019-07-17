@@ -18,16 +18,15 @@ import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.math.Vector3f;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
+import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
-import gg.warcraft.monolith.api.world.location.Location;
-import gg.warcraft.monolith.api.world.location.Orientation;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
-import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
@@ -52,8 +51,8 @@ public class HailBlast extends AbstractAbility implements RangedAbility {
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
 
         Location origin = caster.getEyeLocation();
-        Orientation orientation = caster.getEyeOrientation();
-        Vector3f direction = orientation.toVector();
+        Location orientation = caster.getEyeLocation();
+        Vector3f direction = orientation.getRotation();
         Vector3f velocity = direction.mul(speed);
         Movement movement = movementFactory.createLinearMovement(origin, velocity, range);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());

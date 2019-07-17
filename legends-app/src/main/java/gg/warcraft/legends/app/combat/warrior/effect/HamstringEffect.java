@@ -14,19 +14,18 @@ import gg.warcraft.monolith.api.effect.ParticleFactory;
 import gg.warcraft.monolith.api.effect.ParticleType;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityQueryService;
+import gg.warcraft.monolith.api.math.Vector3f;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.ColorHue;
 import gg.warcraft.monolith.api.util.Duration;
-import gg.warcraft.monolith.api.world.location.Location;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
+import gg.warcraft.monolith.api.world.Location;
 
 import java.util.function.Supplier;
 
 public class HamstringEffect implements Cancellable {
     private static final float RADIUS = 0.5f;
     private static final int FRAMES = 20;
-    private static final Vector3fc OFFSET = new Vector3f(0, 0.1f, 0); // TODO make VectorUtils with vectors for HEAD_OFFSET, CHEST_OFFSET, HEEL_OFFSET etc
+    private static final Vector3f OFFSET = new Vector3f(0, 0.1f, 0); // TODO make VectorUtils with vectors for HEAD_OFFSET, CHEST_OFFSET, HEEL_OFFSET etc
 
     private final Effect effect;
 

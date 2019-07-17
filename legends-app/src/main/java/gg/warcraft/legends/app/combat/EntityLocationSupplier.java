@@ -2,7 +2,7 @@ package gg.warcraft.legends.app.combat;
 
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityQueryService;
-import gg.warcraft.monolith.api.world.location.Location;
+import gg.warcraft.monolith.api.world.Location;
 
 import java.util.UUID;
 import java.util.function.Supplier;

@@ -16,16 +16,16 @@ import gg.warcraft.monolith.api.combat.PotionEffectType;
 import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.math.Vector3f;
+import gg.warcraft.monolith.api.world.BlockLocation;
 import gg.warcraft.monolith.api.world.DirectionUtils;
+import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.BlockTypeUtils;
-import gg.warcraft.monolith.api.world.location.BlockLocation;
-import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
-import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
@@ -64,9 +64,9 @@ public class Teleport extends AbstractAbility implements RangedAbility {
                     relativeLocation.getY(),
                     relativeLocation.getZ()
             ).add(0.5f, 0, 0.5f);
-            teleportOrientation = caster.getEyeOrientation().getYaw();
+            teleportOrientation = caster.getEyeLocation().getYaw();
         } else {
-            Vector3f targetToCaster = targetLocation.toLocation().toVector().sub(originalLocation.toVector());
+            Vector3f targetToCaster = targetLocation.toLocation().sub(originalLocation).getTranslation();
             targetToCaster.normalize();
             BlockLocation adjustedLocation = targetLocation.toLocation()
                     .add(0.5f, 0.5f, 0.5f)
@@ -78,7 +78,7 @@ public class Teleport extends AbstractAbility implements RangedAbility {
                     adjustedLocation.getY(),
                     adjustedLocation.getZ()
             ).add(0.5f, 1, 0.5f);
-            teleportOrientation = caster.getEyeOrientation().getYaw();
+            teleportOrientation = caster.getEyeLocation().getYaw();
         }
 
         entityCommandService.teleport(caster.getId(), teleportLocation, directionUtils.toDirection(teleportOrientation));

@@ -16,13 +16,14 @@ import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.entity.service.EntityQueryService;
+import gg.warcraft.monolith.api.math.Vector3f;
 import gg.warcraft.monolith.api.util.Cancellable;
+import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
-import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
@@ -47,14 +48,15 @@ public class ArcaneMissile extends AbstractAbility implements RangedAbility {
         this.worldCommandService = worldCommandService;
 
         Location location = caster.getEyeLocation();
-        Vector3f direction = caster.getEyeOrientation().toVector();
+        Vector3f direction = caster.getEyeLocation().getRotation();
         Supplier<Location> targetSupplier = () -> {
             Entity target = entityQueryService.getEntity(rangedTarget.getId());
             return target.getEyeLocation();
         };
         float speed = snapshot.getFloat(AbilityConfigurationValue.SPEED);
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
-        Movement movement = movementFactory.createHomingMovement(location, direction, speed, targetSupplier);
+        Vector3fc tempDir = new org.joml.Vector3f(direction.x(), direction.y(), direction.z());
+        Movement movement = movementFactory.createHomingMovement(location, tempDir, speed, targetSupplier);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
 
         Cancellable effect = mageEffectFactory.createArcaneMissileEffect(movement);

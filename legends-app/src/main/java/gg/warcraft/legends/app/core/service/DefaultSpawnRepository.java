@@ -3,7 +3,7 @@ package gg.warcraft.legends.app.core.service;
 import com.google.inject.Singleton;
 import gg.warcraft.legends.api.core.service.SpawnRepository;
 import gg.warcraft.legends.api.entity.LegendsTeam;
-import gg.warcraft.monolith.api.world.location.Location;
+import gg.warcraft.monolith.api.world.Location;
 
 import java.util.HashMap;
 import java.util.Map;

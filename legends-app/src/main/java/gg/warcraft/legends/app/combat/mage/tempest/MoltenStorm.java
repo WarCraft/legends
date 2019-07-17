@@ -20,16 +20,15 @@ import gg.warcraft.monolith.api.effect.EffectVectors;
 import gg.warcraft.monolith.api.effect.EffectVectorsFactory;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.math.Vector3f;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
+import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
-import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -39,8 +38,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class MoltenStorm extends AbstractAbility implements RangedAbility, Runnable {
-    private static final Vector3fc HEIGHT = new Vector3f(0, 20, 0);
-    private static final Vector3fc OFFSET = new Vector3f(5, 0, 5);
+    private static final Vector3f HEIGHT = new Vector3f(0, 20, 0);
+    private static final Vector3f OFFSET = new Vector3f(5, 0, 5);
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
     private static final Sound CAST_SOUND = Sound.ENTITY_GHAST_SHOOT;
     private static final Sound HIT_SOUND = Sound.ENTITY_ENDERDRAGON_FIREBALL_EXPLODE;
@@ -81,14 +80,14 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
                 : blockTarget.getLocation().toLocation().add(0.5f, 1, 0.5f);
 
         Location origin = location.add(HEIGHT).add(OFFSET);
-        Vector3f direction = location.sub(origin.toVector()).toVector().normalize();
+        Vector3f direction = location.sub(origin).getTranslation().normalize();
         float speed = getSnapshot().getFloat(AbilityConfigurationValue.SPEED);
         this.velocity = direction.mul(speed);
         this.range = getSnapshot().getFloat(AbilityConfigurationValue.RANGE);
 
         EffectVectors vectors = effectVectorsFactory.createRingVectors(spawnRadius, numberOfFireballs);
         List<Location> spawnLocations = vectors.getVectors().stream()
-                .map(vector -> vector.mul(random.nextFloat(), new Vector3f()))
+                .map(vector -> vector.mul(random.nextFloat()))
                 .map(origin::add)
                 .collect(Collectors.toList());
         Collections.shuffle(spawnLocations);

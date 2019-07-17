@@ -103,20 +103,19 @@ import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
+import gg.warcraft.monolith.api.math.Vector3i;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.Direction;
 import gg.warcraft.monolith.api.world.World;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.box.BoundingBlockBox;
 import gg.warcraft.monolith.api.world.block.box.BoundingBlockBoxFactory;
-import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldQueryService;
 import gg.warcraft.siege.api.weapon.PersistentSiegeWeaponDecorator;
 import gg.warcraft.siege.api.weapon.SiegeWeapon;
 import gg.warcraft.siege.api.weapon.SiegeWeaponFactory;
 import gg.warcraft.siege.api.weapon.service.SiegeWeaponRepository;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.joml.Vector3i;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -137,11 +136,8 @@ public class LegendsPlugin extends JavaPlugin {
                 ServerConfiguration.class, legendsMapperModule);
 
         SpawnRepository spawnRepository = injector.getInstance(SpawnRepository.class);
-        serverConfiguration.getSpawnLocations().forEach((team, location) -> {
-            Location spawn = Location.apply(location);
-            // TODO store orientation
-            spawnRepository.save(team, spawn);
-        });
+        serverConfiguration.getSpawnLocations().forEach((team, location) ->
+                spawnRepository.save(team, location.toLocation()));
 
         RankCommandService rankCommandService = injector.getInstance(RankCommandService.class);
         rankCommandService.initializeRanks(LegendsTeam.HUMAN, serverConfiguration.getRankFavorTable(),

@@ -28,7 +28,7 @@ public class ToxicArrow extends AbstractAbility implements MeleeAbility {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
         abilityCommandService.createArrow(this, caster.getId(), caster.getEyeLocation(),
-                caster.getEyeOrientation().toVector(), SPEED, SPREAD);
+                caster.getEyeLocation().getRotation(), SPEED, SPREAD);
     }
 
     @Override

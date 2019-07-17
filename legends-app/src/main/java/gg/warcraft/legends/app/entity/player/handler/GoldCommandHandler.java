@@ -8,8 +8,8 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
+import gg.warcraft.monolith.api.math.Vector3f;
 import gg.warcraft.monolith.api.util.ColorCode;
-import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.UUID;
@@ -62,9 +62,9 @@ public class GoldCommandHandler implements CommandHandler {
         }
 
         LegendsPlayer targetPlayer = playerQueryService.getPlayer(targetPlayerId);
-        Vector3f playerLocation = player.getLocation().toVector();
-        Vector3f targetPlayerLocation = targetPlayer.getLocation().toVector();
-        if (playerLocation.distance(targetPlayerLocation) > TRADE_DISTANCE) {
+        Vector3f playerLocation = player.getLocation().getTranslation();
+        Vector3f targetPlayerLocation = targetPlayer.getLocation().getTranslation();
+        if (playerLocation.dist(targetPlayerLocation) > TRADE_DISTANCE) {
             playerCommandService.sendNotification(player.getId(), "You need to be closer to " + targetPlayerName + "" +
                     " to give them gold.");
             return false;

@@ -11,8 +11,8 @@ import gg.warcraft.monolith.api.entity.player.event.PlayerPreRespawnEvent;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.Direction;
 import gg.warcraft.monolith.api.world.DirectionUtils;
+import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.World;
-import gg.warcraft.monolith.api.world.location.Location;
 
 public class PlayerSpawnHandler {
     private final LegendsPlayerQueryService legendsPlayerQueryService;

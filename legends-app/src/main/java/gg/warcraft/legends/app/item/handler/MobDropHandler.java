@@ -19,8 +19,8 @@ import gg.warcraft.monolith.api.command.CommandSender;
 import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.event.ItemPrePickupEvent;
 import gg.warcraft.monolith.api.util.TimeUtils;
+import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.World;
-import gg.warcraft.monolith.api.world.location.Location;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
 
 import java.util.Collections;

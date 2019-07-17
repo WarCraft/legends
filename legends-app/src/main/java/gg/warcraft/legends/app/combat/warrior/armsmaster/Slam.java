@@ -11,10 +11,10 @@ import gg.warcraft.monolith.api.combat.PotionEffectType;
 import gg.warcraft.monolith.api.combat.value.CombatValue;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.math.Vector3f;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
-import org.joml.Vector3fc;
 
 public class Slam extends AbstractAbility implements MeleeAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
@@ -24,7 +24,7 @@ public class Slam extends AbstractAbility implements MeleeAbility {
     private final EntityCommandService entityCommandService;
     private final WorldCommandService worldCommandService;
 
-    private final Vector3fc direction;
+    private final Vector3f direction;
 
     @Inject
     public Slam(EntityCommandService entityCommandService, WorldCommandService worldCommandService,
@@ -33,7 +33,7 @@ public class Slam extends AbstractAbility implements MeleeAbility {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
         this.worldCommandService = worldCommandService;
-        this.direction = caster.getEyeOrientation().toVector();
+        this.direction = caster.getEyeLocation().getRotation();
     }
 
     @Override

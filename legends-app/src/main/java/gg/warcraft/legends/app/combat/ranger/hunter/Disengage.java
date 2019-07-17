@@ -7,10 +7,10 @@ import gg.warcraft.combat.api.ability.MeleeAbility;
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.math.Vector3f;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.service.WorldCommandService;
-import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
@@ -23,9 +23,9 @@ public class Disengage extends AbstractAbility implements MeleeAbility {
                      @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                      @Assisted("target") @Nullable Entity meleeTarget) {
         super(caster.getId(), snapshot);
-        Vector3f direction = caster.getEyeOrientation().toVector();
-        direction.y = 0;
-        direction.mul(-1);
+        Vector3f direction = caster.getEyeLocation().getRotation()
+                .withY(0)
+                .mul(-1);
         float distance = snapshot.getFloat("distance");
         entityCommandService.knockback(caster.getId(), direction, distance);
         worldCommandService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);

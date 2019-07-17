@@ -17,11 +17,11 @@ import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerPreRespawnEvent;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+import gg.warcraft.monolith.api.math.Vector3f;
 import gg.warcraft.monolith.api.world.Direction;
 import gg.warcraft.monolith.api.world.DirectionUtils;
+import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.World;
-import gg.warcraft.monolith.api.world.location.Location;
-import gg.warcraft.monolith.api.world.location.Orientation;
 
 import java.util.HashMap;
 import java.util.List;
@@ -50,17 +50,17 @@ public class TutorialStepHandler implements CommandHandler {
     private final TaskService taskService;
 
     private Location startLocation;
-    private Orientation startOrientation;
+    private Vector3f startOrientation;
     private Location raceLocation;
-    private Orientation raceOrientation;
+    private Vector3f raceOrientation;
     private Location classLocation;
-    private Orientation classOrientation;
+    private Vector3f classOrientation;
     private Location gatheringLocation;
-    private Orientation gatheringOrientation;
+    private Vector3f gatheringOrientation;
     private Location siegeLocation;
-    private Orientation siegeOrientation;
+    private Vector3f siegeOrientation;
     private Location finaleLocation;
-    private Orientation finaleOrientation;
+    private Vector3f finaleOrientation;
 
     @Inject
     public TutorialStepHandler(LegendsPlayerQueryService playerQueryService,
@@ -79,17 +79,17 @@ public class TutorialStepHandler implements CommandHandler {
         this.taskService = taskService;
 
         this.startLocation = new Location(World.THE_END, 196.5f, 163f, -19.5f);
-        this.startOrientation = Orientation.apply(directionUtils.toVector(Direction.EAST));
+        this.startOrientation = directionUtils.toVector(Direction.EAST);
         this.raceLocation = new Location(World.THE_END, 253.5f, 174f, 92.5f);
-        this.raceOrientation = Orientation.apply(directionUtils.toVector(Direction.EAST));
+        this.raceOrientation = directionUtils.toVector(Direction.EAST);
         this.classLocation = new Location(World.THE_END, 357.5f, 191f, 34.5f);
-        this.classOrientation = Orientation.apply(directionUtils.toVector(Direction.EAST));
+        this.classOrientation = directionUtils.toVector(Direction.EAST);
         this.gatheringLocation = new Location(World.THE_END, 203.5f, 180f, -138.5f);
-        this.gatheringOrientation = Orientation.apply(directionUtils.toVector(Direction.SOUTH));
+        this.gatheringOrientation = directionUtils.toVector(Direction.SOUTH);
         this.siegeLocation = new Location(World.THE_END, 288.5f, 165f, -191.5f);
-        this.siegeOrientation = Orientation.apply(directionUtils.toVector(Direction.EAST));
+        this.siegeOrientation = directionUtils.toVector(Direction.EAST);
         this.finaleLocation = new Location(World.THE_END, 414.5f, 178f, -112.5f);
-        this.finaleOrientation = Orientation.apply(directionUtils.toVector(Direction.EAST));
+        this.finaleOrientation = directionUtils.toVector(Direction.EAST);
     }
 
     private Location getLocationForStep(TutorialStep step) {

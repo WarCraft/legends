@@ -14,17 +14,16 @@ import gg.warcraft.monolith.api.effect.ParticleFactory;
 import gg.warcraft.monolith.api.effect.ParticleType;
 import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityQueryService;
+import gg.warcraft.monolith.api.math.Vector3f;
 import gg.warcraft.monolith.api.util.Cancellable;
-import gg.warcraft.monolith.api.world.location.Location;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
+import gg.warcraft.monolith.api.world.Location;
 
 import java.util.function.Supplier;
 
 public class FocusEffect implements Cancellable {
     private static final float RADIUS = 0.5f;
     private static final int FRAMES = 20;
-    private static final Vector3fc OFFSET = new Vector3f(0, 0.1f, 0);
+    private static final Vector3f OFFSET = new Vector3f(0, 0.1f, 0);
 
     private final Effect effect;
 

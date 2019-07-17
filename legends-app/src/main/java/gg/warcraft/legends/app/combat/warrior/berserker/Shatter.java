@@ -19,9 +19,9 @@ import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.entity.service.EntityQueryService;
 import gg.warcraft.monolith.api.entity.team.Team;
+import gg.warcraft.monolith.api.math.Vector3f;
 import gg.warcraft.monolith.api.util.TimeUtils;
-import gg.warcraft.monolith.api.world.location.Location;
-import org.joml.Vector3f;
+import gg.warcraft.monolith.api.world.Location;
 
 import javax.annotation.Nullable;
 
@@ -58,7 +58,7 @@ public class Shatter extends AbstractAbility implements RangedAbility {
         this.confusion = getSnapshot().getPotionEffect(PotionEffectType.CONFUSION);
 
         float distance = snapshot.getFloat(AbilityConfigurationValue.DISTANCE);
-        Vector3f direction = caster.getEyeOrientation().toVector();
+        Vector3f direction = caster.getEyeLocation().getRotation();
         entityCommandService.leap(caster.getId(), direction, distance);
 
         Movement movement = movementFactory.createStationaryMovement(caster.getLocation());

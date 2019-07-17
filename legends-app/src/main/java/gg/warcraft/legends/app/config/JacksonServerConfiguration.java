@@ -7,7 +7,7 @@ import gg.warcraft.legends.api.config.ServerConfiguration;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.legends.api.item.crate.config.LootCrateConfiguration;
-import gg.warcraft.monolith.api.world.location.config.LocationWithOrientationConfig;
+import gg.warcraft.monolith.api.world.config.LocationConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class JacksonServerConfiguration implements ServerConfiguration {
-    private final Map<LegendsTeam, LocationWithOrientationConfig> spawnLocations;
+    private final Map<LegendsTeam, LocationConfig> spawnLocations;
     private final List<RankPrefixConfiguration> rankPrefixes;
     private final List<String> humanRankSuffixes;
     private final List<String> orcRankSuffixes;
@@ -29,7 +29,7 @@ public class JacksonServerConfiguration implements ServerConfiguration {
     private final Map<Integer, Map<LootCrateType, Integer>> rankUpRewards;
 
     @JsonCreator
-    public JacksonServerConfiguration(@JsonProperty("spawnLocations") Map<LegendsTeam, LocationWithOrientationConfig> spawnLocations,
+    public JacksonServerConfiguration(@JsonProperty("spawnLocations") Map<LegendsTeam, LocationConfig> spawnLocations,
                                       @JsonProperty("rankPrefixes") List<RankPrefixConfiguration> rankPrefixes,
                                       @JsonProperty("humanRankSuffixes") List<String> humanRankSuffixes,
                                       @JsonProperty("orcRankSuffixes") List<String> orcRankSuffixes,
@@ -56,7 +56,7 @@ public class JacksonServerConfiguration implements ServerConfiguration {
     }
 
     @Override
-    public Map<LegendsTeam, LocationWithOrientationConfig> getSpawnLocations() {
+    public Map<LegendsTeam, LocationConfig> getSpawnLocations() {
         return spawnLocations;
     }
 
