@@ -121,8 +121,8 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
         Entity randomTarget = nearbyEntities.get(randomTargetNumber);
 
         Location targetLocation = randomTarget.getLocation().add(0, 0.5f, 0);
-        Vector3f castDirection = targetLocation.sub(totemLocation).getTranslation().normalize();
-        Vector3f halfCastDirection = castDirection.mul(0.5f);
+        Vector3f castDirection = targetLocation.subtract(totemLocation).translation().normalize();
+        Vector3f halfCastDirection = castDirection.multiply(0.5f);
         Location fireballOrigin = totemLocation.add(halfCastDirection);
 
         float radius = getSnapshot().getFloat(AbilityConfigurationValue.RADIUS);

@@ -23,9 +23,9 @@ public class Disengage extends AbstractAbility implements MeleeAbility {
                      @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                      @Assisted("target") @Nullable Entity meleeTarget) {
         super(caster.getId(), snapshot);
-        Vector3f direction = caster.getEyeLocation().getRotation()
+        Vector3f direction = caster.getEyeLocation().rotation()
                 .withY(0)
-                .mul(-1);
+                .multiply(-1);
         float distance = snapshot.getFloat("distance");
         entityCommandService.knockback(caster.getId(), direction, distance);
         worldCommandService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);

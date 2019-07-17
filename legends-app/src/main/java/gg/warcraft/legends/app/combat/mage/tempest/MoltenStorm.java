@@ -80,14 +80,14 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
                 : blockTarget.getLocation().toLocation().add(0.5f, 1, 0.5f);
 
         Location origin = location.add(HEIGHT).add(OFFSET);
-        Vector3f direction = location.sub(origin).getTranslation().normalize();
+        Vector3f direction = location.subtract(origin).translation().normalize();
         float speed = getSnapshot().getFloat(AbilityConfigurationValue.SPEED);
-        this.velocity = direction.mul(speed);
+        this.velocity = direction.multiply(speed);
         this.range = getSnapshot().getFloat(AbilityConfigurationValue.RANGE);
 
         EffectVectors vectors = effectVectorsFactory.createRingVectors(spawnRadius, numberOfFireballs);
         List<Location> spawnLocations = vectors.getVectors().stream()
-                .map(vector -> vector.mul(random.nextFloat()))
+                .map(vector -> vector.multiply(random.nextFloat()))
                 .map(origin::add)
                 .collect(Collectors.toList());
         Collections.shuffle(spawnLocations);

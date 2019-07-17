@@ -64,9 +64,9 @@ public class Teleport extends AbstractAbility implements RangedAbility {
                     relativeLocation.getY(),
                     relativeLocation.getZ()
             ).add(0.5f, 0, 0.5f);
-            teleportOrientation = caster.getEyeLocation().getYaw();
+            teleportOrientation = caster.getEyeLocation().yaw();
         } else {
-            Vector3f targetToCaster = targetLocation.toLocation().sub(originalLocation).getTranslation();
+            Vector3f targetToCaster = targetLocation.toLocation().subtract(originalLocation).translation();
             targetToCaster.normalize();
             BlockLocation adjustedLocation = targetLocation.toLocation()
                     .add(0.5f, 0.5f, 0.5f)
@@ -78,7 +78,7 @@ public class Teleport extends AbstractAbility implements RangedAbility {
                     adjustedLocation.getY(),
                     adjustedLocation.getZ()
             ).add(0.5f, 1, 0.5f);
-            teleportOrientation = caster.getEyeLocation().getYaw();
+            teleportOrientation = caster.getEyeLocation().yaw();
         }
 
         entityCommandService.teleport(caster.getId(), teleportLocation, directionUtils.toDirection(teleportOrientation));

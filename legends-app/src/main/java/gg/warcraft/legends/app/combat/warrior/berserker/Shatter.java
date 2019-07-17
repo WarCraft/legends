@@ -58,7 +58,7 @@ public class Shatter extends AbstractAbility implements RangedAbility {
         this.confusion = getSnapshot().getPotionEffect(PotionEffectType.CONFUSION);
 
         float distance = snapshot.getFloat(AbilityConfigurationValue.DISTANCE);
-        Vector3f direction = caster.getEyeLocation().getRotation();
+        Vector3f direction = caster.getEyeLocation().rotation();
         entityCommandService.leap(caster.getId(), direction, distance);
 
         Movement movement = movementFactory.createStationaryMovement(caster.getLocation());

@@ -62,9 +62,9 @@ public class GoldCommandHandler implements CommandHandler {
         }
 
         LegendsPlayer targetPlayer = playerQueryService.getPlayer(targetPlayerId);
-        Vector3f playerLocation = player.getLocation().getTranslation();
-        Vector3f targetPlayerLocation = targetPlayer.getLocation().getTranslation();
-        if (playerLocation.dist(targetPlayerLocation) > TRADE_DISTANCE) {
+        Vector3f playerLocation = player.getLocation().translation();
+        Vector3f targetPlayerLocation = targetPlayer.getLocation().translation();
+        if (playerLocation.distanceTo(targetPlayerLocation) > TRADE_DISTANCE) {
             playerCommandService.sendNotification(player.getId(), "You need to be closer to " + targetPlayerName + "" +
                     " to give them gold.");
             return false;

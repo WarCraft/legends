@@ -34,7 +34,7 @@ public class PlayerSpawnHandler {
     @Subscribe
     public void onPlayerPreRespawnEvent(PlayerPreRespawnEvent event) {
         LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getPlayerId());
-        if (player.getLocation().getWorld() == World.OVERWORLD) {
+        if (player.getLocation().world() == World.OVERWORLD) {
             Location spawn = spawnRepository.getSpawn(player.getTeam());
             event.setLocation(spawn);
         }
@@ -44,7 +44,7 @@ public class PlayerSpawnHandler {
     public void onPlayerTeamChangedEvent(EntityTeamChangedEvent event) {
         if (event.getEntityType() == EntityType.PLAYER) {
             LegendsPlayer player = legendsPlayerQueryService.getPlayer(event.getEntityId());
-            if (player.getLocation().getWorld() == World.OVERWORLD) {
+            if (player.getLocation().world() == World.OVERWORLD) {
                 Location spawn = spawnRepository.getSpawn(player.getTeam());
                 // TODO Direction direction = directionUtils.toDirection(spawn.getYaw());
                 entityCommandService.teleport(event.getEntityId(), spawn, Direction.NORTH);

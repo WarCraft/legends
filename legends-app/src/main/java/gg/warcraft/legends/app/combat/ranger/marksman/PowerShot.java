@@ -27,9 +27,9 @@ public class PowerShot extends AbstractAbility implements MeleeAbility {
                      @Assisted("target") @Nullable Entity meleeTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
-        this.knockbackDirection = caster.getEyeLocation().getRotation();
+        this.knockbackDirection = caster.getEyeLocation().rotation();
         abilityCommandService.createArrow(this, caster.getId(), caster.getEyeLocation(),
-                caster.getEyeLocation().getRotation(), SPEED, SPREAD);
+                caster.getEyeLocation().rotation(), SPEED, SPREAD);
     }
 
     @Override

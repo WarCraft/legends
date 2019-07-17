@@ -48,7 +48,7 @@ public class ArcaneMissile extends AbstractAbility implements RangedAbility {
         this.worldCommandService = worldCommandService;
 
         Location location = caster.getEyeLocation();
-        Vector3f direction = caster.getEyeLocation().getRotation();
+        Vector3f direction = caster.getEyeLocation().rotation();
         Supplier<Location> targetSupplier = () -> {
             Entity target = entityQueryService.getEntity(rangedTarget.getId());
             return target.getEyeLocation();

@@ -20,7 +20,7 @@ public class TutorialPvpHandler {
     public void onAbilityPreHitEvent(AbilityPreHitEvent event) {
         Player target = playerQueryService.getPlayer(event.getTargetId());
         if (target != null
-                && target.getLocation().getWorld() == World.THE_END) {
+                && target.getLocation().world() == World.THE_END) {
             event.cancel();
         }
     }
