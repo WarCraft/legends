@@ -25,7 +25,7 @@ public class UniversalDroppedItemHandler implements Listener {
         }
 
         List<String> lore = itemMeta.getLore();
-        if (lore.isEmpty()) {
+        if (lore == null || lore.isEmpty()) {
             return;
         }
 
