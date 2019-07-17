@@ -52,17 +52,17 @@ public class Teleport extends AbstractAbility implements RangedAbility {
 
         Location originalLocation = caster.getLocation();
         Location teleportLocation;
-        Float teleportOrientation;
+        float teleportOrientation;
 
         BlockLocation targetLocation = blockTarget.getLocation();
         BlockLocation relativeLocation = targetLocation.add(0, 1, 0);
         Block relative = worldQueryService.getBlockAt(relativeLocation);
         if (blockTypeUtils.getNonSolids().contains(relative.getType())) {
             teleportLocation = new Location(
-                    relativeLocation.getWorld(),
-                    relativeLocation.getX(),
-                    relativeLocation.getY(),
-                    relativeLocation.getZ()
+                    relativeLocation.world(),
+                    relativeLocation.x(),
+                    relativeLocation.y(),
+                    relativeLocation.z()
             ).add(0.5f, 0, 0.5f);
             teleportOrientation = caster.getEyeLocation().yaw();
         } else {
@@ -73,10 +73,10 @@ public class Teleport extends AbstractAbility implements RangedAbility {
                     .add(targetToCaster)
                     .toBlockLocation();
             teleportLocation = new Location(
-                    adjustedLocation.getWorld(),
-                    adjustedLocation.getX(),
-                    adjustedLocation.getY(),
-                    adjustedLocation.getZ()
+                    adjustedLocation.world(),
+                    adjustedLocation.x(),
+                    adjustedLocation.y(),
+                    adjustedLocation.z()
             ).add(0.5f, 1, 0.5f);
             teleportOrientation = caster.getEyeLocation().yaw();
         }
