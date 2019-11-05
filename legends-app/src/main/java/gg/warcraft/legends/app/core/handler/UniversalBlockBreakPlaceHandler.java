@@ -44,7 +44,7 @@ public class UniversalBlockBreakPlaceHandler {
 
     @Subscribe
     public void onBlockPreTriggerEvent(BlockPreTriggerEvent event) {
-        if (event.getBlock().getType() == BlockType.FARMLAND) {
+        if (event.getBlock().type() == BlockType.FARMLAND) {
             event.cancel();
         }
     }

@@ -11,7 +11,6 @@ import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
 import gg.warcraft.legends.api.shop.SpecializationId;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
-import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
 import gg.warcraft.monolith.api.menu.ButtonBuilder;
@@ -24,6 +23,7 @@ import gg.warcraft.monolith.api.menu.service.MenuCommandService;
 import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.StringUtils;
 import gg.warcraft.monolith.api.util.TimeUtils;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -165,7 +165,7 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
         lore.add(ColorCode.YELLOW + "[Shift right click] Stand Your Ground");
         lore.add("Bunker down to greatly increase all of your");
         lore.add("resistances for a moderate duration.");
-        return createSpecializationButton(player, LegendsSpecialization.ARMSMASTER, ItemType.WOOD_SWORD,
+        return createSpecializationButton(player, LegendsSpecialization.ARMSMASTER, ItemType.SWORD, // TODO wood sword
                 lore, cooldown);
     }
 
@@ -189,7 +189,7 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
         lore.add("you, damaging enemies while throwing");
         lore.add("them into the air and making them");
         lore.add("nauseous for a moderate duration.");
-        return createSpecializationButton(player, LegendsSpecialization.BERSERKER, ItemType.WOOD_AXE,
+        return createSpecializationButton(player, LegendsSpecialization.BERSERKER, ItemType.AXE, // TODO wood axe
                 lore, cooldown);
     }
 
@@ -251,7 +251,7 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
         lore.add("Conjure a storm of molten rocks at your");
         lore.add("targeted location. Each fireball damages");
         lore.add("and briefly sets enemies on fire.");
-        return createSpecializationButton(player, LegendsSpecialization.TEMPEST, ItemType.WOOD_HOE,
+        return createSpecializationButton(player, LegendsSpecialization.TEMPEST, ItemType.HOE, // TODO wood hoe
                 lore, cooldown);
     }
 

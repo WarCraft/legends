@@ -3,7 +3,7 @@ package gg.warcraft.legends.api.item.equipment;
 import gg.warcraft.legends.api.combat.LegendsSpecializationType;
 import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.item.ItemRarity;
-import gg.warcraft.monolith.api.item.Item;
+import gg.warcraft.monolith.api.world.item.Item;
 
 public interface EquipmentGenerator {
 

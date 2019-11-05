@@ -14,9 +14,9 @@ import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
 import gg.warcraft.monolith.api.entity.Equipment;
 import gg.warcraft.monolith.api.entity.EquipmentSlot;
-import gg.warcraft.monolith.api.item.Item;
-import gg.warcraft.monolith.api.item.ItemBuilderFactory;
-import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemFactory;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +43,7 @@ public class KitCommandHandler implements CommandHandler {
                              LegendsPlayerCommandService playerCommandService,
                              SpecializationQueryService specializationQueryService,
                              EquipmentBuilderFactory equipmentBuilderFactory,
-                             ItemBuilderFactory itemBuilderFactory) {
+                             ItemFactory itemFactory) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.specializationQueryService = specializationQueryService;
@@ -55,37 +55,36 @@ public class KitCommandHandler implements CommandHandler {
         kitAttributes.put(LegendsAttribute.VITALITY, 1);
         kitAttributes.put(LegendsAttribute.CRIT, 1);
         this.kitHelmet = equipmentBuilderFactory.createEquipmentBuilder(
-                ItemType.LEATHER_HELMET, ItemRarity.COMMON, "Beginner's Cap")
+                ItemType.HELMET, ItemRarity.COMMON, "Beginner's Cap")
                 .withAttributes(kitAttributes)
                 .build();
         this.kitChestplate = equipmentBuilderFactory.createEquipmentBuilder(
-                ItemType.LEATHER_CHESTPLATE, ItemRarity.COMMON, "Beginner's Shirt")
+                ItemType.CHESTPLATE, ItemRarity.COMMON, "Beginner's Shirt")
                 .withAttributes(kitAttributes)
                 .build();
         this.kitLeggings = equipmentBuilderFactory.createEquipmentBuilder(
-                ItemType.LEATHER_LEGGINGS, ItemRarity.COMMON, "Beginner's Shorts")
+                ItemType.LEGGINGS, ItemRarity.COMMON, "Beginner's Shorts")
                 .withAttributes(kitAttributes)
                 .build();
         this.kitBoots = equipmentBuilderFactory.createEquipmentBuilder(
-                ItemType.LEATHER_BOOTS, ItemRarity.COMMON, "Beginner's Sandals")
+                ItemType.BOOTS, ItemRarity.COMMON, "Beginner's Sandals")
                 .withAttributes(kitAttributes)
                 .build();
         this.kitSword = equipmentBuilderFactory.createEquipmentBuilder(
-                ItemType.WOOD_SWORD, ItemRarity.COMMON, "Beginner's Sword")
+                ItemType.SWORD, ItemRarity.COMMON, "Beginner's Sword")
                 .withAttributes(kitAttributes)
                 .build();
         this.kitAxe = equipmentBuilderFactory.createEquipmentBuilder(
-                ItemType.WOOD_AXE, ItemRarity.COMMON, "Beginner's Axe")
+                ItemType.AXE, ItemRarity.COMMON, "Beginner's Axe")
                 .withAttributes(kitAttributes)
                 .build();
         this.kitBow = equipmentBuilderFactory.createEquipmentBuilder(
                 ItemType.BOW, ItemRarity.COMMON, "Beginner's Bow")
                 .withAttributes(kitAttributes)
                 .build();
-        this.kitArrow = itemBuilderFactory.createItemBuilder(
-                ItemType.ARROW, "Arrow").build();
+        this.kitArrow = itemFactory.create(ItemType.ARROW).withName("Arrow");
         this.kitHoe = equipmentBuilderFactory.createEquipmentBuilder(
-                ItemType.WOOD_HOE, ItemRarity.COMMON, "Beginner's Staff")
+                ItemType.HOE, ItemRarity.COMMON, "Beginner's Staff")
                 .withAttributes(kitAttributes)
                 .build();
         this.kitStick = equipmentBuilderFactory.createEquipmentBuilder(

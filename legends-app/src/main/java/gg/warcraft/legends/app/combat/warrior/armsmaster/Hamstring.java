@@ -14,7 +14,7 @@ import gg.warcraft.monolith.api.entity.Entity;
 import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.WorldService;
 
 public class Hamstring extends AbstractAbility implements MeleeAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
@@ -22,16 +22,16 @@ public class Hamstring extends AbstractAbility implements MeleeAbility {
     private static final Sound MISS_SOUND = Sound.ENTITY_BOBBER_THROW;
 
     private final EntityCommandService entityCommandService;
-    private final WorldCommandService worldCommandService;
+    private final WorldService WorldService;
     private final WarriorEffectFactory warriorEffectFactory;
 
     @Inject
-    public Hamstring(EntityCommandService entityCommandService, WorldCommandService worldCommandService,
+    public Hamstring(EntityCommandService entityCommandService, WorldService WorldService,
                      WarriorEffectFactory warriorEffectFactory, @Assisted AbilitySnapshot snapshot,
                      @Assisted("caster") Entity caster, @Assisted("target") Entity meleeTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
-        this.worldCommandService = worldCommandService;
+        this.WorldService = WorldService;
         this.warriorEffectFactory = warriorEffectFactory;
     }
 
@@ -44,11 +44,11 @@ public class Hamstring extends AbstractAbility implements MeleeAbility {
         entityCommandService.addPotionEffect(entity.getId(), slow);
 
         warriorEffectFactory.createHamstringEffect(entity, slow.getDuration());
-        worldCommandService.playSound(entity.getLocation(), HIT_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(entity.getLocation(), HIT_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
     @Override
     public void onMiss(Entity entity) {
-        worldCommandService.playSound(entity.getLocation(), MISS_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(entity.getLocation(), MISS_SOUND, SOUND_CATEGORY, 1, 1);
     }
 }

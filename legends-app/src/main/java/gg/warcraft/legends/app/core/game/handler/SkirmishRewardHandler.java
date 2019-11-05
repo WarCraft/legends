@@ -8,7 +8,8 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.monolith.api.entity.team.Team;
-import gg.warcraft.monolith.api.item.Item;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.StackableItem;
 
 public class SkirmishRewardHandler {
     private final LegendsPlayerQueryService playerQueryService;
@@ -30,7 +31,8 @@ public class SkirmishRewardHandler {
         Item warCrate = lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.WAR_CRATE).build();
         playerQueryService.getOnlinePlayers().forEach(player -> {
             int rewardCount = player.getTeam() == winner ? 5 : 2;
-            playerCommandService.giveItem(player.getId(), warCrate.withStackSize(rewardCount), false);
+            Item stackedItem = ((StackableItem) warCrate).withCount(rewardCount);
+            playerCommandService.giveItem(player.getId(), stackedItem, false);
         });
     }
 }

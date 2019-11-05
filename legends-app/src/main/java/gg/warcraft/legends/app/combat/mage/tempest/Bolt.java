@@ -17,7 +17,7 @@ import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.world.BlockLocation;
 import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.block.Block;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.WorldService;
 
 import javax.annotation.Nullable;
 
@@ -26,7 +26,7 @@ public class Bolt extends AbstractAbility implements RangedAbility {
 
     @Inject
     public Bolt(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                WorldCommandService worldCommandService, HitboxFactory hitboxFactory, MovementFactory movementFactory,
+                WorldService WorldService, HitboxFactory hitboxFactory, MovementFactory movementFactory,
                 @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                 @Assisted("target") @Nullable Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
         super(caster.getId(), snapshot);
@@ -36,7 +36,7 @@ public class Bolt extends AbstractAbility implements RangedAbility {
         if (rangedTarget != null) {
             location = rangedTarget.getLocation();
         } else if (blockTarget != null) {
-            BlockLocation blockLocation = blockTarget.getLocation();
+            BlockLocation blockLocation = blockTarget.location();
             location = blockLocation.toLocation().add(0.5f, 1f, 0.5f);
         } else {
             throw new IllegalArgumentException("Failed to cast Bolt with null entity and block targets.");
@@ -47,7 +47,7 @@ public class Bolt extends AbstractAbility implements RangedAbility {
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
         abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
 
-        worldCommandService.strikeLightning(location, true);
+        WorldService.strikeLightning(location, true);
     }
 
     @Override

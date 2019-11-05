@@ -10,7 +10,7 @@ import gg.warcraft.legends.api.item.config.AttributeRollConfiguration;
 import gg.warcraft.legends.api.item.config.EquipmentConfiguration;
 import gg.warcraft.legends.api.item.config.EquipmentLoreConfiguration;
 import gg.warcraft.legends.api.item.equipment.EquipmentType;
-import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.List;
 import java.util.Map;

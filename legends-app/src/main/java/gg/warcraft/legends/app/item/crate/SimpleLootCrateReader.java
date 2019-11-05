@@ -7,9 +7,9 @@ import gg.warcraft.legends.api.item.crate.LootCrateReader;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
 import gg.warcraft.monolith.api.entity.attribute.Attribute;
-import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemReader;
 import gg.warcraft.monolith.api.item.ItemReaderFactory;
+import gg.warcraft.monolith.api.world.item.Item;
 
 public class SimpleLootCrateReader implements LootCrateReader {
     private final Item item;
@@ -26,7 +26,7 @@ public class SimpleLootCrateReader implements LootCrateReader {
 
     @Override
     public LootCrateType getCrateType() {
-        String name = item.getName();
+        String name = item.name();
         for (LootCrateType type : LootCrateType.values()) {
             LootCrate crate = lootCrateRepository.get(type);
             if (crate != null && name.contains(crate.getName())) {

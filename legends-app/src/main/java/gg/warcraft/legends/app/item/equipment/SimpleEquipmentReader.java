@@ -4,10 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.legends.api.item.equipment.EquipmentReader;
 import gg.warcraft.monolith.api.entity.attribute.Attribute;
-import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemReader;
 import gg.warcraft.monolith.api.item.ItemReaderFactory;
 import gg.warcraft.monolith.api.util.StringUtils;
+import gg.warcraft.monolith.api.world.item.Item;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class SimpleEquipmentReader implements EquipmentReader {
             return 0;
         }
 
-        List<String> lore = item.getLore();
+        List<String> lore = item.getTooltip();
         for (String line : lore) {
             if (line.contains("Available Upgrades")) {
                 String rawLine = stringUtils.removeChatCodes(line);
@@ -51,7 +51,7 @@ public class SimpleEquipmentReader implements EquipmentReader {
             return 0;
         }
 
-        String name = item.getName();
+        String name = item.name();
         if (name.matches("^.*\\(\\+\\d*\\)$")) {
             String onlyUpgradeNumbers = name.replaceAll("^.*\\(\\+", "").replaceAll("\\)$", "");
             try {

@@ -14,7 +14,7 @@ import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.util.Cancellable;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.WorldService;
 
 import javax.annotation.Nullable;
 
@@ -26,7 +26,7 @@ public class Sneak extends AbstractAbility implements MeleeAbility, Cancellable 
 
     @Inject
     public Sneak(EntityCommandService entityCommandService, PlayerHidingCommandService playerHidingCommandService,
-                 WorldCommandService worldCommandService, TaskService taskService, @Assisted AbilitySnapshot snapshot,
+                 WorldService WorldService, TaskService taskService, @Assisted AbilitySnapshot snapshot,
                  @Assisted("caster") Entity caster, @Assisted("target") @Nullable Entity meleeTarget) {
         super(caster.getId(), snapshot);
         this.playerHidingCommandService = playerHidingCommandService;
@@ -37,7 +37,7 @@ public class Sneak extends AbstractAbility implements MeleeAbility, Cancellable 
         playerHidingCommandService.hidePlayer(caster.getId());
         taskService.runLater(this::cancel, speed.getDuration());
 
-        worldCommandService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
     @Override

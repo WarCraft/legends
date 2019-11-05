@@ -9,7 +9,8 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.monolith.api.entity.event.EntityFatalDamageEvent;
-import gg.warcraft.monolith.api.item.Item;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.StackableItem;
 import gg.warcraft.siege.api.objective.event.ObjectiveCapturedEvent;
 
 import java.util.UUID;
@@ -43,7 +44,7 @@ public class CaptureAndKillRewardHandler {
 
         int cratesForObjective = serverRepository.getObjectiveCrates(event.getObjective().getType());
         if (cratesForObjective > 0) {
-            Item warCrateStack = warCrate.withStackSize(cratesForObjective);
+            Item warCrateStack = ((StackableItem)warCrate).withCount(cratesForObjective);
             event.getAttackerIds().forEach(playerId -> {
                 playerCommandService.giveItem(playerId, warCrateStack, false);
                 playerCommandService.sendNotification(playerId, "You gained " + cratesForObjective + " crates.");

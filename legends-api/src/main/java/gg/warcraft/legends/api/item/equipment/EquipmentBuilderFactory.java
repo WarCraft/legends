@@ -1,7 +1,7 @@
 package gg.warcraft.legends.api.item.equipment;
 
 import gg.warcraft.legends.api.item.ItemRarity;
-import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 public interface EquipmentBuilderFactory {
 

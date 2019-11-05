@@ -15,8 +15,9 @@ import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.entity.event.EntityPreInteractEvent;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.item.Inventory;
-import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.world.block.event.BlockPreInteractEvent;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.StackableItem;
 
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -59,14 +60,14 @@ public class LootCrateUseHandler {
 
         LootCrateType crateType = reader.getCrateType();
         if (crateType == null) {
-            pluginLogger.warning("Failed to open loot crate with name " + itemInHand.getName() + " for player " +
+            pluginLogger.warning("Failed to open loot crate with name " + itemInHand.name() + " for player " +
                     playerId + ", no crate type exists for this item.");
             return true;
         }
 
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
         Inventory inventory = player.getInventory();
-        if (inventory.getSpace() >= ITEMS_PER_CRATE && inventory.remove(itemInHand.withStackSize(1))) {
+        if (inventory.getSpace() >= ITEMS_PER_CRATE && inventory.remove(((StackableItem) itemInHand).withCount(1))) {
             for (int i = 0; i < ITEMS_PER_CRATE; i += 1) {
                 lootCrateCommandService.openCrate(playerId, crateType);
             }

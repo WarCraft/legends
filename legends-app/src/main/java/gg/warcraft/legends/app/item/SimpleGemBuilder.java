@@ -5,17 +5,16 @@ import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.legends.api.item.GemBuilder;
 import gg.warcraft.legends.api.item.ItemRarity;
-import gg.warcraft.monolith.api.item.Item;
-import gg.warcraft.monolith.api.item.ItemBuilder;
-import gg.warcraft.monolith.api.item.ItemBuilderFactory;
-import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.util.ColorCode;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemFactory;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleGemBuilder implements GemBuilder {
-    private final ItemBuilderFactory itemBuilderFactory;
+    private final ItemFactory itemFactory;
     private final ItemType type;
     private final ItemRarity rarity;
     private final String name;
@@ -25,9 +24,9 @@ public class SimpleGemBuilder implements GemBuilder {
     private int breakChance;
 
     @Inject
-    public SimpleGemBuilder(ItemBuilderFactory itemBuilderFactory, @Assisted ItemRarity rarity,
+    public SimpleGemBuilder(ItemFactory itemFactory, @Assisted ItemRarity rarity,
                             @Assisted String name) {
-        this.itemBuilderFactory = itemBuilderFactory;
+        this.itemFactory = itemFactory;
         this.type = getItemType(rarity);
         this.rarity = rarity;
         this.name = name;
@@ -43,7 +42,7 @@ public class SimpleGemBuilder implements GemBuilder {
             case RARE:
                 return ItemType.ENDER_PEARL;
             case EPIC:
-                return ItemType.EYE_OF_ENDER;
+                return ItemType.ENDER_EYE;
             case LEGENDARY:
             case ANCIENT:
                 return ItemType.NETHER_STAR;
@@ -78,31 +77,31 @@ public class SimpleGemBuilder implements GemBuilder {
 
     @Override
     public Item build() {
-        ItemBuilder itemBuilder = itemBuilderFactory.createItemBuilder(type, rarity.getColor() + name);
+        Item item = itemFactory.create(type).withName(rarity.getColor() + name);
 
         // set type at top of tooltip
-        itemBuilder.addLore(ColorCode.GRAY + "Upgrade Gem");
+        item = item.addTooltip(ColorCode.GRAY + "Upgrade Gem");
 
         // add success stats
         if (!attributes.keySet().isEmpty()) {
-            itemBuilder.addLore("").addLore(successChance + "% chance to upgrade equipment with:");
+            item = item.addTooltip("").addTooltip(successChance + "% chance to upgrade equipment with:");
             for (Map.Entry<LegendsAttribute, Integer> entry : attributes.entrySet()) {
-                itemBuilder.addLore("+" + entry.getValue() + " " + entry.getKey().getName());
+                item = item.addTooltip("+" + entry.getValue() + " " + entry.getKey().getName());
             }
         }
 
         // add break chance
         if (breakChance > 0) {
-            itemBuilder.addLore("")
-                    .addLore(breakChance + "% chance to destroy the equipment")
-                    .addLore("when the upgrade fails.");
+            item = item.addTooltip("")
+                    .addTooltip(breakChance + "% chance to destroy the equipment")
+                    .addTooltip("when the upgrade fails.");
         }
 
         // add tutorial
-        itemBuilder.addLore("")
-                .addLore("[SHIFT + RIGHT CLICK] an equipment to open")
-                .addLore("its socket window and add this gem to it.");
+        item = item.addTooltip("")
+                .addTooltip("[SHIFT + RIGHT CLICK] an equipment to open")
+                .addTooltip("its socket window and add this gem to it.");
 
-        return itemBuilder.build();
+        return item;
     }
 }

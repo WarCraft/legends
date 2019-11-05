@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.shop.ShopItemType;
 import gg.warcraft.legends.api.shop.config.ShopItemConfiguration;
-import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.List;
 

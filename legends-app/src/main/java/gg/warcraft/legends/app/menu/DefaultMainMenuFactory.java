@@ -21,10 +21,6 @@ import gg.warcraft.legends.app.menu.task.ItemClaimTask;
 import gg.warcraft.monolith.api.command.service.CommandCommandService;
 import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.attribute.Attributes;
-import gg.warcraft.monolith.api.item.Item;
-import gg.warcraft.monolith.api.item.ItemType;
-import gg.warcraft.monolith.api.item.service.ItemStorageCommandService;
-import gg.warcraft.monolith.api.item.service.ItemStorageQueryService;
 import gg.warcraft.monolith.api.menu.Button;
 import gg.warcraft.monolith.api.menu.ButtonBuilder;
 import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
@@ -36,6 +32,9 @@ import gg.warcraft.monolith.api.menu.service.MenuCommandService;
 import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.StringUtils;
 import gg.warcraft.monolith.api.util.TimeUtils;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemType;
+import gg.warcraft.monolith.api.world.item.storage.ItemStorageService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,8 +50,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     private final MenuCommandService menuCommandService;
     private final SpawnQueryService spawnQueryService;
     private final SpawnCommandService spawnCommandService;
-    private final ItemStorageQueryService itemStorageQueryService;
-    private final ItemStorageCommandService itemStorageCommandService;
+    private final ItemStorageService itemStorageService;
     private final MenuBuilderFactory menuBuilderFactory;
     private final ButtonBuilderFactory buttonBuilderFactory;
     private final SpecializationMenuFactory specializationMenuFactory;
@@ -75,8 +73,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
                                   SpawnQueryService spawnQueryService,
                                   SpawnCommandService spawnCommandService,
                                   MenuBuilderFactory menuBuilderFactory,
-                                  ItemStorageCommandService itemStorageCommandService,
-                                  ItemStorageQueryService itemStorageQueryService,
+                                  ItemStorageService itemStorageService,
                                   ButtonBuilderFactory buttonBuilderFactory,
                                   SpecializationMenuFactory specializationMenuFactory,
                                   DailyLoginMenuFactory dailyLoginMenuFactory, TeamMenuFactory teamMenuFactory,
@@ -92,8 +89,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         this.spawnCommandService = spawnCommandService;
         this.spawnQueryService = spawnQueryService;
         this.menuBuilderFactory = menuBuilderFactory;
-        this.itemStorageCommandService = itemStorageCommandService;
-        this.itemStorageQueryService = itemStorageQueryService;
+        this.itemStorageService = itemStorageService;
         this.buttonBuilderFactory = buttonBuilderFactory;
         this.specializationMenuFactory = specializationMenuFactory;
         this.dailyLoginMenuFactory = dailyLoginMenuFactory;
@@ -213,7 +209,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
 
     ItemType getRankIcon(String rank) {
         if (rank.contains("Wood")) {
-            return ItemType.OAK_WOOD_PLANK;
+            return ItemType.PLANKS;
         } else if (rank.contains("Stone")) {
             return ItemType.STONE;
         } else if (rank.contains("Iron")) {
@@ -227,7 +223,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         } else if (rank.contains("Obsidian")) {
             return ItemType.OBSIDIAN;
         } else {
-            return ItemType.OAK_WOOD_PLANK;
+            return ItemType.PLANKS; // TODO oak planks
         }
     }
 
@@ -304,7 +300,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
                 : "Wayfarer";
         ItemType icon = player.getSpecialization() != null
                 ? player.getSpecialization().getValidMainhands().iterator().next()
-                : ItemType.WOOD_SWORD;
+                : ItemType.SWORD; // TODO was WOOD sword
         String specializationPrefix = stringUtils.isVowel(specialization.charAt(0)) ? "an " : "a ";
         ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(icon, "Class");
         builder.addTooltip("You are currently fighting as " + specializationPrefix + YELLOW + specialization);
@@ -469,7 +465,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
 
     Button createShopButton(LegendsPlayer player) {
         UUID playerId = player.getId();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.ENCHANTED_GOLD_APPLE, "WarCraft: Shop");
+        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.GOLDEN_APPLE, "WarCraft: Shop"); // TODO enchanted golden apple
         builder.addTooltip("To go even further beyond in supporting the");
         builder.addTooltip("server the WarCraft: Shop has ten different");
         builder.addTooltip("items for sale every day. These items can");
@@ -510,20 +506,23 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         builder.addTooltip("can be claimed from this menu at any time.");
         builder.addTooltip("");
 
-        List<Item> storedItems = itemStorageQueryService.getStoredItems(playerId);
-        if (storedItems.isEmpty()) {
-            builder.addTooltip("There are no items currently waiting for you");
-        } else {
-            builder.addTooltip("You have " + storedItems.size() + " items waiting for you.");
-            builder.addTooltip("[CLICK] To receive your items");
+        builder.addTooltip("CURRENTLY UNAVAILABLE");
 
-            ItemClaimTask itemClaimTask = new ItemClaimTask(itemStorageQueryService,
-                    itemStorageCommandService, playerQueryService, playerCommandService,
-                    taskService, playerId);
-            taskService.runNextTick(itemClaimTask);
-
-            menuCommandService.closeMenu(playerId);
-        }
+        // TODO
+        // List<Item> storedItems = itemStorageService.getItems(playerId);
+//        if (storedItems.isEmpty()) {
+//            builder.addTooltip("There are no items currently waiting for you");
+//        } else {
+//            builder.addTooltip("You have " + storedItems.size() + " items waiting for you.");
+//            builder.addTooltip("[CLICK] To receive your items");
+//
+//            ItemClaimTask itemClaimTask = new ItemClaimTask(itemStorageService,
+//                    itemStorageService, playerQueryService, playerCommandService,
+//                    taskService, playerId);
+//            taskService.runNextTick(itemClaimTask);
+//
+//            menuCommandService.closeMenu(playerId);
+//        }
 
         return builder.build();
     }

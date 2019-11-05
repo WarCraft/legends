@@ -14,8 +14,8 @@ import gg.warcraft.legends.api.item.equipment.EquipmentBuilder;
 import gg.warcraft.legends.api.item.equipment.EquipmentBuilderFactory;
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
 import gg.warcraft.legends.api.item.equipment.EquipmentType;
-import gg.warcraft.monolith.api.item.Item;
-import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

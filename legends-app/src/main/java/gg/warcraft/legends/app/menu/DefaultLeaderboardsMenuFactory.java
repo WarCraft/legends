@@ -9,7 +9,6 @@ import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.menu.LeaderboardsMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.monolith.api.entity.player.Player;
-import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
 import gg.warcraft.monolith.api.menu.ButtonBuilder;
@@ -20,6 +19,7 @@ import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
 import gg.warcraft.monolith.api.menu.MenuSize;
 import gg.warcraft.monolith.api.menu.service.MenuCommandService;
 import gg.warcraft.monolith.api.util.ColorCode;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.HashSet;
 import java.util.List;

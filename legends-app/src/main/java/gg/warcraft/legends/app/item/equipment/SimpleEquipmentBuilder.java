@@ -5,11 +5,10 @@ import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.item.equipment.EquipmentBuilder;
-import gg.warcraft.monolith.api.item.Item;
-import gg.warcraft.monolith.api.item.ItemBuilder;
-import gg.warcraft.monolith.api.item.ItemBuilderFactory;
-import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.util.FormatCode;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemFactory;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SimpleEquipmentBuilder implements EquipmentBuilder {
-    private final ItemBuilderFactory itemBuilderFactory;
+    private final ItemFactory itemFactory;
     private final ItemType type;
     private final ItemRarity rarity;
     private final String name;
@@ -28,9 +27,9 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
     private List<String> flavorText;
 
     @Inject
-    public SimpleEquipmentBuilder(ItemBuilderFactory itemBuilderFactory, @Assisted ItemType type,
+    public SimpleEquipmentBuilder(ItemFactory itemFactory, @Assisted ItemType type,
                                   @Assisted ItemRarity rarity, @Assisted String name) {
-        this.itemBuilderFactory = itemBuilderFactory;
+        this.itemFactory = itemFactory;
         this.type = type;
         this.rarity = rarity;
         this.name = name;
@@ -81,35 +80,35 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
         String upgradedName = upgradeCount > 0
                 ? name + " (+" + upgradeCount + ")"
                 : name;
-        ItemBuilder itemBuilder = itemBuilderFactory.createItemBuilder(type, rarity.getColor() + upgradedName);
+        Item item = itemFactory.create(type).withName(rarity.getColor() + upgradedName);
 
         // set type at top of tooltip
-        itemBuilder.addLore("Equipment");
+        item = item.addTooltip("Equipment");
 
         // add stats
         if (!attributes.keySet().isEmpty()) {
-            itemBuilder.addLore("");
+            item = item.addTooltip("");
             for (Map.Entry<LegendsAttribute, Integer> entry : attributes.entrySet()) {
                 if (entry.getValue() != 0) {
-                    itemBuilder.addLore("+" + entry.getValue() + " " + entry.getKey().getName());
+                    item = item.addTooltip("+" + entry.getValue() + " " + entry.getKey().getName());
                 }
             }
         }
 
         // add upgrades
         if (availableUpgrades > 0) {
-            itemBuilder.addLore("");
-            itemBuilder.addLore(availableUpgrades + " Available Upgrades");
+            item = item.addTooltip("");
+            item = item.addTooltip(availableUpgrades + " Available Upgrades");
         }
 
         // add flavor text
         if (!flavorText.isEmpty()) {
-            itemBuilder.addLore("");
+            item = item.addTooltip("");
             for (String text : flavorText) {
-                itemBuilder.addLore(FormatCode.ITALIC + text);
+                item = item.addTooltip(FormatCode.ITALIC + text);
             }
         }
 
-        return itemBuilder.build();
+        return item;
     }
 }

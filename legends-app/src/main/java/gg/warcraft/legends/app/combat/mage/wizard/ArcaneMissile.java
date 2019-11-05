@@ -22,7 +22,7 @@ import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.WorldService;
 import org.joml.Vector3fc;
 
 import javax.annotation.Nullable;
@@ -34,18 +34,18 @@ public class ArcaneMissile extends AbstractAbility implements RangedAbility {
     private static final Sound HIT_SOUND = Sound.ENTITY_ENDERDRAGON_HURT;
 
     private final EntityCommandService entityCommandService;
-    private final WorldCommandService worldCommandService;
+    private final WorldService WorldService;
 
     @Inject
     public ArcaneMissile(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
                          EntityQueryService entityQueryService,
-                         WorldCommandService worldCommandService, MovementFactory movementFactory,
+                         WorldService WorldService, MovementFactory movementFactory,
                          HitboxFactory hitboxFactory, MageEffectFactory mageEffectFactory,
                          @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                          @Assisted("target") Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
         super(caster.getId(), snapshot);
         this.entityCommandService = entityCommandService;
-        this.worldCommandService = worldCommandService;
+        this.WorldService = WorldService;
 
         Location location = caster.getEyeLocation();
         Vector3f direction = caster.getEyeLocation().rotation();
@@ -62,14 +62,14 @@ public class ArcaneMissile extends AbstractAbility implements RangedAbility {
         Cancellable effect = mageEffectFactory.createArcaneMissileEffect(movement);
         abilityCommandService.createProjectile(this, movement, hitbox, effect::cancel);
 
-        worldCommandService.playSound(location, CAST_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(location, CAST_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
     @Override
     public boolean onHit(Entity entity) {
         CombatValue damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
         entityCommandService.damage(entity.getId(), damage);
-        worldCommandService.playSound(entity.getLocation(), HIT_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(entity.getLocation(), HIT_SOUND, SOUND_CATEGORY, 1, 1);
         return true;
     }
 

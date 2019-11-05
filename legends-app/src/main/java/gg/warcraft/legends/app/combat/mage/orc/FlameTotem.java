@@ -28,11 +28,9 @@ import gg.warcraft.monolith.api.world.BlockLocation;
 import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.BlockType;
-import gg.warcraft.monolith.api.world.block.BlockTypeUtils;
 import gg.warcraft.monolith.api.world.block.BlockUtils;
-import gg.warcraft.monolith.api.world.block.backup.service.BlockBackupCommandService;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
-import gg.warcraft.monolith.api.world.service.WorldQueryService;
+import gg.warcraft.monolith.api.world.block.backup.BlockBackupService;
+import gg.warcraft.monolith.api.world.WorldService;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -60,11 +58,9 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
 
     @Inject
     public FlameTotem(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                      EntityQueryService entityQueryService, WorldQueryService worldQueryService,
-                      WorldCommandService worldCommandService, BlockBackupCommandService blockBackupCommandService,
+                      EntityQueryService entityQueryService, WorldService WorldService, BlockBackupService blockBackupService,
                       TaskService taskService, MovementFactory movementFactory, HitboxFactory hitboxFactory,
                       MageEffectFactory mageEffectFactory, BlockUtils blockUtils, TimeUtils timeUtils,
-                      BlockTypeUtils blockTypeUtils,
                       @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                       @Assisted("target") @Nullable Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
         super(caster.getId(), snapshot);
@@ -77,21 +73,21 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
         this.casterTeam = caster.getTeam();
 
         BlockLocation casterLocation = caster.getLocation().toBlockLocation();
-        Block casterLocationBlock = worldQueryService.getBlockAt(casterLocation);
+        Block casterLocationBlock = WorldService.getBlock(casterLocation);
         Set<Block> adjacentBlocksX = blockUtils.getAdjacentBlocksX(casterLocationBlock);
         Set<Block> surroundingBlocksXZ = new HashSet<>(adjacentBlocksX);
         adjacentBlocksX.forEach(block -> surroundingBlocksXZ.addAll(blockUtils.getAdjacentBlocksZ(block)));
         surroundingBlocksXZ.addAll(blockUtils.getAdjacentBlocksZ(casterLocationBlock));
         Optional<Block> spawnBlockOptional = surroundingBlocksXZ.stream()
-                .filter(block -> block.getType() == BlockType.AIR)
+                .filter(block -> block.type() == BlockType.AIR)
                 .findFirst();
         Block totemBlock = spawnBlockOptional.orElse(casterLocationBlock);
-        BlockLocation totemLocation = totemBlock.getLocation();
-        UUID totemBlockBackupId = !blockTypeUtils.getLiquids().contains(totemBlock.getType())
-                ? blockBackupCommandService.createBlockBackup(totemLocation)
+        BlockLocation totemLocation = totemBlock.location();
+        UUID totemBlockBackupId = !totemBlock.liquid()
+                ? blockBackupService.createBackup(totemLocation)
                 : null;
         if (totemBlockBackupId != null) {
-            worldCommandService.setBlockType(totemBlock, BlockType.REDSTONE_TORCH_ON);
+            WorldService.setBlockType(totemBlock.location(), BlockType.REDSTONE_TORCH); // TODO RedstoneTorchVariant.ON
         }
         this.totemLocation = totemLocation
                 .toLocation()
@@ -101,7 +97,7 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
         taskService.runLater(() -> {
             task.cancel();
             if (totemBlockBackupId != null) {
-                blockBackupCommandService.restoreBlockBackup(totemBlockBackupId);
+                blockBackupService.restoreBackup(totemBlockBackupId);
             }
         }, snapshot.getDuration());
 

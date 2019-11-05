@@ -9,8 +9,6 @@ import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
 import gg.warcraft.legends.api.menu.AdminMenuFactory;
 import gg.warcraft.monolith.api.core.AuthorizationService;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.item.Item;
-import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
 import gg.warcraft.monolith.api.menu.ButtonBuilder;
@@ -20,6 +18,9 @@ import gg.warcraft.monolith.api.menu.MenuBuilder;
 import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
 import gg.warcraft.monolith.api.menu.MenuSize;
 import gg.warcraft.monolith.api.menu.service.MenuCommandService;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemType;
+import gg.warcraft.monolith.api.world.item.StackableItem;
 
 import java.util.UUID;
 
@@ -61,7 +62,7 @@ public class DefaultAdminMenuFactory extends AbstractMenuFactory implements Admi
         buttonBuilder.withAction(action -> {
             // TODO    if (authorizationService.isAdmin(playerId)) {
             LootCrateBuilder crateBuilder = lootCrateBuilderFactory.createLootCrateBuilder(crateType);
-            Item crateItem = crateBuilder.build().withStackSize(action.isShiftClick() ? 64 : 1);
+            Item crateItem = ((StackableItem) crateBuilder.build()).withCount(action.isShiftClick() ? 64 : 1);
             playerCommandService.giveItem(playerId, crateItem, false);
             // TODO    }
         });

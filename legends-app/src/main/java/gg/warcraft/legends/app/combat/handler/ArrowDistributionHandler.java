@@ -9,24 +9,24 @@ import gg.warcraft.monolith.api.core.TaskService;
 import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
-import gg.warcraft.monolith.api.item.Item;
-import gg.warcraft.monolith.api.item.ItemBuilderFactory;
-import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemFactory;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.UUID;
 
 public class ArrowDistributionHandler {
     private final PlayerQueryService playerQueryService;
     private final PlayerCommandService playerCommandService;
-    private final ItemBuilderFactory itemBuilderFactory;
+    private final ItemFactory itemFactory;
     private final TaskService taskService;
 
     @Inject
     public ArrowDistributionHandler(PlayerQueryService playerQueryService, PlayerCommandService playerCommandService,
-                                    ItemBuilderFactory itemBuilderFactory, TaskService taskService) {
+                                    ItemFactory itemFactory, TaskService taskService) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
-        this.itemBuilderFactory = itemBuilderFactory;
+        this.itemFactory = itemFactory;
         this.taskService = taskService;
     }
 
@@ -39,7 +39,7 @@ public class ArrowDistributionHandler {
                 if (player != null) {
                     if (player.getInventory().getSpace() > 0
                             || player.getInventory().contains(ItemType.ARROW)) {
-                        Item arrow = itemBuilderFactory.createItemBuilder(ItemType.ARROW, "Arrow").build();
+                        Item arrow = itemFactory.create(ItemType.ARROW).withName("Arrow");
                         taskService.runNextTick(() -> playerCommandService.giveItem(playerId, arrow, false));
                     }
                 }
@@ -55,7 +55,7 @@ public class ArrowDistributionHandler {
                 UUID playerId = event.getPlayerId();
                 Player player = playerQueryService.getPlayer(playerId);
                 if (!player.getInventory().contains(ItemType.ARROW)) {
-                    Item arrow = itemBuilderFactory.createItemBuilder(ItemType.ARROW, "Arrow").build();
+                    Item arrow = itemFactory.create(ItemType.ARROW).withName("Arrow");
                     taskService.runNextTick(() -> playerCommandService.giveItem(playerId, arrow, false));
                 }
         }

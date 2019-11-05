@@ -5,7 +5,7 @@ import gg.warcraft.legends.api.entity.LegendsTeam;
 import gg.warcraft.legends.api.item.AttributeDistribution;
 import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.item.equipment.EquipmentType;
-import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.List;
 import java.util.Map;

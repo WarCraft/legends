@@ -10,7 +10,7 @@ import gg.warcraft.monolith.api.entity.service.EntityCommandService;
 import gg.warcraft.monolith.api.math.Vector3f;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.WorldService;
 
 import javax.annotation.Nullable;
 
@@ -19,7 +19,7 @@ public class Disengage extends AbstractAbility implements MeleeAbility {
     private static final Sound CAST_SOUND = Sound.ENTITY_ENDERDRAGON_FLAP; // TODO use bat takeoff sound in stead?
 
     @Inject
-    public Disengage(EntityCommandService entityCommandService, WorldCommandService worldCommandService,
+    public Disengage(EntityCommandService entityCommandService, WorldService WorldService,
                      @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                      @Assisted("target") @Nullable Entity meleeTarget) {
         super(caster.getId(), snapshot);
@@ -28,7 +28,7 @@ public class Disengage extends AbstractAbility implements MeleeAbility {
                 .multiply(-1);
         float distance = snapshot.getFloat("distance");
         entityCommandService.knockback(caster.getId(), direction, distance);
-        worldCommandService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
     @Override

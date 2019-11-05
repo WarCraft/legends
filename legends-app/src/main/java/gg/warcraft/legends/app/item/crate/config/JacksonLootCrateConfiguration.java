@@ -6,7 +6,7 @@ import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.legends.api.item.crate.config.LootCrateConfiguration;
 import gg.warcraft.legends.api.item.crate.config.LootCrateDropTableConfiguration;
-import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.ArrayList;
 import java.util.List;

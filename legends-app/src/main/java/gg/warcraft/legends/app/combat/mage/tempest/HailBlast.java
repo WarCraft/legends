@@ -26,7 +26,7 @@ import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.WorldService;
 
 import javax.annotation.Nullable;
 
@@ -39,7 +39,7 @@ public class HailBlast extends AbstractAbility implements RangedAbility {
 
     @Inject
     public HailBlast(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                     WorldCommandService worldCommandService, TaskService taskService, TimeUtils timeUtils,
+                     WorldService WorldService, TaskService taskService, TimeUtils timeUtils,
                      MovementFactory movementFactory, HitboxFactory hitboxFactory, MageEffectFactory mageEffectFactory,
                      @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                      @Assisted("target") @Nullable Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
@@ -60,11 +60,11 @@ public class HailBlast extends AbstractAbility implements RangedAbility {
         Cancellable effect = mageEffectFactory.createHailBlastEffect(movement, orientation.pitch(), orientation.yaw());
         abilityCommandService.createProjectile(this, movement, hitbox, effect::cancel);
 
-        worldCommandService.playSound(origin, CAST_SOUND, SOUND_CATEGORY, 1, 1);
-        worldCommandService.playSound(origin, CAST_SOUND_2, SOUND_CATEGORY, 1, 0.1f);
+        WorldService.playSound(origin, CAST_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(origin, CAST_SOUND_2, SOUND_CATEGORY, 1, 0.1f);
         for (int i = 0; i <= 12; i += 2) {
             Duration delay = timeUtils.createDurationInTicks(i);
-            taskService.runLater(() -> worldCommandService.playSound(origin, CAST_SOUND, SOUND_CATEGORY, 1, 1), delay);
+            taskService.runLater(() -> WorldService.playSound(origin, CAST_SOUND, SOUND_CATEGORY, 1, 1), delay);
         }
     }
 

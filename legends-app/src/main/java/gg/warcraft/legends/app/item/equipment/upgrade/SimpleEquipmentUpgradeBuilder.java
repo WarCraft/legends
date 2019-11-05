@@ -5,26 +5,25 @@ import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeBuilder;
-import gg.warcraft.monolith.api.item.Item;
-import gg.warcraft.monolith.api.item.ItemBuilder;
-import gg.warcraft.monolith.api.item.ItemBuilderFactory;
-import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.util.FormatCode;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemFactory;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleEquipmentUpgradeBuilder implements EquipmentUpgradeBuilder {
-    private final ItemBuilderFactory itemBuilderFactory;
+    private final ItemFactory itemFactory;
     private final ItemRarity rarity;
     private final String name;
 
     private Map<LegendsAttribute, Integer> attributes;
 
     @Inject
-    public SimpleEquipmentUpgradeBuilder(ItemBuilderFactory itemBuilderFactory,
+    public SimpleEquipmentUpgradeBuilder(ItemFactory itemFactory,
                                          @Assisted ItemRarity rarity, @Assisted String name) {
-        this.itemBuilderFactory = itemBuilderFactory;
+        this.itemFactory = itemFactory;
         this.rarity = rarity;
         this.name = name;
         this.attributes = new HashMap<>();
@@ -44,25 +43,25 @@ public class SimpleEquipmentUpgradeBuilder implements EquipmentUpgradeBuilder {
 
     @Override
     public Item build() {
-        ItemBuilder itemBuilder = itemBuilderFactory.createItemBuilder(ItemType.PAPER, rarity.getColor() + name);
+        Item item = itemFactory.create(ItemType.PAPER).withName(rarity.getColor() + name);
 
         // set type at top of tooltip
-        itemBuilder.addLore("Equipment Upgrade");
+        item = item.addTooltip("Equipment Upgrade");
 
         // add stats
         if (!attributes.keySet().isEmpty()) {
-            itemBuilder.addLore("");
+            item = item.addTooltip("");
             for (Map.Entry<LegendsAttribute, Integer> entry : attributes.entrySet()) {
-                itemBuilder.addLore("+" + entry.getValue() + " " + entry.getKey().getName());
+                item = item.addTooltip("+" + entry.getValue() + " " + entry.getKey().getName());
             }
         }
 
         // add flavor text
-        itemBuilder.addLore("");
-        itemBuilder.addLore(FormatCode.ITALIC + "[RIGHT CLICK] While holding a piece of equipment");
-        itemBuilder.addLore(FormatCode.ITALIC + "in your main hand and this equipment upgrade in");
-        itemBuilder.addLore(FormatCode.ITALIC + "your offhand to use.");
+        item = item.addTooltip("");
+        item = item.addTooltip(FormatCode.ITALIC + "[RIGHT CLICK] While holding a piece of equipment");
+        item = item.addTooltip(FormatCode.ITALIC + "in your main hand and this equipment upgrade in");
+        item = item.addTooltip(FormatCode.ITALIC + "your offhand to use.");
 
-        return itemBuilder.build();
+        return item;
     }
 }

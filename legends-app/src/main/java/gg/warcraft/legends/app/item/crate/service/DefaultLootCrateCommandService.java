@@ -40,10 +40,10 @@ import gg.warcraft.legends.app.item.crate.SimpleLootCrate;
 import gg.warcraft.legends.app.item.crate.SimpleLootCrateDropTable;
 import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.core.PluginLogger;
-import gg.warcraft.monolith.api.item.Item;
-import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.StringUtils;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.Map;
 import java.util.Random;
@@ -234,7 +234,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
 
         Item equipment = equipmentGenerator.generate(specializationType, rarity, player.getTeam());
         playerCommandService.giveItem(playerId, equipment, false);
-        sendReceivedNotification(playerId, equipment.getName());
+        sendReceivedNotification(playerId, equipment.name());
         return true;
     }
 
@@ -262,7 +262,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
 
         Item equipmentUpgrade = equipmentUpgradeGenerator.generate(specializationType, rarity);
         playerCommandService.giveItem(playerId, equipmentUpgrade, false);
-        sendReceivedNotification(playerId, equipmentUpgrade.getName());
+        sendReceivedNotification(playerId, equipmentUpgrade.name());
         return true;
     }
 

@@ -23,9 +23,7 @@ import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
-import gg.warcraft.monolith.api.world.block.BlockTypeUtils;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
-import gg.warcraft.monolith.api.world.service.WorldQueryService;
+import gg.warcraft.monolith.api.world.WorldService;
 
 import javax.annotation.Nullable;
 
@@ -40,8 +38,7 @@ public class Teleport extends AbstractAbility implements RangedAbility {
 
     @Inject
     public Teleport(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                    WorldQueryService worldQueryService, WorldCommandService worldCommandService,
-                    MovementFactory movementFactory, HitboxFactory hitboxFactory, BlockTypeUtils blockTypeUtils,
+                    WorldService WorldService, MovementFactory movementFactory, HitboxFactory hitboxFactory,
                     DirectionUtils directionUtils,
                     @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                     @Assisted("target") @Nullable Entity rangedTarget, @Assisted Block blockTarget) {
@@ -54,10 +51,10 @@ public class Teleport extends AbstractAbility implements RangedAbility {
         Location teleportLocation;
         float teleportOrientation;
 
-        BlockLocation targetLocation = blockTarget.getLocation();
+        BlockLocation targetLocation = blockTarget.location();
         BlockLocation relativeLocation = targetLocation.add(0, 1, 0);
-        Block relative = worldQueryService.getBlockAt(relativeLocation);
-        if (blockTypeUtils.getNonSolids().contains(relative.getType())) {
+        Block relative = WorldService.getBlock(relativeLocation);
+        if (!relative.solid()) {
             teleportLocation = new Location(
                     relativeLocation.world(),
                     relativeLocation.x(),
@@ -82,14 +79,14 @@ public class Teleport extends AbstractAbility implements RangedAbility {
         }
 
         entityCommandService.teleport(caster.getId(), teleportLocation, directionUtils.toDirection(teleportOrientation));
-        worldCommandService.playSound(originalLocation, CAST_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(originalLocation, CAST_SOUND, SOUND_CATEGORY, 1, 1);
 
         float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
         Movement movement = movementFactory.createOneOffMovement(teleportLocation);
         Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
         abilityCommandService.createProjectile(this, movement, hitbox, () -> {
         });
-        worldCommandService.playSound(teleportLocation, HIT_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(teleportLocation, HIT_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
     @Override

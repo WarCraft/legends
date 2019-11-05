@@ -22,8 +22,8 @@ import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
+import gg.warcraft.monolith.api.world.WorldService;
 import gg.warcraft.monolith.api.world.block.Block;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
 
 import javax.annotation.Nullable;
 
@@ -36,7 +36,7 @@ public class Fireball extends AbstractAbility implements RangedAbility {
 
     @Inject
     public Fireball(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                    WorldCommandService worldCommandService, MovementFactory movementFactory,
+                    WorldService worldService, MovementFactory movementFactory,
                     HitboxFactory hitboxFactory, MageEffectFactory mageEffectFactory,
                     @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                     @Assisted("target") @Nullable Entity rangedTarget, @Nullable @Assisted Block blockTarget) {
@@ -54,7 +54,7 @@ public class Fireball extends AbstractAbility implements RangedAbility {
         Cancellable effect = mageEffectFactory.createFireballEffect(movement);
         abilityCommandService.createProjectile(this, movement, hitbox, effect::cancel);
 
-        worldCommandService.playSound(location, CAST_SOUND, SOUND_CATEGORY, 1, 1);
+        worldService.playSound(location, CAST_SOUND, SOUND_CATEGORY, 1, 1);
         // TODO play sound at fly locations (maybe use onTick for this or create something for sound similar to effect)
     }
 

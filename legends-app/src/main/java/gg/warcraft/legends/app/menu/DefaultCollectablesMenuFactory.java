@@ -6,7 +6,6 @@ import gg.warcraft.legends.api.menu.DecorationsMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
 import gg.warcraft.legends.api.menu.MiniPetsMenuFactory;
 import gg.warcraft.legends.api.menu.PromotionsMenuFactory;
-import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
 import gg.warcraft.monolith.api.menu.ButtonBuilder;
@@ -16,6 +15,7 @@ import gg.warcraft.monolith.api.menu.MenuBuilder;
 import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
 import gg.warcraft.monolith.api.menu.MenuSize;
 import gg.warcraft.monolith.api.menu.service.MenuCommandService;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.UUID;
 
@@ -48,7 +48,7 @@ public class DefaultCollectablesMenuFactory extends AbstractMenuFactory implemen
     }
 
     Button createDecorationsButton(UUID playerId) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.OAK_WOOD_PLANK, "Decorations");
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.PLANKS, "Decorations");
         builder.addTooltip("Did you know you can rent a house?");
         builder.addTooltip("Did you know you can completely");
         builder.addTooltip("decorate it however you want!?");
@@ -63,7 +63,7 @@ public class DefaultCollectablesMenuFactory extends AbstractMenuFactory implemen
     }
 
     Button createMiniPetsButton(UUID playerId) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.SPAWN_PIG, "Mini Pets");
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.SPAWN_EGG, "Mini Pets"); // TODO was PIG variant
         builder.addTooltip("Mini pets are cute little creatures");
         builder.addTooltip("that will follow and cheer you on");
         builder.addTooltip("wherever you go.");

@@ -7,22 +7,21 @@ import gg.warcraft.legends.api.item.crate.LootCrate;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilder;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
-import gg.warcraft.monolith.api.item.Item;
-import gg.warcraft.monolith.api.item.ItemBuilder;
-import gg.warcraft.monolith.api.item.ItemBuilderFactory;
-import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemFactory;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 public class SimpleLootCrateBuilder implements LootCrateBuilder {
-    private final ItemBuilderFactory itemBuilderFactory;
+    private final ItemFactory itemFactory;
     private final String name;
     private final ItemRarity rarity;
     private final ItemType type;
 
     @Inject
     public SimpleLootCrateBuilder(LootCrateRepository lootCrateRepository,
-                                  ItemBuilderFactory itemBuilderFactory,
+                                  ItemFactory itemFactory,
                                   @Assisted LootCrateType type) {
-        this.itemBuilderFactory = itemBuilderFactory;
+        this.itemFactory = itemFactory;
 
         LootCrate crate = lootCrateRepository.get(type);
         if (crate == null) {
@@ -36,17 +35,17 @@ public class SimpleLootCrateBuilder implements LootCrateBuilder {
 
     @Override
     public Item build() {
-        ItemBuilder itemBuilder = itemBuilderFactory.createItemBuilder(type, rarity.getColor() + name);
+        Item item = itemFactory.create(type).withName(rarity.getColor() + name);
 
         // set type at top of tooltip
-        itemBuilder.addLore("Loot Crate");
+        item = item.addTooltip("Loot Crate");
 
         // add flavor text
-        itemBuilder.addLore("");
-        itemBuilder.addLore("[RIGHT CLICK] To open for a chance");
-        itemBuilder.addLore("at unlocking collectables or receiving");
-        itemBuilder.addLore("random combat items.");
+        item = item.addTooltip("");
+        item = item.addTooltip("[RIGHT CLICK] To open for a chance");
+        item = item.addTooltip("at unlocking collectables or receiving");
+        item = item.addTooltip("random combat items.");
 
-        return itemBuilder.build();
+        return item;
     }
 }

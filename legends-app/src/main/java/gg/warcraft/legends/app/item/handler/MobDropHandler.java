@@ -16,12 +16,12 @@ import gg.warcraft.legends.api.item.equipment.EquipmentGeneratorFactory;
 import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
-import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.event.ItemPrePickupEvent;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.World;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.WorldService;
+import gg.warcraft.monolith.api.world.item.Item;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,7 +36,7 @@ public class MobDropHandler implements CommandHandler {
 
     private final LegendsPlayerQueryService playerQueryService;
     private final LegendsPlayerCommandService playerCommandService;
-    private final WorldCommandService worldCommandService;
+    private final WorldService WorldService;
     private final WhoDamagedWhoRepository whoDamagedWhoRepository;
     private final EquipmentGeneratorFactory equipmentGeneratorFactory;
     private final Random random;
@@ -46,13 +46,13 @@ public class MobDropHandler implements CommandHandler {
     @Inject
     public MobDropHandler(LegendsPlayerQueryService playerQueryService,
                           LegendsPlayerCommandService playerCommandService,
-                          WorldCommandService worldCommandService,
+                          WorldService WorldService,
                           WhoDamagedWhoRepository whoDamagedWhoRepository,
                           EquipmentGeneratorFactory equipmentGeneratorFactory,
                           Random random) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
-        this.worldCommandService = worldCommandService;
+        this.WorldService = WorldService;
         this.whoDamagedWhoRepository = whoDamagedWhoRepository;
         this.equipmentGeneratorFactory = equipmentGeneratorFactory;
         this.random = random;
@@ -123,14 +123,14 @@ public class MobDropHandler implements CommandHandler {
 
             Item drop = equipmentGenerator.generate(specializationType, team);
             Location dropLocation = new Location(World.OVERWORLD, x, y, z);
-            List<UUID> droppedItemIds = worldCommandService.dropItemsAt(Collections.singletonList(drop), dropLocation);
+            List<UUID> droppedItemIds = WorldService.dropItems(dropLocation, drop); // TODO expose dropped item ID in Monolith
             UUID droppedItemId = droppedItemIds.get(0);
 
             UUID secondDroppedItemId = null;
             if (mobType.equals("Rider") || mobType.equals("Elemental")) {
                 if (random.nextDouble() >= 0.5) {
                     Item secondDrop = equipmentGenerator.generate(specializationType, team);
-                    List<UUID> secondDroppedItemIds = worldCommandService.dropItemsAt(Collections.singletonList(secondDrop), dropLocation);
+                    List<UUID> secondDroppedItemIds = WorldService.dropItems(dropLocation, secondDrop);
                     secondDroppedItemId = secondDroppedItemIds.get(0);
                 }
                 playerCommandService.addFavor(damagerId, 2);

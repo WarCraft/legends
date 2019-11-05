@@ -5,7 +5,7 @@ import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.shop.Promotion;
 import gg.warcraft.legends.api.shop.ShopItemType;
 import gg.warcraft.monolith.api.entity.EquipmentSlot;
-import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.List;
 import java.util.Map;

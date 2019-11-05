@@ -16,8 +16,7 @@ import gg.warcraft.monolith.api.entity.team.service.TeamCommandService;
 import gg.warcraft.monolith.api.menu.Menu;
 import gg.warcraft.monolith.api.menu.service.MenuCommandService;
 import gg.warcraft.monolith.api.world.block.backup.BlockBackup;
-import gg.warcraft.monolith.api.world.block.backup.service.BlockBackupCommandService;
-import gg.warcraft.monolith.api.world.block.backup.service.BlockBackupQueryService;
+import gg.warcraft.monolith.api.world.block.backup.BlockBackupService;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,8 +26,7 @@ public class FishCommandHandler implements CommandHandler {
     private final PlayerCommandService playerCommandService;
     private final TeamCommandService teamCommandService;
     private final SpecializationCommandService specializationCommandService;
-    private final BlockBackupQueryService blockBackupQueryService;
-    private final BlockBackupCommandService blockBackupCommandService;
+    private final BlockBackupService blockBackupService;
     private final MenuCommandService menuCommandService;
     private final ShopCycleHandler shopCycleHandler;
     private final AdminMenuFactory adminMenuFactory;
@@ -38,8 +36,7 @@ public class FishCommandHandler implements CommandHandler {
     public FishCommandHandler(AuthorizationService authorizationService, PlayerCommandService playerCommandService,
                               TeamCommandService teamCommandService,
                               SpecializationCommandService specializationCommandService,
-                              BlockBackupQueryService blockBackupQueryService,
-                              BlockBackupCommandService blockBackupCommandService,
+                              BlockBackupService blockBackupService,
                               MenuCommandService menuCommandService,
                               ShopCycleHandler shopCycleHandler,
                               AdminMenuFactory adminMenuFactory, PersistenceCache persistenceCache) {
@@ -47,8 +44,7 @@ public class FishCommandHandler implements CommandHandler {
         this.playerCommandService = playerCommandService;
         this.teamCommandService = teamCommandService;
         this.specializationCommandService = specializationCommandService;
-        this.blockBackupQueryService = blockBackupQueryService;
-        this.blockBackupCommandService = blockBackupCommandService;
+        this.blockBackupService = blockBackupService;
         this.menuCommandService = menuCommandService;
         this.shopCycleHandler = shopCycleHandler;
         this.adminMenuFactory = adminMenuFactory;
@@ -63,9 +59,7 @@ public class FishCommandHandler implements CommandHandler {
 
     boolean onRestoreAllCommand() {
         // TODO this should delete any domain objects that are linked to temporary blocks like Siege Weapons
-        blockBackupQueryService.getAllBlockBackups().stream()
-                .map(BlockBackup::getId)
-                .forEach(blockBackupCommandService::restoreBlockBackup);
+        blockBackupService.restoreBackups();
         return true;
     }
 

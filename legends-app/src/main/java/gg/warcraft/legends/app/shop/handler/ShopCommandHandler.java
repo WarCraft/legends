@@ -12,7 +12,8 @@ import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
 import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.item.Item;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.StackableItem;
 
 import java.util.List;
 import java.util.UUID;
@@ -64,7 +65,7 @@ public class ShopCommandHandler implements CommandHandler {
                 // TODO how to revoke?
             } else {
                 LootCrateBuilder crateBuilder = lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.TITAN_CRATE);
-                Item crate = crateBuilder.build().withStackSize(actualAmount);
+                Item crate = ((StackableItem) crateBuilder.build()).withCount(actualAmount);
                 playerCommandService.giveItem(actualPlayerId, crate, false);
             }
             return true;

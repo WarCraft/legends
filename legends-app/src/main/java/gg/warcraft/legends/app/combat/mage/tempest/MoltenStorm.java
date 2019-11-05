@@ -28,7 +28,7 @@ import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
 import gg.warcraft.monolith.api.world.block.Block;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.WorldService;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -48,7 +48,7 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
 
     private final AbilityCommandService abilityCommandService;
     private final EntityCommandService entityCommandService;
-    private final WorldCommandService worldCommandService;
+    private final WorldService WorldService;
     private final MovementFactory movementFactory;
     private final MageEffectFactory mageEffectFactory;
     private final Hitbox hitbox;
@@ -58,7 +58,7 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
 
     @Inject
     public MoltenStorm(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                       WorldCommandService worldCommandService, TaskService taskService, TimeUtils timeUtils,
+                       WorldService WorldService, TaskService taskService, TimeUtils timeUtils,
                        HitboxFactory hitboxFactory, MovementFactory movementFactory,
                        EffectVectorsFactory effectVectorsFactory, MageEffectFactory mageEffectFactory,
                        @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
@@ -66,7 +66,7 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
         super(caster.getId(), snapshot);
         this.abilityCommandService = abilityCommandService;
         this.entityCommandService = entityCommandService;
-        this.worldCommandService = worldCommandService;
+        this.WorldService = WorldService;
         this.movementFactory = movementFactory;
         this.mageEffectFactory = mageEffectFactory;
 
@@ -77,7 +77,7 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
 
         Location location = rangedTarget != null
                 ? rangedTarget.getLocation()
-                : blockTarget.getLocation().toLocation().add(0.5f, 1, 0.5f);
+                : blockTarget.location().toLocation().add(0.5f, 1, 0.5f);
 
         Location origin = location.add(HEIGHT).add(OFFSET);
         Vector3f direction = location.subtract(origin).translation().normalize();
@@ -106,7 +106,7 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
         mageEffectFactory.createMoltenStormRingEffect(location, duration);
 
         // Play sound
-        worldCommandService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
         entityCommandService.damage(entity.getId(), damage);
         entityCommandService.burn(entity.getId(), burnDuration);
 
-        worldCommandService.playSound(entity.getLocation(), HIT_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(entity.getLocation(), HIT_SOUND, SOUND_CATEGORY, 1, 1);
         return true;
     }
 
@@ -135,7 +135,7 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
 
     @Override
     public boolean onGrounded(Location location) {
-        worldCommandService.playSound(location, HIT_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(location, HIT_SOUND, SOUND_CATEGORY, 1, 1);
         return true;
     }
 }

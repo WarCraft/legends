@@ -11,7 +11,9 @@ import gg.warcraft.legends.api.shop.profile.service.ShopProfileCommandService;
 import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
-import gg.warcraft.monolith.api.item.Item;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.StackableItem;
+import scala.collection.mutable.Stack;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -21,9 +23,9 @@ public class LaunchRewardsCommandHandler implements CommandHandler {
     private final LegendsPlayerQueryService playerQueryService;
     private final LegendsPlayerCommandService playerCommandService;
     private final ShopProfileCommandService shopProfileCommandService;
-    private final Item threeWarCrates;
-    private final Item twoLegendCrates;
-    private final Item titanCrate;
+    private final StackableItem threeWarCrates;
+    private final StackableItem twoLegendCrates;
+    private final StackableItem titanCrate;
 
     @Inject
     public LaunchRewardsCommandHandler(LegendsPlayerQueryService playerQueryService,
@@ -33,17 +35,17 @@ public class LaunchRewardsCommandHandler implements CommandHandler {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.shopProfileCommandService = shopProfileCommandService;
-        this.threeWarCrates = lootCrateBuilderFactory
+        this.threeWarCrates = ((StackableItem)lootCrateBuilderFactory
                 .createLootCrateBuilder(LootCrateType.WAR_CRATE)
-                .build()
-                .withStackSize(3);
-        this.twoLegendCrates = lootCrateBuilderFactory
+                .build())
+                .withCount(3);
+        this.twoLegendCrates = ((StackableItem)lootCrateBuilderFactory
                 .createLootCrateBuilder(LootCrateType.LEGEND_CRATE)
-                .build()
-                .withStackSize(2);
-        this.titanCrate = lootCrateBuilderFactory
+                .build())
+                .withCount(2);
+        this.titanCrate = ((StackableItem)lootCrateBuilderFactory
                 .createLootCrateBuilder(LootCrateType.TITAN_CRATE)
-                .build();
+                .build());
     }
 
     @Override

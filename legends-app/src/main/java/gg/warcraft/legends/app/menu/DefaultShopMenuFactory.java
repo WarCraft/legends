@@ -18,7 +18,6 @@ import gg.warcraft.legends.api.shop.profile.service.ShopProfileCommandService;
 import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
 import gg.warcraft.legends.api.shop.service.ShopRepository;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
 import gg.warcraft.monolith.api.menu.ButtonBuilder;
@@ -29,6 +28,7 @@ import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
 import gg.warcraft.monolith.api.menu.MenuSize;
 import gg.warcraft.monolith.api.menu.service.MenuCommandService;
 import gg.warcraft.monolith.api.util.ColorCode;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.UUID;
 

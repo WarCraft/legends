@@ -9,8 +9,8 @@ import gg.warcraft.legends.api.item.equipment.EquipmentBuilderFactory;
 import gg.warcraft.legends.api.item.equipment.EquipmentModifier;
 import gg.warcraft.legends.api.item.equipment.EquipmentReader;
 import gg.warcraft.legends.api.item.equipment.EquipmentReaderFactory;
-import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.util.ColorCodeUtils;
+import gg.warcraft.monolith.api.world.item.Item;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,7 +66,7 @@ public class SimpleEquipmentModifier implements EquipmentModifier {
 
     @Override
     public Item build() {
-        String itemName = item.getName();
+        String itemName = item.name();
         String cleanItemName = colorCodeUtils.stripColorCodes(itemName).replaceAll("\\s\\(\\+\\d+\\)$", "");
         String rarityColorCode = itemName.replace(colorCodeUtils.stripColorCodes(itemName), "");
         ItemRarity itemRarity = ItemRarity.COMMON;
@@ -76,7 +76,7 @@ public class SimpleEquipmentModifier implements EquipmentModifier {
             }
         }
 
-        EquipmentBuilder equipmentBuilder = equipmentBuilderFactory.createEquipmentBuilder(item.getType(), itemRarity, cleanItemName);
+        EquipmentBuilder equipmentBuilder = equipmentBuilderFactory.createEquipmentBuilder(item.type(), itemRarity, cleanItemName);
         modifiedAttributes.forEach(equipmentBuilder::withAttribute);
         equipmentBuilder.withAvailableUpgrades(availableUpgrades);
         equipmentBuilder.withUpgradeCount(upgradeCount);

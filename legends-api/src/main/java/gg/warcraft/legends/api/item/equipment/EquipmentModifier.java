@@ -1,7 +1,7 @@
 package gg.warcraft.legends.api.item.equipment;
 
 import gg.warcraft.legends.api.entity.LegendsAttribute;
-import gg.warcraft.monolith.api.item.Item;
+import gg.warcraft.monolith.api.world.item.Item;
 
 public interface EquipmentModifier {
 

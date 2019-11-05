@@ -13,9 +13,9 @@ import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
 import gg.warcraft.monolith.api.entity.player.event.PlayerEquipmentChangedEvent;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
-import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemReader;
 import gg.warcraft.monolith.api.item.ItemReaderFactory;
+import gg.warcraft.monolith.api.world.item.Item;
 
 import java.util.ArrayList;
 import java.util.Collections;

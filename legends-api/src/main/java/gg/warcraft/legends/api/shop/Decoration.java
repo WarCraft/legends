@@ -1,6 +1,6 @@
 package gg.warcraft.legends.api.shop;
 
-import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 public interface Decoration extends ShopItem {
 

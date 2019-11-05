@@ -9,7 +9,7 @@ import gg.warcraft.monolith.api.entity.status.AbstractStatusEffect;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.WorldService;
 
 import java.util.UUID;
 
@@ -20,19 +20,19 @@ public class StandYourGroundStatusEffect extends AbstractStatusEffect {
     private static final Sound DAMAGED_SOUND = Sound.ENTITY_IRONGOLEM_HURT;
 
     private final EntityQueryService entityQueryService;
-    private final WorldCommandService worldCommandService;
+    private final WorldService WorldService;
 
     @Inject
-    public StandYourGroundStatusEffect(EntityQueryService entityQueryService, WorldCommandService worldCommandService,
+    public StandYourGroundStatusEffect(EntityQueryService entityQueryService, WorldService WorldService,
                                        @Assisted UUID entityId, @Assisted Duration duration) {
         super(entityId, NAME, TYPE, duration);
         this.entityQueryService = entityQueryService;
-        this.worldCommandService = worldCommandService;
+        this.WorldService = WorldService;
     }
 
     @Override
     public void onEntityDamageEvent(EntityDamageEvent event) {
         Entity entity = entityQueryService.getEntity(getEntityId());
-        worldCommandService.playSound(entity.getLocation(), DAMAGED_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(entity.getLocation(), DAMAGED_SOUND, SOUND_CATEGORY, 1, 1);
     }
 }

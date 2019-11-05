@@ -27,11 +27,10 @@ import gg.warcraft.monolith.api.world.BlockLocation;
 import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
-import gg.warcraft.monolith.api.world.block.Block;
-import gg.warcraft.monolith.api.world.block.BlockType;
+import gg.warcraft.monolith.api.world.block.*;
 import gg.warcraft.monolith.api.world.block.spoofing.BlockSpoofingCommandService;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
-import gg.warcraft.monolith.api.world.service.WorldQueryService;
+import gg.warcraft.monolith.api.world.WorldService;
+import gg.warcraft.monolith.api.world.block.variant.TrapdoorVariant;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -43,7 +42,7 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
 
     private final AbilityCommandService abilityCommandService;
     private final EntityCommandService entityCommandService;
-    private final WorldCommandService worldCommandService;
+    private final WorldService WorldService;
     private final BlockSpoofingCommandService blockSpoofingCommandService;
     private final TaskService taskService;
     private final BlockLocation blockLocation;
@@ -54,21 +53,22 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
 
     @Inject
     public Trap(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                PlayerQueryService playerQueryService, WorldCommandService worldCommandService,
-                WorldQueryService worldQueryService, BlockSpoofingCommandService blockSpoofingCommandService,
+                PlayerQueryService playerQueryService, WorldService WorldService,
+                BlockSpoofingCommandService blockSpoofingCommandService,
                 MovementFactory movementFactory, HitboxFactory hitboxFactory, TaskService taskService,
                 @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
                 @Assisted("target") @Nullable Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
         super(caster.getId(), snapshot);
         this.abilityCommandService = abilityCommandService;
         this.entityCommandService = entityCommandService;
-        this.worldCommandService = worldCommandService;
+        this.WorldService = WorldService;
         this.blockSpoofingCommandService = blockSpoofingCommandService;
         this.taskService = taskService;
 
         this.blockLocation = caster.getLocation().toBlockLocation();
-        Block currentBlock = worldQueryService.getBlockAt(blockLocation);
-        Block fakeBlock = currentBlock.withType(BlockType.WOODEN_TRAPDOOR);
+        Block currentBlock = WorldService.getBlock(blockLocation);
+        Block fakeBlock = new Trapdoor(currentBlock.location(), TrapdoorVariant.OAK, BlockFace.NORTH, BlockBisection.TOP,
+                false, false, false);
         this.spoofedPlayerIds = playerQueryService.getOnlinePlayers().stream()
                 .filter(player -> player.getTeam() == caster.getTeam())
                 .map(Player::getId)
@@ -83,7 +83,7 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
 
         Duration duration = snapshot.getDuration();
         taskService.runLater(this::cancel, duration);
-        worldCommandService.playSound(caster.getLocation(), PLACE_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(caster.getLocation(), PLACE_SOUND, SOUND_CATEGORY, 1, 1);
     }
 
     @Override
@@ -111,14 +111,14 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
         });
 
         cancel();
-        worldCommandService.playSound(entity.getLocation(), TRIGGER_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(entity.getLocation(), TRIGGER_SOUND, SOUND_CATEGORY, 1, 1);
         return true;
     }
 
     @Override
     public boolean onMiss(Entity entity) {
         cancel();
-        worldCommandService.playSound(entity.getLocation(), TRIGGER_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(entity.getLocation(), TRIGGER_SOUND, SOUND_CATEGORY, 1, 1);
         return true;
     }
 

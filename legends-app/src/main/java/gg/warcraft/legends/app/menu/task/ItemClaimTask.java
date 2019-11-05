@@ -4,29 +4,26 @@ import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.monolith.api.core.TaskService;
-import gg.warcraft.monolith.api.item.Item;
-import gg.warcraft.monolith.api.item.service.ItemStorageCommandService;
-import gg.warcraft.monolith.api.item.service.ItemStorageQueryService;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.storage.ItemStorageService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class ItemClaimTask implements Runnable {
-    private final ItemStorageQueryService itemStorageQueryService;
-    private final ItemStorageCommandService itemStorageCommandService;
+    private final ItemStorageService itemStorageService;
     private final LegendsPlayerQueryService playerQueryService;
     private final LegendsPlayerCommandService playerCommandService;
     private final TaskService taskService;
     private final UUID playerId;
 
-    public ItemClaimTask(ItemStorageQueryService itemStorageQueryService,
-                         ItemStorageCommandService itemStorageCommandService,
+    public ItemClaimTask(ItemStorageService itemStorageService,
                          LegendsPlayerQueryService playerQueryService,
                          LegendsPlayerCommandService playerCommandService,
                          TaskService taskService,
                          UUID playerId) {
-        this.itemStorageQueryService = itemStorageQueryService;
-        this.itemStorageCommandService = itemStorageCommandService;
+        this.itemStorageService = itemStorageService;
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.taskService = taskService;
@@ -35,7 +32,8 @@ public class ItemClaimTask implements Runnable {
 
     @Override
     public void run() {
-        List<Item> storedItems = itemStorageQueryService.getStoredItems(playerId);
+        // TODO List<Item> storedItems = itemStorageService.getItems(playerId);
+        List<Item> storedItems = new ArrayList<>();
         if (storedItems.isEmpty()) {
             return;
         }
@@ -47,12 +45,13 @@ public class ItemClaimTask implements Runnable {
             return;
         }
 
-        Item itemToClaim = storedItems.get(0);
-        itemStorageCommandService.claimItem(itemToClaim, playerId);
-        playerCommandService.giveItem(playerId, itemToClaim, false);
-        playerCommandService.sendNotification(playerId, "You received " + itemToClaim.getStackSize() +
-                " " + itemToClaim.getName() + "!");
-
-        taskService.runNextTick(this);
+        // TODO
+//        Item itemToClaim = storedItems.get(0);
+//        itemStorageService.claimItem(itemToClaim, playerId);
+//        playerCommandService.giveItem(playerId, itemToClaim, false);
+//        playerCommandService.sendNotification(playerId, "You received " + itemToClaim.getStackSize() +
+//                " " + itemToClaim.getName() + "!");
+//
+//        taskService.runNextTick(this);
     }
 }

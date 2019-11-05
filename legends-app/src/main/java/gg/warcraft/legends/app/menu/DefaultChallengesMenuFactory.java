@@ -7,7 +7,6 @@ import gg.warcraft.legends.api.entity.player.LegendsPlayer;
 import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
 import gg.warcraft.legends.api.menu.ChallengesMenuFactory;
 import gg.warcraft.legends.api.menu.MainMenuFactory;
-import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
 import gg.warcraft.monolith.api.menu.ButtonBuilder;
@@ -18,6 +17,7 @@ import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
 import gg.warcraft.monolith.api.menu.MenuSize;
 import gg.warcraft.monolith.api.menu.service.MenuCommandService;
 import gg.warcraft.monolith.api.util.ColorCode;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.UUID;
 
@@ -79,7 +79,7 @@ public class DefaultChallengesMenuFactory extends AbstractMenuFactory implements
     }
 
     Button createAlltimeChallengesButton(UUID playerId) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.MINECART_WITH_TNT, "All-time Challenges");
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.MINECART, "All-time Challenges"); // TODO add MinecartVariant.TNT
         builder.addTooltip("All-time challenges are the passive");
         builder.addTooltip("challenges of Ouros. Simply playing on");
         builder.addTooltip("the server will progress them. Some");
@@ -95,7 +95,7 @@ public class DefaultChallengesMenuFactory extends AbstractMenuFactory implements
     }
 
     Button createSpecialChallengesButton(UUID playerId) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.MINECART_WITH_TNT, "Special Challenges");
+        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.MINECART, "Special Challenges"); // TODO add MinecartVariant.TNT
         builder.addTooltip("Special challenges are challenges");
         builder.addTooltip("that require a little bit more thought.");
         builder.addTooltip("");

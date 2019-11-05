@@ -12,13 +12,14 @@ import gg.warcraft.legends.api.item.equipment.EquipmentReaderFactory;
 import gg.warcraft.monolith.api.entity.EquipmentSlot;
 import gg.warcraft.monolith.api.entity.event.EntityPreInteractEvent;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.item.Item;
 import gg.warcraft.monolith.api.item.ItemReader;
 import gg.warcraft.monolith.api.item.ItemReaderFactory;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
+import gg.warcraft.monolith.api.world.WorldService;
 import gg.warcraft.monolith.api.world.block.event.BlockPreInteractEvent;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.StackableItem;
 
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class EquipmentUpgradeUseHandler {
     private static final String EQUIPMENT_UPGRADE_TYPE = "Equipment Upgrade";
     private static final String EQUIPMENT_TYPE = "Equipment";
 
-    private final WorldCommandService worldCommandService;
+    private final WorldService WorldService;
     private final PlayerCommandService playerCommandService;
     private final LegendsPlayerQueryService playerQueryService;
     private final ItemReaderFactory itemReaderFactory;
@@ -34,13 +35,13 @@ public class EquipmentUpgradeUseHandler {
     private final EquipmentModifierFactory equipmentModifierFactory;
 
     @Inject
-    public EquipmentUpgradeUseHandler(WorldCommandService worldCommandService,
+    public EquipmentUpgradeUseHandler(WorldService WorldService,
                                       PlayerCommandService playerCommandService,
                                       LegendsPlayerQueryService playerQueryService,
                                       EquipmentModifierFactory equipmentModifierFactory,
                                       EquipmentReaderFactory equipmentReaderFactory,
                                       ItemReaderFactory itemReaderFactory) {
-        this.worldCommandService = worldCommandService;
+        this.WorldService = WorldService;
         this.playerCommandService = playerCommandService;
         this.playerQueryService = playerQueryService;
         this.itemReaderFactory = itemReaderFactory;
@@ -88,13 +89,14 @@ public class EquipmentUpgradeUseHandler {
         equipmentModifier.addUpgradeCount(1);
         Item newEquipment = equipmentModifier.build();
 
-        Item newUpgrade = offhand.withStackSize(offhand.getStackSize() - 1);
+        StackableItem stackedOffhand = (StackableItem) offhand;
+        Item newUpgrade = stackedOffhand.withCount(stackedOffhand.count() - 1);
 
         try {
             playerCommandService.setEquipment(playerId, EquipmentSlot.OFF_HAND, newUpgrade);
             playerCommandService.setEquipment(playerId, EquipmentSlot.MAIN_HAND, newEquipment);
 
-            worldCommandService.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
+            WorldService.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,
                     SoundCategory.AMBIENT, 1, 1);
         } catch (Exception ex) {
             ex.printStackTrace();

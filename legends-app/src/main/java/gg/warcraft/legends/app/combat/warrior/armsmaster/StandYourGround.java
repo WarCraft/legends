@@ -19,7 +19,7 @@ import gg.warcraft.monolith.api.entity.status.StatusEffect;
 import gg.warcraft.monolith.api.entity.status.service.StatusCommandService;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.WorldService;
 
 import javax.annotation.Nullable;
 
@@ -29,7 +29,7 @@ public class StandYourGround extends AbstractAbility implements MeleeAbility {
 
     @Inject
     public StandYourGround(EntityCommandService entityCommandService, AttributeCommandService attributeCommandService,
-                           StatusCommandService statusCommandService, WorldCommandService worldCommandService,
+                           StatusCommandService statusCommandService, WorldService WorldService,
                            TaskService taskService, WarriorEffectFactory warriorEffectFactory,
                            WarriorStatusEffectFactory warriorStatusEffectFactory, @Assisted AbilitySnapshot snapshot,
                            @Assisted("caster") Entity caster, @Assisted("target") @Nullable Entity meleeTarget) {
@@ -48,7 +48,7 @@ public class StandYourGround extends AbstractAbility implements MeleeAbility {
                 slow.getDuration());
 
         warriorEffectFactory.createStandYourGroundEffect(caster, slow.getDuration());
-        worldCommandService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);
 
         StatusEffect statusEffect =
                 warriorStatusEffectFactory.createStandYourGroundStatusEffect(caster.getId(), slow.getDuration());

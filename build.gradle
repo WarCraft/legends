@@ -26,7 +26,7 @@ subprojects {
     }
 
     dependencies {
-        shadow 'gg.warcraft:monolith-api:2.0.0-SNAPSHOT'
+        shadow 'gg.warcraft:monolith-api_2.13:14.0.0-SNAPSHOT'
         shadow 'gg.warcraft:chat-api:1.0.0-SNAPSHOT'
         shadow 'gg.warcraft:gathering-api:1.0.0-SNAPSHOT'
         shadow 'gg.warcraft:combat-api:1.0.0-SNAPSHOT'

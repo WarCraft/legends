@@ -14,24 +14,24 @@ import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.world.Location;
 import gg.warcraft.monolith.api.world.Sound;
 import gg.warcraft.monolith.api.world.SoundCategory;
-import gg.warcraft.monolith.api.world.service.WorldCommandService;
+import gg.warcraft.monolith.api.world.WorldService;
 
 import java.util.UUID;
 
 public class PlayerRankChangedHandler {
     private final LegendsPlayerQueryService playerQueryService;
     private final ChatProfileCommandService chatProfileCommandService;
-    private final WorldCommandService worldCommandService;
+    private final WorldService WorldService;
     private final RankQueryService rankQueryService;
 
     @Inject
     public PlayerRankChangedHandler(LegendsPlayerQueryService playerQueryService,
                                     ChatProfileCommandService chatProfileCommandService,
-                                    WorldCommandService worldCommandService,
+                                    WorldService WorldService,
                                     RankQueryService rankQueryService) {
         this.playerQueryService = playerQueryService;
         this.chatProfileCommandService = chatProfileCommandService;
-        this.worldCommandService = worldCommandService;
+        this.WorldService = WorldService;
         this.rankQueryService = rankQueryService;
     }
 
@@ -47,7 +47,7 @@ public class PlayerRankChangedHandler {
         chatProfileCommandService.setTag(playerId, newRank.getFormattedName(), newRank.getColor());
 
         Location location = player.getLocation();
-        worldCommandService.playSound(location, Sound.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 1, 1);
+        WorldService.playSound(location, Sound.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 1, 1);
     }
 
     @Subscribe

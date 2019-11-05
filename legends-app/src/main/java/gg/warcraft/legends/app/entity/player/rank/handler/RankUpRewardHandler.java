@@ -13,7 +13,8 @@ import gg.warcraft.monolith.api.command.Command;
 import gg.warcraft.monolith.api.command.CommandHandler;
 import gg.warcraft.monolith.api.command.CommandSender;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.item.Item;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.StackableItem;
 
 import java.util.List;
 import java.util.Map;
@@ -60,10 +61,10 @@ public class RankUpRewardHandler implements CommandHandler {
             }
 
             rewards.forEach((crate, amount) -> {
-                Item reward = lootCrateBuilderFactory.createLootCrateBuilder(crate).build().withStackSize(amount);
+                Item reward = ((StackableItem) lootCrateBuilderFactory.createLootCrateBuilder(crate).build()).withCount(amount);
                 playerCommandService.giveItem(playerId, reward, false);
                 String pluralAdendum = amount > 1 ? "s" : "";
-                playerCommandService.sendNotification(playerId, "You received " + amount + " " + reward.getName() +
+                playerCommandService.sendNotification(playerId, "You received " + amount + " " + reward.name() +
                         pluralAdendum + " for ranking up!");
             });
             rankUpRewardsClaimed = newRankUpRewardsClaimed;

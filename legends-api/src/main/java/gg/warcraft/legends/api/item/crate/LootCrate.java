@@ -2,7 +2,7 @@ package gg.warcraft.legends.api.item.crate;
 
 import com.google.common.collect.ImmutableSortedMap;
 import gg.warcraft.legends.api.item.ItemRarity;
-import gg.warcraft.monolith.api.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemType;
 
 public interface LootCrate {
 

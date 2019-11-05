@@ -9,8 +9,8 @@ dependencies {
         maven { url 'https://dl.bintray.com/nuvotifier/maven/' }
     }
 
-    shadow('org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT') { exclude group: '*' }
-    shadow 'de.slikey:EffectLib:5.10-SNAPSHOT'
+    shadow('org.spigotmc:spigot:1.14.4-R0.1-SNAPSHOT') { exclude group: '*' }
+    shadow 'de.slikey:EffectLib:6.2-SNAPSHOT'
     shadow 'LibsDisguises:LibsDisguises:9.5.2'
     shadow "com.vexsoftware:nuvotifier-universal:2.3.4"
 }

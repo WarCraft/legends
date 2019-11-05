@@ -9,8 +9,6 @@ import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.entity.player.Player;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
 import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
-import gg.warcraft.monolith.api.item.Item;
-import gg.warcraft.monolith.api.item.ItemType;
 import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
 import gg.warcraft.monolith.api.menu.Button;
 import gg.warcraft.monolith.api.menu.ButtonBuilder;
@@ -21,6 +19,9 @@ import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
 import gg.warcraft.monolith.api.menu.MenuSize;
 import gg.warcraft.monolith.api.menu.service.MenuCommandService;
 import gg.warcraft.monolith.api.util.ColorCode;
+import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemType;
+import gg.warcraft.monolith.api.world.item.StackableItem;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -57,17 +58,17 @@ public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements
         this.pluginLogger = pluginLogger;
 
         if (DAILY_REWARDS.isEmpty()) {
-            Item warCrate = lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.WAR_CRATE).build();
-            Item legendCrate = lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.LEGEND_CRATE).build();
-            Item titanCrate = lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.TITAN_CRATE).build();
+            StackableItem warCrate = (StackableItem) lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.WAR_CRATE).build();
+            StackableItem legendCrate = (StackableItem) lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.LEGEND_CRATE).build();
+            StackableItem titanCrate = (StackableItem) lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.TITAN_CRATE).build();
 
             DAILY_REWARDS.put(1, warCrate);
             DAILY_REWARDS.put(7, legendCrate);
             DAILY_REWARDS.put(8, warCrate);
             DAILY_REWARDS.put(14, legendCrate);
-            DAILY_REWARDS.put(15, warCrate.withStackSize(2));
-            DAILY_REWARDS.put(21, legendCrate.withStackSize(2));
-            DAILY_REWARDS.put(22, warCrate.withStackSize(2));
+            DAILY_REWARDS.put(15, warCrate.withCount(2));
+            DAILY_REWARDS.put(21, legendCrate.withCount(2));
+            DAILY_REWARDS.put(22, warCrate.withCount(2));
             DAILY_REWARDS.put(28, titanCrate);
         }
     }
@@ -120,9 +121,9 @@ public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements
         boolean dayClaimed = day <= claimed;
         ItemType icon;
         if (isSpecial) {
-            icon = dayClaimed ? ItemType.BLACK_STAINED_GLASS : ItemType.ENDER_CHEST;
+            icon = dayClaimed ? ItemType.BARRIER : ItemType.CHEST; // TODO was icon = dayClaimed ? ItemType.BLACK_STAINED_GLASS : ItemType.ENDER_CHEST;
         } else {
-            icon = dayClaimed ? ItemType.BROWN_STAINED_GLASS : ItemType.CHEST;
+            icon = dayClaimed ? ItemType.BARRIER : ItemType.CHEST; // TODO was icon = dayClaimed ? ItemType.BROWN_STAINED_GLASS : ItemType.CHEST;
         }
 
         LootCrateType lootCrateType;

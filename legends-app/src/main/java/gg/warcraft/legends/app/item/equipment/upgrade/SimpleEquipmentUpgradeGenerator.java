@@ -6,7 +6,7 @@ import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeBuilderFactory;
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeGenerator;
-import gg.warcraft.monolith.api.item.Item;
+import gg.warcraft.monolith.api.world.item.Item;
 
 import java.util.Random;
 
