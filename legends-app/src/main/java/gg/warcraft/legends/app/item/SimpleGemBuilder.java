@@ -7,14 +7,14 @@ import gg.warcraft.legends.api.item.GemBuilder;
 import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.world.item.Item;
-import gg.warcraft.monolith.api.world.item.ItemFactory;
+import gg.warcraft.monolith.api.world.item.ItemService;
 import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleGemBuilder implements GemBuilder {
-    private final ItemFactory itemFactory;
+    private final ItemService itemService;
     private final ItemType type;
     private final ItemRarity rarity;
     private final String name;
@@ -24,9 +24,9 @@ public class SimpleGemBuilder implements GemBuilder {
     private int breakChance;
 
     @Inject
-    public SimpleGemBuilder(ItemFactory itemFactory, @Assisted ItemRarity rarity,
+    public SimpleGemBuilder(ItemService itemService, @Assisted ItemRarity rarity,
                             @Assisted String name) {
-        this.itemFactory = itemFactory;
+        this.itemService = itemService;
         this.type = getItemType(rarity);
         this.rarity = rarity;
         this.name = name;
@@ -77,7 +77,7 @@ public class SimpleGemBuilder implements GemBuilder {
 
     @Override
     public Item build() {
-        Item item = itemFactory.create(type).withName(rarity.getColor() + name);
+        Item item = itemService.create(type).withName(rarity.getColor() + name);
 
         // set type at top of tooltip
         item = item.addTooltip(ColorCode.GRAY + "Upgrade Gem");

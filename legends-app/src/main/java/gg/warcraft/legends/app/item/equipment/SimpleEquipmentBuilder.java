@@ -7,7 +7,7 @@ import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.item.equipment.EquipmentBuilder;
 import gg.warcraft.monolith.api.util.FormatCode;
 import gg.warcraft.monolith.api.world.item.Item;
-import gg.warcraft.monolith.api.world.item.ItemFactory;
+import gg.warcraft.monolith.api.world.item.ItemService;
 import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SimpleEquipmentBuilder implements EquipmentBuilder {
-    private final ItemFactory itemFactory;
+    private final ItemService itemService;
     private final ItemType type;
     private final ItemRarity rarity;
     private final String name;
@@ -27,9 +27,9 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
     private List<String> flavorText;
 
     @Inject
-    public SimpleEquipmentBuilder(ItemFactory itemFactory, @Assisted ItemType type,
+    public SimpleEquipmentBuilder(ItemService itemService, @Assisted ItemType type,
                                   @Assisted ItemRarity rarity, @Assisted String name) {
-        this.itemFactory = itemFactory;
+        this.itemService = itemService;
         this.type = type;
         this.rarity = rarity;
         this.name = name;
@@ -80,7 +80,7 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
         String upgradedName = upgradeCount > 0
                 ? name + " (+" + upgradeCount + ")"
                 : name;
-        Item item = itemFactory.create(type).withName(rarity.getColor() + upgradedName);
+        Item item = itemService.create(type).withName(rarity.getColor() + upgradedName);
 
         // set type at top of tooltip
         item = item.addTooltip("Equipment");

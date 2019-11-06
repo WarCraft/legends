@@ -4,23 +4,23 @@ import com.google.inject.Inject;
 import gg.warcraft.legends.api.shop.DecorationId;
 import gg.warcraft.legends.api.shop.DecorationUtils;
 import gg.warcraft.monolith.api.world.item.Item;
-import gg.warcraft.monolith.api.world.item.ItemFactory;
+import gg.warcraft.monolith.api.world.item.ItemService;
 
 public class DefaultDecorationUtils implements DecorationUtils {
     private static final int STACK_SIZE = 64;
 
-    private final ItemFactory itemFactory;
+    private final ItemService itemService;
 
     @Inject
-    public DefaultDecorationUtils(ItemFactory itemFactory) {
-        this.itemFactory = itemFactory;
+    public DefaultDecorationUtils(ItemService itemService) {
+        this.itemService = itemService;
     }
 
     @Override
     public Item createItem(DecorationId decorationId) {
 //        ItemType type = decorationId.getIcon();
 //        String name = decorationId.getName();
-//        ItemBuilder builder = itemFactory.createItemBuilder(type, name);
+//        ItemBuilder builder = itemService.createItemBuilder(type, name);
 //        builder.withLore(decorationId.getLore());
 //        return builder.build();
         return null;
@@ -30,7 +30,7 @@ public class DefaultDecorationUtils implements DecorationUtils {
     public Item createStack(DecorationId decorationId) {
 //        ItemType type = decorationId.getIcon();
 //        String name = decorationId.getName();
-//        ItemBuilder builder = itemFactory.createItemBuilder(type, name);
+//        ItemBuilder builder = itemService.createItemBuilder(type, name);
 //        builder.withLore(decorationId.getLore());
 //        builder.withStackSize(STACK_SIZE);
 //        return builder.build();
@@ -41,7 +41,7 @@ public class DefaultDecorationUtils implements DecorationUtils {
     public Item createMenuItem(DecorationId decorationId, boolean unlocked) {
 //        ItemType type = decorationId.getIcon();
 //        String name = decorationId.getName();
-//        ItemBuilder builder = itemFactory.createItemBuilder(type, name);
+//        ItemBuilder builder = itemService.createItemBuilder(type, name);
 //        List<String> lore = decorationId.getMenuLore(unlocked);
 //        builder.withLore(lore);
 //        return builder.build();

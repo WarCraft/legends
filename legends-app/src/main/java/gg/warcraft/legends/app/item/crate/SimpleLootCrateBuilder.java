@@ -8,20 +8,20 @@ import gg.warcraft.legends.api.item.crate.LootCrateBuilder;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
 import gg.warcraft.monolith.api.world.item.Item;
-import gg.warcraft.monolith.api.world.item.ItemFactory;
+import gg.warcraft.monolith.api.world.item.ItemService;
 import gg.warcraft.monolith.api.world.item.ItemType;
 
 public class SimpleLootCrateBuilder implements LootCrateBuilder {
-    private final ItemFactory itemFactory;
+    private final ItemService itemService;
     private final String name;
     private final ItemRarity rarity;
     private final ItemType type;
 
     @Inject
     public SimpleLootCrateBuilder(LootCrateRepository lootCrateRepository,
-                                  ItemFactory itemFactory,
+                                  ItemService itemService,
                                   @Assisted LootCrateType type) {
-        this.itemFactory = itemFactory;
+        this.itemService = itemService;
 
         LootCrate crate = lootCrateRepository.get(type);
         if (crate == null) {
@@ -35,7 +35,7 @@ public class SimpleLootCrateBuilder implements LootCrateBuilder {
 
     @Override
     public Item build() {
-        Item item = itemFactory.create(type).withName(rarity.getColor() + name);
+        Item item = itemService.create(type).withName(rarity.getColor() + name);
 
         // set type at top of tooltip
         item = item.addTooltip("Loot Crate");

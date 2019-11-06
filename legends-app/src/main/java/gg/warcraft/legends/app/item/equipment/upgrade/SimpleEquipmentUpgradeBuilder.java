@@ -7,23 +7,23 @@ import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeBuilder;
 import gg.warcraft.monolith.api.util.FormatCode;
 import gg.warcraft.monolith.api.world.item.Item;
-import gg.warcraft.monolith.api.world.item.ItemFactory;
+import gg.warcraft.monolith.api.world.item.ItemService;
 import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleEquipmentUpgradeBuilder implements EquipmentUpgradeBuilder {
-    private final ItemFactory itemFactory;
+    private final ItemService itemService;
     private final ItemRarity rarity;
     private final String name;
 
     private Map<LegendsAttribute, Integer> attributes;
 
     @Inject
-    public SimpleEquipmentUpgradeBuilder(ItemFactory itemFactory,
+    public SimpleEquipmentUpgradeBuilder(ItemService itemService,
                                          @Assisted ItemRarity rarity, @Assisted String name) {
-        this.itemFactory = itemFactory;
+        this.itemService = itemService;
         this.rarity = rarity;
         this.name = name;
         this.attributes = new HashMap<>();
@@ -43,7 +43,7 @@ public class SimpleEquipmentUpgradeBuilder implements EquipmentUpgradeBuilder {
 
     @Override
     public Item build() {
-        Item item = itemFactory.create(ItemType.PAPER).withName(rarity.getColor() + name);
+        Item item = itemService.create(ItemType.PAPER).withName(rarity.getColor() + name);
 
         // set type at top of tooltip
         item = item.addTooltip("Equipment Upgrade");

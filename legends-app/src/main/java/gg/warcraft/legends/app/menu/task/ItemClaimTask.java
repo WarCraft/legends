@@ -39,7 +39,7 @@ public class ItemClaimTask implements Runnable {
         }
 
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        if (player.getInventory().getSpace() < 1) {
+        if (!player.getInventory().hasSpace(1)) {
             playerCommandService.sendNotification(playerId,
                     "You don't have enough inventory space to claim all of your items. Please free up some space and try again.");
             return;

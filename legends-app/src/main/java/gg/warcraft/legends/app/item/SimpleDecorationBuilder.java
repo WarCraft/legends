@@ -6,22 +6,22 @@ import gg.warcraft.legends.api.item.DecorationBuilder;
 import gg.warcraft.legends.api.shop.Decoration;
 import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.world.item.Item;
-import gg.warcraft.monolith.api.world.item.ItemFactory;
+import gg.warcraft.monolith.api.world.item.ItemService;
 
 public class SimpleDecorationBuilder implements DecorationBuilder {
-    private final ItemFactory itemFactory;
+    private final ItemService itemService;
     private final Decoration decoration;
 
     @Inject
-    public SimpleDecorationBuilder(ItemFactory itemFactory,
+    public SimpleDecorationBuilder(ItemService itemService,
                                    @Assisted Decoration decoration) {
-        this.itemFactory = itemFactory;
+        this.itemService = itemService;
         this.decoration = decoration;
     }
 
     @Override
     public Item build() {
-        Item item = itemFactory.create(decoration.getItemType()).withName(
+        Item item = itemService.create(decoration.getItemType()).withName(
                 decoration.getRarity().getColor() + decoration.getName());
 
         // set type at top of tooltip

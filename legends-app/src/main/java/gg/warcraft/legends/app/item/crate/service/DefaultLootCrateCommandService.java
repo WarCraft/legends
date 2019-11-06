@@ -207,7 +207,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         ConsumableBuilder builder = consumableBuilderFactory.createConsumableBuilder(type, name, rarity);
         Item consumable = builder.build();
         playerCommandService.giveItem(playerId, consumable, false);
-        sendReceivedNotification(playerId, consumable.getName());
+        sendReceivedNotification(playerId, consumable.name());
         return true;
     }
 

@@ -14,9 +14,10 @@ import gg.warcraft.monolith.api.core.EventService;
 import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.entity.event.EntityPreInteractEvent;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.item.Inventory;
 import gg.warcraft.monolith.api.world.block.event.BlockPreInteractEvent;
+import gg.warcraft.monolith.api.world.item.Inventory;
 import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemService;
 import gg.warcraft.monolith.api.world.item.StackableItem;
 
 import java.util.UUID;
@@ -30,6 +31,7 @@ public class LootCrateUseHandler {
     private final PlayerCommandService playerCommandService;
     private final LegendsPlayerQueryService playerQueryService;
     private final LootCrateReaderFactory lootCrateReaderFactory;
+    private final ItemService itemService;
     private final EventService eventService;
     private final Logger pluginLogger;
 
@@ -38,12 +40,13 @@ public class LootCrateUseHandler {
                                PlayerCommandService playerCommandService,
                                LegendsPlayerQueryService playerQueryService,
                                LootCrateReaderFactory lootCrateReaderFactory,
-                               EventService eventService,
+                               EventService eventService, ItemService itemService,
                                @PluginLogger Logger pluginLogger) {
         this.lootCrateCommandService = lootCrateCommandService;
         this.playerCommandService = playerCommandService;
         this.playerQueryService = playerQueryService;
         this.lootCrateReaderFactory = lootCrateReaderFactory;
+        this.itemService = itemService;
         this.eventService = eventService;
         this.pluginLogger = pluginLogger;
     }
@@ -67,12 +70,14 @@ public class LootCrateUseHandler {
 
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
         Inventory inventory = player.getInventory();
-        if (inventory.getSpace() >= ITEMS_PER_CRATE && inventory.remove(((StackableItem) itemInHand).withCount(1))) {
-            for (int i = 0; i < ITEMS_PER_CRATE; i += 1) {
-                lootCrateCommandService.openCrate(playerId, crateType);
+        if (inventory.hasSpace(ITEMS_PER_CRATE)) {
+            if(itemService.takeFrom(playerId, ((StackableItem) itemInHand).withCount(1))) {
+                for (int i = 0; i < ITEMS_PER_CRATE; i += 1) {
+                    lootCrateCommandService.openCrate(playerId, crateType);
+                }
+                LootCrateOpenedEvent event = new SimpleLootCrateOpenedEvent(playerId);
+                eventService.publish(event);
             }
-            LootCrateOpenedEvent event = new SimpleLootCrateOpenedEvent(playerId);
-            eventService.publish(event);
         } else {
             playerCommandService.sendNotification(playerId, "Please make sure you have at least " + ITEMS_PER_CRATE +
                     " empty slots in your inventory before opening a Loot Crate.");

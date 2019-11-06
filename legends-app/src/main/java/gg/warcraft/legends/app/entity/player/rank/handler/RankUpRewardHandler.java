@@ -53,7 +53,7 @@ public class RankUpRewardHandler implements CommandHandler {
                 continue;
             }
 
-            if (player.getInventory().getSpace() < 3) {
+            if (!player.getInventory().hasSpace(3)) {
                 playerCommandService.sendNotification(playerId,
                         "You have rewards for ranking up waiting for you, but you need at least 3 free spaces in your inventory. " +
                                 " When you're ready you can claim them in the first button in /menu.");

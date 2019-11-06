@@ -188,7 +188,7 @@ public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements
                 LocalDate lastClaimed = getLastClaimed(player);
                 LocalDate now = LocalDate.now();
                 if (lastClaimed.isBefore(now)) {
-                    if (player.getInventory().getSpace() > 0) {
+                    if (player.getInventory().hasSpace(1)) {
                         int newClaimCounter = claimCounter + 1;
                         playerCommandService.setData(playerId, DAILY_LOGIN_COUNTER_DATA, "" + newClaimCounter);
                         playerCommandService.setData(playerId, DAILY_LOGIN_LAST_CLAIMED_DATA, now.toString());

@@ -71,7 +71,7 @@ public class DefaultBlueprintVendorDialogFactory extends AbstractMenuFactory imp
                     return;
                 }
 
-                if (player.getInventory().getSpace() < 1) {
+                if (!player.getInventory().hasSpace(1)) {
                     playerCommandService.sendNotification(playerId, "Please make sure you have at least 1 free inventory slot.");
                     closeMenu(playerId);
                     return;

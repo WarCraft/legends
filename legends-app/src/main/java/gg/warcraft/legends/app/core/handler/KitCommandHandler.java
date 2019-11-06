@@ -15,7 +15,7 @@ import gg.warcraft.monolith.api.command.CommandSender;
 import gg.warcraft.monolith.api.entity.Equipment;
 import gg.warcraft.monolith.api.entity.EquipmentSlot;
 import gg.warcraft.monolith.api.world.item.Item;
-import gg.warcraft.monolith.api.world.item.ItemFactory;
+import gg.warcraft.monolith.api.world.item.ItemService;
 import gg.warcraft.monolith.api.world.item.ItemType;
 
 import java.util.HashMap;
@@ -43,7 +43,7 @@ public class KitCommandHandler implements CommandHandler {
                              LegendsPlayerCommandService playerCommandService,
                              SpecializationQueryService specializationQueryService,
                              EquipmentBuilderFactory equipmentBuilderFactory,
-                             ItemFactory itemFactory) {
+                             ItemService itemService) {
         this.playerQueryService = playerQueryService;
         this.playerCommandService = playerCommandService;
         this.specializationQueryService = specializationQueryService;
@@ -82,7 +82,7 @@ public class KitCommandHandler implements CommandHandler {
                 ItemType.BOW, ItemRarity.COMMON, "Beginner's Bow")
                 .withAttributes(kitAttributes)
                 .build();
-        this.kitArrow = itemFactory.create(ItemType.ARROW).withName("Arrow");
+        this.kitArrow = itemService.create(ItemType.ARROW).withName("Arrow");
         this.kitHoe = equipmentBuilderFactory.createEquipmentBuilder(
                 ItemType.HOE, ItemRarity.COMMON, "Beginner's Staff")
                 .withAttributes(kitAttributes)
@@ -115,7 +115,7 @@ public class KitCommandHandler implements CommandHandler {
             playerCommandService.setEquipment(playerId, EquipmentSlot.FEET, kitBoots);
         }
 
-        if (player.getInventory().getSpace() < 1) {
+        if (!player.getInventory().hasSpace(1)) {
             playerCommandService.sendNotification(playerId, "Please make sure you have at least " +
                     "1 free inventory slot to recieve a kit weapon.");
             return true;
