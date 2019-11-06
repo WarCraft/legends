@@ -6,17 +6,18 @@ import gg.warcraft.legends.api.shop.Promotion;
 import gg.warcraft.legends.api.shop.ShopItemType;
 import gg.warcraft.monolith.api.entity.EquipmentSlot;
 import gg.warcraft.monolith.api.world.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemTypeOrVariant;
 
 import java.util.List;
 import java.util.Map;
 
 public class SimplePromotion extends SimpleShopItem implements Promotion {
-    private final ItemType itemType;
+    private final ItemTypeOrVariant itemType;
     private final EquipmentSlot equipmentSlot;
     private final Map<LegendsAttribute, Integer> attributes;
 
-    public SimplePromotion(String id, ShopItemType type, ItemRarity rarity, int price, String name, ItemType icon,
-                           List<String> lore, ItemType itemType, EquipmentSlot equipmentSlot,
+    public SimplePromotion(String id, ShopItemType type, ItemRarity rarity, int price, String name, ItemTypeOrVariant icon,
+                           List<String> lore, ItemTypeOrVariant itemType, EquipmentSlot equipmentSlot,
                            Map<LegendsAttribute, Integer> attributes) {
         super(id, type, rarity, price, name, icon, lore);
         this.itemType = itemType;
@@ -25,7 +26,7 @@ public class SimplePromotion extends SimpleShopItem implements Promotion {
     }
 
     @Override
-    public ItemType getItemType() {
+    public ItemTypeOrVariant getItemType() {
         return itemType;
     }
 

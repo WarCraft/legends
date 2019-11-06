@@ -1,8 +1,9 @@
 package gg.warcraft.legends.api.item;
 
 import gg.warcraft.monolith.api.world.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemTypeOrVariant;
 
 public interface ConsumableBuilderFactory {
 
-    ConsumableBuilder createConsumableBuilder(ItemType itemType, String name, ItemRarity rarity);
+    ConsumableBuilder createConsumableBuilder(ItemTypeOrVariant itemType, String name, ItemRarity rarity);
 }

@@ -44,6 +44,7 @@ import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.StringUtils;
 import gg.warcraft.monolith.api.world.item.Item;
 import gg.warcraft.monolith.api.world.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemTypeOrVariant;
 
 import java.util.Map;
 import java.util.Random;
@@ -181,20 +182,20 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
     }
 
     private boolean awardRandomConsumable(UUID playerId, ItemRarity rarity) {
-        ItemType type;
+        ItemTypeOrVariant type;
         String name;
         switch (rarity) {
             case RARE:
-                type = ItemType.GOLD_CARROT;
+                type = ItemType.GOLDEN_CARROT;
                 name = "Golden Carrot";
                 break;
             case EPIC:
-                type = ItemType.GOLD_APPLE;
+                type = ItemType.GOLDEN_APPLE;
                 name = "Golden Apple";
                 break;
             case LEGENDARY:
             case ANCIENT:
-                type = ItemType.ENCHANTED_GOLD_APPLE;
+                type = ItemType.GOLDEN_APPLE; // TODO enchanted
                 name = "Enchanted Golden Apple";
                 break;
             case COMMON:

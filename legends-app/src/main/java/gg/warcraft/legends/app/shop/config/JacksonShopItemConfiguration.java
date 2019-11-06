@@ -14,7 +14,7 @@ public class JacksonShopItemConfiguration implements ShopItemConfiguration {
     private final ShopItemType type;
     private final ItemRarity rarity;
     private final String name;
-    private final ItemType icon;
+    private final String icon;
     private final String skull;
     private final List<String> lore;
 
@@ -23,7 +23,7 @@ public class JacksonShopItemConfiguration implements ShopItemConfiguration {
                                         @JsonProperty("type") ShopItemType type,
                                         @JsonProperty("rarity") ItemRarity rarity,
                                         @JsonProperty("name") String name,
-                                        @JsonProperty("icon") ItemType icon,
+                                        @JsonProperty("icon") String icon,
                                         @JsonProperty("skull") String skull,
                                         @JsonProperty("lore") List<String> lore) {
         this.id = id;
@@ -56,7 +56,7 @@ public class JacksonShopItemConfiguration implements ShopItemConfiguration {
     }
 
     @Override
-    public ItemType getIcon() {
+    public String getIcon() {
         return icon;
     }
 

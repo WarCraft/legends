@@ -17,7 +17,7 @@ public class JacksonDecorationPackConfiguration extends JacksonShopItemConfigura
                                               @JsonProperty("type") ShopItemType type,
                                               @JsonProperty("rarity") ItemRarity rarity,
                                               @JsonProperty("name") String name,
-                                              @JsonProperty("icon") ItemType icon,
+                                              @JsonProperty("icon") String icon,
                                               @JsonProperty("lore") List<String> lore,
                                               @JsonProperty("decorations") List<String> decorations) {
         super(id, type, rarity, name, icon, null, lore);

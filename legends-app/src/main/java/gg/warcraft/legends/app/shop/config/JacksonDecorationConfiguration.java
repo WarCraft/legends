@@ -10,7 +10,7 @@ import gg.warcraft.monolith.api.world.item.ItemType;
 import java.util.List;
 
 public class JacksonDecorationConfiguration extends JacksonShopItemConfiguration implements DecorationConfiguration {
-    private final ItemType itemType;
+    private final String itemType;
 
     @JsonCreator
     public JacksonDecorationConfiguration(@JsonProperty("id") String id,
@@ -18,12 +18,12 @@ public class JacksonDecorationConfiguration extends JacksonShopItemConfiguration
                                           @JsonProperty("rarity") ItemRarity rarity,
                                           @JsonProperty("name") String name,
                                           @JsonProperty("lore") List<String> lore) {
-        super(id, type, rarity, name, ItemType.valueOf(id), null, lore);
+        super(id, type, rarity, name, id, null, lore);
         this.itemType = getIcon();
     }
 
     @Override
-    public ItemType getItemType() {
+    public String getItemType() {
         return itemType;
     }
 }

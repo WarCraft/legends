@@ -1,9 +1,9 @@
 package gg.warcraft.legends.spigot.OLD.ai;
 
 import com.google.common.collect.Sets;
-import net.minecraft.server.v1_12_R1.EntityInsentient;
-import net.minecraft.server.v1_12_R1.EntityLiving;
-import net.minecraft.server.v1_12_R1.PathfinderGoalSelector;
+import net.minecraft.server.v1_14_R1.EntityInsentient;
+import net.minecraft.server.v1_14_R1.EntityLiving;
+import net.minecraft.server.v1_14_R1.PathfinderGoalSelector;
 
 import java.lang.reflect.Field;
 

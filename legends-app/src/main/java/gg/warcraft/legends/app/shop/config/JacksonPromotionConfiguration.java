@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class JacksonPromotionConfiguration extends JacksonShopItemConfiguration implements PromotionConfiguration {
-    private final ItemType itemType;
+    private final String itemType;
     private final EquipmentSlot equipmentSlot;
     private final Map<LegendsAttribute, Integer> attributes;
 
@@ -22,10 +22,10 @@ public class JacksonPromotionConfiguration extends JacksonShopItemConfiguration 
                                          @JsonProperty("type") ShopItemType type,
                                          @JsonProperty("rarity") ItemRarity rarity,
                                          @JsonProperty("name") String name,
-                                         @JsonProperty("icon") ItemType icon,
+                                         @JsonProperty("icon") String icon,
                                          @JsonProperty("skull") String skull,
                                          @JsonProperty("lore") List<String> lore,
-                                         @JsonProperty("itemType") ItemType itemType,
+                                         @JsonProperty("itemType") String itemType,
                                          @JsonProperty("equipmentSlot") EquipmentSlot equipmentSlot,
                                          @JsonProperty("attributes") Map<LegendsAttribute, Integer> attributes) {
         super(id, type, rarity, name, icon, skull, lore);
@@ -35,7 +35,7 @@ public class JacksonPromotionConfiguration extends JacksonShopItemConfiguration 
     }
 
     @Override
-    public ItemType getItemType() {
+    public String getItemType() {
         return itemType;
     }
 

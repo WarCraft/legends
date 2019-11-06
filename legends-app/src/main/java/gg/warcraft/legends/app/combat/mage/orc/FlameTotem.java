@@ -87,7 +87,7 @@ public class FlameTotem extends AbstractAbility implements RangedAbility, Runnab
                 ? blockBackupService.createBackup(totemLocation)
                 : null;
         if (totemBlockBackupId != null) {
-            WorldService.setBlockType(totemBlock.location(), BlockType.REDSTONE_TORCH); // TODO RedstoneTorchVariant.ON
+            WorldService.setBlock(totemBlock.location(), BlockType.REDSTONE_TORCH); // TODO RedstoneTorchState:LIT
         }
         this.totemLocation = totemLocation
                 .toLocation()

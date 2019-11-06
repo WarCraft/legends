@@ -1,7 +1,7 @@
 package gg.warcraft.legends.spigot.core.handler;
 
 import com.google.inject.Inject;
-import de.slikey.effectlib.util.ReflectionUtils;
+import de.slikey.effectlib.particle.ReflectionHandler;
 import gg.warcraft.legends.api.core.game.Game;
 import gg.warcraft.legends.api.core.game.War;
 import gg.warcraft.legends.api.core.game.service.GameQueryService;
@@ -12,17 +12,16 @@ import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.siege.api.objective.Objective;
 import gg.warcraft.siege.api.objective.service.ObjectiveQueryService;
-import net.minecraft.server.v1_12_R1.IChatBaseComponent;
-import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerListHeaderFooter;
+import net.minecraft.server.v1_14_R1.IChatBaseComponent;
+import net.minecraft.server.v1_14_R1.PacketPlayOutPlayerListHeaderFooter;
 import org.bukkit.Server;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
 
 import java.lang.reflect.Field;
 import java.time.LocalTime;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import static de.slikey.effectlib.util.ReflectionUtils.PackageType;
 import static gg.warcraft.legends.api.entity.LegendsTeam.HUMAN;
 import static gg.warcraft.legends.api.entity.LegendsTeam.ORC;
 import static org.bukkit.ChatColor.RESET;
@@ -86,13 +85,13 @@ public class SpigotScoreboardHandler implements Runnable {
         this.pluginLogger = pluginLogger;
 
         try {
-            headerField = ReflectionUtils.getField("PacketPlayOutPlayerListHeaderFooter", PackageType.MINECRAFT_SERVER, true, "a");
-        } catch (ClassNotFoundException | NoSuchFieldException ex) {
+            headerField = ReflectionHandler.getField("PacketPlayOutPlayerListHeaderFooter", ReflectionHandler.PackageType.MINECRAFT_SERVER, "a");
+        } catch (Exception ex) {
             pluginLogger.severe("Could not get header field from 'PacketPlayOutPlayerListHeaderFooter': " + ex.getMessage());
         }
         try {
-            footerField = ReflectionUtils.getField("PacketPlayOutPlayerListHeaderFooter", PackageType.MINECRAFT_SERVER, true, "b");
-        } catch (ClassNotFoundException | NoSuchFieldException ex) {
+            footerField = ReflectionHandler.getField("PacketPlayOutPlayerListHeaderFooter", ReflectionHandler.PackageType.MINECRAFT_SERVER, "b");
+        } catch (Exception ex) {
             pluginLogger.severe("Could not get footer field from 'PacketPlayOutPlayerListHeaderFooter': " + ex.getMessage());
         }
     }

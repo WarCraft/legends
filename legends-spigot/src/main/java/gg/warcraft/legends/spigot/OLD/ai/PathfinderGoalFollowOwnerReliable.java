@@ -1,10 +1,10 @@
 package gg.warcraft.legends.spigot.OLD.ai;
 
-import net.minecraft.server.v1_12_R1.EntityInsentient;
-import net.minecraft.server.v1_12_R1.PathEntity;
-import net.minecraft.server.v1_12_R1.PathfinderGoal;
+import net.minecraft.server.v1_14_R1.EntityInsentient;
+import net.minecraft.server.v1_14_R1.PathEntity;
+import net.minecraft.server.v1_14_R1.PathfinderGoal;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_14_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -31,7 +31,7 @@ public class PathfinderGoalFollowOwnerReliable extends PathfinderGoal {
         }
 
         Location targetLocation = player.getLocation();
-        path = nmsEntity.getNavigation().a(targetLocation.getX(), targetLocation.getY(), targetLocation.getZ());
+        path = nmsEntity.getNavigation().a(targetLocation.getX(), targetLocation.getY(), targetLocation.getZ(), 1); // TODO what is this int?
 
         if (path != null) {
             c();

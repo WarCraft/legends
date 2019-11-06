@@ -19,7 +19,7 @@ public interface EquipmentConfiguration {
 
     List<EquipmentType> getOffhandTypes();
 
-    Map<EquipmentType, Map<ItemRarity, ItemType>> getItemTypes();
+    Map<EquipmentType, Map<ItemRarity, String>> getItemTypes();
 
     Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> getAttributeRolls();
 

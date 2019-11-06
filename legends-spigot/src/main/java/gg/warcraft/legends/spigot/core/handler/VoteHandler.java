@@ -6,7 +6,7 @@ import com.vexsoftware.votifier.model.VotifierEvent;
 import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.item.Item;
+import gg.warcraft.monolith.api.world.item.Item;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

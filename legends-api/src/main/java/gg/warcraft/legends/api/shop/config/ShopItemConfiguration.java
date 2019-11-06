@@ -16,7 +16,7 @@ public interface ShopItemConfiguration {
 
     String getName();
 
-    ItemType getIcon();
+    String getIcon();
 
     String getSkull();
 

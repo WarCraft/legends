@@ -16,7 +16,7 @@ public class JacksonSpecializationConfiguration extends JacksonShopItemConfigura
                                               @JsonProperty("type") ShopItemType type,
                                               @JsonProperty("rarity") ItemRarity rarity,
                                               @JsonProperty("name") String name,
-                                              @JsonProperty("icon") ItemType icon,
+                                              @JsonProperty("icon") String icon,
                                               @JsonProperty("skull") String skull,
                                               @JsonProperty("lore") List<String> lore) {
         super(id, type, rarity, name, icon, skull, lore);

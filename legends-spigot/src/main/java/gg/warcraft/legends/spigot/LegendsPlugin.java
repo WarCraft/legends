@@ -107,10 +107,10 @@ import gg.warcraft.monolith.api.math.Vector3i;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.monolith.api.world.Direction;
 import gg.warcraft.monolith.api.world.World;
+import gg.warcraft.monolith.api.world.WorldService;
 import gg.warcraft.monolith.api.world.block.Block;
 import gg.warcraft.monolith.api.world.block.box.BoundingBlockBox;
 import gg.warcraft.monolith.api.world.block.box.BoundingBlockBoxFactory;
-import gg.warcraft.monolith.api.world.service.WorldQueryService;
 import gg.warcraft.siege.api.weapon.PersistentSiegeWeaponDecorator;
 import gg.warcraft.siege.api.weapon.SiegeWeapon;
 import gg.warcraft.siege.api.weapon.SiegeWeaponFactory;
@@ -474,14 +474,14 @@ public class LegendsPlugin extends JavaPlugin {
         // Siege weapon
         SiegeWeaponFactory siegeWeaponFactory = injector.getInstance(SiegeWeaponFactory.class);
         SiegeWeaponRepository siegeWeaponRepository = injector.getInstance(SiegeWeaponRepository.class);
-        WorldQueryService worldQueryService = injector.getInstance(WorldQueryService.class);
+        WorldService worldService = injector.getInstance(WorldService.class);
 
-        Block loadBlock = worldQueryService.getBlockAt(World.THE_END, 294, 164, -193);
-        Block turnLeftBlock = worldQueryService.getBlockAt(World.THE_END, 293, 165, -198);
-        Block turnRightBlock = worldQueryService.getBlockAt(World.THE_END, 295, 165, -198);
-        Block chargeBlock = worldQueryService.getBlockAt(World.THE_END, 294, 165, -197);
-        Block fireBlock = worldQueryService.getBlockAt(World.THE_END, 294, 166, -197);
-        Block projectileOriginBlock = worldQueryService.getBlockAt(World.THE_END, 294, 176, -206);
+        Block loadBlock = worldService.getBlock(World.THE_END, 294, 164, -193);
+        Block turnLeftBlock = worldService.getBlock(World.THE_END, 293, 165, -198);
+        Block turnRightBlock = worldService.getBlock(World.THE_END, 295, 165, -198);
+        Block chargeBlock = worldService.getBlock(World.THE_END, 294, 165, -197);
+        Block fireBlock = worldService.getBlock(World.THE_END, 294, 166, -197);
+        Block projectileOriginBlock = worldService.getBlock(World.THE_END, 294, 176, -206);
 
         BoundingBlockBoxFactory boundingBlockBoxFactory = injector.getInstance(BoundingBlockBoxFactory.class);
         BoundingBlockBox tutorialTrebuchetBoundingBox = boundingBlockBoxFactory.createBoundingBlockBox(

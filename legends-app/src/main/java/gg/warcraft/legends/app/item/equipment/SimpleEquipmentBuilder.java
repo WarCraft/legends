@@ -9,6 +9,7 @@ import gg.warcraft.monolith.api.util.FormatCode;
 import gg.warcraft.monolith.api.world.item.Item;
 import gg.warcraft.monolith.api.world.item.ItemService;
 import gg.warcraft.monolith.api.world.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemTypeOrVariant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 public class SimpleEquipmentBuilder implements EquipmentBuilder {
     private final ItemService itemService;
-    private final ItemType type;
+    private final ItemTypeOrVariant type;
     private final ItemRarity rarity;
     private final String name;
 
@@ -27,7 +28,7 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
     private List<String> flavorText;
 
     @Inject
-    public SimpleEquipmentBuilder(ItemService itemService, @Assisted ItemType type,
+    public SimpleEquipmentBuilder(ItemService itemService, @Assisted ItemTypeOrVariant type,
                                   @Assisted ItemRarity rarity, @Assisted String name) {
         this.itemService = itemService;
         this.type = type;

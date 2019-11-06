@@ -15,7 +15,9 @@ import gg.warcraft.legends.api.item.equipment.EquipmentBuilderFactory;
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
 import gg.warcraft.legends.api.item.equipment.EquipmentType;
 import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemService;
 import gg.warcraft.monolith.api.world.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemTypeOrVariant;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -26,14 +28,17 @@ import java.util.Random;
 public class SimpleEquipmentGenerator implements EquipmentGenerator {
     private final EquipmentConfiguration equipmentConfiguration;
     private final EquipmentBuilderFactory equipmentBuilderFactory;
+    private final ItemService itemService;
     private final Random random;
 
     @Inject
     public SimpleEquipmentGenerator(EquipmentConfigurationRepository equipmentConfigurationRepository,
-                                    EquipmentBuilderFactory equipmentBuilderFactory, Random random) {
+                                    EquipmentBuilderFactory equipmentBuilderFactory, Random random,
+                                    ItemService itemService) {
         this.equipmentConfiguration = equipmentConfigurationRepository.getConfiguration();
         this.equipmentBuilderFactory = equipmentBuilderFactory;
         this.random = random;
+        this.itemService = itemService;
     }
 
     private AttributeDistribution getRandomAttributeDistribution() {
@@ -160,7 +165,8 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
         }
 
         AttributeDistribution attributeDistribution = getRandomAttributeDistribution();
-        ItemType itemType = equipmentConfiguration.getItemTypes().get(type).get(rarity);
+        String itemTypeString = equipmentConfiguration.getItemTypes().get(type).get(rarity);
+        ItemTypeOrVariant itemType = itemService.parseData(itemTypeString);
 
         List<EquipmentLoreConfiguration> loreConfigurations = equipmentConfiguration.getItemLores().get(specialization)
                 .get(team).get(attributeDistribution).get(type).get(rarity);

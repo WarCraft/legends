@@ -21,6 +21,7 @@ import gg.warcraft.legends.app.shop.SimpleDecorationPack;
 import gg.warcraft.legends.app.shop.SimpleMiniPet;
 import gg.warcraft.legends.app.shop.SimplePromotion;
 import gg.warcraft.legends.app.shop.SimpleSpecialization;
+import gg.warcraft.monolith.api.world.item.ItemService;
 
 import java.util.List;
 import java.util.Map;
@@ -29,10 +30,12 @@ import java.util.stream.Collectors;
 
 public class DefaultShopCommandService implements ShopCommandService {
     private final ShopRepository shopRepository;
+    private final ItemService itemService;
 
     @Inject
-    public DefaultShopCommandService(ShopRepository shopRepository) {
+    public DefaultShopCommandService(ShopRepository shopRepository, ItemService itemService) {
         this.shopRepository = shopRepository;
+        this.itemService = itemService;
     }
 
     void readDecorationConfiguration(DecorationConfiguration configuration,
@@ -46,9 +49,9 @@ public class DefaultShopCommandService implements ShopCommandService {
                 rarity,
                 price,
                 configuration.getName(),
-                configuration.getIcon(),
+                itemService.parseData(configuration.getIcon()),
                 configuration.getLore(),
-                configuration.getItemType());
+                itemService.parseData(configuration.getItemType()));
         shopRepository.save(decoration);
     }
 
@@ -68,7 +71,7 @@ public class DefaultShopCommandService implements ShopCommandService {
                 rarity,
                 price,
                 configuration.getName(),
-                configuration.getIcon(),
+                itemService.parseData(configuration.getIcon()),
                 configuration.getLore(),
                 decorations);
         shopRepository.save(decorationPack);
@@ -103,9 +106,9 @@ public class DefaultShopCommandService implements ShopCommandService {
                 rarity,
                 price,
                 configuration.getName(),
-                configuration.getIcon(),
+                itemService.parseData(configuration.getIcon()),
                 configuration.getLore(),
-                configuration.getItemType(),
+                itemService.parseData(configuration.getItemType()),
                 configuration.getEquipmentSlot(),
                 configuration.getAttributes());
         shopRepository.save(promotion);
@@ -122,7 +125,7 @@ public class DefaultShopCommandService implements ShopCommandService {
                 rarity,
                 price,
                 configuration.getName(),
-                configuration.getIcon(),
+                itemService.parseData(configuration.getIcon()),
                 configuration.getLore());
         shopRepository.save(specialization);
     }

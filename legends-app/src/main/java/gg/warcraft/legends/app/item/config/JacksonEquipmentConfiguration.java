@@ -21,7 +21,7 @@ public class JacksonEquipmentConfiguration implements EquipmentConfiguration {
     private final NavigableMap<Float, ItemRarity> itemRarities;
     private final Map<LegendsSpecializationType, List<EquipmentType>> validTypes;
     private final List<EquipmentType> offhandTypes;
-    private final Map<EquipmentType, Map<ItemRarity, ItemType>> itemTypes;
+    private final Map<EquipmentType, Map<ItemRarity, String>> itemTypes;
     private final Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> attributeRolls;
     private final Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> legendaryRolls;
     private final Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> ancientRolls;
@@ -34,7 +34,7 @@ public class JacksonEquipmentConfiguration implements EquipmentConfiguration {
     public JacksonEquipmentConfiguration(@JsonProperty("itemRarities") TreeMap<Float, ItemRarity> itemRarities,
                                          @JsonProperty("validTypes") Map<LegendsSpecializationType, List<EquipmentType>> validTypes,
                                          @JsonProperty("offhandTypes") List<EquipmentType> offhandTypes,
-                                         @JsonProperty("itemTypes") Map<EquipmentType, Map<ItemRarity, ItemType>> itemTypes,
+                                         @JsonProperty("itemTypes") Map<EquipmentType, Map<ItemRarity, String>> itemTypes,
                                          @JsonProperty("attributeRolls") Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> attributeRolls,
                                          @JsonProperty("legendaryRolls") Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> legendaryRolls,
                                          @JsonProperty("ancientRolls") Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>> ancientRolls,
@@ -71,7 +71,7 @@ public class JacksonEquipmentConfiguration implements EquipmentConfiguration {
     }
 
     @Override
-    public Map<EquipmentType, Map<ItemRarity, ItemType>> getItemTypes() {
+    public Map<EquipmentType, Map<ItemRarity, String>> getItemTypes() {
         return itemTypes;
     }
 

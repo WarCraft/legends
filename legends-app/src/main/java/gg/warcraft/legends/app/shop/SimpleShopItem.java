@@ -4,6 +4,7 @@ import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.shop.ShopItem;
 import gg.warcraft.legends.api.shop.ShopItemType;
 import gg.warcraft.monolith.api.world.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemTypeOrVariant;
 
 import java.util.List;
 
@@ -13,11 +14,11 @@ public class SimpleShopItem implements ShopItem {
     private final ItemRarity rarity;
     private final int price;
     private final String name;
-    private final ItemType icon;
+    private final ItemTypeOrVariant icon;
     private final String skull;
     private final List<String> lore;
 
-    public SimpleShopItem(String id, ShopItemType type, ItemRarity rarity, int price, String name, ItemType icon,
+    public SimpleShopItem(String id, ShopItemType type, ItemRarity rarity, int price, String name, ItemTypeOrVariant icon,
                           List<String> lore) {
         this.id = id;
         this.type = type;
@@ -67,7 +68,7 @@ public class SimpleShopItem implements ShopItem {
     }
 
     @Override
-    public ItemType getIcon() {
+    public ItemTypeOrVariant getIcon() {
         return icon;
     }
 
