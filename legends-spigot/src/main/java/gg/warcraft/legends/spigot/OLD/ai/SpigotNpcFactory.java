@@ -2,13 +2,7 @@ package gg.warcraft.legends.spigot.OLD.ai;
 
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.ai.NpcFactory;
-import net.minecraft.server.v1_14_R1.EntityAgeable;
-import net.minecraft.server.v1_14_R1.EntityHuman;
-import net.minecraft.server.v1_14_R1.EntityInsentient;
-import net.minecraft.server.v1_14_R1.EntityLiving;
-import net.minecraft.server.v1_14_R1.PathfinderGoalLookAtPlayer;
-import net.minecraft.server.v1_14_R1.PathfinderGoalRandomLookaround;
-import net.minecraft.server.v1_14_R1.PathfinderGoalSelector;
+import net.minecraft.server.v1_14_R1.*;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
@@ -45,7 +39,7 @@ public class SpigotNpcFactory implements NpcFactory {
                 goal.a(0, new PathfinderGoalLookAtPlayer(insentientEntity, EntityHuman.class, 8.0F));
                 goal.a(1, new PathfinderGoalRandomLookaround(insentientEntity));
 
-                insentientEntity.setCustomName(name);
+                insentientEntity.setCustomName(new ChatComponentText(name));
             } else {
                 System.out.println("Failed to make npc");
                 System.out.println(entity.getType() + " is not an instance of an EntityInsentient");

@@ -2,19 +2,7 @@ package gg.warcraft.legends.spigot.OLD.ai;
 
 import com.google.inject.Inject;
 import gg.warcraft.legends.api.ai.CombatPetFactory;
-import net.minecraft.server.v1_14_R1.EntityHuman;
-import net.minecraft.server.v1_14_R1.EntityLiving;
-import net.minecraft.server.v1_14_R1.EntityTameableAnimal;
-import net.minecraft.server.v1_14_R1.PathfinderGoalFloat;
-import net.minecraft.server.v1_14_R1.PathfinderGoalFollowOwner;
-import net.minecraft.server.v1_14_R1.PathfinderGoalHurtByTarget;
-import net.minecraft.server.v1_14_R1.PathfinderGoalLeapAtTarget;
-import net.minecraft.server.v1_14_R1.PathfinderGoalLookAtPlayer;
-import net.minecraft.server.v1_14_R1.PathfinderGoalMeleeAttack;
-import net.minecraft.server.v1_14_R1.PathfinderGoalOwnerHurtByTarget;
-import net.minecraft.server.v1_14_R1.PathfinderGoalOwnerHurtTarget;
-import net.minecraft.server.v1_14_R1.PathfinderGoalRandomLookaround;
-import net.minecraft.server.v1_14_R1.PathfinderGoalSelector;
+import net.minecraft.server.v1_14_R1.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.attribute.Attribute;
@@ -58,7 +46,7 @@ public class SpigotCombatPetFactory implements CombatPetFactory {
                 EntityTameableAnimal tameableEntity = (EntityTameableAnimal) nmsEntity;
                 tameableEntity.setTamed(true);
                 tameableEntity.setOwnerUUID(ownerId);
-                tameableEntity.setCustomName(ChatColor.LIGHT_PURPLE + owner.getName() + "'s pet");
+                tameableEntity.setCustomName(new ChatComponentText(ChatColor.LIGHT_PURPLE + owner.getName() + "'s pet"));
 
                 PathfinderGoalSelector goal = PathfinderUtils.resetAndGetGoalSelectorFor(nmsEntity);
                 PathfinderGoalSelector target = PathfinderUtils.resetAndGetTargetSelectorFor(nmsEntity);
@@ -75,7 +63,7 @@ public class SpigotCombatPetFactory implements CombatPetFactory {
 
                 target.a(1, new PathfinderGoalOwnerHurtTarget(tameableEntity));
                 target.a(2, new PathfinderGoalOwnerHurtByTarget(tameableEntity));
-                target.a(3, new PathfinderGoalHurtByTarget(tameableEntity, true));
+                target.a(3, new PathfinderGoalHurtByTarget(tameableEntity, LivingEntity.class));
             } else {
                 System.out.println("Failed to make combat pet, " + entity.getType() +
                         " is not an instance of an EntityTameableAnimal");
