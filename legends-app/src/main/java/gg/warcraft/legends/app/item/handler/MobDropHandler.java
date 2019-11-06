@@ -126,15 +126,15 @@ public class MobDropHandler implements CommandHandler {
 
             Item drop = equipmentGenerator.generate(specializationType, team);
             Location dropLocation = new Location(World.OVERWORLD, x, y, z);
-            List<UUID> droppedItemIds = itemService.dropItems(dropLocation, drop); // TODO expose dropped item ID in Monolith
-            UUID droppedItemId = droppedItemIds.get(0);
+            UUID[] droppedItemIds = itemService.dropItems(dropLocation, drop); // TODO expose dropped item ID in Monolith
+            UUID droppedItemId = droppedItemIds[0];
 
             UUID secondDroppedItemId = null;
             if (mobType.equals("Rider") || mobType.equals("Elemental")) {
                 if (random.nextDouble() >= 0.5) {
                     Item secondDrop = equipmentGenerator.generate(specializationType, team);
-                    List<UUID> secondDroppedItemIds = itemService.dropItems(dropLocation, secondDrop);
-                    secondDroppedItemId = secondDroppedItemIds.get(0);
+                    UUID[] secondDroppedItemIds = itemService.dropItems(dropLocation, secondDrop);
+                    secondDroppedItemId = secondDroppedItemIds[0];
                 }
                 playerCommandService.addFavor(damagerId, 2);
                 playerCommandService.sendNotification(damagerId, "You gained 2 favor.");
