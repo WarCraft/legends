@@ -10,12 +10,13 @@ import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
 import gg.warcraft.monolith.api.world.item.Item;
 import gg.warcraft.monolith.api.world.item.ItemService;
 import gg.warcraft.monolith.api.world.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemTypeOrVariant;
 
 public class SimpleLootCrateBuilder implements LootCrateBuilder {
     private final ItemService itemService;
     private final String name;
     private final ItemRarity rarity;
-    private final ItemType type;
+    private final ItemTypeOrVariant type;
 
     @Inject
     public SimpleLootCrateBuilder(LootCrateRepository lootCrateRepository,

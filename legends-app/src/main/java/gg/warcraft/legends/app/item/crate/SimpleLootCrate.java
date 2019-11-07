@@ -6,6 +6,7 @@ import gg.warcraft.legends.api.item.crate.LootCrate;
 import gg.warcraft.legends.api.item.crate.LootCrateDropTable;
 import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.monolith.api.world.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemTypeOrVariant;
 
 import java.util.SortedMap;
 
@@ -13,10 +14,10 @@ public class SimpleLootCrate implements LootCrate {
     private final String name;
     private final LootCrateType type;
     private final ItemRarity rarity;
-    private final ItemType itemType;
+    private final ItemTypeOrVariant itemType;
     private final ImmutableSortedMap<Float, LootCrateDropTable> dropTable;
 
-    public SimpleLootCrate(String name, LootCrateType type, ItemRarity rarity, ItemType itemType,
+    public SimpleLootCrate(String name, LootCrateType type, ItemRarity rarity, ItemTypeOrVariant itemType,
                            SortedMap<Float, LootCrateDropTable> dropTable) {
         this.name = name;
         this.type = type;
@@ -41,7 +42,7 @@ public class SimpleLootCrate implements LootCrate {
     }
 
     @Override
-    public ItemType getItemType() {
+    public ItemTypeOrVariant getItemType() {
         return itemType;
     }
 

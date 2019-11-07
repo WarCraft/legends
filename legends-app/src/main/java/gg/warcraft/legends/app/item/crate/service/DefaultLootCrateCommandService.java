@@ -43,6 +43,7 @@ import gg.warcraft.monolith.api.core.PluginLogger;
 import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.StringUtils;
 import gg.warcraft.monolith.api.world.item.Item;
+import gg.warcraft.monolith.api.world.item.ItemService;
 import gg.warcraft.monolith.api.world.item.ItemType;
 import gg.warcraft.monolith.api.world.item.ItemTypeOrVariant;
 
@@ -64,6 +65,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
     private final ShopProfileQueryService shopProfileQueryService;
     private final ShopProfileCommandService shopProfileCommandService;
     private final EventService eventService;
+    private final ItemService itemService;
     private final StringUtils stringUtils;
     private final Logger pluginLogger;
     private final Random random;
@@ -78,7 +80,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
                                           ShopQueryService shopQueryService,
                                           ShopProfileQueryService shopProfileQueryService,
                                           ShopProfileCommandService shopProfileCommandService,
-                                          EventService eventService,
+                                          EventService eventService, ItemService itemService,
                                           StringUtils stringUtils, Random random,
                                           @PluginLogger Logger pluginLogger) {
         this.lootCrateRepository = lootCrateRepository;
@@ -91,6 +93,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         this.shopProfileQueryService = shopProfileQueryService;
         this.shopProfileCommandService = shopProfileCommandService;
         this.eventService = eventService;
+        this.itemService = itemService;
         this.stringUtils = stringUtils;
         this.pluginLogger = pluginLogger;
         this.random = random;
@@ -127,7 +130,7 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
             // create loot crate
             String crateName = crateConfiguration.getName();
             ItemRarity crateRarity = crateConfiguration.getRarity();
-            ItemType itemType = crateConfiguration.getItemType();
+            ItemTypeOrVariant itemType = itemService.parseData(crateConfiguration.getItemType());
             SortedMap<Float, LootCrateDropTable> dropTables = new TreeMap<>();
             AtomicDouble cumulativeDropTableChance = new AtomicDouble();
             crateConfiguration.getDropTable().forEach(dropTableConfiguration -> {

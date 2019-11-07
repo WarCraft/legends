@@ -15,14 +15,14 @@ public class JacksonLootCrateConfiguration implements LootCrateConfiguration {
     private final String name;
     private final LootCrateType type;
     private final ItemRarity rarity;
-    private final ItemType itemType;
+    private final String itemType;
     private final List<LootCrateDropTableConfiguration> dropTable;
 
     @JsonCreator
     public JacksonLootCrateConfiguration(@JsonProperty("name") String name,
                                          @JsonProperty("type") LootCrateType type,
                                          @JsonProperty("rarity") ItemRarity rarity,
-                                         @JsonProperty("itemType") ItemType itemType,
+                                         @JsonProperty("itemType") String itemType,
                                          @JsonProperty("dropTable") List<LootCrateDropTableConfiguration> dropTable) {
         this.name = name;
         this.type = type;
@@ -47,7 +47,7 @@ public class JacksonLootCrateConfiguration implements LootCrateConfiguration {
     }
 
     @Override
-    public ItemType getItemType() {
+    public String getItemType() {
         return itemType;
     }
 

@@ -3,6 +3,7 @@ package gg.warcraft.legends.api.item.crate;
 import com.google.common.collect.ImmutableSortedMap;
 import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.monolith.api.world.item.ItemType;
+import gg.warcraft.monolith.api.world.item.ItemTypeOrVariant;
 
 public interface LootCrate {
 
@@ -12,7 +13,7 @@ public interface LootCrate {
 
     ItemRarity getRarity();
 
-    ItemType getItemType();
+    ItemTypeOrVariant getItemType();
 
     ImmutableSortedMap<Float, LootCrateDropTable> viewDropTable();
 }
