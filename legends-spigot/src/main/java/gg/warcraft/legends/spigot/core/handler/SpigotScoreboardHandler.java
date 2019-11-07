@@ -85,12 +85,12 @@ public class SpigotScoreboardHandler implements Runnable {
         this.pluginLogger = pluginLogger;
 
         try {
-            headerField = ReflectionHandler.getField("PacketPlayOutPlayerListHeaderFooter", ReflectionHandler.PackageType.MINECRAFT_SERVER, "a");
+            headerField = ReflectionHandler.getField("PacketPlayOutPlayerListHeaderFooter", ReflectionHandler.PackageType.MINECRAFT_SERVER, "header");
         } catch (Exception ex) {
             pluginLogger.severe("Could not get header field from 'PacketPlayOutPlayerListHeaderFooter': " + ex.getMessage());
         }
         try {
-            footerField = ReflectionHandler.getField("PacketPlayOutPlayerListHeaderFooter", ReflectionHandler.PackageType.MINECRAFT_SERVER, "b");
+            footerField = ReflectionHandler.getField("PacketPlayOutPlayerListHeaderFooter", ReflectionHandler.PackageType.MINECRAFT_SERVER, "footer");
         } catch (Exception ex) {
             pluginLogger.severe("Could not get footer field from 'PacketPlayOutPlayerListHeaderFooter': " + ex.getMessage());
         }
@@ -150,12 +150,12 @@ public class SpigotScoreboardHandler implements Runnable {
         Objective lumberMill = objectiveQueryService.getObjective(lumberMillId);
         Objective mine = objectiveQueryService.getObjective(mineId);
         Objective outpost = objectiveQueryService.getObjective(outpostId);
-        return getColorOrDefault(keepEast.getOccupiers()) + "K" +
-                getColorOrDefault(keepWest.getOccupiers()) + "K" +
-                getColorOrDefault(farm.getOccupiers()) + "F" +
-                getColorOrDefault(lumberMill.getOccupiers()) + "L" +
-                getColorOrDefault(mine.getOccupiers()) + "M" +
-                getColorOrDefault(outpost.getOccupiers()) + "O";
+        return getColorOrDefault(keepEast != null ? keepEast.getOccupiers() : null) + "K" +
+                getColorOrDefault(keepWest != null ? keepWest.getOccupiers() : null) + "K" +
+                getColorOrDefault(farm != null ? farm.getOccupiers() : null) + "F" +
+                getColorOrDefault(lumberMill != null ? lumberMill.getOccupiers() : null) + "L" +
+                getColorOrDefault(mine != null ? mine.getOccupiers() : null) + "M" +
+                getColorOrDefault(outpost != null ? outpost.getOccupiers() : null) + "O";
     }
 
     private String getFormattedObjectives() {
