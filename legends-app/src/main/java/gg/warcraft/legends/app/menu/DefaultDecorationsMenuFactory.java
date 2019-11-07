@@ -74,7 +74,7 @@ public class DefaultDecorationsMenuFactory extends AbstractMenuFactory implement
         builder.addButton(5, createDecorationButton(playerId, DecorationPackId.STONE));
         builder.addButton(6, createDecorationButton(playerId, DecorationPackId.WOOD));
         builder.addButton(7, createDecorationButton(playerId, DecorationPackId.DESERT));
-        builder.addButton(8, createDecorationButton(playerId, DecorationPackId.CLAY));
+        builder.addButton(8, createDecorationButton(playerId, DecorationPackId.TERRACOTTA));
 
         builder.addButton(11, createDecorationButton(playerId, DecorationPackId.NATURE));
         builder.addButton(12, createDecorationButton(playerId, DecorationPackId.GARDENING));
@@ -82,7 +82,7 @@ public class DefaultDecorationsMenuFactory extends AbstractMenuFactory implement
         builder.addButton(14, createDecorationButton(playerId, DecorationPackId.ORES));
         builder.addButton(15, createDecorationButton(playerId, DecorationPackId.GEMSTONES));
         builder.addButton(16, createDecorationButton(playerId, DecorationPackId.CONCRETE));
-        builder.addButton(17, createDecorationButton(playerId, DecorationPackId.TERRACOTTA));
+        builder.addButton(17, createDecorationButton(playerId, DecorationPackId.GLAZED_TERRACOTTA));
 
         builder.addButton(20, createDecorationButton(playerId, DecorationPackId.BLURPLE));
         builder.addButton(21, createDecorationButton(playerId, DecorationPackId.NETHER));
