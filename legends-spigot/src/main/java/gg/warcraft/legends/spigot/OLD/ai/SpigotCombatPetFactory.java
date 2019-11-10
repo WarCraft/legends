@@ -48,8 +48,11 @@ public class SpigotCombatPetFactory implements CombatPetFactory {
                 tameableEntity.setOwnerUUID(ownerId);
                 tameableEntity.setCustomName(new ChatComponentText(ChatColor.LIGHT_PURPLE + owner.getName() + "'s pet"));
 
-                PathfinderGoalSelector goal = PathfinderUtils.resetAndGetGoalSelectorFor(nmsEntity);
-                PathfinderGoalSelector target = PathfinderUtils.resetAndGetTargetSelectorFor(nmsEntity);
+                PathfinderUtils.resetSelectorsFor(tameableEntity);
+//       OLD      PathfinderGoalSelector goal = PathfinderUtils.resetAndGetGoalSelectorFor(nmsEntity);
+//                PathfinderGoalSelector target = PathfinderUtils.resetAndGetTargetSelectorFor(nmsEntity);
+                PathfinderGoalSelector goal = tameableEntity.goalSelector;
+                PathfinderGoalSelector target = tameableEntity.targetSelector;
 
                 goal.a(0, new PathfinderGoalFloat(tameableEntity));
                 goal.a(1, new PathfinderGoalLeapAtTarget(tameableEntity, 0.4F));
@@ -68,7 +71,7 @@ public class SpigotCombatPetFactory implements CombatPetFactory {
                 System.out.println("Failed to make combat pet, " + entity.getType() +
                         " is not an instance of an EntityTameableAnimal");
             }
-        } catch (IllegalAccessException ex) {
+        } catch (Exception ex) {
             System.out.println("Failed to set combat pet goal selectors");
             ex.printStackTrace();
         }

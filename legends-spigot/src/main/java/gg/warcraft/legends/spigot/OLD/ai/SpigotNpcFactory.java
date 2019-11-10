@@ -34,7 +34,9 @@ public class SpigotNpcFactory implements NpcFactory {
                     ((EntityAgeable) insentientEntity).ageLocked = true;
                 }
 
-                PathfinderGoalSelector goal = PathfinderUtils.resetAndGetGoalSelectorFor(nmsEntity);
+                PathfinderUtils.resetSelectorsFor(nmsEntity);
+//      OLD     PathfinderGoalSelector goal = PathfinderUtils.resetAndGetGoalSelectorFor(nmsEntity);
+                PathfinderGoalSelector goal = ((EntityInsentient) nmsEntity).goalSelector;
 
                 goal.a(0, new PathfinderGoalLookAtPlayer(insentientEntity, EntityHuman.class, 8.0F));
                 goal.a(1, new PathfinderGoalRandomLookaround(insentientEntity));
@@ -44,7 +46,7 @@ public class SpigotNpcFactory implements NpcFactory {
                 System.out.println("Failed to make npc");
                 System.out.println(entity.getType() + " is not an instance of an EntityInsentient");
             }
-        } catch (IllegalAccessException ex) {
+        } catch (Exception ex) {
             System.out.println("Failed to set npc goal selectors");
             ex.printStackTrace();
         }
