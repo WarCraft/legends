@@ -163,7 +163,7 @@ public enum DecorationId {
     EMERALD_ORE,
     GOLD_ORE,
     IRON_ORE,
-    LAPIS_LAZULI_ORE,
+    LAPIS_ORE,
     REDSTONE_ORE,
     GLOWING_REDSTONE_ORE,
 
@@ -172,7 +172,7 @@ public enum DecorationId {
     EMERALD_BLOCK,
     GOLD_BLOCK,
     IRON_BLOCK,
-    LAPIS_LAZULI_BLOCK,
+    LAPIS_BLOCK,
     REDSTONE_BLOCK,
 
     // Desert pack
