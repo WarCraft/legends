@@ -77,6 +77,8 @@ public class LootCrateUseHandler {
                 }
                 LootCrateOpenedEvent event = new SimpleLootCrateOpenedEvent(playerId);
                 eventService.publish(event);
+            } else {
+                System.out.println("Failed to take item from " + playerId + " inventory for loot crate " + itemInHand);
             }
         } else {
             playerCommandService.sendNotification(playerId, "Please make sure you have at least " + ITEMS_PER_CRATE +
