@@ -29,8 +29,8 @@ import javax.annotation.Nullable;
 
 public class Teleport extends AbstractAbility implements RangedAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
-    private static final Sound CAST_SOUND = Sound.ENTITY_ENDERMEN_TELEPORT;
-    private static final Sound HIT_SOUND = Sound.ENTITY_ENDERMEN_TELEPORT;
+    private static final Sound CAST_SOUND = Sound.ENTITY_ENDERMAN_TELEPORT;
+    private static final Sound HIT_SOUND = Sound.ENTITY_ENDERMAN_TELEPORT;
 
     private final EntityCommandService entityCommandService;
     private final CombatValue damage;

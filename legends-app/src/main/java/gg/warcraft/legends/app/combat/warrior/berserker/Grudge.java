@@ -22,7 +22,7 @@ import java.util.UUID;
 public class Grudge extends AbstractAbility implements MeleeAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
     private static final Sound HIT_SOUND = Sound.ENTITY_WITHER_SPAWN;
-    private static final Sound MISS_SOUND = Sound.ENTITY_BOBBER_THROW;
+    private static final Sound MISS_SOUND = Sound.ENTITY_FISHING_BOBBER_THROW;
 
     private final StatusCommandService statusCommandService;
     private final WorldService WorldService;

@@ -42,7 +42,7 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
     private static final Vector3f OFFSET = new Vector3f(5, 0, 5);
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
     private static final Sound CAST_SOUND = Sound.ENTITY_GHAST_SHOOT;
-    private static final Sound HIT_SOUND = Sound.ENTITY_ENDERDRAGON_FIREBALL_EXPLODE;
+    private static final Sound HIT_SOUND = Sound.ENTITY_DRAGON_FIREBALL_EXPLODE;
 
     private static final Random random = new Random(System.currentTimeMillis());
 

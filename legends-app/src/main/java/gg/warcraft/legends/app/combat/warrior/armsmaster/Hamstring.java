@@ -19,7 +19,7 @@ import gg.warcraft.monolith.api.world.WorldService;
 public class Hamstring extends AbstractAbility implements MeleeAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
     private static final Sound HIT_SOUND = Sound.ENTITY_SILVERFISH_DEATH;
-    private static final Sound MISS_SOUND = Sound.ENTITY_BOBBER_THROW;
+    private static final Sound MISS_SOUND = Sound.ENTITY_FISHING_BOBBER_THROW;
 
     private final EntityCommandService entityCommandService;
     private final WorldService WorldService;

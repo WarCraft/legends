@@ -30,8 +30,8 @@ import java.util.function.Supplier;
 
 public class ArcaneMissile extends AbstractAbility implements RangedAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
-    private static final Sound CAST_SOUND = Sound.ENTITY_ENDERDRAGON_HURT;
-    private static final Sound HIT_SOUND = Sound.ENTITY_ENDERDRAGON_HURT;
+    private static final Sound CAST_SOUND = Sound.ENTITY_ENDER_DRAGON_HURT;
+    private static final Sound HIT_SOUND = Sound.ENTITY_ENDER_DRAGON_HURT;
 
     private final EntityCommandService entityCommandService;
     private final WorldService WorldService;

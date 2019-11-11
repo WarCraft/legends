@@ -17,7 +17,7 @@ public class StandYourGroundStatusEffect extends AbstractStatusEffect {
     private static final String NAME = "Stand Your Ground";
     private static final String TYPE = "legends.armsmaster.standyourground";
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
-    private static final Sound DAMAGED_SOUND = Sound.ENTITY_IRONGOLEM_HURT;
+    private static final Sound DAMAGED_SOUND = Sound.ENTITY_IRON_GOLEM_HURT;
 
     private final EntityQueryService entityQueryService;
     private final WorldService WorldService;

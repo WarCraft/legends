@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 
 public class Disengage extends AbstractAbility implements MeleeAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
-    private static final Sound CAST_SOUND = Sound.ENTITY_ENDERDRAGON_FLAP; // TODO use bat takeoff sound in stead?
+    private static final Sound CAST_SOUND = Sound.ENTITY_ENDER_DRAGON_FLAP; // TODO use bat takeoff sound in stead?
 
     @Inject
     public Disengage(EntityCommandService entityCommandService, WorldService WorldService,

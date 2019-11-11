@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 
 public class StandYourGround extends AbstractAbility implements MeleeAbility {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
-    private static final Sound CAST_SOUND = Sound.ENTITY_IRONGOLEM_DEATH;
+    private static final Sound CAST_SOUND = Sound.ENTITY_IRON_GOLEM_DEATH;
 
     @Inject
     public StandYourGround(EntityCommandService entityCommandService, AttributeCommandService attributeCommandService,
