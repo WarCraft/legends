@@ -110,6 +110,6 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
             }
         }
 
-        return item;
+        return item.withHideAttributes(true);
     }
 }
