@@ -5,6 +5,7 @@ import com.google.inject.assistedinject.Assisted;
 import gg.warcraft.legends.api.entity.LegendsAttribute;
 import gg.warcraft.legends.api.item.ItemRarity;
 import gg.warcraft.legends.api.item.equipment.EquipmentBuilder;
+import gg.warcraft.monolith.api.util.ColorCode;
 import gg.warcraft.monolith.api.util.FormatCode;
 import gg.warcraft.monolith.api.world.item.Item;
 import gg.warcraft.monolith.api.world.item.ItemService;
@@ -84,14 +85,14 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
         Item item = itemService.create(type).withName(rarity.getColor() + upgradedName);
 
         // set type at top of tooltip
-        item = item.addTooltip("Equipment");
+        item = item.addTooltip(FormatCode.RESET + "" + ColorCode.GRAY + "Equipment");
 
         // add stats
         if (!attributes.keySet().isEmpty()) {
             item = item.addTooltip("");
             for (Map.Entry<LegendsAttribute, Integer> entry : attributes.entrySet()) {
                 if (entry.getValue() != 0) {
-                    item = item.addTooltip("+" + entry.getValue() + " " + entry.getKey().getName());
+                    item = item.addTooltip(FormatCode.RESET + "" + ColorCode.GRAY + "+" + entry.getValue() + " " + entry.getKey().getName());
                 }
             }
         }
@@ -99,14 +100,14 @@ public class SimpleEquipmentBuilder implements EquipmentBuilder {
         // add upgrades
         if (availableUpgrades > 0) {
             item = item.addTooltip("");
-            item = item.addTooltip(availableUpgrades + " Available Upgrades");
+            item = item.addTooltip(FormatCode.RESET + "" + ColorCode.GRAY + availableUpgrades + " Available Upgrades");
         }
 
         // add flavor text
         if (!flavorText.isEmpty()) {
             item = item.addTooltip("");
             for (String text : flavorText) {
-                item = item.addTooltip(FormatCode.ITALIC + text);
+                item = item.addTooltip(FormatCode.RESET + "" + ColorCode.GRAY + FormatCode.ITALIC + text);
             }
         }
 
