@@ -90,7 +90,12 @@ public class EquipmentUpgradeUseHandler {
         Item newEquipment = equipmentModifier.build();
 
         StackableItem stackedOffhand = (StackableItem) offhand;
-        Item newUpgrade = stackedOffhand.withCount(stackedOffhand.count() - 1);
+        Item newUpgrade;
+        if(stackedOffhand.count() == 1) {
+            newUpgrade = null;
+        } else {
+            newUpgrade = stackedOffhand.withCount(stackedOffhand.count() - 1);
+        }
 
         try {
             playerCommandService.setEquipment(playerId, EquipmentSlot.OFF_HAND, newUpgrade);
