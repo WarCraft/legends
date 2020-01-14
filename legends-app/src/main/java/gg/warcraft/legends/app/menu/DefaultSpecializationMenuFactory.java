@@ -141,9 +141,9 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
         createSwitchView(specialization, isLocked, canSwitch, cooldown).forEach(builder::addTooltip);
 
         builder.withAction(action -> {
-            if (!isLocked && cooldown == null && action.isShiftRightClick()) {
+         //   if (!isLocked && cooldown == null && action.isShiftRightClick()) {
                 legendsPlayerCommandService.setSpecialization(player.getId(), specializationName);
-            }
+         //   }
         });
         return builder.build();
     }

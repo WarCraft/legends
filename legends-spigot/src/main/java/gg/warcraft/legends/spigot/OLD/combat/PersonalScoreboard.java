@@ -50,7 +50,7 @@ public class PersonalScoreboard implements Runnable, Cancellable {
         player.setMetadata(METADATA_KEY, metadata);
         player.setScoreboard(scoreboard);
 
-        Objective health = scoreboard.registerNewObjective(HEALTH_OBJECTIVE, HEALTH_CRITERIA);
+        Objective health = scoreboard.registerNewObjective(HEALTH_OBJECTIVE, HEALTH_CRITERIA, HEALTH_OBJECTIVE);
         health.setDisplaySlot(DisplaySlot.BELOW_NAME);
         health.setDisplayName(ChatColor.RED + "❤");
     }
@@ -94,7 +94,7 @@ public class PersonalScoreboard implements Runnable, Cancellable {
         });
 
         if (!cooldowns.isEmpty()) {
-            Objective objective = scoreboard.registerNewObjective(COOLDOWN_OBJECTIVE, DUMMY_CRITERIA);
+            Objective objective = scoreboard.registerNewObjective(COOLDOWN_OBJECTIVE, DUMMY_CRITERIA, COOLDOWN_OBJECTIVE);
             objective.setDisplaySlot(DisplaySlot.SIDEBAR);
             cooldowns.forEach((key, value) -> {
                 Score score = objective.getScore(key);

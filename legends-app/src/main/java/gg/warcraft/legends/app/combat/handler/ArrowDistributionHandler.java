@@ -49,6 +49,10 @@ public class ArrowDistributionHandler {
 
     @Subscribe
     public void onPlayerSpecializationChangedEvent(PlayerSpecializationChangedEvent event) {
+        if(event.getNewSpecialization() == null) {
+            System.out.println("New spec was null?");
+            return;
+        }
         switch (event.getNewSpecialization().getPermission()) {
             case "warcraft.marksman":
             case "warcraft.hunter":

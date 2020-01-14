@@ -87,7 +87,7 @@ public class TutorialCommandHandler implements CommandHandler {
                             ? "an "
                             : "a ";
                     playerCommandService.sendNotification(playerId, "You are now " + prefix + argument + ".");
-                    commandCommandService.dispatchCommandFor("kit", playerId);
+                    commandCommandService.dispatchCommandFor("kit:kit", playerId);
                 }
                 return true;
             case "skiptutorial":
