@@ -37,6 +37,7 @@ lazy val app = (project in file("legends-app"))
     commonSettings,
     libraryDependencies ++= commonDependencies
   )
+  .dependsOn(api)
 
 lazy val spigot = (project in file("legends-spigot"))
   .settings(
@@ -50,4 +51,4 @@ lazy val spigot = (project in file("legends-spigot"))
       "com.destroystokyo.paper" % "paper-api" % "1.15.1-R0.1-SNAPSHOT" % Provided
     )
   )
-  .dependsOn(gathering)
+  .dependsOn(app)
