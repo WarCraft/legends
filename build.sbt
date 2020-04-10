@@ -21,6 +21,7 @@ lazy val assemblySettings = Seq(
 
 lazy val commonDependencies = Seq(
   "gg.warcraft" %% "monolith-api" % "15.0.0-SNAPSHOT",
+  "gg.warcraft" %% "combat-api" % "15.0.0-SNAPSHOT",
   "org.scalatest" %% "scalatest" % "3.0.8" % Test
 )
 
