@@ -35,8 +35,7 @@ class Hamstring(
 
   override def onHit(entity: Entity): Unit = {
     entityService damageEntity (entity.id, snapshot.damage)
-    val slow = snapshot.potionEffect(PotionEffect.SLOW)
-    entityService addPotionEffect (entity.id, slow)
+    entityService addPotionEffect (entity.id, snapshot.slow)
     // TODO warriorEffectFactory.createHamstringEffect(entity, slow.getDuration());
     worldService playSound (entity.location, hitSound, soundCategory, 1, 1)
   }

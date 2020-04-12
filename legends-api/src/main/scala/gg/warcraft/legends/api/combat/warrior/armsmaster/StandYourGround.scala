@@ -2,7 +2,6 @@ package gg.warcraft.legends.api.combat.warrior.armsmaster
 
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.ability.MeleeAbility
-import gg.warcraft.monolith.api.combat.PotionEffect
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.entity.status.StatusService
@@ -36,12 +35,9 @@ class StandYourGround(
   private final val castSound = Sound.ENTITY_IRON_GOLEM_DEATH
 
   {
-    val resistance = snapshot.potionEffect(PotionEffect.DAMAGE_RESISTANCE)
-    val fireResistance = snapshot.potionEffect(PotionEffect.FIRE_RESISTANCE)
-    val slow = snapshot.potionEffect(PotionEffect.SLOW)
-    entityService addPotionEffect (caster.id, resistance)
-    entityService addPotionEffect (caster.id, fireResistance)
-    entityService addPotionEffect (caster.id, slow)
+    entityService addPotionEffect (caster.id, snapshot.resistance)
+    entityService addPotionEffect (caster.id, snapshot.fireResistance)
+    entityService addPotionEffect (caster.id, snapshot.slow)
 
     // TODO
 //    AttributeModifier knockbackModifier =

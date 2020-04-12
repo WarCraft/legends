@@ -66,7 +66,7 @@ class Fireball(
   {
     val location = caster.eyeLocation
     val direction = location.rotation
-    val velocity = direction multiply snapshot.speed.modified
+    val velocity = direction multiply snapshot.velocity.modified
     val movement = Movement.linear(location, velocity, maxDistance)
     val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
     val effect = new Fireball.Effect(movement)

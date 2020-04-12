@@ -2,7 +2,6 @@ package gg.warcraft.legends.api.combat.warrior.berserker
 
 import gg.warcraft.combat.api.ability.MeleeAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
-import gg.warcraft.monolith.api.combat.PotionEffect
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
@@ -34,8 +33,7 @@ class Maul(
   private final val missSound = Sound.ENTITY_FISHING_BOBBER_THROW
 
   override def onHit(entity: Entity): Unit = {
-    val absorption = snapshot potionEffect PotionEffect.ABSORPTION
-    entityService addPotionEffect (entity.id, absorption)
+    entityService addPotionEffect (caster.id, snapshot.absorption)
     entityService damageEntity (entity.id, snapshot.damage)
 
     // TODO create effect

@@ -2,7 +2,6 @@ package gg.warcraft.legends.api.combat.warrior.armsmaster
 
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.ability.MeleeAbility
-import gg.warcraft.monolith.api.combat.PotionEffect
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
@@ -36,8 +35,7 @@ class Slam(
   override def onHit(entity: Entity): Unit = {
     entityService damageEntity (entity.id, snapshot.damage)
     entityService knockBackEntity (entity.id, caster.eyeLocation.rotation, snapshot.knockBack.modified)
-    val confusion = snapshot.potionEffect(PotionEffect.CONFUSION)
-    entityService addPotionEffect (entity.id, confusion)
+    entityService addPotionEffect (entity.id, snapshot.nausea)
     worldService playSound (entity.location, hitSound, soundCategory, 1, 1)
   }
 
