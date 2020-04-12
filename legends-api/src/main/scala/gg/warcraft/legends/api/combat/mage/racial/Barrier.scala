@@ -1,4 +1,4 @@
-package gg.warcraft.legends.api.combat.mage.human
+package gg.warcraft.legends.api.combat.mage.racial
 
 import gg.warcraft.combat.api.ability.MeleeAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
