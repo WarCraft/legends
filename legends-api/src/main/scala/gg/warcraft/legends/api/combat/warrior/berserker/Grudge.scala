@@ -1,9 +1,19 @@
 package gg.warcraft.legends.api.combat.warrior.berserker
 
+import java.util.UUID
+
 import gg.warcraft.combat.api.ability.MeleeAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
-import gg.warcraft.monolith.api.entity.Entity
-import gg.warcraft.monolith.api.entity.status.StatusService
+import gg.warcraft.combat.api.Movement
+import gg.warcraft.monolith.api.combat.{CombatSource, CombatValue}
+import gg.warcraft.monolith.api.core.Duration
+import gg.warcraft.monolith.api.core.event.Event
+import gg.warcraft.monolith.api.effect.{
+  EffectRenderer, EffectVectors, Particle, ParticleAdapter
+}
+import gg.warcraft.monolith.api.entity.{Entity, EntityDamageEvent, EntityService}
+import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
+import gg.warcraft.monolith.api.math.Vector3f
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object Grudge {
@@ -19,6 +29,41 @@ object Grudge {
         snapshot: AbilitySnapshot,
         target: Option[Entity]
     ): MeleeAbility = new Grudge(caster, snapshot)
+  }
+
+  class Effect(movement: Movement, duration: Duration)(
+      implicit particleAdapter: ParticleAdapter
+  ) extends gg.warcraft.monolith.api.effect.Effect(() => movement.get.add(offset), period) {
+    private final val offset = Vector3f(0, 1.5f, 0)
+    private final val period = Duration.ofTicks(5)
+
+    private val particle = Particle.VILLAGER_ANGRY
+    private val vectors = EffectVectors.origin()
+    private val renderer = EffectRenderer(particle, vectors)
+    addRenderer(renderer)
+    cancel(duration)
+  }
+
+  class Status(
+      override val source: CombatSource,
+      override val duration: Option[Duration],
+      casterId: UUID,
+      heal: CombatValue
+  )(
+      implicit entityService: EntityService
+  ) extends Status.Effect {
+    override val name: String = "Grudge"
+    override val group: String = "debuff"
+
+    override def handle(event: Event): Unit = event match {
+      case EntityDamageEvent(_, _, damage) =>
+        damage.source.entityId match {
+          case Some(entityId) =>
+            if (entityId == casterId) entityService healEntity (casterId, heal)
+          case None =>
+        }
+      case _ =>
+    }
   }
 }
 
