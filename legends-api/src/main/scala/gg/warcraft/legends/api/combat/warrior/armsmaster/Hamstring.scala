@@ -4,8 +4,9 @@ import gg.warcraft.combat.api.ability.MeleeAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.Movement
 import gg.warcraft.monolith.api.core.Duration
+import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.effect.{
-  EffectRenderer, EffectVectors, Particle, ParticleAdapter
+  Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
 }
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.math.Vector3f
@@ -26,9 +27,10 @@ object Hamstring {
     ): MeleeAbility = new Hamstring(caster, snapshot)
   }
 
-  class Effect(movement: Movement, duration: Duration)( // TODO maybe implement Effect and Status as a method that returns anon impl?
-      implicit particleAdapter: ParticleAdapter
-  ) extends gg.warcraft.monolith.api.effect.Effect() {
+  class ParticleEffect(movement: Movement, duration: Duration)(
+      implicit taskService: TaskService,
+      particleAdapter: ParticleAdapter
+  ) extends Effect(movement.get) {
     private final val radius = 0.5f
     private final val frames = 20
     // TODO make VectorUtils with vectors for HEAD_OFFSET, CHEST_OFFSET, HEEL_OFFSET etc

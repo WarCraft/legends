@@ -5,16 +5,14 @@ import java.util.UUID
 import gg.warcraft.combat.api.ability.MeleeAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.Movement
-import gg.warcraft.monolith.api.combat.{CombatSource, CombatValue}
+import gg.warcraft.monolith.api.combat.{ CombatSource, CombatValue }
 import gg.warcraft.monolith.api.core.Duration
 import gg.warcraft.monolith.api.core.event.Event
-import gg.warcraft.monolith.api.effect.{
-  EffectRenderer, EffectVectors, Particle, ParticleAdapter
-}
-import gg.warcraft.monolith.api.entity.{Entity, EntityDamageEvent, EntityService}
-import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
+import gg.warcraft.monolith.api.effect.{ Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter }
+import gg.warcraft.monolith.api.entity.{ Entity, EntityDamageEvent, EntityService }
+import gg.warcraft.monolith.api.entity.status.{ Status, StatusService }
 import gg.warcraft.monolith.api.math.Vector3f
-import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
+import gg.warcraft.monolith.api.world.{ Sound, SoundCategory, WorldService }
 
 object Grudge {
   class Factory(
@@ -31,9 +29,9 @@ object Grudge {
     ): MeleeAbility = new Grudge(caster, snapshot)
   }
 
-  class Effect(movement: Movement, duration: Duration)(
+  class ParticleEffect(movement: Movement, duration: Duration)(
       implicit particleAdapter: ParticleAdapter
-  ) extends gg.warcraft.monolith.api.effect.Effect(() => movement.get.add(offset), period) {
+  ) extends Effect(() => movement.get.add(offset), period) {
     private final val offset = Vector3f(0, 1.5f, 0)
     private final val period = Duration.ofTicks(5)
 
@@ -41,10 +39,11 @@ object Grudge {
     private val vectors = EffectVectors.origin()
     private val renderer = EffectRenderer(particle, vectors)
     addRenderer(renderer)
+
     cancel(duration)
   }
 
-  class Status(
+  class StatusEffect(
       override val source: CombatSource,
       override val duration: Option[Duration],
       casterId: UUID,

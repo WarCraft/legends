@@ -21,7 +21,7 @@ object LastStand {
     ): MeleeAbility = new LastStand(caster, snapshot)
   }
 
-  class Status(
+  class StatusEffect(
       override val source: CombatSource,
       override val duration: Option[Duration]
   ) extends Status.Effect {
@@ -46,7 +46,7 @@ class LastStand(
   private final val castSound = Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED
 
   {
-    val status = new LastStand.Status(caster, snapshot.duration)
+    val status = new LastStand.StatusEffect(caster, snapshot.duration)
     statusService addEffect (caster.id, status)
     worldService playSound (caster.location, castSound, soundCategory, 1, 1)
   }

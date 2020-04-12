@@ -7,7 +7,7 @@ import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.effect.{
-  EffectRenderer, EffectVectors, Particle, ParticleAdapter
+  Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
 }
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
@@ -28,24 +28,22 @@ object Fireball {
     ): RangedAbility = new Fireball(caster, snapshot)
   }
 
-  class Effect(movement: Movement)(
+  class ParticleEffect(movement: Movement)(
       implicit particleAdapter: ParticleAdapter,
       taskService: TaskService
-  ) extends gg.warcraft.monolith.api.effect.Effect(movement.get) {
+  ) extends Effect(movement.get) {
     private final val radius = 0.2f
     private final val particleCount = 20
 
-    {
-      val innerParticle = Particle.FLAME
-      val innerVectors = EffectVectors.origin()
-      val innerRenderer = EffectRenderer(innerParticle, innerVectors)
-      addRenderer(innerRenderer)
+    private val innerParticle = Particle.FLAME
+    private val innerVectors = EffectVectors.origin()
+    private val innerRenderer = EffectRenderer(innerParticle, innerVectors)
+    addRenderer(innerRenderer)
 
-      val outerParticle = Particle.REDSTONE.color(Particle.Color.ORANGE)
-      val outerVectors = EffectVectors.sphere(radius, particleCount)
-      val outerRenderer = EffectRenderer(outerParticle, outerVectors)
-      addRenderer(outerRenderer)
-    }
+    private val outerParticle = Particle.REDSTONE.color(Particle.Color.ORANGE)
+    private val outerVectors = EffectVectors.sphere(radius, particleCount)
+    private val outerRenderer = EffectRenderer(outerParticle, outerVectors)
+    addRenderer(outerRenderer)
   }
 }
 
@@ -69,8 +67,9 @@ class Fireball(
     val velocity = direction multiply snapshot.velocity.modified
     val movement = Movement.linear(location, velocity, maxDistance)
     val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
-    val effect = new Fireball.Effect(movement)
-    projectileService createProjectile (this, movement, hitbox, () => effect.cancel())
+    val effect = new Fireball.ParticleEffect(movement)
+    projectileService createProjectile (this, movement, hitbox, () =>
+      effect.cancel())
     worldService playSound (caster.location, castSound, soundCategory, 1, 1)
     // TODO play sound at fly locations (maybe use onTick for this or create something for sound similar to effect)
   }

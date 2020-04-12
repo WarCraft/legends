@@ -8,7 +8,7 @@ import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.core.Duration
 import gg.warcraft.monolith.api.core.event.Event
 import gg.warcraft.monolith.api.effect.{
-  EffectRenderer, EffectVectors, Particle, ParticleAdapter
+  Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
 }
 import gg.warcraft.monolith.api.entity.{Entity, EntityDamageEvent, EntityService}
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
@@ -17,10 +17,12 @@ import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object StandYourGround {
   class Factory(
-      implicit entityService: EntityService,
+      implicit taskService: TaskService,
+      entityService: EntityService,
       attributeService: AttributeService,
       statusService: StatusService,
-      worldService: WorldService
+      worldService: WorldService,
+      particleAdapter: ParticleAdapter
   ) extends MeleeAbility.Factory {
     override def create(
         caster: Entity,
@@ -29,18 +31,17 @@ object StandYourGround {
     ): MeleeAbility = new StandYourGround(caster, snapshot)
   }
 
-  class Effect(movement: Movement, duration: Duration)(
+  class ParticleEffect(movement: Movement, duration: Duration)(
       implicit particleAdapter: ParticleAdapter,
       taskService: TaskService
-  ) extends gg.warcraft.monolith.api.effect.Effect(movement.get, tick = this.tick) {
+  ) extends Effect(movement.get) {
     private final val radius = 2.5f
     private final val particleCount = 50
+    private final val particle = Particle.CRIT_MAGIC
 
-    private val particle = Particle.CRIT_MAGIC
-    tick()
     cancel(duration)
 
-    private def tick(): Unit = {
+    override def tick(): Unit = {
       clearRenderers()
       val vectors = EffectVectors.dome(radius, particleCount)
       val renderer = EffectRenderer(particle, vectors)
@@ -48,7 +49,7 @@ object StandYourGround {
     }
   }
 
-  class Status(
+  class StatusEffect(
       override val source: CombatSource,
       override val duration: Option[Duration]
   )(
@@ -96,9 +97,9 @@ class StandYourGround(
 //      slow.getDuration());
 
     val movement = Movement.entity(caster)
-    new StandYourGround.Effect(movement, snapshot.slow.duration)
+    new StandYourGround.ParticleEffect(movement, snapshot.slow.duration)
 
-    val status = new StandYourGround.Status(caster, snapshot.slow.duration)
+    val status = new StandYourGround.StatusEffect(caster, snapshot.slow.duration)
     statusService addEffect (caster.id, status)
 
     worldService playSound (caster.location, castSound, soundCategory, 1, 1)
