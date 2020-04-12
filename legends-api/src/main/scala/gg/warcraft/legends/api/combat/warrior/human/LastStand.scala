@@ -50,8 +50,4 @@ class LastStand(
     statusService addEffect (caster.id, status)
     worldService playSound (caster.location, castSound, soundCategory, 1, 1)
   }
-
-  override def onHit(entity: Entity): Unit = {}
-
-  override def onMiss(entity: Entity): Unit = {}
 }

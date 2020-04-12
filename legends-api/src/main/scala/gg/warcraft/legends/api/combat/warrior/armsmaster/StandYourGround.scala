@@ -52,8 +52,4 @@ class StandYourGround(
 //    statusCommandService.addStatusEffect(statusEffect, caster.getId());
     worldService playSound (caster.location, castSound, soundCategory, 1, 1)
   }
-
-  override def onHit(entity: Entity): Unit = {}
-
-  override def onMiss(entity: Entity): Unit = {}
 }
