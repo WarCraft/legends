@@ -2,9 +2,17 @@ package gg.warcraft.legends.api.combat.warrior.armsmaster
 
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.ability.MeleeAbility
-import gg.warcraft.monolith.api.entity.{Entity, EntityService}
+import gg.warcraft.combat.api.Movement
+import gg.warcraft.monolith.api.combat.CombatSource
+import gg.warcraft.monolith.api.core.task.TaskService
+import gg.warcraft.monolith.api.core.Duration
+import gg.warcraft.monolith.api.core.event.Event
+import gg.warcraft.monolith.api.effect.{
+  EffectRenderer, EffectVectors, Particle, ParticleAdapter
+}
+import gg.warcraft.monolith.api.entity.{Entity, EntityDamageEvent, EntityService}
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
-import gg.warcraft.monolith.api.entity.status.StatusService
+import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object StandYourGround {
@@ -20,6 +28,46 @@ object StandYourGround {
         target: Option[Entity]
     ): MeleeAbility = new StandYourGround(caster, snapshot)
   }
+
+  class Effect(movement: Movement, duration: Duration)(
+      implicit particleAdapter: ParticleAdapter,
+      taskService: TaskService
+  ) extends gg.warcraft.monolith.api.effect.Effect(movement.get, tick = this.tick) {
+    private final val radius = 2.5f
+    private final val particleCount = 50
+
+    private val particle = Particle.CRIT_MAGIC
+    tick()
+    cancel(duration)
+
+    private def tick(): Unit = {
+      clearRenderers()
+      val vectors = EffectVectors.dome(radius, particleCount)
+      val renderer = EffectRenderer(particle, vectors)
+      addRenderer(renderer)
+    }
+  }
+
+  class Status(
+      override val source: CombatSource,
+      override val duration: Option[Duration]
+  )(
+      implicit entityService: EntityService,
+      worldService: WorldService
+  ) extends Status.Effect {
+    private final val soundCategory = SoundCategory.HOSTILE
+    private final val hitSound = Sound.ENTITY_IRON_GOLEM_HURT
+
+    override val name: String = "Stand Your Ground"
+    override val group: String = "buff"
+
+    override def handle(event: Event): Unit = event match {
+      case EntityDamageEvent(entityId, _, _) =>
+        val entity = entityService getEntity entityId
+        worldService playSound (entity.location, hitSound, soundCategory, 1, 1)
+      case _ =>
+    }
+  }
 }
 
 class StandYourGround(
@@ -29,7 +77,9 @@ class StandYourGround(
     implicit entityService: EntityService,
     attributeService: AttributeService,
     statusService: StatusService,
-    worldService: WorldService
+    worldService: WorldService,
+    particleAdapter: ParticleAdapter,
+    taskService: TaskService
 ) extends MeleeAbility {
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.ENTITY_IRON_GOLEM_DEATH
@@ -44,12 +94,13 @@ class StandYourGround(
 //        attributeCommandService.addAttributeModifier(caster.getId(), GenericAttribute.KNOCKBACK_RESISTANCE, 1);
 //    taskService.runLater(() -> attributeCommandService.removeAttributeModifier(caster.getId(), knockbackModifier),
 //      slow.getDuration());
-//
-//    warriorEffectFactory.createStandYourGroundEffect(caster, slow.getDuration());
-//
-//    StatusEffect statusEffect =
-//        warriorStatusEffectFactory.createStandYourGroundStatusEffect(caster.getId(), slow.getDuration());
-//    statusCommandService.addStatusEffect(statusEffect, caster.getId());
+
+    val movement = Movement.entity(caster)
+    new StandYourGround.Effect(movement, snapshot.slow.duration)
+
+    val status = new StandYourGround.Status(caster, snapshot.slow.duration)
+    statusService addEffect (caster.id, status)
+
     worldService playSound (caster.location, castSound, soundCategory, 1, 1)
   }
 }
