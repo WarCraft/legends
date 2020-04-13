@@ -5,18 +5,14 @@ import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.ability.RangedAbility.Flag
 import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.monolith.api.block.Block
-import gg.warcraft.monolith.api.core.task.TaskService
-import gg.warcraft.monolith.api.effect.ParticleAdapter
-import gg.warcraft.monolith.api.entity.{ Entity, EntityService }
-import gg.warcraft.monolith.api.world.{ Sound, SoundCategory, WorldService }
+import gg.warcraft.monolith.api.entity.{Entity, EntityService}
+import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object Teleport {
   class Factory(
-      implicit taskService: TaskService,
-      entityService: EntityService,
+      implicit entityService: EntityService,
       projectileService: ProjectileService,
-      worldService: WorldService,
-      particleAdapter: ParticleAdapter
+      worldService: WorldService
   ) extends RangedAbility.Factory {
     override val flags: Set[Flag] =
       Set(RangedAbility.BLOCK_TARGET_REQUIRED)
@@ -31,13 +27,13 @@ object Teleport {
 }
 
 class Teleport(
-    override val caster  : Entity               ,
-override val snapshot: AbilitySnapshot
-) (
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(
     implicit entityService: EntityService,
     projectileService: ProjectileService,
-    worldService: WorldService,
-)extends RangedAbility {
+    worldService: WorldService
+) extends RangedAbility {
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.ENTITY_ENDERMAN_TELEPORT
   private final val hitSound = Sound.ENTITY_ENDERMAN_TELEPORT
