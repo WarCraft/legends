@@ -1,0 +1,99 @@
+package gg.warcraft.legends.api.combat.mage.elementalist
+
+import gg.warcraft.combat.api.{ Hitbox, Movement }
+import gg.warcraft.combat.api.ability.RangedAbility
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot
+import gg.warcraft.combat.api.projectile.ProjectileService
+import gg.warcraft.monolith.api.block.Block
+import gg.warcraft.monolith.api.core.task.TaskService
+import gg.warcraft.monolith.api.core.Duration
+import gg.warcraft.monolith.api.effect.{ Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter }
+import gg.warcraft.monolith.api.entity.{ Entity, EntityService }
+import gg.warcraft.monolith.api.math.Vector3f
+import gg.warcraft.monolith.api.world.{ Sound, SoundCategory, WorldService }
+
+object HailBlast {
+  class Factory(
+      implicit taskService: TaskService,
+      entityService: EntityService,
+      projectileService: ProjectileService,
+      worldService: WorldService,
+      particleAdapter: ParticleAdapter
+  ) extends RangedAbility.Factory {
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        blockTarget: Option[Block],
+        entityTarget: Option[Entity]
+    ): RangedAbility = new HailBlast(caster, snapshot)
+  }
+
+  class ParticleEffect(
+      movement: Movement,
+      direction: Vector3f
+  )(
+      implicit taskService: TaskService,
+      particleAdapter: ParticleAdapter
+  ) extends Effect(movement.get) {
+    private final val iterations = 15
+    private final val particle = Particle.CLOUD
+
+    private val (pitch, yaw) = direction.toPitchYaw
+
+    private var iteration = 1
+
+    cancel(Duration.ofTicks(iterations))
+
+    override def tick(): Unit = {
+      clearRenderers()
+
+      val vectors = EffectVectors
+        .circle(0.4f + 0.2f * iteration, 4 * iteration)
+        .rotateAxisX(Math.toRadians(90 + pitch).toFloat)
+        .rotateAxisY(Math.toRadians(-yaw).toFloat)
+      val renderer = EffectRenderer(particle, vectors)
+      addRenderer(renderer)
+
+      iteration += 1
+    }
+  }
+}
+
+class HailBlast(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(
+    implicit taskService: TaskService,
+    entityService: EntityService,
+    projectileService: ProjectileService,
+    worldService: WorldService,
+    particleAdapter: ParticleAdapter
+) extends RangedAbility {
+  private final val soundCategory = SoundCategory.HOSTILE
+  private final val castSound = Sound.BLOCK_SNOW_BREAK
+  private final val castSound2 = Sound.ENTITY_SILVERFISH_HURT
+
+  private val origin = caster.eyeLocation
+  private val velocity = origin.rotation multiply snapshot.velocity.modified
+  private val movement = Movement.linear(caster.eyeLocation, velocity, snapshot.range.modified)
+  private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
+
+  private val effect = new HailBlast.ParticleEffect(movement, origin.rotation)
+  projectileService createProjectile (this, movement, hitbox, effect.cancel)
+
+  worldService playSound (caster.location, castSound, soundCategory, 1, 1)
+  worldService playSound (caster.location, castSound2, soundCategory, 1, 0.1f)
+  (1 to 6).foreach { i =>
+    val delay = Duration.ofTicks(i * 2)
+    taskService runLater (delay, () =>
+      worldService playSound (caster.location, castSound, soundCategory, 1, 1))
+  }
+
+  override def onHit(entity: Entity): Boolean = {
+    entityService damageEntity (entity.id, snapshot.damage)
+    entityService addPotionEffect (entity.id, snapshot.slow)
+    false
+  }
+
+  override def onMiss(entity: Entity): Boolean = false
+}
