@@ -1,20 +1,21 @@
-package gg.warcraft.legends.app.combat.ranger.hunter;
+package gg.warcraft.legends.api.combat.hunter.ranger
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import gg.warcraft.combat.api.ability.AbstractAbility;
-import gg.warcraft.combat.api.ability.MeleeAbility;
-import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
-import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
-import gg.warcraft.combat.api.ability.service.AbilityCommandService;
-import gg.warcraft.monolith.api.combat.PotionEffect;
-import gg.warcraft.monolith.api.combat.PotionEffectType;
-import gg.warcraft.monolith.api.combat.value.CombatValue;
-import gg.warcraft.monolith.api.entity.Entity;
-import gg.warcraft.monolith.api.entity.service.EntityCommandService;
+class ToxicArrow {
 
-import javax.annotation.Nullable;
+}
 
+/*
+public interface ToxicArrowFactory extends MeleeAbilityFactory { // TODO rename this AbilityFactory and the other one to TargetedAbilityFactory? Who then gets to register for projectiles?
+
+    @Override
+    default EnumSet<MeleeAbilityFlag> getFlags() {
+        return EnumSet.noneOf(MeleeAbilityFlag.class);
+    }
+}
+
+ */
+
+/*
 public class ToxicArrow extends AbstractAbility implements MeleeAbility {
     private static final float SPEED = 3; // suggested speed of 0.6 by the spigot docs is way too low
     private static final float SPREAD = 2; // suggested spread of 12 by the spigot docs is way too wide
@@ -44,3 +45,5 @@ public class ToxicArrow extends AbstractAbility implements MeleeAbility {
         // do nothing
     }
 }
+
+ */

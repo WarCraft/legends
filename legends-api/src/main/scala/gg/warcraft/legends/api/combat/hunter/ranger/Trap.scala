@@ -1,40 +1,21 @@
-package gg.warcraft.legends.app.combat.ranger.hunter;
+package gg.warcraft.legends.api.combat.hunter.ranger
+
+class Trap {
+
+}
 
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import gg.warcraft.combat.api.Hitbox;
-import gg.warcraft.combat.api.HitboxFactory;
-import gg.warcraft.combat.api.Movement;
-import gg.warcraft.combat.api.MovementFactory;
-import gg.warcraft.combat.api.ability.AbstractAbility;
-import gg.warcraft.combat.api.ability.RangedAbility;
-import gg.warcraft.combat.api.ability.config.AbilityConfigurationValue;
-import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
-import gg.warcraft.combat.api.ability.service.AbilityCommandService;
-import gg.warcraft.monolith.api.combat.PotionEffect;
-import gg.warcraft.monolith.api.combat.PotionEffectType;
-import gg.warcraft.monolith.api.combat.value.CombatValue;
-import gg.warcraft.monolith.api.core.TaskService;
-import gg.warcraft.monolith.api.entity.Entity;
-import gg.warcraft.monolith.api.entity.player.Player;
-import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
-import gg.warcraft.monolith.api.entity.service.EntityCommandService;
-import gg.warcraft.monolith.api.math.Vector3f;
-import gg.warcraft.monolith.api.util.Cancellable;
-import gg.warcraft.monolith.api.util.Duration;
-import gg.warcraft.monolith.api.world.BlockLocation;
-import gg.warcraft.monolith.api.world.Location;
-import gg.warcraft.monolith.api.world.Sound;
-import gg.warcraft.monolith.api.world.SoundCategory;
-import gg.warcraft.monolith.api.world.block.*;
-import gg.warcraft.monolith.api.world.block.spoofing.BlockSpoofingCommandService;
-import gg.warcraft.monolith.api.world.WorldService;
-import gg.warcraft.monolith.api.world.block.variant.TrapdoorVariant;
+/*
+public interface TrapFactory extends RangedAbilityFactory {
 
-import javax.annotation.Nullable;
-import java.util.UUID;
+    @Override
+    default EnumSet<RangedAbilityFlag> getFlags() {
+        return EnumSet.noneOf(RangedAbilityFlag.class);
+    }
+}
+ */
 
+/*
 public class Trap extends AbstractAbility implements RangedAbility, Cancellable {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
     private static final Sound PLACE_SOUND = Sound.BLOCK_IRON_TRAPDOOR_OPEN;
@@ -128,3 +109,5 @@ public class Trap extends AbstractAbility implements RangedAbility, Cancellable 
         return false;
     }
 }
+
+ */

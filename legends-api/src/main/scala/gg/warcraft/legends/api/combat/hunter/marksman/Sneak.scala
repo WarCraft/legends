@@ -1,23 +1,21 @@
-package gg.warcraft.legends.app.combat.ranger.marksman;
+package gg.warcraft.legends.api.combat.hunter.marksman
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import gg.warcraft.combat.api.ability.AbstractAbility;
-import gg.warcraft.combat.api.ability.MeleeAbility;
-import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
-import gg.warcraft.monolith.api.combat.PotionEffect;
-import gg.warcraft.monolith.api.combat.PotionEffectType;
-import gg.warcraft.monolith.api.core.TaskService;
-import gg.warcraft.monolith.api.entity.Entity;
-import gg.warcraft.monolith.api.entity.player.hiding.PlayerHidingCommandService;
-import gg.warcraft.monolith.api.entity.service.EntityCommandService;
-import gg.warcraft.monolith.api.util.Cancellable;
-import gg.warcraft.monolith.api.world.Sound;
-import gg.warcraft.monolith.api.world.SoundCategory;
-import gg.warcraft.monolith.api.world.WorldService;
+class Sneak {
 
-import javax.annotation.Nullable;
+}
 
+
+/*
+public interface SneakFactory extends MeleeAbilityFactory {
+
+    @Override
+    default EnumSet<MeleeAbilityFlag> getFlags() {
+        return EnumSet.noneOf(MeleeAbilityFlag.class);
+    }
+}
+ */
+
+/*
 public class Sneak extends AbstractAbility implements MeleeAbility, Cancellable {
     private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
     private static final Sound CAST_SOUND = Sound.ENTITY_PLAYER_BREATH;
@@ -56,3 +54,6 @@ public class Sneak extends AbstractAbility implements MeleeAbility, Cancellable 
         // do nothing
     }
 }
+
+
+ */

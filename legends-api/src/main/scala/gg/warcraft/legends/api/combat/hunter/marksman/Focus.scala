@@ -1,23 +1,22 @@
-package gg.warcraft.legends.app.combat.ranger.marksman;
+package gg.warcraft.legends.api.combat.hunter.marksman
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import gg.warcraft.combat.api.ability.AbstractAbility;
-import gg.warcraft.combat.api.ability.MeleeAbility;
-import gg.warcraft.combat.api.ability.config.AbilitySnapshot;
-import gg.warcraft.legends.app.combat.ranger.effect.RangerEffectFactory;
-import gg.warcraft.legends.app.combat.ranger.status.RangerStatusEffectFactory;
-import gg.warcraft.monolith.api.entity.Entity;
-import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.entity.service.EntityCommandService;
-import gg.warcraft.monolith.api.entity.status.StatusEffect;
-import gg.warcraft.monolith.api.entity.status.service.StatusCommandService;
-import gg.warcraft.monolith.api.util.Cancellable;
-import gg.warcraft.monolith.api.util.Duration;
-import gg.warcraft.monolith.api.util.TimeUtils;
+class Focus {
 
-import javax.annotation.Nullable;
-import java.util.UUID;
+}
+
+
+/*
+public interface FocusFactory extends MeleeAbilityFactory {
+
+    @Override
+    default EnumSet<MeleeAbilityFlag> getFlags() {
+        return EnumSet.noneOf(MeleeAbilityFlag.class);
+    }
+}
+ */
+
+
+/*
 
 public class Focus extends AbstractAbility implements MeleeAbility, Cancellable {
     private final EntityCommandService entityCommandService;
@@ -79,3 +78,67 @@ public class Focus extends AbstractAbility implements MeleeAbility, Cancellable 
         // do nothing
     }
 }
+
+ */
+
+
+
+
+
+/*
+
+public class FocusEffect implements Cancellable {
+    private static final float RADIUS = 0.5f;
+    private static final int FRAMES = 20;
+    private static final Vector3f OFFSET = new Vector3f(0, 0.1f, 0);
+
+    private final Effect effect;
+
+    @Inject
+    public FocusEffect(EntityQueryService entityQueryService, ParticleFactory particleFactory,
+                       EffectVectorsFactory effectVectorsFactory, EffectRendererFactory effectRendererFactory,
+                       EffectFactory effectFactory, @Assisted Entity target) {
+        EntityLocationSupplier entityLocationSupplier = new EntityLocationSupplier(entityQueryService, target);
+        Supplier<Location> locationSupplier = () -> entityLocationSupplier.get().add(OFFSET);
+        this.effect = effectFactory.createSimpleEffect(locationSupplier);
+
+        Particle particle = particleFactory.createSimpleParticle(ParticleType.REDSTONE);
+        EffectVectors vectors = effectVectorsFactory.createRingVectors(RADIUS, FRAMES);
+        EffectRenderer renderer = effectRendererFactory.createIterativeEffectRenderer(particle, vectors);
+        effect.addRenderer(renderer);
+    }
+
+    @Override
+    public void cancel() {
+        effect.cancel();
+    }
+}
+ */
+
+
+
+
+
+
+/*
+public class FocusStatusEffect extends AbstractStatusEffect implements CombatStatusEffect {
+    private static final String NAME = "Focus";
+    private static final String TYPE = "legends.marksman.focus";
+
+    private final CombatValueModifier damageModifier;
+
+    @Inject
+    public FocusStatusEffect(CombatFactory combatFactory, @Assisted UUID entityId,
+                             @Assisted float damageModifier) {
+        super(entityId, NAME, TYPE, null);
+        this.damageModifier =
+                combatFactory.createCombatValueModifier(CombatValueModifierType.PERCENT, damageModifier, this);
+    }
+
+    @Override
+    public void onAbilityPreCastEvent(AbilityPreCastEvent event) {
+        event.addDamageModifier(damageModifier);
+    }
+}
+
+ */
