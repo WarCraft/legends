@@ -37,7 +37,7 @@ class Bolt(
     projectileService: ProjectileService,
     worldService: WorldService
 ) extends RangedAbility {
-  private var location: Location =
+  private val location: Location =
     if (entityTarget.isDefined) entityTarget.get.location
     else blockTarget.get.location.add(0.5f, 1, 0.5f)
 

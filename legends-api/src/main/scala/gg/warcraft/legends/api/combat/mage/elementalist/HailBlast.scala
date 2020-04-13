@@ -7,6 +7,7 @@ import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.core.Duration
+import gg.warcraft.monolith.api.core.Duration._
 import gg.warcraft.monolith.api.effect.{ Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter }
 import gg.warcraft.monolith.api.entity.{ Entity, EntityService }
 import gg.warcraft.monolith.api.math.Vector3f
@@ -83,9 +84,8 @@ class HailBlast(
 
   worldService playSound (caster.location, castSound, soundCategory, 1, 1)
   worldService playSound (caster.location, castSound2, soundCategory, 1, 0.1f)
-  (1 to 6).foreach { i =>
-    val delay = Duration.ofTicks(i * 2)
-    taskService runLater (delay, () =>
+  (2 to 12 by 2).foreach { i =>
+    taskService runLater (i.ticks, () =>
       worldService playSound (caster.location, castSound, soundCategory, 1, 1))
   }
 
