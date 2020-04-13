@@ -1,23 +1,25 @@
 package gg.warcraft.legends.api.combat.hunter.marksman
 
-class Focus {
+import gg.warcraft.combat.api.ability.MeleeAbility
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot
+import gg.warcraft.monolith.api.entity.Entity
 
+object Focus {
+  class Factory extends MeleeAbility.Factory {
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        target: Option[Entity]
+    ): MeleeAbility = new Focus(caster, snapshot)
+  }
 }
 
+class Focus(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+) extends MeleeAbility {}
 
 /*
-public interface FocusFactory extends MeleeAbilityFactory {
-
-    @Override
-    default EnumSet<MeleeAbilityFlag> getFlags() {
-        return EnumSet.noneOf(MeleeAbilityFlag.class);
-    }
-}
- */
-
-
-/*
-
 public class Focus extends AbstractAbility implements MeleeAbility, Cancellable {
     private final EntityCommandService entityCommandService;
     private final StatusCommandService statusCommandService;
@@ -78,12 +80,7 @@ public class Focus extends AbstractAbility implements MeleeAbility, Cancellable 
         // do nothing
     }
 }
-
  */
-
-
-
-
 
 /*
 
@@ -115,11 +112,6 @@ public class FocusEffect implements Cancellable {
 }
  */
 
-
-
-
-
-
 /*
 public class FocusStatusEffect extends AbstractStatusEffect implements CombatStatusEffect {
     private static final String NAME = "Focus";
@@ -140,5 +132,4 @@ public class FocusStatusEffect extends AbstractStatusEffect implements CombatSta
         event.addDamageModifier(damageModifier);
     }
 }
-
  */
