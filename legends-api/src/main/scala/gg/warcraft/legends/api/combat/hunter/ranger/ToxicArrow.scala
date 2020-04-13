@@ -1,49 +1,39 @@
 package gg.warcraft.legends.api.combat.hunter.ranger
 
-class ToxicArrow {
+import gg.warcraft.combat.api.ability.MeleeAbility
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot
+import gg.warcraft.combat.api.projectile.ProjectileService
+import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 
+object ToxicArrow {
+  class Factory(
+      implicit entityService: EntityService,
+      projectileService: ProjectileService
+  ) extends MeleeAbility.Factory {
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        target: Option[Entity]
+    ): MeleeAbility = new ToxicArrow(caster, snapshot)
+  }
 }
 
-/*
-public interface ToxicArrowFactory extends MeleeAbilityFactory { // TODO rename this AbilityFactory and the other one to TargetedAbilityFactory? Who then gets to register for projectiles?
+class ToxicArrow(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(
+    implicit entityService: EntityService,
+    projectileService: ProjectileService
+) extends MeleeAbility {
+  // suggested speed of 0.6 by the spigot docs is way too low
+  private final val velocity = 3
+  // suggested spread of 12 by the spigot docs is way too wide
+  private final val spread = 2
 
-    @Override
-    default EnumSet<MeleeAbilityFlag> getFlags() {
-        return EnumSet.noneOf(MeleeAbilityFlag.class);
-    }
+  projectileService createArrow (this, caster.eyeLocation, caster.eyeLocation.rotation, velocity, spread, () => {})
+
+  override def onHit(entity: Entity): Unit = {
+    entityService damageEntity (entity.id, snapshot.damage)
+    entityService addPotionEffect (entity.id, snapshot.poison)
+  }
 }
-
- */
-
-/*
-public class ToxicArrow extends AbstractAbility implements MeleeAbility {
-    private static final float SPEED = 3; // suggested speed of 0.6 by the spigot docs is way too low
-    private static final float SPREAD = 2; // suggested spread of 12 by the spigot docs is way too wide
-
-    private final EntityCommandService entityCommandService;
-
-    @Inject
-    public ToxicArrow(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                      @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                      @Assisted("target") @Nullable Entity meleeTarget) {
-        super(caster.getId(), snapshot);
-        this.entityCommandService = entityCommandService;
-        abilityCommandService.createArrow(this, caster.getId(), caster.getEyeLocation(),
-                caster.getEyeLocation().rotation(), SPEED, SPREAD);
-    }
-
-    @Override
-    public void onHit(Entity entity) {
-        CombatValue damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
-        PotionEffect poison = getSnapshot().getPotionEffect(PotionEffectType.POISON);
-        entityCommandService.damage(entity.getId(), damage);
-        entityCommandService.addPotionEffect(entity.getId(), poison);
-    }
-
-    @Override
-    public void onMiss(Entity entity) {
-        // do nothing
-    }
-}
-
- */

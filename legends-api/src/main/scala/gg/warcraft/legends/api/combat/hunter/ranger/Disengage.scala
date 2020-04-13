@@ -1,51 +1,37 @@
 package gg.warcraft.legends.api.combat.hunter.ranger
 
-class Disengage {
+import gg.warcraft.combat.api.ability.MeleeAbility
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot
+import gg.warcraft.monolith.api.entity.{Entity, EntityService}
+import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
+object Disengage {
+  class Factory(
+      implicit entityService: EntityService,
+      worldService: WorldService
+  ) extends MeleeAbility.Factory {
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        target: Option[Entity]
+    ): MeleeAbility = new Disengage(caster, snapshot)
+  }
 }
 
+class Disengage(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(
+    implicit entityService: EntityService,
+    worldService: WorldService
+) extends MeleeAbility {
+  private final val soundCategory = SoundCategory.HOSTILE
+  private final val castSound = Sound.ENTITY_ENDER_DRAGON_FLAP // BAT_TAKEOFF?
 
-/*
-public interface DisengageFactory extends MeleeAbilityFactory {
+  // TODO add an extra melee ability flag which prevents hit/miss checks for selfcast abilities?
 
-    @Override
-    default EnumSet<MeleeAbilityFlag> getFlags() {
-        return EnumSet.noneOf(MeleeAbilityFlag.class);
-    }
+  private val direction = caster.eyeLocation.rotation.withY(0).multiply(-1)
+  entityService knockBackEntity (caster.id, direction, snapshot.distance.modified)
+
+  worldService playSound (caster.location, castSound, soundCategory, 1, 1)
 }
-
- */
-
-
-/*
-public class Disengage extends AbstractAbility implements MeleeAbility {
-    private static final SoundCategory SOUND_CATEGORY = SoundCategory.HOSTILE;
-    private static final Sound CAST_SOUND = Sound.ENTITY_ENDER_DRAGON_FLAP; // TODO use bat takeoff sound in stead?
-
-    @Inject
-    public Disengage(EntityCommandService entityCommandService, WorldService WorldService,
-                     @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                     @Assisted("target") @Nullable Entity meleeTarget) {
-        super(caster.getId(), snapshot);
-        Vector3f direction = caster.getEyeLocation().rotation()
-                .withY(0)
-                .multiply(-1);
-        float distance = snapshot.getFloat("distance");
-        entityCommandService.knockback(caster.getId(), direction, distance);
-        WorldService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);
-    }
-
-    @Override
-    public void onHit(Entity entity) {
-        // do nothing
-    }
-
-    @Override
-    public void onMiss(Entity entity) {
-        // do nothing
-        // TODO do we want a specific MeleeAbility flag which does NOT do melee target hit/miss checks i.e.
-        // TODO insta cast self buffs? Maybe even make an entirely new SelfCastFactory?
-    }
-}
-
- */

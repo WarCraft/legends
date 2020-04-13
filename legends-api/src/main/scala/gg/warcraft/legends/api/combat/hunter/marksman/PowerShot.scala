@@ -1,53 +1,42 @@
 package gg.warcraft.legends.api.combat.hunter.marksman
 
-class PowerShot {
+import gg.warcraft.combat.api.ability.MeleeAbility
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot
+import gg.warcraft.combat.api.projectile.ProjectileService
+import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 
+object PowerShot {
+  class Factory(
+      implicit entityService: EntityService,
+      projectileService: ProjectileService
+  ) extends MeleeAbility.Factory {
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        target: Option[Entity]
+    ): MeleeAbility = new PowerShot(caster, snapshot)
+  }
 }
 
+class PowerShot(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(
+    implicit entityService: EntityService,
+    projectileService: ProjectileService
+) extends MeleeAbility {
+  // suggested speed of 0.6 by the spigot docs is way too low
+  private final val velocity = 3
+  // suggested spread of 12 by the spigot docs is way too wide
+  private final val spread = 2
 
-/*
+  private val location = caster.eyeLocation
+  private val direction = location.rotation
 
-public interface PowerShotFactory extends MeleeAbilityFactory {
+  projectileService createArrow (this, location, direction, velocity, spread, () => {})
 
-    @Override
-    default EnumSet<MeleeAbilityFlag> getFlags() {
-        return EnumSet.noneOf(MeleeAbilityFlag.class);
-    }
+  override def onHit(entity: Entity): Unit = {
+    entityService damageEntity (entity.id, snapshot.damage)
+    entityService knockBackEntity (entity.id, direction, snapshot.knockBack.modified)
+  }
 }
-
- */
-
-/*
-public class PowerShot extends AbstractAbility implements MeleeAbility {
-    private static final float SPEED = 3; // suggested speed of 0.6 by the spigot docs is way too low
-    private static final float SPREAD = 2; // suggested spread of 12 by the spigot docs is way too wide
-
-    private final EntityCommandService entityCommandService;
-    private final Vector3f knockbackDirection;
-
-    @Inject
-    public PowerShot(AbilityCommandService abilityCommandService, EntityCommandService entityCommandService,
-                     @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                     @Assisted("target") @Nullable Entity meleeTarget) {
-        super(caster.getId(), snapshot);
-        this.entityCommandService = entityCommandService;
-        this.knockbackDirection = caster.getEyeLocation().rotation();
-        abilityCommandService.createArrow(this, caster.getId(), caster.getEyeLocation(),
-                caster.getEyeLocation().rotation(), SPEED, SPREAD);
-    }
-
-    @Override
-    public void onHit(Entity entity) {
-        CombatValue damage = getSnapshot().getValue(AbilityConfigurationValue.DAMAGE);
-        float knockback = getSnapshot().getFloat(AbilityConfigurationValue.KNOCKBACK);
-        entityCommandService.damage(entity.getId(), damage);
-        entityCommandService.knockback(entity.getId(), knockbackDirection, knockback);
-    }
-
-    @Override
-    public void onMiss(Entity entity) {
-        // do nothing
-    }
-}
-
- */

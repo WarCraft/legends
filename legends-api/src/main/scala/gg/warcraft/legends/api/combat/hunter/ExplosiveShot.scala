@@ -1,50 +1,51 @@
 package gg.warcraft.legends.api.combat.hunter
 
-class ExplosiveShot {
+import gg.warcraft.combat.api.ability.MeleeAbility
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot
+import gg.warcraft.combat.api.projectile.ProjectileService
+import gg.warcraft.monolith.api.entity.{Entity, EntityService}
+import gg.warcraft.monolith.api.world.{Location, WorldService}
 
+object ExplosiveShot {
+  class Factory(
+      implicit entityService: EntityService,
+      projectileService: ProjectileService,
+      worldService: WorldService
+  ) extends MeleeAbility.Factory {
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        target: Option[Entity]
+    ): MeleeAbility = new ExplosiveShot(caster, snapshot)
+  }
 }
 
+class ExplosiveShot(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(
+    implicit entityService: EntityService,
+    projectileService: ProjectileService,
+    worldService: WorldService
+) extends MeleeAbility {
+  // suggested speed of 0.6 by the spigot docs is way too low
+  private final val velocity = 3
+  // suggested spread of 12 by the spigot docs is way too wide
+  private final val spread = 2
 
-/*
-public interface ExplosiveShotFactory extends MeleeAbilityFactory {
+  private val arrowId = projectileService createArrow (this, caster.eyeLocation, caster.eyeLocation.rotation, velocity, spread, () => {})
 
-    @Override
-    default EnumSet<MeleeAbilityFlag> getFlags() {
-        return EnumSet.noneOf(MeleeAbilityFlag.class);
+  private def explode(location: Location): Unit = {
+    entityService.getNearbyEntities(location, snapshot.radius.modified) foreach {
+      it =>
+        entityService damageEntity (it.id, snapshot.damage)
+        entityService knockBackEntity (it.id, snapshot.knockBack.modified)
     }
+    worldService createExplosion (location, true)
+  }
+
+  override def onHit(entity: Entity): Unit =
+    explode(entity.location)
+
+  // TODO explode arrow onGrounded
 }
- */
-
-/*
-  public ExplosiveShot(EntityService entityService, MonolithEntity caster, double damage, double knockback, double radius) {
-      super(caster);
-      this.entityService = entityService;
-      this.damage = damage;
-      this.knockback = knockback;
-      this.radius = radius;
-
-      MonolithArrow arrow = new MonolithArrow(caster, new HostileTo(caster));
-      arrow.addObserver(this);
-  }
-
-  private void explode(Location location) {
-      List<MonolithEntity> casualties = entityService.getNearbyMonolithEntities(location, radius);
-      casualties.forEach(entity -> {
-          entity.damage(damage);
-          entity.knockback(location, knockback);
-      });
-
-      World world = location.getWorld();
-      world.createExplosion(location.getX(), location.getY(), location.getZ(), 0, false, false);
-  }
-
-  @Override
-  public void onGrounded(Location location) {
-      explode(location);
-  }
-
-  @Override
-  public void onHit(MonolithEntity entity) {
-      explode(entity.getLocation());
-  }
-  */
