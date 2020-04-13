@@ -1,4 +1,4 @@
-package gg.warcraft.legends.api.combat.warrior.armsmaster
+package gg.warcraft.legends.api.combat.warrior.guardian
 
 import gg.warcraft.combat.api.ability.MeleeAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
