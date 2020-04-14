@@ -1,135 +1,112 @@
 package gg.warcraft.legends.api.combat.hunter.marksman
 
-import gg.warcraft.combat.api.ability.MeleeAbility
+import gg.warcraft.combat.api.ability.{AbilityPreCastEvent, MeleeAbility}
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
-import gg.warcraft.monolith.api.entity.Entity
+import gg.warcraft.combat.api.Movement
+import gg.warcraft.monolith.api.combat.{CombatSource, CombatValue}
+import gg.warcraft.monolith.api.core.{Cancellable, ColorCode, Duration, Message}
+import gg.warcraft.monolith.api.core.event.PreEvent
+import gg.warcraft.monolith.api.core.task.TaskService
+import gg.warcraft.monolith.api.core.Duration._
+import gg.warcraft.monolith.api.effect.{
+  Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
+}
+import gg.warcraft.monolith.api.entity.{Entity, EntityService}
+import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
+import gg.warcraft.monolith.api.math.Vector3f
+import gg.warcraft.monolith.api.player.PlayerService
 
 object Focus {
-  class Factory extends MeleeAbility.Factory {
+  class Factory(
+      implicit taskService: TaskService,
+      entityService: EntityService,
+      playerService: PlayerService,
+      statusService: StatusService,
+      repository: FocusRepository,
+      particleAdapter: ParticleAdapter
+  ) extends MeleeAbility.Factory {
     override def create(
         caster: Entity,
         snapshot: AbilitySnapshot,
         target: Option[Entity]
     ): MeleeAbility = new Focus(caster, snapshot)
   }
+
+  class ParticleEffect(movement: Movement)(
+      implicit taskService: TaskService,
+      particleAdapter: ParticleAdapter
+  ) extends Effect(movement.get.add(offset)) {
+    private final val radius = 0.5f
+    private final val frames = 20
+    private final val offset = Vector3f(0, 0.1f, 0)
+
+    private final val particle = Particle.REDSTONE
+    private final val vectors = EffectVectors.ring(radius, frames)
+
+    private val renderer = EffectRenderer.iterative(particle, vectors)
+    addRenderer(renderer)
+  }
+
+  class StatusEffect(
+      override val source: CombatSource,
+      override val duration: Option[Duration],
+      modifierValue: Float
+  ) extends Status.Effect {
+    override val name: String = "Focus"
+    override val group: String = "buff"
+
+    private val modifier =
+      CombatValue.Modifier(source, CombatValue.Modifier.PERCENT, modifierValue)
+
+    override def reduce[T <: PreEvent](event: T): T = event match {
+      case it: AbilityPreCastEvent =>
+        it.copy(damageModifiers = modifier :: it.damageModifiers).asInstanceOf[T]
+      case _ => event
+    }
+  }
 }
 
 class Focus(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-) extends MeleeAbility {}
+)(
+    implicit taskService: TaskService,
+    entityService: EntityService,
+    playerService: PlayerService,
+    statusService: StatusService,
+    repository: FocusRepository,
+    particleAdapter: ParticleAdapter
+) extends MeleeAbility
+    with Cancellable {
+  private final val maxDuration = Integer.MAX_VALUE.ticks
+  private final val text =
+    "You're currently focussing and can not move, cast [Shift Left Click] again to cancel."
 
-/*
-public class Focus extends AbstractAbility implements MeleeAbility, Cancellable {
-    private final EntityCommandService entityCommandService;
-    private final StatusCommandService statusCommandService;
-    private final TimeUtils timeUtils;
-    private final StatusEffect statusEffect;
-    private final Cancellable effect;
+  private var status: Status.Effect = _
+  private var effect: Effect = _
 
-    @Inject
-    public Focus(EntityCommandService entityCommandService, StatusCommandService statusCommandService,
-                 PlayerCommandService playerCommandService, RangerStatusEffectFactory rangerStatusEffectFactory,
-                 RangerEffectFactory rangerEffectFactory, FocusRepository focusRepository, TimeUtils timeUtils,
-                 @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                 @Assisted("target") @Nullable Entity meleeTarget) {
-        super(caster.getId(), snapshot);
-        this.entityCommandService = entityCommandService;
-        this.statusCommandService = statusCommandService;
-        this.timeUtils = timeUtils;
+  repository removeFocus caster.id match {
+    case Some(focus) => focus.cancel()
+    case None =>
+      entityService freezeEntity (caster.id, maxDuration)
 
-        UUID casterId = caster.getId();
-        Focus focus = focusRepository.getFocus(casterId);
-        if (focus != null) {
-            statusEffect = null;
-            effect = null;
+      val source = CombatSource(caster.name, Some(caster.id))
+      val modifier = snapshot.combatValue("damage-modifier").modified
+      status = new Focus.StatusEffect(source, None, modifier)
+      statusService addEffect (caster.id, status)
 
-            focus.cancel();
-            focusRepository.delete(focus);
-        } else {
-            Duration duration = timeUtils.createDurationInTicks(Integer.MAX_VALUE);
-            entityCommandService.freeze(casterId, duration);
+      val movement = Movement.entity(caster)
+      effect = new Focus.ParticleEffect(movement)
 
-            float damageModifier = snapshot.getFloat("damage-modifier");
-            this.statusEffect = rangerStatusEffectFactory.createFocusStatusEffect(casterId, damageModifier);
-            statusCommandService.addStatusEffect(statusEffect, casterId);
+      repository addFocus this
 
-            this.effect = rangerEffectFactory.createFocusEffect(caster);
+      val message = Message(text, s"${ColorCode.YELLOW}$text")
+      playerService sendMessage (caster.id, message)
+  }
 
-            focusRepository.save(this);
-
-            playerCommandService.sendNotification(casterId,
-                    "You're currently focussing and can not move, cast [SHIFT LEFT CLICK] again to cancel.");
-        }
-    }
-
-    @Override
-    public void cancel() {
-        entityCommandService.freeze(getCasterId(), timeUtils.immediately());
-        statusCommandService.removeStatusEffect(statusEffect, getCasterId());
-        effect.cancel();
-    }
-
-    @Override
-    public void onHit(Entity entity) {
-        // do nothing
-    }
-
-    @Override
-    public void onMiss(Entity entity) {
-        // do nothing
-    }
+  override def cancel(): Unit = {
+    entityService freezeEntity (caster.id, 0.ticks)
+    statusService removeEffect (caster.id, status)
+    effect.cancel();
+  }
 }
- */
-
-/*
-
-public class FocusEffect implements Cancellable {
-    private static final float RADIUS = 0.5f;
-    private static final int FRAMES = 20;
-    private static final Vector3f OFFSET = new Vector3f(0, 0.1f, 0);
-
-    private final Effect effect;
-
-    @Inject
-    public FocusEffect(EntityQueryService entityQueryService, ParticleFactory particleFactory,
-                       EffectVectorsFactory effectVectorsFactory, EffectRendererFactory effectRendererFactory,
-                       EffectFactory effectFactory, @Assisted Entity target) {
-        EntityLocationSupplier entityLocationSupplier = new EntityLocationSupplier(entityQueryService, target);
-        Supplier<Location> locationSupplier = () -> entityLocationSupplier.get().add(OFFSET);
-        this.effect = effectFactory.createSimpleEffect(locationSupplier);
-
-        Particle particle = particleFactory.createSimpleParticle(ParticleType.REDSTONE);
-        EffectVectors vectors = effectVectorsFactory.createRingVectors(RADIUS, FRAMES);
-        EffectRenderer renderer = effectRendererFactory.createIterativeEffectRenderer(particle, vectors);
-        effect.addRenderer(renderer);
-    }
-
-    @Override
-    public void cancel() {
-        effect.cancel();
-    }
-}
- */
-
-/*
-public class FocusStatusEffect extends AbstractStatusEffect implements CombatStatusEffect {
-    private static final String NAME = "Focus";
-    private static final String TYPE = "legends.marksman.focus";
-
-    private final CombatValueModifier damageModifier;
-
-    @Inject
-    public FocusStatusEffect(CombatFactory combatFactory, @Assisted UUID entityId,
-                             @Assisted float damageModifier) {
-        super(entityId, NAME, TYPE, null);
-        this.damageModifier =
-                combatFactory.createCombatValueModifier(CombatValueModifierType.PERCENT, damageModifier, this);
-    }
-
-    @Override
-    public void onAbilityPreCastEvent(AbilityPreCastEvent event) {
-        event.addDamageModifier(damageModifier);
-    }
-}
- */
