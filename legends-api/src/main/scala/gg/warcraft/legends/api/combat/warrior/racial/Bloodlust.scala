@@ -38,6 +38,7 @@ object Bloodlust {
         }
       case _ =>
     }
+
     override def reduce[T <: PreEvent](event: T): T = event match {
       case it: AbilityPreCastEvent =>
         if (active) {

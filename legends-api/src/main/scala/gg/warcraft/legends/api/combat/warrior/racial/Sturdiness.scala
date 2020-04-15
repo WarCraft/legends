@@ -23,11 +23,14 @@ object Sturdiness {
         percentHealth = newPercentHealth
       case _ =>
     }
+
     override def reduce[T <: PreEvent](event: T): T = event match {
       case it: EntityPreDamageEvent =>
         val modifierValue = -0.25f * (1 - percentHealth)
-        val modifier = CombatValue.Modifier(source, CombatValue.Modifier.PERCENT, modifierValue)
-        it.copy(damage = it.damage.copy(modifiers = modifier :: it.damage.modifiers)).asInstanceOf[T]
+        val modifier =
+          CombatValue.Modifier(source, CombatValue.Modifier.PERCENT, modifierValue)
+        it.copy(damage = it.damage.copy(modifiers = modifier :: it.damage.modifiers))
+          .asInstanceOf[T]
       case _ => event
     }
   }
