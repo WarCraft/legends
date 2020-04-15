@@ -32,7 +32,7 @@ object ArcaneBarrier {
     require(source.entityId.isDefined)
 
     override val name: String = "Arcane Barrier"
-    override val group: String = "racial"
+    override val group: String = "legends.racial"
 
     override def handle(event: Event): Unit = event match {
       case it: EntityHealthChangedEvent =>

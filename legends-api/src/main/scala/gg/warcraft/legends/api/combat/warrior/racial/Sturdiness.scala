@@ -14,7 +14,7 @@ object Sturdiness {
       override val duration: Option[Duration]
   ) extends Status.Effect {
     override val name: String = "Sturdiness"
-    override val group: String = "racial"
+    override val group: String = "legends.racial"
 
     private var percentHealth = 1f
 

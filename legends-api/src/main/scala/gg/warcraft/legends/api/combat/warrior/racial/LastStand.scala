@@ -26,7 +26,7 @@ object LastStand {
       override val duration: Option[Duration]
   ) extends Status.Effect {
     override val name: String = "Last Stand"
-    override val group: String = "racial"
+    override val group: String = "legends.racial"
 
     override def reduce[T <: PreEvent](event: T): T = event match {
       case it: EntityPreFatalDamageEvent => it.copy(cancelled = true).asInstanceOf[T]
