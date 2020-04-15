@@ -29,7 +29,7 @@ object Bloodlust {
 
     override def handle(event: Event): Unit = event match {
       case EntityHealthChangedEvent(_, _, _, _, _, newPercentHealth) =>
-        if (newPercentHealth <= 0.5f) {
+        if (newPercentHealth <= 0.5f) { // TODO add threshold to config
           entityService addPotionEffect (source.entityId.get, potionEffect)
           active = true
         } else {
