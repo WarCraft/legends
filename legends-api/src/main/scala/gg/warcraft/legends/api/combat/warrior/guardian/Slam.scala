@@ -36,10 +36,10 @@ class Slam(
     entityService damageEntity (entity.id, snapshot.damage)
     entityService knockBackEntity (entity.id, caster.eyeLocation.rotation, snapshot.knockBack.modified)
     entityService addPotionEffect (entity.id, snapshot.nausea)
-    worldService playSound (entity.location, hitSound, soundCategory, 1, 1)
+    worldService playSound (entity.location, hitSound, soundCategory)
   }
 
   override def onMiss(entity: Entity): Unit = {
-    worldService playSound (entity.location, missSound, soundCategory, 1, 1)
+    worldService playSound (entity.location, missSound, soundCategory)
   }
 }

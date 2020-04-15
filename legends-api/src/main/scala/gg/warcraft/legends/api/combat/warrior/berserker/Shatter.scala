@@ -56,7 +56,7 @@ class Shatter(
       val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
       projectileService createProjectile (this, movement, hitbox, () => {})
 
-      worldService playSound (caster.location, hitSound, soundCategory, 1, 1)
+      worldService playSound (caster.location, hitSound, soundCategory)
       true
     } else false
   }

@@ -48,6 +48,6 @@ class LastStand(
   {
     val status = new LastStand.StatusEffect(caster, snapshot.duration)
     statusService addEffect (caster.id, status)
-    worldService playSound (caster.location, castSound, soundCategory, 1, 1)
+    worldService playSound (caster.location, castSound, soundCategory)
   }
 }

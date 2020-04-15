@@ -40,5 +40,5 @@ class Sneak(
     playerHidingService reveal caster.id
   })
 
-  worldService playSound (caster.location, castSound, soundCategory, 1, 1)
+  worldService playSound (caster.location, castSound, soundCategory)
 }

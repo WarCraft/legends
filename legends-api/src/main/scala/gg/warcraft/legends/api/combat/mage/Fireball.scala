@@ -70,7 +70,7 @@ class Fireball(
     val effect = new Fireball.ParticleEffect(movement)
     projectileService createProjectile (this, movement, hitbox, () =>
       effect.cancel())
-    worldService playSound (caster.location, castSound, soundCategory, 1, 1)
+    worldService playSound (caster.location, castSound, soundCategory)
     // TODO play sound at fly locations (maybe use onTick for this or create something for sound similar to effect)
   }
 

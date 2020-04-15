@@ -82,11 +82,11 @@ class HailBlast(
   private val effect = new HailBlast.ParticleEffect(movement, origin.rotation)
   projectileService createProjectile (this, movement, hitbox, effect.cancel)
 
-  worldService playSound (caster.location, castSound, soundCategory, 1, 1)
+  worldService playSound (caster.location, castSound, soundCategory)
   worldService playSound (caster.location, castSound2, soundCategory, 1, 0.1f)
   (2 to 12 by 2).foreach { i =>
     taskService runLater (i.ticks, () =>
-      worldService playSound (caster.location, castSound, soundCategory, 1, 1))
+      worldService playSound (caster.location, castSound, soundCategory))
   }
 
   override def onHit(entity: Entity): Boolean = {

@@ -77,7 +77,7 @@ class Trap(
   private val projectileId = projectileService createProjectile (this, movement, hitbox, () => {})
 
   taskService runLater (snapshot.duration, cancel)
-  worldService playSound (caster.location, castSound, soundCategory, 1, 1)
+  worldService playSound (caster.location, castSound, soundCategory)
 
   override def cancel(): Unit = if (!cancelled) {
     cancelled = true
@@ -96,7 +96,7 @@ class Trap(
       entityService setVelocity (entity.id, Vector3f())
     })
 
-    worldService playSound (entity.location, hitSound, soundCategory, 1, 1)
+    worldService playSound (entity.location, hitSound, soundCategory)
 
     cancel()
     true
@@ -104,7 +104,7 @@ class Trap(
 
   override def onMiss(entity: Entity): Boolean = {
     cancel()
-    worldService playSound (entity.location, hitSound, soundCategory, 1, 1)
+    worldService playSound (entity.location, hitSound, soundCategory)
     true
   }
 

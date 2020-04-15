@@ -113,7 +113,7 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
         mageEffectFactory.createMoltenStormRingEffect(location, duration);
 
         // Play sound
-        WorldService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY, 1, 1);
+        WorldService.playSound(caster.getLocation(), CAST_SOUND, SOUND_CATEGORY);
     }
 
     @Override
@@ -129,14 +129,14 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
   override def onHit(entity: Entity): Boolean = {
     entityService damageEntity (entity.id, snapshot.damage)
     entityService burnEntity (entity.id, snapshot.burn)
-    worldService playSound (entity.location, hitSound, soundCategory, 1, 1)
+    worldService playSound (entity.location, hitSound, soundCategory)
     true
   }
 
   override def onMiss(entity: Entity): Boolean = false
 
   override def onGrounded(location: Location): Boolean = {
-    worldService playSound (location, hitSound, soundCategory, 1, 1);
+    worldService playSound (location, hitSound, soundCategory)
     true
   }
 }

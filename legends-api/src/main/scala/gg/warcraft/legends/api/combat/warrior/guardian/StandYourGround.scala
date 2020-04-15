@@ -65,7 +65,7 @@ object StandYourGround {
     override def handle(event: Event): Unit = event match {
       case EntityDamageEvent(entityId, _, _) =>
         val entity = entityService getEntity entityId
-        worldService playSound (entity.location, hitSound, soundCategory, 1, 1)
+        worldService playSound (entity.location, hitSound, soundCategory)
       case _ =>
     }
   }
@@ -102,6 +102,6 @@ class StandYourGround(
     val status = new StandYourGround.StatusEffect(caster, snapshot.slow.duration)
     statusService addEffect (caster.id, status)
 
-    worldService playSound (caster.location, castSound, soundCategory, 1, 1)
+    worldService playSound (caster.location, castSound, soundCategory)
   }
 }

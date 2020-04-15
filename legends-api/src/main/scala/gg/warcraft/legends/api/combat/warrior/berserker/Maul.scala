@@ -37,9 +37,9 @@ class Maul(
     entityService damageEntity (entity.id, snapshot.damage)
 
     // TODO create effect
-    worldService playSound (entity.location, hitSound, soundCategory, 1, 1)
+    worldService playSound (entity.location, hitSound, soundCategory)
   }
 
   override def onMiss(entity: Entity): Unit =
-    worldService playSound (entity.location, missSound, soundCategory, 1, 1)
+    worldService playSound (entity.location, missSound, soundCategory)
 }

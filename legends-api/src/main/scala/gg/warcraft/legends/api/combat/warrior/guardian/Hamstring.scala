@@ -60,10 +60,10 @@ class Hamstring(
     entityService damageEntity (entity.id, snapshot.damage)
     entityService addPotionEffect (entity.id, snapshot.slow)
     // TODO warriorEffectFactory.createHamstringEffect(entity, slow.getDuration());
-    worldService playSound (entity.location, hitSound, soundCategory, 1, 1)
+    worldService playSound (entity.location, hitSound, soundCategory)
   }
 
   override def onMiss(entity: Entity): Unit = {
-    worldService playSound (entity.location, missSound, soundCategory, 1, 1)
+    worldService playSound (entity.location, missSound, soundCategory)
   }
 }

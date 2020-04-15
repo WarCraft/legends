@@ -73,11 +73,11 @@ class ArcaneMissile(
   private val effect = new ArcaneMissile.ParticleEffect(movement)
   projectileService createProjectile (this, movement, hitbox, effect.cancel)
 
-  worldService playSound (caster.location, castSound, soundCategory, 1, 1)
+  worldService playSound (caster.location, castSound, soundCategory)
 
   override def onHit(entity: Entity): Boolean = {
     entityService damageEntity (entity.id, snapshot.damage)
-    worldService playSound (entity.location, hitSound, soundCategory, 1, 1)
+    worldService playSound (entity.location, hitSound, soundCategory)
     true
   }
 

@@ -40,12 +40,12 @@ class Teleport(
 
   // TODO
 
-  worldService playSound (caster.location, castSound, soundCategory, 1, 1)
+  worldService playSound (caster.location, castSound, soundCategory)
 
   override def onHit(entity: Entity): Boolean = {
     entityService damageEntity (entity.id, snapshot.damage)
     entityService addPotionEffect (entity.id, snapshot.slow)
-    worldService playSound (entity.location, hitSound, soundCategory, 1, 1)
+    worldService playSound (entity.location, hitSound, soundCategory)
     false
   }
 
@@ -85,7 +85,7 @@ class Teleport(
     }
 
     entityCommandService.teleport(caster.getId(), teleportLocation, directionUtils.toDirection(teleportOrientation));
-    WorldService.playSound(originalLocation, CAST_SOUND, SOUND_CATEGORY, 1, 1);
+    WorldService.playSound(originalLocation, CAST_SOUND, SOUND_CATEGORY);
 
     float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
     Movement movement = movementFactory.createOneOffMovement(teleportLocation);

@@ -33,5 +33,5 @@ class Disengage(
   private val direction = caster.eyeLocation.rotation.withY(0).multiply(-1)
   entityService knockBackEntity (caster.id, direction, snapshot.distance.modified)
 
-  worldService playSound (caster.location, castSound, soundCategory, 1, 1)
+  worldService playSound (caster.location, castSound, soundCategory)
 }
