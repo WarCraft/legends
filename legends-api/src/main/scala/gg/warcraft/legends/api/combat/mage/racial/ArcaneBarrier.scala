@@ -4,7 +4,7 @@ import gg.warcraft.combat.api.ability.MeleeAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 
-object Barrier {
+object ArcaneBarrier {
   class Factory(
       implicit entityService: EntityService
   ) extends MeleeAbility.Factory {
@@ -12,11 +12,11 @@ object Barrier {
         caster: Entity,
         snapshot: AbilitySnapshot,
         target: Option[Entity]
-    ): MeleeAbility = new Barrier(caster, snapshot)
+    ): MeleeAbility = new ArcaneBarrier(caster, snapshot)
   }
 }
 
-class Barrier(
+class ArcaneBarrier(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
 )(
