@@ -35,8 +35,9 @@ object ArcaneBarrier {
     override val group: String = "legends.racial"
 
     override def handle(event: Event): Unit = event match {
-      case it: EntityHealthChangedEvent =>
-        if (it.newPercentHealth <= 0.5f)
+      case EntityHealthChangedEvent(_, _, _, _, _, newPercentHealth) =>
+        if (newPercentHealth <= 0.5f)
+          // TODO remove infix operator usage from calls with multiple params?
           abilityService castAbility (name, source.entityId.get, None)
       case _ =>
     }
