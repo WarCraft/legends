@@ -8,8 +8,8 @@ import gg.warcraft.monolith.api.player.hiding.PlayerHidingService
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object Sneak {
-  class Factory(
-      implicit taskService: TaskService,
+  class Factory(implicit
+      taskService: TaskService,
       entityService: EntityService,
       playerHidingService: PlayerHidingService,
       worldService: WorldService
@@ -25,8 +25,8 @@ object Sneak {
 class Sneak(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit taskService: TaskService,
+)(implicit
+    taskService: TaskService,
     entityService: EntityService,
     playerHidingService: PlayerHidingService,
     worldService: WorldService
@@ -34,11 +34,12 @@ class Sneak(
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.ENTITY_PLAYER_BREATH
 
-  entityService addPotionEffect (caster.id, snapshot.speed)
-  playerHidingService hide caster.id
-  taskService runLater (snapshot.speed.duration, () => {
-    playerHidingService reveal caster.id
-  })
+  entityService.addPotionEffect(caster.id, snapshot.speed)
+  playerHidingService.hide(caster.id)
+  taskService.runLater(
+    snapshot.speed.duration,
+    () => playerHidingService.reveal(caster.id)
+  )
 
-  worldService playSound (caster.location, castSound, soundCategory)
+  worldService.playSound(caster.location, castSound, soundCategory)
 }
