@@ -5,10 +5,6 @@ import gg.warcraft.monolith.api.effect.Particle
 import gg.warcraft.monolith.api.effect.Particle.Color
 import gg.warcraft.monolith.api.entity.team.Team
 
-object LegendsTeam {
-  implicit def toString(team: LegendsTeam): String = team.toString
-}
-
 sealed abstract class LegendsTeam(
     val kind: String,
     override val name: String,
@@ -16,42 +12,46 @@ sealed abstract class LegendsTeam(
     override val chatColor: ColorCode.Type
 ) extends Team
 
-case object DWARVES
-    extends LegendsTeam(
-      "Dwarf",
-      "Dwarves",
-      Particle.Color.PURPLE,
-      ColorCode.DARK_PURPLE
-    )
+object LegendsTeam {
+  case object DWARVES
+      extends LegendsTeam(
+        "Dwarf",
+        "Dwarves",
+        Particle.Color.PURPLE,
+        ColorCode.DARK_PURPLE
+      )
 
-case object ELVES
-    extends LegendsTeam(
-      "Elf",
-      "Elves",
-      Particle.Color.GREEN,
-      ColorCode.DARK_GREEN
-    )
+  case object ELVES
+      extends LegendsTeam(
+        "Elf",
+        "Elves",
+        Particle.Color.GREEN,
+        ColorCode.DARK_GREEN
+      )
 
-case object HUMANS
-    extends LegendsTeam(
-      "Human",
-      "Humans",
-      Particle.Color.BLUE,
-      ColorCode.DARK_BLUE
-    )
+  case object HUMANS
+      extends LegendsTeam(
+        "Human",
+        "Humans",
+        Particle.Color.BLUE,
+        ColorCode.DARK_BLUE
+      )
 
-case object ORCS
-    extends LegendsTeam(
-      "Orc",
-      "Orcs",
-      Particle.Color.RED,
-      ColorCode.DARK_RED
-    )
+  case object ORCS
+      extends LegendsTeam(
+        "Orc",
+        "Orcs",
+        Particle.Color.RED,
+        ColorCode.DARK_RED
+      )
 
-case object WAYFARER
-    extends LegendsTeam(
-      "Wayfarer",
-      "Wayfarers",
-      Particle.Color.SILVER,
-      ColorCode.GRAY
-    )
+  case object WAYFARER
+      extends LegendsTeam(
+        "Wayfarer",
+        "Wayfarers",
+        Particle.Color.SILVER,
+        ColorCode.GRAY
+      )
+
+  implicit def toString(team: LegendsTeam): String = team.toString
+}
