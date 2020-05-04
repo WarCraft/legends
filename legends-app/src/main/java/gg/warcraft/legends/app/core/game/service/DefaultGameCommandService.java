@@ -39,45 +39,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class DefaultGameCommandService implements GameCommandService {
-    private static final int TALLY_TIMER_IN_SECONDS = 900;
-    private static final int DAILY_WINNER_SCORE = 5;
-    private static final int SKIRMISH_WINNER_SCORE = 1;
-    private static final Map<String, LegendsTeam> DEFAULT_CAPTURES;
 
-    static {
-        DEFAULT_CAPTURES = new HashMap<>();
-        DEFAULT_CAPTURES.put("HUMAN_KEEP_EAST", LegendsTeam.HUMAN);
-        DEFAULT_CAPTURES.put("HUMAN_KEEP_WEST", LegendsTeam.HUMAN);
-        DEFAULT_CAPTURES.put("HUMAN_OUTPOST_ORC", LegendsTeam.HUMAN);
-        DEFAULT_CAPTURES.put("HUMAN_FARM", LegendsTeam.HUMAN);
-        DEFAULT_CAPTURES.put("HUMAN_LUMBER_MILL", LegendsTeam.HUMAN);
-        DEFAULT_CAPTURES.put("HUMAN_MINE", LegendsTeam.HUMAN);
-
-        DEFAULT_CAPTURES.put("ORC_KEEP_EAST", LegendsTeam.ORC);
-        DEFAULT_CAPTURES.put("ORC_KEEP_WEST", LegendsTeam.ORC);
-        DEFAULT_CAPTURES.put("ORC_OUTPOST_HUMAN", LegendsTeam.ORC);
-        DEFAULT_CAPTURES.put("ORC_FARM", LegendsTeam.ORC);
-        DEFAULT_CAPTURES.put("ORC_LUMBER_MILL", LegendsTeam.ORC);
-        DEFAULT_CAPTURES.put("ORC_MINE", LegendsTeam.ORC);
-    }
-
-    private final GameRepository gameRepository;
-    private final ObjectiveQueryService objectiveQueryService;
-    private final ObjectiveCommandService objectiveCommandService;
-    private final EventService eventService;
-    private final TimeUtils timeUtils;
-
-    @Inject
-    public DefaultGameCommandService(GameRepository gameRepository,
-                                     ObjectiveQueryService objectiveQueryService,
-                                     ObjectiveCommandService objectiveCommandService,
-                                     EventService eventService, TimeUtils timeUtils) {
-        this.gameRepository = gameRepository;
-        this.objectiveQueryService = objectiveQueryService;
-        this.objectiveCommandService = objectiveCommandService;
-        this.eventService = eventService;
-        this.timeUtils = timeUtils;
-    }
 
     @Override
     public void readConfiguration(ServerConfiguration configuration) {

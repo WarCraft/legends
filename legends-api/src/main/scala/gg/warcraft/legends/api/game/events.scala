@@ -23,14 +23,6 @@ case class WarTallyEvent(
     points: Map[Team, Int]
 ) extends Event
 
-case class WarPausedEvent(
-    war: War
-) extends Event
-
-case class WarResumedEvent(
-    war: War
-) extends Event
-
 case class WarFinishedEvent(
     war: War,
     winner: Team
