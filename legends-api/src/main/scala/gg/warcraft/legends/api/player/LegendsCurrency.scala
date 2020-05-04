@@ -1,7 +1,7 @@
 package gg.warcraft.legends.api.player
 
 object LegendsCurrency {
-  implicit def toString(currency: LegendsCurrency): String = currency.name
+  implicit def toString(currency: LegendsCurrency): String = currency.toString
 }
 
 sealed abstract class LegendsCurrency(val name: String) {
