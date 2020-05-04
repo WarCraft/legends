@@ -1,29 +1,15 @@
-package gg.warcraft.legends.app.menu;
+package gg.warcraft.legends.api.menu
 
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.item.crate.LootCrate;
-import gg.warcraft.legends.api.item.crate.LootCrateBuilder;
-import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
-import gg.warcraft.legends.api.item.crate.LootCrateType;
-import gg.warcraft.legends.api.item.crate.service.LootCrateRepository;
-import gg.warcraft.legends.api.menu.AdminMenuFactory;
-import gg.warcraft.monolith.api.core.AuthorizationService;
-import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
-import gg.warcraft.monolith.api.menu.Button;
-import gg.warcraft.monolith.api.menu.ButtonBuilder;
-import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
-import gg.warcraft.monolith.api.menu.Menu;
-import gg.warcraft.monolith.api.menu.MenuBuilder;
-import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
-import gg.warcraft.monolith.api.menu.MenuSize;
-import gg.warcraft.monolith.api.menu.service.MenuCommandService;
-import gg.warcraft.monolith.api.world.item.Item;
-import gg.warcraft.monolith.api.world.item.ItemType;
-import gg.warcraft.monolith.api.world.item.StackableItem;
+import gg.warcraft.monolith.api.menu.Menu
 
-import java.util.UUID;
+object AdminMenu {
+  def apply(): Menu = {
+    
+  }
+}
 
+
+/*
 public class DefaultAdminMenuFactory extends AbstractMenuFactory implements AdminMenuFactory {
     private final PlayerCommandService playerCommandService;
     private final AuthorizationService authorizationService;
@@ -84,3 +70,4 @@ public class DefaultAdminMenuFactory extends AbstractMenuFactory implements Admi
         return builder.build();
     }
 }
+ */

@@ -1,24 +1,10 @@
-package gg.warcraft.legends.app.menu;
+package gg.warcraft.legends.api.menu
 
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
-import gg.warcraft.legends.api.menu.DecorationsMenuFactory;
-import gg.warcraft.legends.api.menu.MainMenuFactory;
-import gg.warcraft.legends.api.menu.MiniPetsMenuFactory;
-import gg.warcraft.legends.api.menu.PromotionsMenuFactory;
-import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
-import gg.warcraft.monolith.api.menu.Button;
-import gg.warcraft.monolith.api.menu.ButtonBuilder;
-import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
-import gg.warcraft.monolith.api.menu.Menu;
-import gg.warcraft.monolith.api.menu.MenuBuilder;
-import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
-import gg.warcraft.monolith.api.menu.MenuSize;
-import gg.warcraft.monolith.api.menu.service.MenuCommandService;
-import gg.warcraft.monolith.api.world.item.ItemType;
+object CollectablesMenu {
 
-import java.util.UUID;
+}
 
+/*
 public class DefaultCollectablesMenuFactory extends AbstractMenuFactory implements CollectablesMenuFactory {
     private final DecorationsMenuFactory decorationsMenuFactory;
     private final MiniPetsMenuFactory miniPetsMenuFactory;
@@ -104,3 +90,5 @@ public class DefaultCollectablesMenuFactory extends AbstractMenuFactory implemen
         return builder.build();
     }
 }
+
+ */

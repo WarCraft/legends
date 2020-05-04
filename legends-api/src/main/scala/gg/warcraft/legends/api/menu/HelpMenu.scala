@@ -1,22 +1,11 @@
-package gg.warcraft.legends.app.menu;
+package gg.warcraft.legends.api.menu
 
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.menu.HelpMenuFactory;
-import gg.warcraft.legends.api.menu.MainMenuFactory;
-import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
-import gg.warcraft.monolith.api.menu.Button;
-import gg.warcraft.monolith.api.menu.ButtonBuilder;
-import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
-import gg.warcraft.monolith.api.menu.Menu;
-import gg.warcraft.monolith.api.menu.MenuBuilder;
-import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
-import gg.warcraft.monolith.api.menu.MenuSize;
-import gg.warcraft.monolith.api.menu.service.MenuCommandService;
-import gg.warcraft.monolith.api.util.ColorCode;
-import gg.warcraft.monolith.api.world.item.ItemType;
+object HelpMenu {
 
-import java.util.UUID;
+}
 
+
+/*
 public class DefaultHelpMenuFactory extends AbstractMenuFactory implements HelpMenuFactory {
     private final MainMenuFactory mainMenuFactory;
 
@@ -293,3 +282,5 @@ public class DefaultHelpMenuFactory extends AbstractMenuFactory implements HelpM
         return builder.build();
     }
 }
+
+ */

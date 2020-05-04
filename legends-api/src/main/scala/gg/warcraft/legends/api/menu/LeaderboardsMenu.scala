@@ -1,31 +1,10 @@
-package gg.warcraft.legends.app.menu;
+package gg.warcraft.legends.api.menu
 
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.core.leaderboard.LeaderboardEntry;
-import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardQueryService;
-import gg.warcraft.legends.api.entity.player.LegendsPlayer;
-import gg.warcraft.legends.api.entity.player.LegendsStatistic;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.legends.api.menu.LeaderboardsMenuFactory;
-import gg.warcraft.legends.api.menu.MainMenuFactory;
-import gg.warcraft.monolith.api.entity.player.Player;
-import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
-import gg.warcraft.monolith.api.menu.Button;
-import gg.warcraft.monolith.api.menu.ButtonBuilder;
-import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
-import gg.warcraft.monolith.api.menu.Menu;
-import gg.warcraft.monolith.api.menu.MenuBuilder;
-import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
-import gg.warcraft.monolith.api.menu.MenuSize;
-import gg.warcraft.monolith.api.menu.service.MenuCommandService;
-import gg.warcraft.monolith.api.util.ColorCode;
-import gg.warcraft.monolith.api.world.item.ItemType;
+object LeaderboardsMenu {
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+}
 
+/*
 public class DefaultLeaderboardsMenuFactory extends AbstractMenuFactory implements LeaderboardsMenuFactory {
     private final LegendsPlayerQueryService playerQueryService;
     private final LeaderboardQueryService leaderboardQueryService;
@@ -219,3 +198,5 @@ public class DefaultLeaderboardsMenuFactory extends AbstractMenuFactory implemen
         return builder.build();
     }
 }
+
+ */

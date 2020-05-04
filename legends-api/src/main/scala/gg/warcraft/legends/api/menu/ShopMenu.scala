@@ -1,37 +1,10 @@
-package gg.warcraft.legends.app.menu;
+package gg.warcraft.legends.api.menu
 
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.entity.player.LegendsPlayer;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.legends.api.menu.MainMenuFactory;
-import gg.warcraft.legends.api.menu.ShopMenuFactory;
-import gg.warcraft.legends.api.shop.Decoration;
-import gg.warcraft.legends.api.shop.DecorationId;
-import gg.warcraft.legends.api.shop.DecorationPack;
-import gg.warcraft.legends.api.shop.DecorationPackId;
-import gg.warcraft.legends.api.shop.MiniPetId;
-import gg.warcraft.legends.api.shop.PromotionId;
-import gg.warcraft.legends.api.shop.ShopItem;
-import gg.warcraft.legends.api.shop.SpecializationId;
-import gg.warcraft.legends.api.shop.profile.ShopProfile;
-import gg.warcraft.legends.api.shop.profile.service.ShopProfileCommandService;
-import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
-import gg.warcraft.legends.api.shop.service.ShopRepository;
-import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
-import gg.warcraft.monolith.api.menu.Button;
-import gg.warcraft.monolith.api.menu.ButtonBuilder;
-import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
-import gg.warcraft.monolith.api.menu.Menu;
-import gg.warcraft.monolith.api.menu.MenuBuilder;
-import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
-import gg.warcraft.monolith.api.menu.MenuSize;
-import gg.warcraft.monolith.api.menu.service.MenuCommandService;
-import gg.warcraft.monolith.api.util.ColorCode;
-import gg.warcraft.monolith.api.world.item.ItemType;
+object ShopMenu {
 
-import java.util.UUID;
+}
 
+/*
 public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopMenuFactory {
     private final LegendsPlayerQueryService playerQueryService;
     private final PlayerCommandService playerCommandService;
@@ -229,3 +202,5 @@ public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopM
         return builder.build();
     }
 }
+
+ */

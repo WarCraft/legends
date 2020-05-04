@@ -1,36 +1,10 @@
-package gg.warcraft.legends.app.menu;
+package gg.warcraft.legends.api.menu
 
-import com.google.inject.Inject;
-import gg.warcraft.combat.api.specialization.Specialization;
-import gg.warcraft.combat.api.specialization.service.SpecializationQueryService;
-import gg.warcraft.legends.api.combat.LegendsSpecialization;
-import gg.warcraft.legends.api.entity.player.LegendsPlayer;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.legends.api.menu.MainMenuFactory;
-import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
-import gg.warcraft.legends.api.shop.SpecializationId;
-import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
-import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
-import gg.warcraft.monolith.api.menu.Button;
-import gg.warcraft.monolith.api.menu.ButtonBuilder;
-import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
-import gg.warcraft.monolith.api.menu.Menu;
-import gg.warcraft.monolith.api.menu.MenuBuilder;
-import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
-import gg.warcraft.monolith.api.menu.MenuSize;
-import gg.warcraft.monolith.api.menu.service.MenuCommandService;
-import gg.warcraft.monolith.api.util.ColorCode;
-import gg.warcraft.monolith.api.util.StringUtils;
-import gg.warcraft.monolith.api.util.TimeUtils;
-import gg.warcraft.monolith.api.world.item.ItemType;
+object CombatClassMenu {
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+}
 
+/*
 public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implements SpecializationMenuFactory {
     private static final String YELLOW = ColorCode.YELLOW.toString();
     private static final String GREEN = ColorCode.GREEN.toString();
@@ -301,3 +275,5 @@ public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implem
         return builder.build();
     }
 }
+
+ */

@@ -1,30 +1,10 @@
-package gg.warcraft.legends.app.menu;
+package gg.warcraft.legends.api.menu
 
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.entity.LegendsTeam;
-import gg.warcraft.legends.api.entity.player.LegendsPlayer;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.legends.api.menu.MainMenuFactory;
-import gg.warcraft.legends.api.menu.TeamMenuFactory;
-import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
-import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.entity.team.Team;
-import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
-import gg.warcraft.monolith.api.menu.Button;
-import gg.warcraft.monolith.api.menu.ButtonBuilder;
-import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
-import gg.warcraft.monolith.api.menu.Menu;
-import gg.warcraft.monolith.api.menu.MenuBuilder;
-import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
-import gg.warcraft.monolith.api.menu.MenuSize;
-import gg.warcraft.monolith.api.menu.service.MenuCommandService;
-import gg.warcraft.monolith.api.util.ColorCode;
-import gg.warcraft.monolith.api.world.item.ItemType;
+object TeamMenu {
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+}
 
+/*
 public class DefaultTeamMenuFactory extends AbstractMenuFactory implements TeamMenuFactory {
     private static final String YELLOW = ColorCode.YELLOW.toString();
     private static final String GREEN = ColorCode.GREEN.toString();
@@ -131,3 +111,5 @@ public class DefaultTeamMenuFactory extends AbstractMenuFactory implements TeamM
         return builder.build();
     }
 }
+
+ */

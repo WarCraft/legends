@@ -1,35 +1,10 @@
-package gg.warcraft.legends.app.menu;
+package gg.warcraft.legends.api.menu
 
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
-import gg.warcraft.legends.api.item.crate.LootCrateType;
-import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
-import gg.warcraft.legends.api.menu.MainMenuFactory;
-import gg.warcraft.monolith.api.core.PluginLogger;
-import gg.warcraft.monolith.api.entity.player.Player;
-import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
-import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
-import gg.warcraft.monolith.api.menu.Button;
-import gg.warcraft.monolith.api.menu.ButtonBuilder;
-import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
-import gg.warcraft.monolith.api.menu.Menu;
-import gg.warcraft.monolith.api.menu.MenuBuilder;
-import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
-import gg.warcraft.monolith.api.menu.MenuSize;
-import gg.warcraft.monolith.api.menu.service.MenuCommandService;
-import gg.warcraft.monolith.api.util.ColorCode;
-import gg.warcraft.monolith.api.world.item.Item;
-import gg.warcraft.monolith.api.world.item.ItemType;
-import gg.warcraft.monolith.api.world.item.StackableItem;
+object DailyLoginMenu {
 
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.NavigableMap;
-import java.util.TreeMap;
-import java.util.UUID;
-import java.util.logging.Logger;
+}
 
+/*
 public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements DailyLoginMenuFactory {
     private static final String DAILY_LOGIN_COUNTER_DATA = "dailyLoginCounter";
     private static final String DAILY_LOGIN_LAST_CLAIMED_DATA = "dailyLoginLastClaimed";
@@ -261,3 +236,5 @@ public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements
         return builder.build();
     }
 }
+
+ */

@@ -1,45 +1,10 @@
-package gg.warcraft.legends.app.menu;
+package gg.warcraft.legends.api.menu
 
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.core.service.SpawnCommandService;
-import gg.warcraft.legends.api.core.service.SpawnQueryService;
-import gg.warcraft.legends.api.entity.LegendsAttribute;
-import gg.warcraft.legends.api.entity.player.LegendsPlayer;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.legends.api.menu.ChallengesMenuFactory;
-import gg.warcraft.legends.api.menu.CollectablesMenuFactory;
-import gg.warcraft.legends.api.menu.DailyLoginMenuFactory;
-import gg.warcraft.legends.api.menu.HelpMenuFactory;
-import gg.warcraft.legends.api.menu.LeaderboardsMenuFactory;
-import gg.warcraft.legends.api.menu.MainMenuFactory;
-import gg.warcraft.legends.api.menu.ShopMenuFactory;
-import gg.warcraft.legends.api.menu.SpecializationMenuFactory;
-import gg.warcraft.legends.api.menu.TeamMenuFactory;
-import gg.warcraft.legends.app.entity.player.rank.handler.PrestigeAttributesHandler;
-import gg.warcraft.legends.app.menu.task.ItemClaimTask;
-import gg.warcraft.monolith.api.command.service.CommandCommandService;
-import gg.warcraft.monolith.api.core.TaskService;
-import gg.warcraft.monolith.api.entity.attribute.Attributes;
-import gg.warcraft.monolith.api.menu.Button;
-import gg.warcraft.monolith.api.menu.ButtonBuilder;
-import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
-import gg.warcraft.monolith.api.menu.Menu;
-import gg.warcraft.monolith.api.menu.MenuBuilder;
-import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
-import gg.warcraft.monolith.api.menu.MenuSize;
-import gg.warcraft.monolith.api.menu.service.MenuCommandService;
-import gg.warcraft.monolith.api.util.ColorCode;
-import gg.warcraft.monolith.api.util.StringUtils;
-import gg.warcraft.monolith.api.util.TimeUtils;
-import gg.warcraft.monolith.api.world.item.Item;
-import gg.warcraft.monolith.api.world.item.ItemType;
-import gg.warcraft.monolith.api.world.item.storage.ItemStorageService;
+object MainMenu {
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+}
 
+/*
 public class DefaultMainMenuFactory implements MainMenuFactory {
     private static final String YELLOW = ColorCode.YELLOW.toString();
     private static final String GRAY = ColorCode.GRAY.toString();
@@ -595,3 +560,5 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         return builder.build();
     }
 }
+
+ */

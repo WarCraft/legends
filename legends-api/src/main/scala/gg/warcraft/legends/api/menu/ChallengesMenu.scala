@@ -1,26 +1,10 @@
-package gg.warcraft.legends.app.menu;
+package gg.warcraft.legends.api.menu
 
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.core.challenge.Challenge;
-import gg.warcraft.legends.api.core.challenge.service.ChallengeRepository;
-import gg.warcraft.legends.api.entity.player.LegendsPlayer;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.legends.api.menu.ChallengesMenuFactory;
-import gg.warcraft.legends.api.menu.MainMenuFactory;
-import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
-import gg.warcraft.monolith.api.menu.Button;
-import gg.warcraft.monolith.api.menu.ButtonBuilder;
-import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
-import gg.warcraft.monolith.api.menu.Menu;
-import gg.warcraft.monolith.api.menu.MenuBuilder;
-import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
-import gg.warcraft.monolith.api.menu.MenuSize;
-import gg.warcraft.monolith.api.menu.service.MenuCommandService;
-import gg.warcraft.monolith.api.util.ColorCode;
-import gg.warcraft.monolith.api.world.item.ItemType;
+object ChallengesMenu {
 
-import java.util.UUID;
+}
 
+/*
 public class DefaultChallengesMenuFactory extends AbstractMenuFactory implements ChallengesMenuFactory {
     private final ChallengeRepository challengeRepository;
     private final LegendsPlayerQueryService playerQueryService;
@@ -234,3 +218,5 @@ public class DefaultChallengesMenuFactory extends AbstractMenuFactory implements
         return builder.build();
     }
 }
+
+ */

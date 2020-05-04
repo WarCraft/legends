@@ -1,34 +1,11 @@
-package gg.warcraft.legends.app.menu;
+package gg.warcraft.legends.api.menu
 
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.item.DecorationBuilderFactory;
-import gg.warcraft.legends.api.menu.DecorationPackMenuFactory;
-import gg.warcraft.legends.api.menu.LegendsMenuFactory;
-import gg.warcraft.legends.api.shop.Decoration;
-import gg.warcraft.legends.api.shop.DecorationId;
-import gg.warcraft.legends.api.shop.DecorationPack;
-import gg.warcraft.legends.api.shop.DecorationPackId;
-import gg.warcraft.legends.api.shop.profile.ShopProfile;
-import gg.warcraft.legends.api.shop.profile.service.ShopProfileQueryService;
-import gg.warcraft.legends.api.shop.service.ShopQueryService;
-import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
-import gg.warcraft.monolith.api.menu.Button;
-import gg.warcraft.monolith.api.menu.ButtonBuilder;
-import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
-import gg.warcraft.monolith.api.menu.Menu;
-import gg.warcraft.monolith.api.menu.MenuBuilder;
-import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
-import gg.warcraft.monolith.api.menu.MenuSize;
-import gg.warcraft.monolith.api.menu.service.MenuCommandService;
-import gg.warcraft.monolith.api.util.ColorCode;
-import gg.warcraft.monolith.api.world.item.Item;
-import gg.warcraft.monolith.api.world.item.ItemType;
-import gg.warcraft.monolith.api.world.item.StackableItem;
+object DecorationPackMenu {
 
-import java.util.List;
-import java.util.UUID;
+}
 
+
+/*
 public class DefaultDecorationPackMenuFactory extends AbstractMenuFactory implements DecorationPackMenuFactory {
     private final ShopProfileQueryService shopProfileQueryService;
     private final ShopQueryService shopQueryService;
@@ -107,3 +84,5 @@ public class DefaultDecorationPackMenuFactory extends AbstractMenuFactory implem
         return builder.build();
     }
 }
+
+ */
