@@ -13,12 +13,11 @@ import gg.warcraft.monolith.api.effect.{
 }
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
-import gg.warcraft.monolith.api.math.Vector3f
 import gg.warcraft.monolith.api.player.PlayerService
 
 object Focus {
-  class Factory(
-      implicit taskService: TaskService,
+  class Factory(implicit
+      taskService: TaskService,
       entityService: EntityService,
       playerService: PlayerService,
       statusService: StatusService,
@@ -32,13 +31,12 @@ object Focus {
     ): MeleeAbility = new Focus(caster, snapshot)
   }
 
-  class ParticleEffect(movement: Movement)(
-      implicit taskService: TaskService,
+  class ParticleEffect(movement: Movement)(implicit
+      taskService: TaskService,
       particleAdapter: ParticleAdapter
-  ) extends Effect(movement.get.add(offset)) {
+  ) extends Effect(() => movement.get + (0, 0.1f, 0)) {
     private final val radius = 0.5f
     private final val frames = 20
-    private final val offset = Vector3f(0, 0.1f, 0)
 
     private final val particle = Particle.REDSTONE
     private final val vectors = EffectVectors.ring(radius, frames)
@@ -55,8 +53,7 @@ object Focus {
     override val name: String = "Focus"
     override val group: String = "buff"
 
-    private val modifier =
-      CombatValue.Modifier(source, CombatValue.Modifier.PERCENT, modifierValue)
+    private val modifier = CombatValue.Modifier.percent(source, modifierValue)
 
     override def reduce[T <: PreEvent](event: T): T = event match {
       case it: AbilityPreCastEvent =>
@@ -69,8 +66,8 @@ object Focus {
 class Focus(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit taskService: TaskService,
+)(implicit
+    taskService: TaskService,
     entityService: EntityService,
     playerService: PlayerService,
     statusService: StatusService,
@@ -85,28 +82,28 @@ class Focus(
   private var status: Status.Effect = _
   private var effect: Effect = _
 
-  repository removeFocus caster.id match {
+  repository.removeFocus(caster.id) match {
     case Some(focus) => focus.cancel()
     case None =>
-      entityService freezeEntity (caster.id, maxDuration)
+      entityService.freezeEntity(caster.id, maxDuration)
 
       val source = CombatSource(caster.name, Some(caster.id))
       val modifier = snapshot.combatValue("damage-modifier").modified
       status = new Focus.StatusEffect(source, None, modifier)
-      statusService addEffect (caster.id, status)
+      statusService.addEffect(caster.id, status)
 
       val movement = Movement.entity(caster)
       effect = new Focus.ParticleEffect(movement)
 
-      repository addFocus this
+      repository.addFocus(this)
 
       val message = Message(text, s"${ColorCode.YELLOW}$text")
-      playerService sendMessage (caster.id, message)
+      playerService.sendMessage(caster.id, message)
   }
 
   override def cancel(): Unit = {
-    entityService freezeEntity (caster.id, 0.ticks)
-    statusService removeEffect (caster.id, status)
+    entityService.freezeEntity(caster.id, 0.ticks)
+    statusService.removeEffect(caster.id, status)
     effect.cancel();
   }
 }
