@@ -3,6 +3,7 @@ package gg.warcraft.legends.api
 import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.item.crate.config.LootCrateConfiguration
 import gg.warcraft.legends.api.item.crate.LootCrateType
+import gg.warcraft.legends.api.player.challenge.Challenge
 import gg.warcraft.monolith.api.core.ColorCode
 import gg.warcraft.monolith.api.world.Location
 
@@ -16,5 +17,6 @@ case class LegendsConfig(
     mobKillFavor: Int,
     eliteMobKillFavor: Int,
     lootCrates: List[LootCrateConfiguration],
-    levelUpRewards: Map[Int, Map[LootCrateType, Int]]
+    levelUpRewards: Map[Int, Map[LootCrateType, Int]],
+    challenges: List[Challenge]
 )
