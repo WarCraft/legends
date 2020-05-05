@@ -6,8 +6,8 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object Disengage {
-  class Factory(
-      implicit entityService: EntityService,
+  class Factory(implicit
+      entityService: EntityService,
       worldService: WorldService
   ) extends MeleeAbility.Factory {
     override def create(
@@ -21,17 +21,17 @@ object Disengage {
 class Disengage(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit entityService: EntityService,
+)(implicit
+    entityService: EntityService,
     worldService: WorldService
 ) extends MeleeAbility {
   private final val soundCategory = SoundCategory.HOSTILE
-  private final val castSound = Sound.ENTITY_ENDER_DRAGON_FLAP // BAT_TAKEOFF?
+  private final val castSound = Sound.ENTITY_ENDER_DRAGON_FLAP // alt BAT_TAKEOFF
 
-  // TODO add an extra melee ability flag which prevents hit/miss checks for selfcast abilities?
+  // TODO add an extra melee ability flag which prevents hit/miss checks for selfcast abilities
 
-  private val direction = caster.eyeLocation.rotation.withY(0).multiply(-1)
-  entityService knockBackEntity (caster.id, direction, snapshot.distance.modified)
+  private val direction = caster.eyeLocation.rotation.copy(y = 0) * -1
+  entityService.knockBackEntity(caster.id, direction, snapshot.distance.modified)
 
-  worldService playSound (caster.location, castSound, soundCategory)
+  worldService.playSound(caster.location, castSound, soundCategory)
 }

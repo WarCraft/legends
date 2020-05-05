@@ -7,8 +7,8 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Location, WorldService}
 
 object ExplosiveShot {
-  class Factory(
-      implicit entityService: EntityService,
+  class Factory(implicit
+      entityService: EntityService,
       projectileService: ProjectileService,
       worldService: WorldService
   ) extends MeleeAbility.Factory {
@@ -23,25 +23,24 @@ object ExplosiveShot {
 class ExplosiveShot(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit entityService: EntityService,
+)(implicit
+    entityService: EntityService,
     projectileService: ProjectileService,
     worldService: WorldService
 ) extends MeleeAbility {
-  // suggested speed of 0.6 by the spigot docs is way too low
-  private final val velocity = 3
-  // suggested spread of 12 by the spigot docs is way too wide
-  private final val spread = 2
-
-  private val arrowId = projectileService createArrow (this, caster.eyeLocation, caster.eyeLocation.rotation, velocity, spread, () => {})
+  private val knockBackDirection = caster.eyeLocation.rotation
+  private val arrowId = projectileService.createArrow(
+    this,
+    caster.eyeLocation,
+    caster.eyeLocation.rotation
+  )
 
   private def explode(location: Location): Unit = {
-    entityService.getNearbyEntities(location, snapshot.radius.modified) foreach {
-      it =>
-        entityService damageEntity (it.id, snapshot.damage)
-        entityService knockBackEntity (it.id, snapshot.knockBack.modified)
+    entityService.getNearbyEntities(location, snapshot.radius.modified).foreach { it =>
+      entityService.damageEntity(it.id, snapshot.damage)
+      entityService.knockBackEntity(it.id, knockBackDirection, snapshot.knockBack.modified)
     }
-    worldService createExplosion (location, true)
+    worldService.createExplosion(location, true)
   }
 
   override def onHit(entity: Entity): Unit =

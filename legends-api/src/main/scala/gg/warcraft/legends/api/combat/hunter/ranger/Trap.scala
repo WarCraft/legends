@@ -17,8 +17,8 @@ import gg.warcraft.monolith.api.world.{
 }
 
 object Trap {
-  class Factory(
-      implicit taskService: TaskService,
+  class Factory(implicit
+      taskService: TaskService,
       entityService: EntityService,
       playerService: PlayerService,
       worldService: WorldService,
@@ -37,8 +37,8 @@ object Trap {
 class Trap(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit taskService: TaskService,
+)(implicit
+    taskService: TaskService,
     entityService: EntityService,
     playerService: PlayerService,
     worldService: WorldService,
@@ -53,7 +53,7 @@ class Trap(
   private var cancelled = false
 
   private val blockLocation: BlockLocation = caster.location
-  private val currentBlock = worldService getBlock blockLocation
+  private val currentBlock = worldService.getBlock(blockLocation)
   private val fakeBlock = Trapdoor(
     currentBlock.location,
     TrapdoorVariant.OAK,
@@ -68,35 +68,37 @@ class Trap(
     .filter { _.team == caster.team }
     .map { _.id }
 
-  spoofedPlayerIds.foreach { blockSpoofingService.spoofBlock(_, fakeBlock) } // TODO add overload for same block multiple people
+  spoofedPlayerIds.foreach {
+    blockSpoofingService.spoofBlock(_, fakeBlock)
+  } // TODO add overload for same block multiple people
 
-  private val trapLocation =
-    BlockLocation.toLocation(blockLocation).add(0.5f, 0, 0.5f)
+  private val trapLocation = BlockLocation.toLocation(blockLocation) + (.5f, 0, .5f)
   private val movement = Movement.stationary(trapLocation)
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
-  private val projectileId = projectileService createProjectile (this, movement, hitbox, () => {})
+  private val projectileId =
+    projectileService.createProjectile(this, movement, hitbox)
 
-  taskService runLater (snapshot.duration, cancel)
-  worldService playSound (caster.location, castSound, soundCategory)
+  taskService.runLater(snapshot.duration, cancel)
+  worldService.playSound(caster.location, castSound, soundCategory)
 
   override def cancel(): Unit = if (!cancelled) {
     cancelled = true
-    projectileService removeProjectile projectileId
-    spoofedPlayerIds foreach { blockSpoofingService.unspoofBlock(_, trapLocation) }
+    projectileService.removeProjectile(projectileId)
+    spoofedPlayerIds.foreach { blockSpoofingService.unspoofBlock(_, trapLocation) }
   }
 
   override def onHit(entity: Entity): Boolean = {
     val startLocation = entity.location
-    entityService addPotionEffect (entity.id, snapshot.poison)
-    entityService freezeEntity (entity.id, snapshot.root)
+    entityService.addPotionEffect(entity.id, snapshot.poison)
+    entityService.freezeEntity(entity.id, snapshot.root)
 
     // prevent yeeting into space
-    taskService runNextTick (() => {
-      entityService teleportEntity (entity.id, startLocation)
-      entityService setVelocity (entity.id, Vector3f())
+    taskService.runNextTick(() => {
+      entityService.teleportEntity(entity.id, startLocation)
+      entityService.setVelocity(entity.id, Vector3f())
     })
 
-    worldService playSound (entity.location, hitSound, soundCategory)
+    worldService.playSound(entity.location, hitSound, soundCategory)
 
     cancel()
     true
@@ -104,7 +106,7 @@ class Trap(
 
   override def onMiss(entity: Entity): Boolean = {
     cancel()
-    worldService playSound (entity.location, hitSound, soundCategory)
+    worldService.playSound(entity.location, hitSound, soundCategory)
     true
   }
 
