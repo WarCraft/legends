@@ -1,141 +1,58 @@
 package gg.warcraft.legends.api.menu
 
+import gg.warcraft.legends.api.entity.LegendsAttribute
+import gg.warcraft.legends.api.player.LegendsCurrency
+import gg.warcraft.monolith.api.core.ColorCode
+import gg.warcraft.monolith.api.core.ColorCode._
+import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.item.{ItemType, ItemTypeOrVariant}
+import gg.warcraft.monolith.api.menu.{Button, Menu}
+import gg.warcraft.monolith.api.player.currency.{Currencies, CurrencyService}
+import gg.warcraft.monolith.api.player.Player
+
 object MainMenu {
+  private def attributesView(
+      player: Player
+  )(implicit
+      attributesService: AttributeService
+  ): List[String] = {
+    val attributes = attributesService.getAttributes(player.id)
+    lazy val strength = attributes.get(LegendsAttribute.STRENGTH).toInt
+    lazy val dexterity = attributes.get(LegendsAttribute.DEXTERITY).toInt
+    lazy val intellect = attributes.get(LegendsAttribute.INTELLECT).toInt
+    lazy val vitality = attributes.get(LegendsAttribute.VITALITY).toInt
+    lazy val crit = attributes.get(LegendsAttribute.CRIT).toInt
+    List(
+      s"${ColorCode.WHITE}Attributes:",
+      if (strength != 0) Some(s"$YELLOW$strength Strength") else None,
+      if (dexterity != 0) Some(s"$YELLOW$dexterity Dexterity") else None,
+      if (intellect != 0) Some(s"$YELLOW$intellect Intellect") else None,
+      if (vitality != 0) Some(s"$YELLOW$vitality Vitality") else None,
+      if (crit != 0) Some(s"$YELLOW$crit Crit") else None
+    ).filter { _.isDefined }
+      .map { _.get } // flatMap?
+  }
 
-}
+  private def currenciesView(
+      player: Player
+  )(implicit
+      currencyService: CurrencyService
+  ): List[String] = {
+    val currencies: Currencies = currencyService.getCurrencies(player.id)
+    List(
+      s"${WHITE}Currencies:",
+      s"$YELLOW${currencies.get(LegendsCurrency.GOLD)} Gold",
+      s"$AQUA${currencies.get(LegendsCurrency.FAVOR)} Favor",
+      s"$GOLD${currencies.get(LegendsCurrency.FRAGMENTS)} Fragments"
+    )
+  }
 
-/*
-public class DefaultMainMenuFactory implements MainMenuFactory {
-    private static final String YELLOW = ColorCode.YELLOW.toString();
-    private static final String GRAY = ColorCode.GRAY.toString();
+  private def levelPassivesView(level: Int): List[String] = {
+    Nil
+  }
 
-    private final LegendsPlayerQueryService playerQueryService;
-    private final LegendsPlayerCommandService playerCommandService;
-    private final CommandCommandService commandCommandService;
-    private final MenuCommandService menuCommandService;
-    private final SpawnQueryService spawnQueryService;
-    private final SpawnCommandService spawnCommandService;
-    private final ItemStorageService itemStorageService;
-    private final MenuBuilderFactory menuBuilderFactory;
-    private final ButtonBuilderFactory buttonBuilderFactory;
-    private final SpecializationMenuFactory specializationMenuFactory;
-    private final TeamMenuFactory teamMenuFactory;
-    private final DailyLoginMenuFactory dailyLoginMenuFactory;
-    private final CollectablesMenuFactory collectablesMenuFactory;
-    private final ChallengesMenuFactory challengesMenuFactory;
-    private final LeaderboardsMenuFactory leaderboardsMenuFactory;
-    private final ShopMenuFactory shopMenuFactory;
-    private final HelpMenuFactory helpMenuFactory;
-    private final StringUtils stringUtils;
-    private final TimeUtils timeUtils;
-    private final TaskService taskService;
-
-    @Inject
-    public DefaultMainMenuFactory(LegendsPlayerQueryService playerQueryService,
-                                  LegendsPlayerCommandService playerCommandService,
-                                  CommandCommandService commandCommandService,
-                                  MenuCommandService menuCommandService,
-                                  SpawnQueryService spawnQueryService,
-                                  SpawnCommandService spawnCommandService,
-                                  MenuBuilderFactory menuBuilderFactory,
-                                  ItemStorageService itemStorageService,
-                                  ButtonBuilderFactory buttonBuilderFactory,
-                                  SpecializationMenuFactory specializationMenuFactory,
-                                  DailyLoginMenuFactory dailyLoginMenuFactory, TeamMenuFactory teamMenuFactory,
-                                  CollectablesMenuFactory collectablesMenuFactory,
-                                  LeaderboardsMenuFactory leaderboardsMenuFactory,
-                                  ChallengesMenuFactory challengesMenuFactory, ShopMenuFactory shopMenuFactory,
-                                  HelpMenuFactory helpMenuFactory, StringUtils stringUtils, TaskService taskService,
-                                  TimeUtils timeUtils) {
-        this.playerQueryService = playerQueryService;
-        this.playerCommandService = playerCommandService;
-        this.commandCommandService = commandCommandService;
-        this.menuCommandService = menuCommandService;
-        this.spawnCommandService = spawnCommandService;
-        this.spawnQueryService = spawnQueryService;
-        this.menuBuilderFactory = menuBuilderFactory;
-        this.itemStorageService = itemStorageService;
-        this.buttonBuilderFactory = buttonBuilderFactory;
-        this.specializationMenuFactory = specializationMenuFactory;
-        this.dailyLoginMenuFactory = dailyLoginMenuFactory;
-        this.teamMenuFactory = teamMenuFactory;
-        this.collectablesMenuFactory = collectablesMenuFactory;
-        this.challengesMenuFactory = challengesMenuFactory;
-        this.leaderboardsMenuFactory = leaderboardsMenuFactory;
-        this.shopMenuFactory = shopMenuFactory;
-        this.helpMenuFactory = helpMenuFactory;
-        this.stringUtils = stringUtils;
-        this.taskService = taskService;
-        this.timeUtils = timeUtils;
-    }
-
-    List<String> createAttributesView(LegendsPlayer player) {
-        Attributes attributes = player.getAttributes();
-        List<String> attributesView = new ArrayList<>();
-        attributesView.add(ColorCode.WHITE + "Attributes:");
-        int strength = (int) attributes.getValue(LegendsAttribute.STRENGTH);
-        if (strength != 0) {
-            attributesView.add(YELLOW + strength + " Strength");
-        }
-        int dexterity = (int) attributes.getValue(LegendsAttribute.DEXTERITY);
-        if (dexterity != 0) {
-            attributesView.add(YELLOW + dexterity + " Dexterity");
-        }
-        int intelligence = (int) attributes.getValue(LegendsAttribute.INTELLIGENCE);
-        if (intelligence != 0) {
-            attributesView.add(YELLOW + intelligence + " Intelligence");
-        }
-        int vitality = (int) attributes.getValue(LegendsAttribute.VITALITY);
-        if (vitality != 0) {
-            attributesView.add(YELLOW + vitality + " Vitality");
-        }
-        int crit = (int) attributes.getValue(LegendsAttribute.CRIT);
-        if (crit != 0) {
-            attributesView.add(YELLOW + crit + " Crit");
-        }
-        return attributesView;
-    }
-
-    List<String> createCurrenciesView(LegendsPlayer player) {
-        List<String> currenciesView = new ArrayList<>();
-        currenciesView.add(ColorCode.WHITE + "Currencies:");
-        int gold = player.getGold();
-        currenciesView.add(YELLOW + gold + " Gold");
-        int favor = player.getFavor();
-        currenciesView.add(ColorCode.AQUA + "" + favor + " Favor");
-        int fragments = player.getFragments();
-        currenciesView.add(ColorCode.GOLD + "" + fragments + " Fragments");
-        return currenciesView;
-    }
-
-    Button createPlayerButton(LegendsPlayer player) {
-        UUID playerId = player.getId();
-        String playerName = player.getName();
-        ButtonBuilder builder = buttonBuilderFactory.createSkullButtonBuilder(playerName, playerName);
-        builder.addTooltip("This is you!");
-        builder.addTooltip("");
-        createAttributesView(player).forEach(builder::addTooltip);
-        builder.addTooltip("");
-        createCurrenciesView(player).forEach(builder::addTooltip);
-
-        // TODO make sure that rank rewards are always stored in the item storage and then remove from rank impl
-        if (player.getRankUpRewardsClaimed() < player.getRank().getLevel()) {
-            if (!(player.getRankUpRewardsClaimed() == 0 && player.getRank().getLevel() == 1)) {
-                builder.addTooltip("");
-                builder.addTooltip(ColorCode.GREEN + "[SHIFT RIGHT CLICK] To claim your rank up rewards");
-            }
-        }
-
-        builder.withAction(action -> {
-            if (action.isShiftRightClick()) {
-                commandCommandService.dispatchCommandFor("claimrankuprewards", playerId);
-                menuCommandService.closeMenu(playerId);
-            }
-        });
-        return builder.build();
-    }
-
-    List<String> createRankPassivesView(int level) {
+  /*
+  List<String> createRankPassivesView(int level) {
         int prestige = level / 50; // NOTE this is hacky, 49/50 is the prestige level
         int clippedLevel = level % 50; // NOTE this is hacky, 49/50 is the prestige level
         int attributeValue = PrestigeAttributesHandler.attributeModifierValues.get(clippedLevel / 7);
@@ -171,28 +88,68 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         }
         return passivesView;
     }
+   */
 
-    ItemType getRankIcon(String rank) {
-        if (rank.contains("Wood")) {
-            return ItemType.PLANKS;
-        } else if (rank.contains("Stone")) {
-            return ItemType.STONE;
-        } else if (rank.contains("Iron")) {
-            return ItemType.IRON_BLOCK;
-        } else if (rank.contains("Gold")) {
-            return ItemType.GOLD_BLOCK;
-        } else if (rank.contains("Emerald")) {
-            return ItemType.EMERALD_BLOCK;
-        } else if (rank.contains("Diamond")) {
-            return ItemType.DIAMOND_BLOCK;
-        } else if (rank.contains("Obsidian")) {
-            return ItemType.OBSIDIAN;
-        } else {
-            return ItemType.PLANKS; // TODO oak planks
+  private def levelIcon(level: Int): ItemTypeOrVariant = level % 10 match {
+    case 0 => ItemType.PLANKS
+    case 1 => ItemType.STONE
+    case 2 => ItemType.IRON_BLOCK
+    case 3 => ItemType.REDSTONE_BLOCK
+    case 4 => ItemType.LAPIS_BLOCK
+    case 5 => ItemType.GOLD_BLOCK
+    case 6 => ItemType.EMERALD_BLOCK
+    case 7 => ItemType.DIAMOND_BLOCK
+    case _ => ItemType.NETHER_STAR
+  }
+
+  def apply(
+      player: Player
+  )(implicit
+      attributesService: AttributeService,
+      currencyService: CurrencyService
+  ): Menu = {
+    val playerButton = Button.skull(
+      player.name,
+      player.name,
+      List(
+        List("This is you!", ""),
+        attributesView(player),
+        List(""),
+        currenciesView(player)
+      ).flatten
+      /*
+       // TODO make sure that rank rewards are always stored in the item storage and then remove from rank impl
+        if (player.getRankUpRewardsClaimed() < player.getRank().getLevel()) {
+            if (!(player.getRankUpRewardsClaimed() == 0 && player.getRank().getLevel() == 1)) {
+                builder.addTooltip("");
+                builder.addTooltip(ColorCode.GREEN + "[SHIFT RIGHT CLICK] To claim your rank up rewards");
+            }
         }
-    }
 
-    Button createRankButton(LegendsPlayer player) {
+        builder.withAction(action -> {
+            if (action.isShiftRightClick()) {
+                commandCommandService.dispatchCommandFor("claimrankuprewards", playerId);
+                menuCommandService.closeMenu(playerId);
+            }
+        });
+        return builder.build();
+       */
+    )
+
+    val levelButton = Button(
+      levelIcon(???),
+      "Level",
+      List(
+        s"${WHITE}Current level:",
+        s"${YELLOW}Lv. ${???} (${%}%)",
+        "",
+        s"${WHITE}Unlocked passives:",
+        levelPassivesView(???)
+      ).flatten
+    )
+
+    /*
+     Button createRankButton(LegendsPlayer player) {
         UUID playerId = player.getId();
         String rank = player.getRank().getColor() + player.getRank().getFormattedName();
         ItemType rankIcon = getRankIcon(rank);
@@ -212,6 +169,39 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         createRankPassivesView(level).forEach(builder::addTooltip);
         return builder.build();
     }
+     */
+
+    Menu(
+      "WarCraft: Legends",
+      Menu.Size.TWO_ROWS,
+      Map(
+        // 1st row
+        0 -> playerButton,
+        1 -> levelButton,
+        2 -> classButton,
+        3 -> raceButton,
+        // 4
+        5 -> itemStorageButton,
+        6 -> returnButton,
+        // 7
+        8 -> helpButton,
+        // 2nd row
+        9 -> dialyLoginButton,
+        10 -> dailyVoteButton,
+        11 -> challengesButton,
+        // 12
+        // 13
+        14 -> collectablesButton,
+        15 -> leaderboardsButton,
+        // 16
+        17 -> shopButton
+      )
+    )
+  }
+}
+
+/*
+public class DefaultMainMenuFactory implements MainMenuFactory {
 
     List<String> createAbilitiesView(String specialization) {
         List<String> abilitiesView = new ArrayList<>();
@@ -535,30 +525,7 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         return builder.build();
     }
 
-    @Override
-    public Menu createMainMenu(UUID playerId) {
-        LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        MenuBuilder builder = menuBuilderFactory.createMenuBuilder("WarCraft: Legends", MenuSize.TWO_ROWS);
-        builder.addButton(0, createPlayerButton(player));
-        builder.addButton(1, createRankButton(player));
-        builder.addButton(2, createClassButton(player));
-        builder.addButton(3, createRaceButton(player));
 
-        builder.addButton(5, createItemStorageButton(player));
-        builder.addButton(6, createReturnButton(player));
-
-        builder.addButton(8, createHelpButton(player));
-
-        builder.addButton(9, createDailyLoginButton(player));
-        builder.addButton(10, createDailyVoteButton(player));
-        builder.addButton(11, createChallengesButton(player));
-
-        builder.addButton(14, createCollectablesButton(player));
-        builder.addButton(15, createLeaderboardsButton(player));
-
-        builder.addButton(17, createShopButton(player));
-        return builder.build();
-    }
 }
 
  */
