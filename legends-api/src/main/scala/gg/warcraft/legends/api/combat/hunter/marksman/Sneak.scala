@@ -36,10 +36,7 @@ class Sneak(
 
   entityService.addPotionEffect(caster.id, snapshot.speed)
   playerHidingService.hide(caster.id)
-  taskService.runLater(
-    snapshot.speed.duration,
-    () => playerHidingService.reveal(caster.id)
-  )
+  taskService.evalLater(snapshot.duration, playerHidingService.reveal(caster.id))
 
   worldService.playSound(caster.location, castSound, soundCategory)
 }
