@@ -40,6 +40,11 @@
 #- "You can lie down on the floor via '/lie'!"
 #- "You can sit with two people on the same horse!"
 
+skirmishTimes:
+  - 2 # UTC = 21 NYT
+  - 20 # UTC = 15 NYT
+  - 23 # UTC = 18 NYT
+
 challenges:
   # dailies
   - id: DAILY_KILLS

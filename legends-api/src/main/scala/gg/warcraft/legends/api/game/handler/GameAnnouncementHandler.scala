@@ -1,34 +1,12 @@
-package gg.warcraft.legends.app.core.game.handler;
+package gg.warcraft.legends.api.game.handler
 
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.entity.LegendsTeam;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.monolith.api.core.TaskService;
-import gg.warcraft.monolith.api.util.ColorCode;
-import gg.warcraft.monolith.api.util.TimeUtils;
-import gg.warcraft.siege.api.objective.Objective;
-import gg.warcraft.siege.api.objective.event.ObjectiveCapturedEvent;
-import gg.warcraft.siege.api.objective.event.ObjectiveNeutralizedEvent;
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
+class GameAnnouncementHandler {
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+}
 
+/* TODO
 public class ObjectiveAnnouncementHandler {
-    // FIXME this key is now compromised, cycle it
-    private static final String discordWebhook = "https://discordapp.com/api/webhooks/427168926540234773/izX7BeEhd-vxfAXA2ZxfQtFCYmWFKqU5ySEsVtt_xsRpSnvox6PdcwUFJyoaNXsGfOAp";
+    private static final String discordWebhook = "DISCORD_KEY";
 
     private final LegendsPlayerQueryService legendsPlayerQueryService;
     private final LegendsPlayerCommandService legendsPlayerCommandService;
@@ -115,3 +93,5 @@ public class ObjectiveAnnouncementHandler {
         // TODO disabled for now: taskService.runLaterAsync(() -> publishDiscordNotification(notification), timeUtils.oneTick());
     }
 }
+
+ */

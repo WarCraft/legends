@@ -15,6 +15,7 @@ import gg.warcraft.legends.api.core.game.event.WarTallyEvent;
 import gg.warcraft.legends.api.core.game.service.GameCommandService;
 import gg.warcraft.legends.api.core.game.service.GameRepository;
 import gg.warcraft.legends.api.entity.LegendsTeam;
+import gg.warcraft.legends.api.item.crate.LootCrateType;
 import gg.warcraft.legends.app.core.game.SimpleSkirmish;
 import gg.warcraft.legends.app.core.game.SimpleWar;
 import gg.warcraft.legends.app.core.game.event.SimpleSkirmishFinishedEvent;
@@ -24,6 +25,7 @@ import gg.warcraft.legends.app.core.game.event.SimpleWarResumedEvent;
 import gg.warcraft.legends.app.core.game.event.SimpleWarStartedEvent;
 import gg.warcraft.legends.app.core.game.event.SimpleWarTallyEvent;
 import gg.warcraft.monolith.api.core.EventService;
+import gg.warcraft.monolith.api.entity.team.Team;
 import gg.warcraft.monolith.api.util.Duration;
 import gg.warcraft.monolith.api.util.TimeUtils;
 import gg.warcraft.siege.api.objective.service.ObjectiveCommandService;
@@ -277,6 +279,15 @@ public class DefaultGameCommandService implements GameCommandService {
             int currentScore = newScore.getOrDefault(winner, 0);
             newScore.put(winner, currentScore + SKIRMISH_WINNER_SCORE);
             gameRepository.save(currentWar);
+
+            // TODO
+            Team winner = event.getWinner();
+            Item warCrate = lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.WAR_CRATE).build();
+            playerQueryService.getOnlinePlayers().forEach(player -> {
+                int rewardCount = player.getTeam() == winner ? 5 : 2;
+                Item stackedItem = ((StackableItem) warCrate).withCount(rewardCount);
+                playerCommandService.giveItem(player.getId(), stackedItem, false);
+            });
         }
 
         gameRepository.saveActiveGame(currentWar.getId());

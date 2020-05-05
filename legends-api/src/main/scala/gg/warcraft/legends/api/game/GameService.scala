@@ -1,5 +1,6 @@
 package gg.warcraft.legends.api.game
 
+import gg.warcraft.legends.api.LegendsConfig
 import gg.warcraft.monolith.api.core.Duration._
 import gg.warcraft.monolith.api.entity.team.Team
 
@@ -19,23 +20,22 @@ class GameService {
     _defaultCaptures = config.defaultCaptures
   }
 
-  def initActiveGame: Unit = ???
+  def initActiveGame(): Unit = ???
 
-  def tickActiveGame: Unit = ???
+  def tickActiveGame(): Unit = ???
 
-  def startWar: Unit = ???
+  def startWar(): Unit = ???
 
-  def runTally: Unit = ???
+  def runTally(): Unit = ???
 
-  def runScore: Unit = ??? // TODO what is this?
+  def runScore(): Unit = ??? // TODO what is this?
 
-  def endWar: Unit = ???
+  def endWar(): Unit = ???
 
-  def startSkirmish: Unit = ???
+  def startSkirmish(): Unit = ???
 
-  def endSkirmish: Unit = ???
+  def endSkirmish(): Unit = ???
 }
-
 
 /*
 public interface GameQueryService {

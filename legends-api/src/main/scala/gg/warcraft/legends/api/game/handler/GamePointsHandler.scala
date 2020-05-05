@@ -1,22 +1,10 @@
-package gg.warcraft.legends.app.core.game.handler;
+package gg.warcraft.legends.api.game.handler
 
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.core.game.Game;
-import gg.warcraft.legends.api.core.game.GameType;
-import gg.warcraft.legends.api.core.game.service.GameRepository;
-import gg.warcraft.legends.api.entity.LegendsTeam;
-import gg.warcraft.monolith.api.entity.EntityType;
-import gg.warcraft.monolith.api.entity.event.EntityFatalDamageEvent;
-import gg.warcraft.monolith.api.entity.player.Player;
-import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
-import gg.warcraft.siege.api.objective.Objective;
-import gg.warcraft.siege.api.objective.event.ObjectiveCapturedEvent;
-import gg.warcraft.siege.api.objective.event.ObjectiveNeutralizedEvent;
+class GamePointsHandler {
 
-import java.util.Map;
-import java.util.UUID;
+}
 
+/* TODO
 public class GameObjectivesAndPointsHandler {
     private final PlayerQueryService playerQueryService;
     private final GameRepository gameRepository;
@@ -102,3 +90,5 @@ public class GameObjectivesAndPointsHandler {
         }
     }
 }
+
+ */

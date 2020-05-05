@@ -18,5 +18,6 @@ case class LegendsConfig(
     eliteMobKillFavor: Int,
     lootCrates: List[LootCrateConfiguration],
     levelUpRewards: Map[Int, Map[LootCrateType, Int]],
-    challenges: List[Challenge]
+    challenges: List[Challenge],
+    skirmishTimes: List[Int]
 )
