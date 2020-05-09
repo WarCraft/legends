@@ -1,22 +1,11 @@
-package gg.warcraft.legends.app.core.leaderboard.handler;
+package gg.warcraft.legends.api.leaderboard
 
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.core.game.event.WarFinishedEvent;
-import gg.warcraft.legends.api.core.leaderboard.LeaderboardEntry;
-import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardQueryService;
-import gg.warcraft.legends.api.entity.player.LegendsStatistic;
-import gg.warcraft.legends.api.item.crate.LootCrateBuilderFactory;
-import gg.warcraft.legends.api.item.crate.LootCrateType;
-import gg.warcraft.monolith.api.core.event.DailyTickEvent;
-import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.entity.player.service.PlayerQueryService;
-import gg.warcraft.monolith.api.world.item.StackableItem;
+class LeaderboardRewardHandler {
 
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+}
 
+
+/*
 public class LeaderboardRewardHandler {
     private final LeaderboardQueryService leaderboardQueryService;
     private final PlayerCommandService playerCommandService;
@@ -136,3 +125,5 @@ public class LeaderboardRewardHandler {
         });
     }
 }
+
+ */

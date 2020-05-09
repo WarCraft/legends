@@ -1,13 +1,11 @@
-package gg.warcraft.legends.app.core.leaderboard.handler;
+package gg.warcraft.legends.api.leaderboard
 
-import com.google.inject.Singleton;
-import gg.warcraft.legends.api.core.leaderboard.service.LeaderboardCommandService;
-import gg.warcraft.legends.api.entity.player.LegendsStatistic;
+class LeaderboardPublishHandler {
 
-import java.util.Arrays;
-import java.util.Iterator;
+}
 
-@Singleton
+
+/*
 public class LeaderboardPublishingHandler implements Runnable {
     private final LeaderboardCommandService leaderboardCommandService;
 
@@ -31,3 +29,5 @@ public class LeaderboardPublishingHandler implements Runnable {
         leaderboardCommandService.publishLeaderboard(nextStatistic);
     }
 }
+
+ */
