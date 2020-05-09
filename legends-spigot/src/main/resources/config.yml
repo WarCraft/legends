@@ -48,11 +48,13 @@ skirmishTimes:
 challenges:
   # dailies
   - id: DAILY_KILLS
+    statisticId: DAILY_KILLS
     name: Daily Kills
     description:
     requirement: 5
     reward: 75
   - id: DAILY_DAMAGE
+    statisticId: DAILY_DAMAGE
     name: Daily Damage Done
     description:
     requirement: 250
@@ -63,36 +65,43 @@ challenges:
     requirement: 1
     reward: 75
   - id: DAILY_STRONGHOLDS
+    statisticId: DAILY_STRONGHOLDS
     name: Daily Strongholds Captured
     description:
     requirement: 1
     reward: 150
   - id: DAILY_GOLD
+    statisticId: DAILY_GOLD
     name: Daily Gold Gained
     description:
     requirement: 150
     reward: 75
   - id: DAILY_FAVOR
+    statisticId: DAILY_FAVOR
     name: Daily Favor Gained
     description:
     requirement: 300
     reward: 75
   - id: DAILY_PLAYTIME
+    statisticId: DAILY_PLAYTIME
     name: Daily Time Played
     description:
     requirement: 15
     reward: 75
   - id: DAILY_MOBS
+    statisticId: DAILY_MOBS
     name: Daily Mobs Killed
     description:
     requirement: 10
     reward: 75
   - id: DAILY_RESOURCES
+    statisticId: DAILY_RESOURCES
     name: Daily Resources Gathered
     description:
     requirement: 15
     reward: 75
   - id: DAILY_CRATES
+    statisticId: DAILY_CRATES
     name: Daily Crates Opened
     description:
     requirement: 3
@@ -100,51 +109,61 @@ challenges:
 
   # monthlies
   - id: MONTHLY_KILLS
+    statisticId: MONTHLY_KILLS
     name: Monthly Kills
     description:
     requirement: 50
     reward: 500
   - id: MONTHLY_DAMAGE
+    statisticId: MONTHLY_DAMAGE
     name: Monthly Damage Done
     description:
     requirement: 2500
     reward: 500
   - id: MONTHLY_FORTS
+    statisticId: MONTHLY_FORTS
     name: Monthly Forts Captured
     description:
     requirement: 10
     reward: 500
   - id: MONTHLY_STRONGHOLDS
+    statisticId: MONTHLY_STRONGHOLDS
     name: Monthly Strongholds Captured
     description:
     requirement: 10
     reward: 750
   - id: MONTHLY_GOLD
+    statisticId: MONTHLY_GOLD
     name: Monthly Gold Gained
     description:
     requirement: 1500
     reward: 500
   - id: MONTHLY_FAVOR
+    statisticId: MONTHLY_FAVOR
     name: Monthly Favor Gained
     description:
     requirement: 3000
     reward: 500
   - id: MONTHLY_PLAYTIME
+    statisticId: MONTHLY_PLATIME
     name: Monthly Time Played
     description:
     requirement: 150
     reward: 500
   - id: MONTHLY_MOBS
+    statisticId: MONTHLY_MOBS
     name: Monthly Mobs Killed
     description:
     requirement: 100
     reward: 500
   - id: MONTHLY_RESOURCES
+    statisticId: MONTHLY_RESOURCES
     name: Monthly Resources Gathered
     description:
     requirement: 150
     reward: 500
   - id: MONTHLY_CRATES
+    statisticId: MONTHLY_CRATES
     name: Monthly Crates Opened
     description:
     requirement: 30
@@ -152,320 +171,382 @@ challenges:
 
   # all-time
   - id: ALLTIME_KILLS_1
+    statisticId: ALLTIME_KILLS
     name: All-time Kills 1
     description:
     requirement: 10
     reward: 100
   - id: ALLTIME_KILLS_2
+    statisticId: ALLTIME_KILLS
     name: All-time Kills 2
     description:
     requirement: 100
     reward: 1000
   - id: ALLTIME_KILLS_3
+    statisticId: ALLTIME_KILLS
     name: All-time Kills 3
     description:
     requirement: 1000
     reward: 10000
   - id: ALLTIME_KILLS_4
+    statisticId: ALLTIME_KILLS
     name: All-time Kills 4
     description:
     requirement: 10000
     reward: 100000
   - id: ALLTIME_KILLS_5
+    statisticId: ALLTIME_KILLS
     name: All-time Kills 5
     description:
     requirement: 100000
     reward: 1000000
   - id: ALLTIME_KILLS_6
+    statisticId: ALLTIME_KILLS
     name: All-time Kills 6
     description:
     requirement: 1000000
     reward: 10000000
 
   - id: ALLTIME_DAMAGE_1
+    statisticId: ALLTIME_DAMAGE
     name: All-time Damage Done 1
     description:
     requirement: 500
     reward: 500
   - id: ALLTIME_DAMAGE_2
+    statisticId: ALLTIME_DAMAGE
     name: All-time Damage Done 2
     description:
     requirement: 5000
     reward: 5000
   - id: ALLTIME_DAMAGE_3
+    statisticId: ALLTIME_DAMAGE
     name: All-time Damage Done 3
     description:
     requirement: 50000
     reward: 50000
   - id: ALLTIME_DAMAGE_4
+    statisticId: ALLTIME_DAMAGE
     name: All-time Damage Done 4
     description:
     requirement: 500000
     reward: 500000
   - id: ALLTIME_DAMAGE_5
+    statisticId: ALLTIME_DAMAGE
     name: All-time Damage Done 5
     description:
     requirement: 5000000
     reward: 5000000
   - id: ALLTIME_DAMAGE_6
+    statisticId: ALLTIME_DAMAGE
     name: All-time Damage Done 6
     description:
     requirement: 50000000
     reward: 50000000
 
   - id: ALLTIME_FORTS_1
+    statisticId: ALLTIME_FORTS
     name: All-time Forts Captured 1
     description:
     requirement: 1
     reward: 100
   - id: ALLTIME_FORTS_2
+    statisticId: ALLTIME_FORTS
     name: All-time Forts Captured 2
     description:
     requirement: 10
     reward: 1000
   - id: ALLTIME_FORTS_3
+    statisticId: ALLTIME_FORTS
     name: All-time Forts Captured 3
     description:
     requirement: 100
     reward: 10000
   - id: ALLTIME_FORTS_4
+    statisticId: ALLTIME_FORTS
     name: All-time Forts Captured 4
     description:
     requirement: 1000
     reward: 100000
   - id: ALLTIME_FORTS_5
+    statisticId: ALLTIME_FORTS
     name: All-time Forts Captured 5
     description:
     requirement: 10000
     reward: 1000000
   - id: ALLTIME_FORTS_6
+    statisticId: ALLTIME_FORTS
     name: All-time Forts Captured 6
     description:
     requirement: 100000
     reward: 10000000
 
   - id: ALLTIME_STRONGHOLDS_1
+    statisticId: ALLTIME_STRONGHOLDS
     name: All-time Strongholds Captured 1
     description:
     requirement: 1
     reward: 100
   - id: ALLTIME_STRONGHOLDS_2
+    statisticId: ALLTIME_STRONGHOLDS
     name: All-time Strongholds Captured 2
     description:
     requirement: 10
     reward: 1000
   - id: ALLTIME_STRONGHOLDS_3
+    statisticId: ALLTIME_STRONGHOLDS
     name: All-time Strongholds Captured 3
     description:
     requirement: 100
     reward: 10000
   - id: ALLTIME_STRONGHOLDS_4
+    statisticId: ALLTIME_STRONGHOLDS
     name: All-time Strongholds Captured 4
     description:
     requirement: 1000
     reward: 100000
   - id: ALLTIME_STRONGHOLDS_5
+    statisticId: ALLTIME_STRONGHOLDS
     name: All-time Strongholds Captured 5
     description:
     requirement: 10000
     reward: 1000000
   - id: ALLTIME_STRONGHOLDS_6
+    statisticId: ALLTIME_STRONGHOLDS
     name: All-time Strongholds Captured 6
     description:
     requirement: 100000
     reward: 10000000
 
   - id: ALLTIME_GOLD_1
+    statisticId: ALLTIME_GOLD
     name: All-time Gold Gained 1
     description:
     requirement: 1000
     reward: 100
   - id: ALLTIME_GOLD_2
+    statisticId: ALLTIME_GOLD
     name: All-time Gold Gained 2
     description:
     requirement: 10000
     reward: 1000
   - id: ALLTIME_GOLD_3
+    statisticId: ALLTIME_GOLD
     name: All-time Gold Gained 3
     description:
     requirement: 100000
     reward: 10000
   - id: ALLTIME_GOLD_4
+    statisticId: ALLTIME_GOLD
     name: All-time Gold Gained 4
     description:
     requirement: 1000000
     reward: 100000
   - id: ALLTIME_GOLD_5
+    statisticId: ALLTIME_GOLD
     name: All-time Gold Gained 5
     description:
     requirement: 10000000
     reward: 1000000
   - id: ALLTIME_GOLD_6
+    statisticId: ALLTIME_GOLD
     name: All-time Gold Gained 6
     description:
     requirement: 100000000
     reward: 10000000
   - id: ALLTIME_GOLD_7
+    statisticId: ALLTIME_GOLD
     name: All-time Gold Gained 7
     description:
     requirement: 1000000000
     reward: 100000000
 
   - id: ALLTIME_FAVOR_1
+    statisticId: ALLTIME_FAVOR
     name: All-time Favor Gained 1
     description:
     requirement: 1000
     reward: 100
   - id: ALLTIME_FAVOR_2
+    statisticId: ALLTIME_FAVOR
     name: All-time Favor Gained 2
     description:
     requirement: 10000
     reward: 1000
   - id: ALLTIME_FAVOR_3
+    statisticId: ALLTIME_FAVOR
     name: All-time Favor Gained 3
     description:
     requirement: 100000
     reward: 10000
   - id: ALLTIME_FAVOR_4
+    statisticId: ALLTIME_FAVOR
     name: All-time Favor Gained 4
     description:
     requirement: 1000000
     reward: 100000
   - id: ALLTIME_FAVOR_5
+    statisticId: ALLTIME_FAVOR
     name: All-time Favor Gained 5
     description:
     requirement: 10000000
     reward: 1000000
   - id: ALLTIME_FAVOR_6
+    statisticId: ALLTIME_FAVOR
     name: All-time Favor Gained 6
     description:
     requirement: 100000000
     reward: 10000000
   - id: ALLTIME_FAVOR_7
+    statisticId: ALLTIME_FAVOR
     name: All-time Favor Gained 7
     description:
     requirement: 1000000000
     reward: 100000000
 
   - id: ALLTIME_PLAYTIME_1
+    statisticId: ALLTIME_PLAYTIME
     name: All-time Time Played 1
     description:
     requirement: 1
     reward: 100
   - id: ALLTIME_PLAYTIME_2
+    statisticId: ALLTIME_PLAYTIME
     name: All-time Time Played 2
     description:
     requirement: 10
     reward: 1000
   - id: ALLTIME_PLAYTIME_3
+    statisticId: ALLTIME_PLAYTIME
     name: All-time Time Played 3
     description:
     requirement: 100
     reward: 10000
   - id: ALLTIME_PLAYTIME_4
+    statisticId: ALLTIME_PLAYTIME
     name: All-time Time Played 4
     description:
     requirement: 1000
     reward: 100000
   - id: ALLTIME_PLAYTIME_5
+    statisticId: ALLTIME_PLAYTIME
     name: All-time Time Played 5
     description:
     requirement: 10000
     reward: 1000000
   - id: ALLTIME_PLAYTIME_6
+    statisticId: ALLTIME_PLAYTIME
     name: All-time Time Played 6
     description:
     requirement: 100000
     reward: 10000000
 
   - id: ALLTIME_MOBS_1
+    statisticId: ALLTIME_MOBS
     name: All-time Mob Kills 1
     description:
     requirement: 10
     reward: 100
   - id: ALLTIME_MOBS_2
+    statisticId: ALLTIME_MOBS
     name: All-time Mob Kills 2
     description:
     requirement: 100
     reward: 1000
   - id: ALLTIME_MOBS_3
+    statisticId: ALLTIME_MOBS
     name: All-time Mob Kills 3
     description:
     requirement: 1000
     reward: 10000
   - id: ALLTIME_MOBS_4
+    statisticId: ALLTIME_MOBS
     name: All-time Mob Kills 4
     description:
     requirement: 10000
     reward: 100000
   - id: ALLTIME_MOBS_5
+    statisticId: ALLTIME_MOBS
     name: All-time Mob Kills 5
     description:
     requirement: 100000
     reward: 1000000
   - id: ALLTIME_MOBS_6
+    statisticId: ALLTIME_MOBS
     name: All-time Mob Kills 6
     description:
     requirement: 1000000
     reward: 10000000
 
   - id: ALLTIME_RESOURCES_1
+    statisticId: ALLTIME_RESOURCES
     name: All-time Resources Gathered 1
     description:
     requirement: 10
     reward: 100
   - id: ALLTIME_RESOURCES_2
+    statisticId: ALLTIME_RESOURCES
     name: All-time Resources Gathered 2
     description:
     requirement: 100
     reward: 1000
   - id: ALLTIME_RESOURCES_3
+    statisticId: ALLTIME_RESOURCES
     name: All-time Resources Gathered 3
     description:
     requirement: 1000
     reward: 10000
   - id: ALLTIME_RESOURCES_4
+    statisticId: ALLTIME_RESOURCES
     name: All-time Resources Gathered 4
     description:
     requirement: 10000
     reward: 100000
   - id: ALLTIME_RESOURCES_5
+    statisticId: ALLTIME_RESOURCES
     name: All-time Resources Gathered 5
     description:
     requirement: 100000
     reward: 1000000
   - id: ALLTIME_RESOURCES_6
+    statisticId: ALLTIME_RESOURCES
     name: All-time Resources Gathered 6
     description:
     requirement: 1000000
     reward: 10000000
 
   - id: ALLTIME_CRATES_1
+    statisticId: ALLTIME_CRATES
     name: All-time Crates Opened 1
     description:
     requirement: 10
     reward: 100
   - id: ALLTIME_CRATES_2
+    statisticId: ALLTIME_CRATES
     name: All-time Crates Opened 2
     description:
     requirement: 100
     reward: 1000
   - id: ALLTIME_CRATES_3
+    statisticId: ALLTIME_CRATES
     name: All-time Crates Opened 3
     description:
     requirement: 1000
     reward: 10000
   - id: ALLTIME_CRATES_4
+    statisticId: ALLTIME_CRATES
     name: All-time Crates Opened 4
     description:
     requirement: 10000
     reward: 100000
   - id: ALLTIME_CRATES_5
+    statisticId: ALLTIME_CRATES
     name: All-time Crates Opened 5
     description:
     requirement: 100000
     reward: 1000000
   - id: ALLTIME_CRATES_6
+    statisticId: ALLTIME_CRATES
     name: All-time Crates Opened 6
     description:
     requirement: 1000000

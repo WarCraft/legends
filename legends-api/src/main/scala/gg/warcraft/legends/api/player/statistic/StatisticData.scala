@@ -27,14 +27,14 @@ case class StatisticData(
     monthlyResources: Long = 0,
     monthlyCrates: Long = 0,
     // all-time
-    allTimeKills: Long = 0,
-    allTimeDamage: Long = 0,
-    allTimeForts: Long = 0,
-    allTimeStrongholds: Long = 0,
-    allTimeGold: Long = 0,
-    allTimeFavor: Long = 0,
-    allTimePlaytime: Long = 0,
-    allTimeMobs: Long = 0,
-    allTimeResources: Long = 0,
-    allTimeCrates: Long = 0
+    alltimeKills: Long = 0,
+    alltimeDamage: Long = 0,
+    alltimeForts: Long = 0,
+    alltimeStrongholds: Long = 0,
+    alltimeGold: Long = 0,
+    alltimeFavor: Long = 0,
+    alltimePlaytime: Long = 0,
+    alltimeMobs: Long = 0,
+    alltimeResources: Long = 0,
+    alltimeCrates: Long = 0
 )
