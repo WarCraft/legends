@@ -1,12 +1,11 @@
-package gg.warcraft.legends.app.entity.player.statistic.handler;
+package gg.warcraft.legends.api.player.statistic.handler
 
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.entity.player.LegendsStatistic;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
-import gg.warcraft.monolith.api.entity.player.MonolithStatistic;
-import gg.warcraft.monolith.api.entity.player.event.PlayerStatisticChangedEvent;
+class PlaytimeStatisticHandler {
 
+}
+
+
+/*
 public class TimePlayedStatisticHandler {
     private final LegendsPlayerCommandService playerCommandService;
 
@@ -15,7 +14,7 @@ public class TimePlayedStatisticHandler {
         this.playerCommandService = playerCommandService;
     }
 
-    @Subscribe
+    @Subscribe TODO is this event still fired? Should it be fired from monolith for this stat or should all stats be implemented by server?
     public void onPlayerStatisticChangedEvent(PlayerStatisticChangedEvent event) {
         if (event.getStatistic() == MonolithStatistic.TIME_PLAYED) {
             playerCommandService.increaseStatistics(event.getPlayerId(), event.getAmount(),
@@ -23,3 +22,5 @@ public class TimePlayedStatisticHandler {
         }
     }
 }
+
+ */

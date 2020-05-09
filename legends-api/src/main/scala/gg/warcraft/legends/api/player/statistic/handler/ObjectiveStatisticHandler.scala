@@ -1,12 +1,11 @@
-package gg.warcraft.legends.app.entity.player.statistic.handler;
+package gg.warcraft.legends.api.player.statistic.handler
 
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.entity.player.LegendsStatistic;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
-import gg.warcraft.siege.api.objective.event.ObjectiveCapturedEvent;
-import gg.warcraft.siege.api.objective.event.ObjectiveDefendedEvent;
-import gg.warcraft.siege.api.objective.event.ObjectiveNeutralizedEvent;
+class ObjectiveStatisticHandler {
+
+}
+
+
+/*
 
 public class ObjectiveStatisticHandler {
     private final LegendsPlayerCommandService playerCommandService;
@@ -112,3 +111,5 @@ public class ObjectiveStatisticHandler {
                 playerCommandService.increaseStatistics(attackerId, 1, statistics));
     }
 }
+
+ */
