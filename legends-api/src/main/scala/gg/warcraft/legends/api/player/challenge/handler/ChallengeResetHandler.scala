@@ -1,22 +1,11 @@
-package gg.warcraft.legends.app.core.challenge.handler;
+package gg.warcraft.legends.api.player.challenge.handler
 
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.core.challenge.Challenge;
-import gg.warcraft.legends.api.core.game.event.WarStartedEvent;
-import gg.warcraft.legends.api.core.game.service.GameQueryService;
-import gg.warcraft.legends.api.entity.player.LegendsPlayer;
-import gg.warcraft.legends.api.entity.player.LegendsPlayerData;
-import gg.warcraft.legends.api.entity.player.LegendsStatistic;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerCommandService;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.monolith.api.core.TaskService;
-import gg.warcraft.monolith.api.core.event.DailyTickEvent;
-import gg.warcraft.monolith.api.entity.player.event.PlayerConnectEvent;
+class ChallengeResetHandler  {
 
-import java.time.LocalDateTime;
-import java.util.EnumSet;
-import java.util.UUID;
+}
+
+
+/* TODO
 
 public class ChallengeResetHandler {
     private final LegendsPlayerQueryService playerQueryService;
@@ -108,3 +97,5 @@ public class ChallengeResetHandler {
         });
     }
 }
+
+ */

@@ -1,18 +1,11 @@
-package gg.warcraft.legends.app.core.challenge.handler;
+package gg.warcraft.legends.api.player.challenge.handler
 
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.core.challenge.Challenge;
-import gg.warcraft.legends.api.core.challenge.service.ChallengeRepository;
-import gg.warcraft.legends.api.core.game.event.WarStartedEvent;
-import gg.warcraft.monolith.api.core.event.DailyTickEvent;
+class ChallengeRotateHandler {
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.stream.Collectors;
+}
 
+
+/* TODO
 public class ChallengeCycleHandler {
     private final ChallengeRepository challengeRepository;
 
@@ -55,3 +48,5 @@ public class ChallengeCycleHandler {
         cycleWarries();
     }
 }
+
+ */

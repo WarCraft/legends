@@ -1,25 +1,10 @@
-package gg.warcraft.legends.app.core.challenge.handler;
+package gg.warcraft.legends.api.player.challenge.handler
 
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.core.challenge.Challenge;
-import gg.warcraft.legends.api.core.challenge.service.ChallengeRepository;
-import gg.warcraft.legends.api.entity.player.LegendsCurrency;
-import gg.warcraft.legends.api.entity.player.LegendsPlayer;
-import gg.warcraft.legends.api.entity.player.LegendsStatistic;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.monolith.api.entity.player.Statistic;
-import gg.warcraft.monolith.api.entity.player.event.PlayerStatisticChangedEvent;
-import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
+class ChallengeCompletionHandler {
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+}
 
+/* TODO
 public class ChallengeCompletionHandler {
     private static final Map<Statistic, Set<Challenge>> challenges;
 
@@ -80,3 +65,5 @@ public class ChallengeCompletionHandler {
         });
     }
 }
+
+ */
