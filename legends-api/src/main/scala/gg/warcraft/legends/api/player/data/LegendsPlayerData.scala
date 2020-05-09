@@ -6,6 +6,6 @@ case class LegendsPlayerData(
     id: UUID,
     tutorialStep: String,
     combatClassCooldown: Long,
-    levelUpRewardsClaimed: Boolean,
+    levelRewardsClaimed: Int,
     launchRewardsClaimed: Boolean
 )
