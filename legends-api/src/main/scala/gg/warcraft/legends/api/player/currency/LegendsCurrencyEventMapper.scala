@@ -1,6 +1,5 @@
 package gg.warcraft.legends.api.player.currency
 
-import gg.warcraft.legends.api.player.LegendsCurrency
 import gg.warcraft.monolith.api.core.event.{Event, EventService}
 import gg.warcraft.monolith.api.player.{
   PlayerCurrencyGainedEvent, PlayerCurrencyLostEvent

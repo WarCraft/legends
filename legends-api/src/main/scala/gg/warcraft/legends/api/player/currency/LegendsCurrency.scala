@@ -1,4 +1,4 @@
-package gg.warcraft.legends.api.player
+package gg.warcraft.legends.api.player.currency
 
 sealed abstract class LegendsCurrency(val name: String) {
   override def toString: String = name

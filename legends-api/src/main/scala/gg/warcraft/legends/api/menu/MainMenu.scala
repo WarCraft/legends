@@ -1,7 +1,7 @@
 package gg.warcraft.legends.api.menu
 
 import gg.warcraft.legends.api.entity.LegendsAttribute
-import gg.warcraft.legends.api.player.LegendsCurrency
+import gg.warcraft.legends.api.player.currency.LegendsCurrency
 import gg.warcraft.monolith.api.core.ColorCode
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.entity.attribute.AttributeService

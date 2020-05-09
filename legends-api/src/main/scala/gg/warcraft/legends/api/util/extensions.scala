@@ -1,6 +1,6 @@
 package gg.warcraft.legends.api.util
 
-import gg.warcraft.legends.api.player.LegendsCurrency
+import gg.warcraft.legends.api.player.currency.LegendsCurrency
 import gg.warcraft.legends.api.player.data.{
   LegendsPlayerData, LegendsPlayerDataService
 }
