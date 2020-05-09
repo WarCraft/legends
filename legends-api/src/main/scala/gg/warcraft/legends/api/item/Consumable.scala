@@ -1,7 +1,20 @@
 package gg.warcraft.legends.api.item
 
-case class Consumable ()
+import gg.warcraft.monolith.api.item.{Item, ItemService, ItemTypeOrVariant}
 
-/*TODO
- ConsumableBuilder createConsumableBuilder(ItemTypeOrVariant itemType, String name, ItemRarity rarity);
- */
+import scala.collection.mutable
+
+case class Consumable()
+
+object Consumable {
+  private val items: mutable.Map[String, Item] = mutable.Map.empty
+
+  def apply(name: String, rarity: ItemRarity, typed: ItemTypeOrVariant)(implicit
+      itemService: ItemService
+  ): Item = items.getOrElseUpdate(
+    name,
+    itemService.create(typed)
+      .withName(s"${rarity.color}$name")
+      .withTooltip("Consumable")
+  )
+}
