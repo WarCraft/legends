@@ -1,19 +1,15 @@
-package gg.warcraft.legends.app.core;
+package gg.warcraft.legends.api.core
 
-import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
-import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder;
-import com.amazonaws.services.cloudwatch.model.Dimension;
-import com.amazonaws.services.cloudwatch.model.MetricDatum;
-import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest;
-import com.amazonaws.services.cloudwatch.model.PutMetricDataResult;
-import com.amazonaws.services.cloudwatch.model.StandardUnit;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import gg.warcraft.legends.api.core.MetricsService;
-import gg.warcraft.legends.api.entity.LegendsTeam;
-import gg.warcraft.monolith.api.core.TaskService;
+import gg.warcraft.monolith.api.entity.team.Team
 
-@Singleton
+trait MetricsService {
+  def recordPlayerCount(team: Team, count: Int): Unit
+  def recordPoints(team: Team, points: Int): Unit
+  def recordScore(team: Team, score: Int): Unit
+}
+
+
+/*
 public class AwsMetricsService implements MetricsService {
     private final TaskService taskService;
     private final AmazonCloudWatch cloudwatch;
@@ -54,3 +50,5 @@ public class AwsMetricsService implements MetricsService {
         record("TotalPoints", "Team", team.getPlural(), points);
     }
 }
+
+ */
