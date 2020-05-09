@@ -5,5 +5,5 @@ import gg.warcraft.monolith.api.player.Player
 
 case class PlayerLevelUpEvent(
     player: Player,
-    level: Int
+    level: Level
 ) extends Event
