@@ -3,6 +3,7 @@ package gg.warcraft.legends.api.menu
 import gg.warcraft.combat.api.combatclass.{CombatClass, CombatClassService}
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.combatplayer._
+import gg.warcraft.legends.api.combat.LegendsCombatClass._
 import gg.warcraft.legends.api.util.legendsplayer._
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
@@ -80,7 +81,7 @@ object CombatClassMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = {
-    val combatClass = combatClassService.combatClasses("Guardian")
+    val combatClass = combatClassService.combatClasses(Guardian)
     combatClassButton(
       player,
       combatClass,
@@ -111,7 +112,7 @@ object CombatClassMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = {
-    val combatClass = combatClassService.combatClasses("Berserker")
+    val combatClass = combatClassService.combatClasses(Berserker)
     combatClassButton(
       player,
       combatClass,
@@ -144,7 +145,7 @@ object CombatClassMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = {
-    val combatClass = combatClassService.combatClasses("Hunter")
+    val combatClass = combatClassService.combatClasses(Hunter)
     combatClassButton(
       player,
       combatClass,
@@ -173,7 +174,7 @@ object CombatClassMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = {
-    val combatClass = combatClassService.combatClasses("Marksman")
+    val combatClass = combatClassService.combatClasses(Marksman)
     combatClassButton(
       player,
       combatClass,
@@ -204,7 +205,7 @@ object CombatClassMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = {
-    val combatClass = combatClassService.combatClasses("Elementalist")
+    val combatClass = combatClassService.combatClasses(Elementalist)
     combatClassButton(
       player,
       combatClass,
@@ -236,7 +237,7 @@ object CombatClassMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = {
-    val combatClass = combatClassService.combatClasses("Wizard")
+    val combatClass = combatClassService.combatClasses(Wizard)
     combatClassButton(
       player,
       combatClass,
@@ -277,7 +278,7 @@ object CombatClassMenu {
     val combatClassPrefix = if (combatClassName(0).isVowel) "an" else "a"
 
     val cooldown = player.combatClassCooldown
-    val cooldownText =
+    val cooldownText = // TODO add utils.string implicit ops in Monolith
       if (cooldown <= System.currentTimeMillis) None
       else Some(TimeUtils.timeUntil(cooldown))
 
