@@ -98,7 +98,28 @@ class LootCrateService(implicit
     true
   }
 
-  def openCrate(playerId: UUID, crateType: String): Unit = {}
+  def openCrate(playerId: UUID, crateType: String): Boolean = {
+
+    /*
+       LegendsPlayer player = playerQueryService.getPlayer(playerId);
+        Inventory inventory = player.getInventory();
+        if (inventory.hasSpace(ITEMS_PER_CRATE)) {
+            if(itemService.takeFrom(playerId, ((StackableItem) itemInHand).withCount(1))) {
+                for (int i = 0; i < ITEMS_PER_CRATE; i += 1) {
+                    lootCrateCommandService.openCrate(playerId, crateType);
+                }
+                LootCrateOpenedEvent event = new SimpleLootCrateOpenedEvent(playerId);
+                eventService.publish(event);
+            } else {
+                System.out.println("Failed to take item from " + playerId + " inventory for loot crate " + itemInHand);
+            }
+        } else {
+            playerCommandService.sendNotification(playerId, "Please make sure you have at least " + ITEMS_PER_CRATE +
+                    " empty slots in your inventory before opening a Loot Crate.");
+        }
+        return true;
+     */
+  }
 }
 
 /*
