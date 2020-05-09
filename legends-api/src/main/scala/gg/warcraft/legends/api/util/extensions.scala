@@ -1,7 +1,9 @@
 package gg.warcraft.legends.api.util
 
 import gg.warcraft.legends.api.player.LegendsCurrency
-import gg.warcraft.legends.api.player.data.LegendsPlayerData
+import gg.warcraft.legends.api.player.data.{
+  LegendsPlayerData, LegendsPlayerDataService
+}
 import gg.warcraft.monolith.api.player.Player
 
 object legendsplayer {
@@ -9,6 +11,8 @@ object legendsplayer {
     def legendsData(implicit
         legendsDataService: LegendsPlayerDataService
     ): LegendsPlayerData = legendsDataService.getPlayerData(self.id).getOrThrow
+
+    def combatClassCooldown = 0L // TODO
 
     def favor: Int = self.currencies.get(LegendsCurrency.FAVOR)
     def fragments: Int = self.currencies.get(LegendsCurrency.FRAGMENTS)

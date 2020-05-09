@@ -1,279 +1,312 @@
 package gg.warcraft.legends.api.menu
 
+import gg.warcraft.combat.api.combatclass.{CombatClass, CombatClassService}
+import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.combat.api.util.combatplayer._
+import gg.warcraft.legends.api.util.legendsplayer._
+import gg.warcraft.monolith.api.core.ColorCode._
+import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.item.{ItemType, ItemTypeOrVariant}
+import gg.warcraft.monolith.api.item.variant.AxeVariant
+import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService}
+import gg.warcraft.monolith.api.player.Player
+import gg.warcraft.monolith.api.player.currency.CurrencyService
+import gg.warcraft.monolith.api.util.TimeUtils
+
 object CombatClassMenu {
+  def abilitiesView(combatClass: CombatClass): List[String] = List(
+    "Abilities:",
+    s"[Left Click]$YELLOW${combatClass.leftClick}",
+    s"[Right Click]$YELLOW${combatClass.rightClick}",
+    s"[Shift Left Click]$YELLOW${combatClass.shiftLeftClick}",
+    s"[Shift Right Click]$YELLOW${combatClass.shiftRightClick}"
+  )
 
+  def switchView(
+      combatClass: CombatClass,
+      isLocked: Boolean,
+      canSwitch: Boolean,
+      cooldown: Option[String]
+  ): List[String] = {
+    if (isLocked) {
+      List(s"${RED}Locked")
+    } else if (canSwitch) {
+      if (cooldown.isEmpty)
+        List(s"$GREEN[Shift Right Click] To switch to ${combatClass.name}")
+      else List(s"${RED}You can change combat class in ${cooldown.get}")
+    } else {
+      List("This is your current combat class")
+    }
+  }
+
+  private def combatClassButton(
+      player: Player,
+      combatClass: CombatClass,
+      icon: ItemTypeOrVariant,
+      cooldown: Option[String],
+      lore: String*
+  )(implicit
+      combatDataService: CombatDataService
+  ): Button = {
+    // TODO val combatClassShopId = ???
+    // TODO val isLocked = !shopProfileService.getProfile(player.id).hasCombatClass(combatClassShopId);
+    val canSwitch = player.combatClass match {
+      case Some(playerCombatClass) => playerCombatClass != combatClass
+      case None                    => true
+    }
+
+    val tooltip = lore ++ List("") ++ abilitiesView(combatClass) ++ List(
+      ""
+    ) ++ switchView(combatClass, isLocked, canSwitch, cooldown)
+    Button(
+      icon,
+      combatClass.name,
+      tooltip: _*
+    ) { click =>
+      if (!isLocked && cooldown.isEmpty && click.isShiftRightClick) {
+        val newCombatData =
+          player.combatData.copy(combatClass =
+            Some(combatClass)
+          ) // TODO does this belong in a CombatClassService which then calls combat data?
+        combatDataService.setCombatData(newCombatData)
+      }
+    }
+  }
+
+  def guardianButton(
+      player: Player,
+      cooldown: Option[String]
+  )(implicit
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService
+  ): Button = {
+    val combatClass = combatClassService.combatClasses("Guardian")
+    combatClassButton(
+      player,
+      combatClass,
+      ItemType.SHIELD,
+      cooldown,
+      "Guardians wield a sword and a shield.",
+      "Their skills focus on control and defense.",
+      "",
+      s"$YELLOW[Left Click] Melee",
+      "A normal Minecraft melee swing.",
+      s"$YELLOW[Right Click] Hamstring",
+      "Damage your enemy and slow them for a",
+      "short duration.",
+      s"$YELLOW[Shift Left Click] Slam",
+      "An overpowering blow that damages the",
+      "target, knocks them back, and makes",
+      "them nauseous for a moderate duration.",
+      s"$YELLOW[Shift Right Click] Stand Your Ground",
+      "Bunker down to greatly increase all of your",
+      "resistances for a moderate duration."
+    )
+  }
+
+  def berserkerButton(
+      player: Player,
+      cooldown: Option[String]
+  )(implicit
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService
+  ): Button = {
+    val combatClass = combatClassService.combatClasses("Berserker")
+    combatClassButton(
+      player,
+      combatClass,
+      AxeVariant.STONE,
+      cooldown,
+      "Berserkers dual wield axes. Their skills",
+      "focus on damage and recovering health.",
+      "",
+      s"$YELLOW[Left Click] Melee",
+      "A normal Minecraft melee swing.",
+      s"$YELLOW[Right Click] Maul",
+      "Maul your enemy for damage and receive",
+      "absorption for a short duration.",
+      s"$YELLOW[Shift Left Click] Grudge",
+      "Mark a player with your grudge for a",
+      "moderate duration. Any attacks made",
+      "against them heal you a little bit.",
+      s"$YELLOW[Shift Right Click] Shatter",
+      "Slam down into the ground in front of",
+      "you, damaging enemies while throwing",
+      "them into the air and making them",
+      "nauseous for a moderate duration."
+    )
+  }
+
+  def hunterButton(
+      player: Player,
+      cooldown: Option[String]
+  )(implicit
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService
+  ): Button = {
+    val combatClass = combatClassService.combatClasses("Hunter")
+    combatClassButton(
+      player,
+      combatClass,
+      ItemType.BOW,
+      cooldown,
+      "Hunters use bow and arrow. Their skills",
+      "offer damage, control, and mobility.",
+      "",
+      s"$YELLOW[Left Click] Toxic Arrow",
+      "Fire a poisoned arrow damaging your target",
+      "and applying poison for a short duration.",
+      s"$YELLOW[Right Click] Shoot",
+      "A normal Minecraft bow shot.",
+      s"$YELLOW[Shift Left Click] Trap",
+      "Place a trap at your feet which roots",
+      "any enemies that trigger it.",
+      s"$YELLOW[Shift Right Click] Disengage",
+      "Leap backwards a sizable distance."
+    )
+  }
+
+  def marksmanButton(
+      player: Player,
+      cooldown: Option[String]
+  )(implicit
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService
+  ): Button = {
+    val combatClass = combatClassService.combatClasses("Marksman")
+    combatClassButton(
+      player,
+      combatClass,
+      ItemType.CROSSBOW,
+      cooldown,
+      "Marksmen use a crossbow. Their skills",
+      "focus on damage while sacrificing mobility.",
+      "",
+      s"$YELLOW[Left Click] Power Shot",
+      "Fire a high velocity shot dealing damage",
+      "and knocking back your target.",
+      s"$YELLOW[Right Click] Shoot",
+      "A normal Minecraft bow shot.",
+      s"$YELLOW[Shift Left Click] Focus",
+      "Focus your vision and greatly increase",
+      "your damage while becoming immobile",
+      "(cast again to cancel).",
+      s"$YELLOW[Shift Right Click] Sneak",
+      "Gain a speed boost and hide in plain",
+      "sight, becoming invisible to enemies."
+    )
+  }
+
+  def elementalistButton(
+      player: Player,
+      cooldown: Option[String]
+  )(implicit
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService
+  ): Button = {
+    val combatClass = combatClassService.combatClasses("Elementalist")
+    combatClassButton(
+      player,
+      combatClass,
+      ItemType.HOE,
+      cooldown,
+      "Elementalists wield a staff (hoe). Their",
+      "skills offer large area damage.",
+      "", // TODO refactor these skill descriptions into combat class config
+      s"$YELLOW[Left Click] Fireball",
+      "Fling a ball of fire at your target",
+      "dealing damage and setting them on fire",
+      s"$YELLOW[Right Click] Bolt",
+      "Call down lightning at your targeted",
+      "location damaging nearby enemies.",
+      s"$YELLOW[Shift Left Click] Hail Blast",
+      "Blast an icy torrent in front of you",
+      "damaging and slowing enemies.",
+      s"$YELLOW[Shift Right Click] Molten Storm",
+      "Conjure a storm of molten rocks at your",
+      "targeted location. Each fireball damages",
+      "and briefly sets enemies on fire."
+    )
+  }
+
+  def wizardButton(
+      player: Player,
+      cooldown: Option[String]
+  )(implicit
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService
+  ): Button = {
+    val combatClass = combatClassService.combatClasses("Wizard")
+    combatClassButton(
+      player,
+      combatClass,
+      ItemType.STICK,
+      cooldown,
+      "Wizards wield wand (stick) and book. Their",
+      "skills focus on area control, and mobility.",
+      "",
+      s"$YELLOW[Left Click] Fireball",
+      "Fling a ball of fire at your target",
+      "dealing damage and setting them on fire",
+      s"$YELLOW[Right Click] Arcane Missile",
+      "Cast an arcane missile damaging nearby",
+      "enemies on impact.",
+      s"$YELLOW[Shift Left Click] Teleport",
+      "Teleport to your targeted location, releasing",
+      "an arcane explosion around you on arrival",
+      "damaging and slowing nearby enemies.",
+      s"$YELLOW[Shift Right Click] Mass Piggify",
+      "Conjure chaotic energies at your targeted",
+      "location, which after a short delay force",
+      "your enemies to ride uncontrollable pigs",
+      "making them nauseous."
+    )
+  }
+
+  def apply(
+      player: Player
+  )(implicit
+      menuService: MenuService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService
+  ): Menu = {
+    val combatClass = player.combatClass
+    val combatClassName = combatClass.get.name
+    val combatClassPrefix = if (combatClassName(0).isVowel) "an" else "a"
+
+    val cooldown = player.combatClassCooldown
+    val cooldownText =
+      if (cooldown <= System.currentTimeMillis) None
+      else Some(TimeUtils.timeUntil(cooldown))
+
+    val infoButton = Button(
+      ItemType.BOOK,
+      "Choosing a Combat Class",
+      List(
+        s"You are currently fighting as $combatClassPrefix",
+        s"$YELLOW$combatClassName",
+        "",
+        "You can change your combat class",
+        "once every 10 minutes."
+      )
+    )
+
+    Menu(
+      "Combat Class",
+      Menu.Size.ONE_ROW,
+      Map(
+        0 -> infoButton,
+        8 -> Button.back(MainMenu.apply),
+        // 1st row
+        2 -> guardianButton(player, cooldownText),
+        3 -> berserkerButton(player, cooldownText),
+        4 -> hunterButton(player, cooldownText),
+        5 -> marksmanButton(player, cooldownText),
+        6 -> elementalistButton(player, cooldownText),
+        7 -> wizardButton(player, cooldownText)
+      )
+    )
+  }
 }
-
-/*
-public class DefaultSpecializationMenuFactory extends AbstractMenuFactory implements SpecializationMenuFactory {
-    private static final String YELLOW = ColorCode.YELLOW.toString();
-    private static final String GREEN = ColorCode.GREEN.toString();
-    private static final String RED = ColorCode.RED.toString();
-    private static final Map<String, SpecializationId> specializationNameToId;
-
-    static {
-        specializationNameToId = new HashMap<>();
-        specializationNameToId.put("Armsmaster", SpecializationId.ARMSMASTER);
-        specializationNameToId.put("Berserker", SpecializationId.BERSERKER);
-        specializationNameToId.put("Hunter", SpecializationId.HUNTER);
-        specializationNameToId.put("Marksman", SpecializationId.MARKSMAN);
-        specializationNameToId.put("Tempest", SpecializationId.TEMPEST);
-        specializationNameToId.put("Wizard", SpecializationId.WIZARD);
-    }
-
-    private final LegendsPlayerQueryService legendsPlayerQueryService;
-    private final LegendsPlayerCommandService legendsPlayerCommandService;
-    private final SpecializationQueryService specializationQueryService;
-    private final ShopProfileQueryService shopProfileQueryService;
-    private final MainMenuFactory mainMenuFactory;
-    private final StringUtils stringUtils;
-    private final TimeUtils timeUtils;
-
-    @Inject
-    public DefaultSpecializationMenuFactory(LegendsPlayerQueryService legendsPlayerQueryService,
-                                            LegendsPlayerCommandService legendsPlayerCommandService,
-                                            SpecializationQueryService specializationQueryService,
-                                            ShopProfileQueryService shopProfileQueryService,
-                                            MenuCommandService menuCommandService,
-                                            MenuBuilderFactory menuBuilderFactory,
-                                            ButtonBuilderFactory buttonBuilderFactory,
-                                            MainMenuFactory mainMenuFactory,
-                                            StringUtils stringUtils, TimeUtils timeUtils) {
-        super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
-        this.legendsPlayerQueryService = legendsPlayerQueryService;
-        this.legendsPlayerCommandService = legendsPlayerCommandService;
-        this.specializationQueryService = specializationQueryService;
-        this.shopProfileQueryService = shopProfileQueryService;
-        this.mainMenuFactory = mainMenuFactory;
-        this.stringUtils = stringUtils;
-        this.timeUtils = timeUtils;
-    }
-
-    Button createInfoButton(Specialization specialization) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Choosing a specialization");
-        String specializationName = specialization == null
-                ? "Beginner"
-                : specialization.getName();
-        String specializationPrefix = stringUtils.isVowel(specializationName.charAt(0)) ? "an " : "a ";
-        builder.addTooltip("You are currently fighting as " + specializationPrefix);
-        builder.addTooltip(YELLOW + specializationName);
-        builder.addTooltip("");
-        builder.addTooltip("You can change your specialization");
-        builder.addTooltip("once every 10 minutes.");
-        return builder.build();
-    }
-
-    List<String> createAbilitiesView(Specialization specialization) {
-        List<String> view = new ArrayList<>();
-        view.add("Abilities:");
-        view.add("[LEFT CLICK] " + YELLOW + specialization.getLeftClickAbility());
-        view.add("[RIGHT CLICK] " + YELLOW + specialization.getRightClickAbility());
-        view.add("[SHIFT LEFT CLICK] " + YELLOW + specialization.getShiftLeftClickAbility());
-        view.add("[SHIFT RIGHT CLICK] " + YELLOW + specialization.getShiftRightClickAbility());
-        return view;
-    }
-
-    List<String> createSwitchView(Specialization specialization, boolean isLocked,
-                                  boolean canSwitch, String cooldown) {
-        List<String> view = new ArrayList<>();
-        if (isLocked) {
-            view.add(RED + "Locked");
-        } else if (canSwitch) {
-            if (cooldown == null) {
-                view.add(GREEN + "[SHIFT RIGHT CLICK] To switch to the " + specialization.getName());
-            } else {
-                view.add(RED + "You can change specializations in " + cooldown);
-            }
-        } else {
-            view.add("This is your current specialization");
-        }
-        return view;
-    }
-
-    Button createSpecializationButton(LegendsPlayer player, LegendsSpecialization legendsSpecialization,
-                                      ItemType icon, List<String> lore, String cooldown) {
-        String specializationName = legendsSpecialization.getName();
-        Specialization specialization = specializationQueryService.getSpecialization(specializationName);
-        SpecializationId specializationId = specializationNameToId.get(specializationName);
-        if (specializationId == null) {
-            System.out.println("WARN failed to createSpecializationButton, specializationId is null for " + specializationName);
-            ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BARRIER, "Something went wrong");
-            builder.addTooltip("Please contact fishb6nes");
-            return builder.build();
-        }
-
-        boolean isLocked = !shopProfileQueryService.getProfile(player.getId()).hasSpecialization(specializationId);
-        Specialization playerSpecialization = player.getSpecialization();
-        boolean canSwitch = playerSpecialization == null
-                || !playerSpecialization.getName().equals(specializationName);
-
-        ButtonBuilder builder = createSimpleButtonBuilder(icon, specializationName);
-        lore.forEach(builder::addTooltip);
-        builder.addTooltip("");
-        createAbilitiesView(specialization).forEach(builder::addTooltip);
-        builder.addTooltip("");
-        createSwitchView(specialization, isLocked, canSwitch, cooldown).forEach(builder::addTooltip);
-
-        builder.withAction(action -> {
-         //   if (!isLocked && cooldown == null && action.isShiftRightClick()) {
-                legendsPlayerCommandService.setSpecialization(player.getId(), specializationName);
-         //   }
-        });
-        return builder.build();
-    }
-
-    Button createArmsmasterButton(LegendsPlayer player, String cooldown) {
-        List<String> lore = new ArrayList<>();
-        lore.add("Armsmasters wield a sword and a shield.");
-        lore.add("Their skills focus on control and defense.");
-        lore.add("");
-        lore.add(ColorCode.YELLOW + "[Left click] Melee");
-        lore.add("A normal Minecraft melee swing.");
-        lore.add(ColorCode.YELLOW + "[Right click] Hamstring");
-        lore.add("Damage your enemy and slow them for a");
-        lore.add("short duration.");
-        lore.add(ColorCode.YELLOW + "[Shift left click] Slam");
-        lore.add("An overpowering blow that damages the");
-        lore.add("target, knocks them back, and makes");
-        lore.add("them nauseous for a moderate duration.");
-        lore.add(ColorCode.YELLOW + "[Shift right click] Stand Your Ground");
-        lore.add("Bunker down to greatly increase all of your");
-        lore.add("resistances for a moderate duration.");
-        return createSpecializationButton(player, LegendsSpecialization.ARMSMASTER, ItemType.SWORD, // TODO wood sword
-                lore, cooldown);
-    }
-
-    Button createBerserkerButton(LegendsPlayer player, String cooldown) {
-        List<String> lore = new ArrayList<>();
-        lore.add("Berserkers wield an axe and the skulls");
-        lore.add("of their enemies. Their skills focus on");
-        lore.add("damage and recovering health.");
-        lore.add("");
-        lore.add(ColorCode.YELLOW + "[Left click] Melee");
-        lore.add("A normal Minecraft melee swing.");
-        lore.add(ColorCode.YELLOW + "[Right click] Maul");
-        lore.add("Maul your enemy for damage and receive");
-        lore.add("absorption for a short duration.");
-        lore.add(ColorCode.YELLOW + "[Shift left click] Grudge");
-        lore.add("Mark a player with your grudge for a");
-        lore.add("moderate duration. Any attacks made");
-        lore.add("against them heal you a little bit.");
-        lore.add(ColorCode.YELLOW + "[Shift right click] Shatter");
-        lore.add("Slam down into the ground in front of");
-        lore.add("you, damaging enemies while throwing");
-        lore.add("them into the air and making them");
-        lore.add("nauseous for a moderate duration.");
-        return createSpecializationButton(player, LegendsSpecialization.BERSERKER, ItemType.AXE, // TODO wood axe
-                lore, cooldown);
-    }
-
-    Button createHunterButton(LegendsPlayer player, String cooldown) {
-        List<String> lore = new ArrayList<>();
-        lore.add("Hunters use bow and arrow. Their skills");
-        lore.add("offer damage, control, and mobility.");
-        lore.add("");
-        lore.add(ColorCode.YELLOW + "[Left click] Toxic Arrow");
-        lore.add("Fire a poisoned arrow damaging your target");
-        lore.add("and applying poison for a short duration.");
-        lore.add(ColorCode.YELLOW + "[Right click] Shoot");
-        lore.add("A normal Minecraft bow shot.");
-        lore.add(ColorCode.YELLOW + "[Shift left click] Trap");
-        lore.add("Place a trap at your feet which roots");
-        lore.add("any enemies that trigger it.");
-        lore.add(ColorCode.YELLOW + "[Shift right click] Disengage");
-        lore.add("Leap backwards a sizable distance.");
-        return createSpecializationButton(player, LegendsSpecialization.HUNTER, ItemType.BOW,
-                lore, cooldown);
-    }
-
-    Button createMarksmanButton(LegendsPlayer player, String cooldown) {
-        List<String> lore = new ArrayList<>();
-        lore.add("Marksmen use bow and arrow. Their skills");
-        lore.add("focus on damage while sacrificing mobility.");
-        lore.add("");
-        lore.add(ColorCode.YELLOW + "[Left click] Power Shot");
-        lore.add("Fire a high velocity shot dealing damage");
-        lore.add("and knocking back your target.");
-        lore.add(ColorCode.YELLOW + "[Right click] Shoot");
-        lore.add("A normal Minecraft bow shot.");
-        lore.add(ColorCode.YELLOW + "[Shift left click] Focus");
-        lore.add("Focus your vision and greatly increase");
-        lore.add("your damage while becoming immobile");
-        lore.add("(cast again to cancel).");
-        lore.add(ColorCode.YELLOW + "[Shift right click] Sneak");
-        lore.add("Gain a speed boost and hide in plain");
-        lore.add("sight, becoming invisible to enemies.");
-        return createSpecializationButton(player, LegendsSpecialization.MARKSMAN, ItemType.BOW,
-                lore, cooldown);
-    }
-
-    Button createTempestButton(LegendsPlayer player, String cooldown) {
-        List<String> lore = new ArrayList<>();
-        lore.add("Tempests wield a staff (hoe). Their");
-        lore.add("skills offer large area damage.");
-        lore.add("");
-        lore.add(ColorCode.YELLOW + "[Left click] Fireball");
-        lore.add("Fling a ball of fire at your target");
-        lore.add("dealing damage and setting them on fire");
-        lore.add(ColorCode.YELLOW + "[Right click] Bolt");
-        lore.add("Call down lightning at your targeted");
-        lore.add("location damaging nearby enemies.");
-        lore.add(ColorCode.YELLOW + "[Shift left click] Hail Blast");
-        lore.add("Blast an icy torrent in front of you");
-        lore.add("damaging and slowing enemies.");
-        lore.add(ColorCode.YELLOW + "[Shift right click] Molten Storm");
-        lore.add("Conjure a storm of molten rocks at your");
-        lore.add("targeted location. Each fireball damages");
-        lore.add("and briefly sets enemies on fire.");
-        return createSpecializationButton(player, LegendsSpecialization.TEMPEST, ItemType.HOE, // TODO wood hoe
-                lore, cooldown);
-    }
-
-    Button createWizardButton(LegendsPlayer player, String cooldown) {
-        List<String> lore = new ArrayList<>();
-        lore.add("Tempests wield wand (stick) and book. Their");
-        lore.add("skills focus on area control, and mobility.");
-        lore.add("");
-        lore.add(ColorCode.YELLOW + "[Left click] Fireball");
-        lore.add("Fling a ball of fire at your target");
-        lore.add("dealing damage and setting them on fire");
-        lore.add(ColorCode.YELLOW + "[Right click] Arcane Missile");
-        lore.add("Cast an arcane missile damaging nearby");
-        lore.add("enemies on impact.");
-        lore.add(ColorCode.YELLOW + "[Shift left click] Teleport");
-        lore.add("Teleport to your targeted location, releasing");
-        lore.add("an arcane explosion around you on arrival");
-        lore.add("damaging and slowing nearby enemies.");
-        lore.add(ColorCode.YELLOW + "[Shift right click] Mass Piggify");
-        lore.add("Conjure chaotic energies at your targeted");
-        lore.add("location, which after a short delay force");
-        lore.add("your enemies to ride uncontrollable pigs");
-        lore.add("making them nauseous.");
-        return createSpecializationButton(player, LegendsSpecialization.WIZARD, ItemType.STICK,
-                lore, cooldown);
-    }
-
-    @Override
-    public Menu createSpecializationMenu(UUID playerId) {
-        LegendsPlayer player = legendsPlayerQueryService.getPlayer(playerId);
-        Specialization specialization = player.getSpecialization();
-        long cooldown = player.getSpecializationCooldown();
-        String cooldownText = null;
-        if (cooldown > System.currentTimeMillis()) {
-            cooldownText = timeUtils.getTimeToGoUntil(cooldown);
-        }
-
-        MenuBuilder builder = createMenuBuilder("Specialization", MenuSize.ONE_ROW);
-        builder.addButton(0, createInfoButton(specialization));
-        builder.addButton(2, createArmsmasterButton(player, cooldownText));
-        builder.addButton(3, createBerserkerButton(player, cooldownText));
-        builder.addButton(4, createHunterButton(player, cooldownText));
-        builder.addButton(5, createMarksmanButton(player, cooldownText));
-        builder.addButton(6, createTempestButton(player, cooldownText));
-        builder.addButton(7, createWizardButton(player, cooldownText));
-        builder.addButton(8, createBackButton(playerId, mainMenuFactory::createMainMenu));
-        return builder.build();
-    }
-}
-
- */
