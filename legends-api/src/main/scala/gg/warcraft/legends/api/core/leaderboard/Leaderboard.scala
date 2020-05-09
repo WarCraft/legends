@@ -1,4 +1,4 @@
-package gg.warcraft.legends.api.leaderboard
+package gg.warcraft.legends.api.core.leaderboard
 
 import java.util.UUID
 

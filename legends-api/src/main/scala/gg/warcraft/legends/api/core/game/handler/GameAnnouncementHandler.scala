@@ -1,4 +1,4 @@
-package gg.warcraft.legends.api.game.handler
+package gg.warcraft.legends.api.core.game.handler
 
 class GameAnnouncementHandler {
 

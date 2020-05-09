@@ -1,9 +1,9 @@
-package gg.warcraft.legends.api.game.handler
+package gg.warcraft.legends.api.core.game.handler
 
 import java.time.LocalTime
 
 import gg.warcraft.legends.api.LegendsConfig
-import gg.warcraft.legends.api.game.{GameService, Skirmish}
+import gg.warcraft.legends.api.core.game.{GameService, Skirmish}
 
 class DailySkirmishHandler(gameService: GameService) extends Runnable {
   private var skirmishTimes: List[LocalTime] = Nil

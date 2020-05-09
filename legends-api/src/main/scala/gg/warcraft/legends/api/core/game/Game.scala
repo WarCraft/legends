@@ -1,4 +1,4 @@
-package gg.warcraft.legends.api.game
+package gg.warcraft.legends.api.core.game
 
 import java.time.LocalDateTime
 

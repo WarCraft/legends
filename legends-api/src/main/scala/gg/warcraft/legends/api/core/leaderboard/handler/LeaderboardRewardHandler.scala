@@ -1,4 +1,4 @@
-package gg.warcraft.legends.api.leaderboard.handler
+package gg.warcraft.legends.api.core.leaderboard.handler
 
 class LeaderboardRewardHandler {
 
