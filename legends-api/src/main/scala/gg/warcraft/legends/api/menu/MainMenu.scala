@@ -11,9 +11,7 @@ import gg.warcraft.monolith.api.player.currency.{Currencies, CurrencyService}
 import gg.warcraft.monolith.api.player.Player
 
 object MainMenu {
-  private def attributesView(
-      player: Player
-  )(implicit
+  private def attributesView(player: Player)(implicit
       attributesService: AttributeService
   ): List[String] = {
     val attributes = attributesService.getAttributes(player.id)
@@ -33,9 +31,7 @@ object MainMenu {
       .map { _.get } // flatMap?
   }
 
-  private def currenciesView(
-      player: Player
-  )(implicit
+  private def currenciesView(player: Player)(implicit
       currencyService: CurrencyService
   ): List[String] = {
     val currencies: Currencies = currencyService.getCurrencies(player.id)
@@ -102,9 +98,7 @@ object MainMenu {
     case _ => ItemType.NETHER_STAR
   }
 
-  def apply(
-      player: Player
-  )(implicit
+  def apply(player: Player)(implicit
       attributesService: AttributeService,
       currencyService: CurrencyService
   ): Menu = {
