@@ -1,6 +1,6 @@
 package gg.warcraft.legends.api.menu
 
-object CollectablesMenu {
+object CollectiblesMenu {
 
 }
 

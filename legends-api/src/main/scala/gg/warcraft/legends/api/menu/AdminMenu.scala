@@ -3,9 +3,6 @@ package gg.warcraft.legends.api.menu
 import gg.warcraft.monolith.api.menu.Menu
 
 object AdminMenu {
-  def apply(): Menu = {
-    
-  }
 }
 
 
