@@ -518,8 +518,6 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
         });
         return builder.build();
     }
-
-
 }
 
- */
+*/

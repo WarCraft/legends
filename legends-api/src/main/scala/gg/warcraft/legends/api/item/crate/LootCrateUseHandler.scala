@@ -26,5 +26,6 @@ class LootCrateUseHandler(lootCrateService: LootCrateService) extends Event.Hand
       if (onInteract(playerId, mainHand))
         event.copy(cancelled = true).asInstanceOf[T]
       else event.asInstanceOf[T]
+    case _ => event
   }
 }
