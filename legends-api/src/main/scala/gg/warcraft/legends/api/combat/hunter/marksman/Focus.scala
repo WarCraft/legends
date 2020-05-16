@@ -56,8 +56,8 @@ object Focus {
     private val modifier = CombatValue.Modifier.percent(source, modifierValue)
 
     override def reduce[T <: PreEvent](event: T): T = event match {
-      case it: AbilityPreCastEvent =>
-        it.copy(damageModifiers = modifier :: it.damageModifiers).asInstanceOf[T]
+      case event @ AbilityPreCastEvent(_, _, damageModifiers, _, _) =>
+        event.copy(damageModifiers = modifier :: damageModifiers).asInstanceOf[T]
       case _ => event
     }
   }
@@ -104,6 +104,6 @@ class Focus(
   override def cancel(): Unit = {
     entityService.freezeEntity(caster.id, 0.ticks)
     statusService.removeEffect(caster.id, status)
-    effect.cancel();
+    effect.cancel()
   }
 }

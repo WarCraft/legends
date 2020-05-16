@@ -20,6 +20,5 @@ object LegendsCombatClass {
   case object Elementalist extends LegendsCombatClass("Elementalist", Type.Mage)
   case object Wizard extends LegendsCombatClass("Wizard", Type.Mage)
 
-  implicit def toString(combatClass: LegendsCombatClass): String =
-    combatClass.name
+  implicit def toString(combatClass: LegendsCombatClass): String = combatClass.name
 }
