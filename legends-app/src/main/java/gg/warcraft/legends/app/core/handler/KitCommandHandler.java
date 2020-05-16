@@ -49,11 +49,11 @@ public class KitCommandHandler implements CommandHandler {
         this.specializationQueryService = specializationQueryService;
 
         Map<LegendsAttribute, Integer> kitAttributes = new HashMap<>();
-        kitAttributes.put(LegendsAttribute.STRENGTH, 1);
-        kitAttributes.put(LegendsAttribute.DEXTERITY, 1);
+        kitAttributes.put(LegendsAttribute.Strength, 1);
+        kitAttributes.put(LegendsAttribute.Dexterity, 1);
         kitAttributes.put(LegendsAttribute.INTELLIGENCE, 1);
-        kitAttributes.put(LegendsAttribute.VITALITY, 1);
-        kitAttributes.put(LegendsAttribute.CRIT, 1);
+        kitAttributes.put(LegendsAttribute.Vitality, 1);
+        kitAttributes.put(LegendsAttribute.Crit, 1);
         this.kitHelmet = equipmentBuilderFactory.createEquipmentBuilder(
                 ItemType.HELMET, ItemRarity.COMMON, "Beginner's Cap")
                 .withAttributes(kitAttributes)

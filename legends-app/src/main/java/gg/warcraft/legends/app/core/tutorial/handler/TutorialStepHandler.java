@@ -157,7 +157,7 @@ public class TutorialStepHandler implements CommandHandler {
                 break;
             case RACE:
                 LegendsTeam team = player.getTeam();
-                if (team == null || team == LegendsTeam.WAYFARER) {
+                if (team == null || team == LegendsTeam.Wayfarers) {
                     playerCommandService.sendNotification(playerId,
                             "Please choose a race by right clicking on one of the signs before continuing.");
                     return true;

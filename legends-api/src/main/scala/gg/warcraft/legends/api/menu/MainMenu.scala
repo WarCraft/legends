@@ -15,11 +15,11 @@ object MainMenu {
       attributesService: AttributeService
   ): List[String] = {
     val attributes = attributesService.getAttributes(player.id)
-    lazy val strength = attributes.get(LegendsAttribute.STRENGTH).toInt
-    lazy val dexterity = attributes.get(LegendsAttribute.DEXTERITY).toInt
-    lazy val intellect = attributes.get(LegendsAttribute.INTELLECT).toInt
-    lazy val vitality = attributes.get(LegendsAttribute.VITALITY).toInt
-    lazy val crit = attributes.get(LegendsAttribute.CRIT).toInt
+    lazy val strength = attributes.get(LegendsAttribute.Strength).toInt
+    lazy val dexterity = attributes.get(LegendsAttribute.Dexterity).toInt
+    lazy val intellect = attributes.get(LegendsAttribute.Intellect).toInt
+    lazy val vitality = attributes.get(LegendsAttribute.Vitality).toInt
+    lazy val crit = attributes.get(LegendsAttribute.Crit).toInt
     List(
       s"${ColorCode.WHITE}Attributes:",
       if (strength != 0) Some(s"$YELLOW$strength Strength") else None,

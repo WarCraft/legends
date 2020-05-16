@@ -76,33 +76,33 @@ public class PrestigeAttributesHandler {
         } else if (prestige == 1) {
             AttributeModifier vitalityModifier = createModifier(playerId, GenericAttribute.MAX_HEALTH, 10);
             newModifiers.add(vitalityModifier);
-            AttributeModifier strengthModifier = createModifier(playerId, LegendsAttribute.STRENGTH, attributeValue);
+            AttributeModifier strengthModifier = createModifier(playerId, LegendsAttribute.Strength, attributeValue);
             newModifiers.add(strengthModifier);
-            AttributeModifier dexterityModifier = createModifier(playerId, LegendsAttribute.DEXTERITY, attributeValue);
+            AttributeModifier dexterityModifier = createModifier(playerId, LegendsAttribute.Dexterity, attributeValue);
             newModifiers.add(dexterityModifier);
             AttributeModifier intelligenceModifier = createModifier(playerId, LegendsAttribute.INTELLIGENCE, attributeValue);
             newModifiers.add(intelligenceModifier);
         } else if (prestige == 2) {
             AttributeModifier vitalityModifier = createModifier(playerId, GenericAttribute.MAX_HEALTH, 10);
             newModifiers.add(vitalityModifier);
-            AttributeModifier strengthModifier = createModifier(playerId, LegendsAttribute.STRENGTH, 10);
+            AttributeModifier strengthModifier = createModifier(playerId, LegendsAttribute.Strength, 10);
             newModifiers.add(strengthModifier);
-            AttributeModifier dexterityModifier = createModifier(playerId, LegendsAttribute.DEXTERITY, 10);
+            AttributeModifier dexterityModifier = createModifier(playerId, LegendsAttribute.Dexterity, 10);
             newModifiers.add(dexterityModifier);
             AttributeModifier intelligenceModifier = createModifier(playerId, LegendsAttribute.INTELLIGENCE, 10);
             newModifiers.add(intelligenceModifier);
-            AttributeModifier critModifier = createModifier(playerId, LegendsAttribute.CRIT, attributeValue);
+            AttributeModifier critModifier = createModifier(playerId, LegendsAttribute.Crit, attributeValue);
             newModifiers.add(critModifier);
         } else if (prestige > 2) {
             AttributeModifier vitalityModifier = createModifier(playerId, GenericAttribute.MAX_HEALTH, 10);
             newModifiers.add(vitalityModifier);
-            AttributeModifier strengthModifier = createModifier(playerId, LegendsAttribute.STRENGTH, 10);
+            AttributeModifier strengthModifier = createModifier(playerId, LegendsAttribute.Strength, 10);
             newModifiers.add(strengthModifier);
-            AttributeModifier dexterityModifier = createModifier(playerId, LegendsAttribute.DEXTERITY, 10);
+            AttributeModifier dexterityModifier = createModifier(playerId, LegendsAttribute.Dexterity, 10);
             newModifiers.add(dexterityModifier);
             AttributeModifier intelligenceModifier = createModifier(playerId, LegendsAttribute.INTELLIGENCE, 10);
             newModifiers.add(intelligenceModifier);
-            AttributeModifier critModifier = createModifier(playerId, LegendsAttribute.CRIT, 10);
+            AttributeModifier critModifier = createModifier(playerId, LegendsAttribute.Crit, 10);
             newModifiers.add(critModifier);
         }
         rankAttributeModifierRepository.save(playerId, newModifiers);
@@ -120,7 +120,7 @@ public class PrestigeAttributesHandler {
         taskService.runNextTick(() -> {
             UUID playerId = event.getPlayerId();
             LegendsPlayer player = playerQueryService.getPlayer(playerId);
-            if (player == null || player.getTeam() == null || player.getTeam() == LegendsTeam.WAYFARER) {
+            if (player == null || player.getTeam() == null || player.getTeam() == LegendsTeam.Wayfarers) {
                 return;
             }
 

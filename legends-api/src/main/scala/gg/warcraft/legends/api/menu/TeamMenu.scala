@@ -12,7 +12,7 @@ import gg.warcraft.monolith.api.player.data.PlayerDataService
 object TeamMenu {
 
   def infoButton(player: Player): Button = {
-    val teamName = player.team.map { _.name }.getOrElse(LegendsTeam.WAYFARER.name)
+    val teamName = player.team.map { _.name }.getOrElse(LegendsTeam.Wayfarers.name)
     Button(
       ItemType.BOOK,
       "Choosing a team",
@@ -60,10 +60,10 @@ object TeamMenu {
   ): Button = {
     Button.skull(
       "fishb6nes",
-      LegendsTeam.HUMANS.name,
+      LegendsTeam.Humans.name,
       List("[Shift Right Click] To switch to this team"),
       if (_.isShiftRightClick) {
-        playerDataService.setPlayerData(player.data.copy(team = LegendsTeam.HUMANS))
+        playerDataService.setPlayerData(player.data.copy(team = LegendsTeam.Humans))
       }
     )
   }
@@ -71,10 +71,10 @@ object TeamMenu {
   def orcButton(player: Player): Button = {
     Button.skull(
       "fishb6nes",
-      LegendsTeam.ORCS.name,
+      LegendsTeam.Orcs.name,
       List("[Shift Right Click] To switch to this team"),
       if (_.isShiftRightClick) {
-        playerDataService.setPlayerData(player.data.copy(team = LegendsTeam.ORCS))
+        playerDataService.setPlayerData(player.data.copy(team = LegendsTeam.Orcs))
       }
     )
   }
@@ -82,10 +82,10 @@ object TeamMenu {
   def dwarfButton(player: Player): Button = {
     Button.skull(
       "fishb6nes",
-      LegendsTeam.DWARVES.name,
+      LegendsTeam.Dwarves.name,
       List("[Shift Right Click] To switch to this team"),
       if (_.isShiftRightClick) {
-        playerDataService.setPlayerData(player.data.copy(team = LegendsTeam.DWARVES))
+        playerDataService.setPlayerData(player.data.copy(team = LegendsTeam.Dwarves))
       }
     )
   }
@@ -93,10 +93,10 @@ object TeamMenu {
   def elfButton(player: Player): Button = {
     Button.skull(
       "fishb6nes",
-      LegendsTeam.ELVES.name,
+      LegendsTeam.Elves.name,
       List("[Shift Right Click] To switch to this team"),
       if (_.isShiftRightClick) {
-        playerDataService.setPlayerData(player.data.copy(team = LegendsTeam.ELVES))
+        playerDataService.setPlayerData(player.data.copy(team = LegendsTeam.Elves))
       }
     )
   }

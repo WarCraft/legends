@@ -13,7 +13,7 @@ sealed abstract class LegendsTeam(
 ) extends Team
 
 object LegendsTeam {
-  case object DWARVES
+  case object Dwarves
       extends LegendsTeam(
         "Dwarf",
         "Dwarves",
@@ -21,7 +21,7 @@ object LegendsTeam {
         ColorCode.DARK_PURPLE
       )
 
-  case object ELVES
+  case object Elves
       extends LegendsTeam(
         "Elf",
         "Elves",
@@ -29,7 +29,7 @@ object LegendsTeam {
         ColorCode.DARK_GREEN
       )
 
-  case object HUMANS
+  case object Humans
       extends LegendsTeam(
         "Human",
         "Humans",
@@ -37,7 +37,7 @@ object LegendsTeam {
         ColorCode.DARK_BLUE
       )
 
-  case object ORCS
+  case object Orcs
       extends LegendsTeam(
         "Orc",
         "Orcs",
@@ -45,7 +45,7 @@ object LegendsTeam {
         ColorCode.DARK_RED
       )
 
-  case object WAYFARER
+  case object Wayfarers
       extends LegendsTeam(
         "Wayfarer",
         "Wayfarers",
