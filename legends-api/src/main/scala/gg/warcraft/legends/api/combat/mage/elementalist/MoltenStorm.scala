@@ -14,8 +14,8 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
 
 object MoltenStorm {
-  class Factory(
-      implicit taskService: TaskService,
+  class Factory(implicit
+      taskService: TaskService,
       entityService: EntityService,
       projectileService: ProjectileService,
       worldService: WorldService,
@@ -37,10 +37,10 @@ object MoltenStorm {
   class AreaParticleEffect(
       location: Location,
       duration: Duration
-  )(
-      implicit taskService: TaskService,
+  )(implicit
+      taskService: TaskService,
       particleAdapter: ParticleAdapter
-  ) extends Effect(() => location.add(0, 0.15f, 0)) {
+  ) extends Effect(() => location + (0, 0.15f, 0)) {
     private final val radius = 7.5f
     private final val particleCount = 100
 
@@ -56,8 +56,8 @@ object MoltenStorm {
 class MoltenStorm(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit entityService: EntityService,
+)(implicit
+    entityService: EntityService,
     worldService: WorldService
 ) extends RangedAbility {
   private final val soundCategory = SoundCategory.HOSTILE
@@ -124,19 +124,19 @@ public class MoltenStorm extends AbstractAbility implements RangedAbility, Runna
         abilityCommandService.createProjectile(this, movement, hitbox, effect::cancel);
     }
 }
- */
+   */
 
   override def onHit(entity: Entity): Boolean = {
-    entityService damageEntity (entity.id, snapshot.damage)
-    entityService burnEntity (entity.id, snapshot.burn)
-    worldService playSound (entity.location, hitSound, soundCategory)
+    entityService.damageEntity(entity.id, snapshot.damage)
+    entityService.burnEntity(entity.id, snapshot.burn)
+    worldService.playSound(entity.location, hitSound, soundCategory)
     true
   }
 
   override def onMiss(entity: Entity): Boolean = false
 
   override def onGrounded(location: Location): Boolean = {
-    worldService playSound (location, hitSound, soundCategory)
+    worldService.playSound(location, hitSound, soundCategory)
     true
   }
 }

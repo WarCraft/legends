@@ -9,8 +9,8 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object Teleport {
-  class Factory(
-      implicit entityService: EntityService,
+  class Factory(implicit
+      entityService: EntityService,
       projectileService: ProjectileService,
       worldService: WorldService
   ) extends RangedAbility.Factory {
@@ -29,8 +29,8 @@ object Teleport {
 class Teleport(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit entityService: EntityService,
+)(implicit
+    entityService: EntityService,
     projectileService: ProjectileService,
     worldService: WorldService
 ) extends RangedAbility {
@@ -40,12 +40,12 @@ class Teleport(
 
   // TODO
 
-  worldService playSound (caster.location, castSound, soundCategory)
+  worldService.playSound(caster.location, castSound, soundCategory)
 
   override def onHit(entity: Entity): Boolean = {
-    entityService damageEntity (entity.id, snapshot.damage)
-    entityService addPotionEffect (entity.id, snapshot.slow)
-    worldService playSound (entity.location, hitSound, soundCategory)
+    entityService.damageEntity(entity.id, snapshot.damage)
+    entityService.addPotionEffect(entity.id, snapshot.slow)
+    worldService.playSound(entity.location, hitSound, soundCategory)
     false
   }
 

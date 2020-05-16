@@ -9,8 +9,8 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object Shatter {
-  class Factory(
-      implicit entityService: EntityService,
+  class Factory(implicit
+      entityService: EntityService,
       projectileService: ProjectileService,
       worldService: WorldService
   ) extends RangedAbility.Factory {
@@ -26,8 +26,8 @@ object Shatter {
 class Shatter(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit entityService: EntityService,
+)(implicit
+    entityService: EntityService,
     projectileService: ProjectileService,
     worldService: WorldService
 ) extends RangedAbility {
@@ -36,15 +36,15 @@ class Shatter(
 
   private val movement = Movement.entity(caster)
   private val hitbox = Hitbox.void()
-  projectileService createProjectile (this, movement, hitbox, () => {})
+  projectileService.createProjectile(this, movement, hitbox)
 
   private val direction = caster.eyeLocation.rotation
-  entityService leapEntity (caster.id, direction, snapshot.distance.modified)
+  entityService.leapEntity(caster.id, direction, snapshot.distance.modified)
 
   override def onHit(entity: Entity): Boolean = {
-    entityService damageEntity (entity.id, snapshot.damage)
-    entityService knockUpEntity (entity.id, snapshot.launch.modified)
-    entityService addPotionEffect (entity.id, snapshot.nausea)
+    entityService.damageEntity(entity.id, snapshot.damage)
+    entityService.knockUpEntity(entity.id, snapshot.launch.modified)
+    entityService.addPotionEffect(entity.id, snapshot.nausea)
     false
   }
 
@@ -54,9 +54,9 @@ class Shatter(
     if (caster.isGrounded) {
       val movement = Movement.oneOff(caster.location)
       val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
-      projectileService createProjectile (this, movement, hitbox, () => {})
+      projectileService.createProjectile(this, movement, hitbox)
 
-      worldService playSound (caster.location, hitSound, soundCategory)
+      worldService.playSound(caster.location, hitSound, soundCategory)
       true
     } else false
   }

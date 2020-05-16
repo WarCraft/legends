@@ -6,8 +6,8 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object Slam {
-  class Factory(
-      implicit entityService: EntityService,
+  class Factory(implicit
+      entityService: EntityService,
       worldService: WorldService
   ) extends MeleeAbility.Factory {
     override val flags: Set[MeleeAbility.Flag] =
@@ -24,8 +24,8 @@ object Slam {
 class Slam(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit entityService: EntityService,
+)(implicit
+    entityService: EntityService,
     worldService: WorldService
 ) extends MeleeAbility {
   private final val soundCategory = SoundCategory.HOSTILE
@@ -33,13 +33,17 @@ class Slam(
   private final val missSound = Sound.ENTITY_FISHING_BOBBER_THROW
 
   override def onHit(entity: Entity): Unit = {
-    entityService damageEntity (entity.id, snapshot.damage)
-    entityService knockBackEntity (entity.id, caster.eyeLocation.rotation, snapshot.knockBack.modified)
-    entityService addPotionEffect (entity.id, snapshot.nausea)
-    worldService playSound (entity.location, hitSound, soundCategory)
+    entityService.damageEntity(entity.id, snapshot.damage)
+    entityService.knockBackEntity(
+      entity.id,
+      caster.eyeLocation.rotation,
+      snapshot.knockBack.modified
+    )
+    entityService.addPotionEffect(entity.id, snapshot.nausea)
+    worldService.playSound(entity.location, hitSound, soundCategory)
   }
 
   override def onMiss(entity: Entity): Unit = {
-    worldService playSound (entity.location, missSound, soundCategory)
+    worldService.playSound(entity.location, missSound, soundCategory)
   }
 }

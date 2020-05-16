@@ -16,8 +16,8 @@ import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object StandYourGround {
-  class Factory(
-      implicit taskService: TaskService,
+  class Factory(implicit
+      taskService: TaskService,
       entityService: EntityService,
       attributeService: AttributeService,
       statusService: StatusService,
@@ -31,8 +31,8 @@ object StandYourGround {
     ): MeleeAbility = new StandYourGround(caster, snapshot)
   }
 
-  class ParticleEffect(movement: Movement, duration: Duration)(
-      implicit particleAdapter: ParticleAdapter,
+  class ParticleEffect(movement: Movement, duration: Duration)(implicit
+      particleAdapter: ParticleAdapter,
       taskService: TaskService
   ) extends Effect(movement.get) {
     private final val radius = 2.5f
@@ -52,8 +52,8 @@ object StandYourGround {
   class StatusEffect(
       override val source: CombatSource,
       override val duration: Option[Duration]
-  )(
-      implicit entityService: EntityService,
+  )(implicit
+      entityService: EntityService,
       worldService: WorldService
   ) extends Status.Effect {
     private final val soundCategory = SoundCategory.HOSTILE
@@ -63,9 +63,8 @@ object StandYourGround {
     override val group: String = "buff"
 
     override def handle(event: Event): Unit = event match {
-      case EntityDamageEvent(entityId, _, _) =>
-        val entity = entityService getEntity entityId
-        worldService playSound (entity.location, hitSound, soundCategory)
+      case EntityDamageEvent(entity, _) =>
+        worldService.playSound(entity.location, hitSound, soundCategory)
       case _ =>
     }
   }
@@ -74,8 +73,8 @@ object StandYourGround {
 class StandYourGround(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit entityService: EntityService,
+)(implicit
+    entityService: EntityService,
     attributeService: AttributeService,
     statusService: StatusService,
     worldService: WorldService,
@@ -86,9 +85,9 @@ class StandYourGround(
   private final val castSound = Sound.ENTITY_IRON_GOLEM_DEATH
 
   {
-    entityService addPotionEffect (caster.id, snapshot.resistance)
-    entityService addPotionEffect (caster.id, snapshot.fireResistance)
-    entityService addPotionEffect (caster.id, snapshot.slow)
+    entityService.addPotionEffect(caster.id, snapshot.resistance)
+    entityService.addPotionEffect(caster.id, snapshot.fireResistance)
+    entityService.addPotionEffect(caster.id, snapshot.slow)
 
     // TODO
 //    AttributeModifier knockbackModifier =
@@ -100,8 +99,8 @@ class StandYourGround(
     new StandYourGround.ParticleEffect(movement, snapshot.slow.duration)
 
     val status = new StandYourGround.StatusEffect(caster, snapshot.slow.duration)
-    statusService addEffect (caster.id, status)
+    statusService.addEffect(caster.id, status)
 
-    worldService playSound (caster.location, castSound, soundCategory)
+    worldService.playSound(caster.location, castSound, soundCategory)
   }
 }

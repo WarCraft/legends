@@ -1,21 +1,22 @@
 package gg.warcraft.legends.api.combat.mage.elementalist
 
-import gg.warcraft.combat.api.{ Hitbox, Movement }
+import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.core.task.TaskService
-import gg.warcraft.monolith.api.core.Duration
 import gg.warcraft.monolith.api.core.Duration._
-import gg.warcraft.monolith.api.effect.{ Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter }
-import gg.warcraft.monolith.api.entity.{ Entity, EntityService }
+import gg.warcraft.monolith.api.effect.{
+  Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
+}
+import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.math.Vector3f
-import gg.warcraft.monolith.api.world.{ Sound, SoundCategory, WorldService }
+import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object HailBlast {
-  class Factory(
-      implicit taskService: TaskService,
+  class Factory(implicit
+      taskService: TaskService,
       entityService: EntityService,
       projectileService: ProjectileService,
       worldService: WorldService,
@@ -32,8 +33,8 @@ object HailBlast {
   class ParticleEffect(
       movement: Movement,
       direction: Vector3f
-  )(
-      implicit taskService: TaskService,
+  )(implicit
+      taskService: TaskService,
       particleAdapter: ParticleAdapter
   ) extends Effect(movement.get) {
     private final val iterations = 15
@@ -43,7 +44,7 @@ object HailBlast {
 
     private var iteration = 1
 
-    cancel(Duration.ofTicks(iterations))
+    cancel(iterations.ticks)
 
     override def tick(): Unit = {
       clearRenderers()
@@ -63,8 +64,8 @@ object HailBlast {
 class HailBlast(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit taskService: TaskService,
+)(implicit
+    taskService: TaskService,
     entityService: EntityService,
     projectileService: ProjectileService,
     worldService: WorldService,
@@ -75,23 +76,26 @@ class HailBlast(
   private final val castSound2 = Sound.ENTITY_SILVERFISH_HURT
 
   private val origin = caster.eyeLocation
-  private val velocity = origin.rotation multiply snapshot.velocity.modified
-  private val movement = Movement.linear(caster.eyeLocation, velocity, snapshot.range.modified)
+  private val velocity = origin.rotation * snapshot.velocity.modified
+  private val movement =
+    Movement.linear(caster.eyeLocation, velocity, snapshot.range.modified)
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
 
   private val effect = new HailBlast.ParticleEffect(movement, origin.rotation)
-  projectileService createProjectile (this, movement, hitbox, effect.cancel)
+  projectileService.createProjectile(this, movement, hitbox, effect.cancel)
 
-  worldService playSound (caster.location, castSound, soundCategory)
-  worldService playSound (caster.location, castSound2, soundCategory, 1, 0.1f)
+  worldService.playSound(caster.location, castSound, soundCategory)
+  worldService.playSound(caster.location, castSound2, soundCategory, 1, 0.1f)
   (2 to 12 by 2).foreach { i =>
-    taskService runLater (i.ticks, () =>
-      worldService playSound (caster.location, castSound, soundCategory))
+    taskService.evalLater(
+      i.ticks,
+      worldService.playSound(caster.location, castSound, soundCategory)
+    )
   }
 
   override def onHit(entity: Entity): Boolean = {
-    entityService damageEntity (entity.id, snapshot.damage)
-    entityService addPotionEffect (entity.id, snapshot.slow)
+    entityService.damageEntity(entity.id, snapshot.damage)
+    entityService.addPotionEffect(entity.id, snapshot.slow)
     false
   }
 
