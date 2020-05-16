@@ -28,8 +28,6 @@ class Disengage(
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.ENTITY_ENDER_DRAGON_FLAP // alt BAT_TAKEOFF
 
-  // TODO add an extra melee ability flag which prevents hit/miss checks for selfcast abilities
-
   private val direction = caster.eyeLocation.rotation.copy(y = 0) * -1
   entityService.knockBackEntity(caster.id, direction, snapshot.distance.modified)
 
