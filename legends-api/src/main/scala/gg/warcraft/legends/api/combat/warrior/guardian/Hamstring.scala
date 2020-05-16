@@ -30,11 +30,9 @@ object Hamstring {
   class ParticleEffect(movement: Movement, duration: Duration)(
       implicit taskService: TaskService,
       particleAdapter: ParticleAdapter
-  ) extends Effect(movement.get) {
+  ) extends Effect(() => movement.get + Vector3f.Offset.feet) {
     private final val radius = 0.5f
     private final val frames = 20
-    // TODO make VectorUtils with vectors for HEAD_OFFSET, CHEST_OFFSET, HEEL_OFFSET etc
-    private final val offset = Vector3f(0, 0.1f, 0) // TODO add to movement
 
     private val particle = Particle.SPELL_MOB.color(Particle.Color.WHITE)
     private val vectors = EffectVectors.ring(radius, frames)

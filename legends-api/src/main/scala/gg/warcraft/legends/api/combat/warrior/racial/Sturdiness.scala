@@ -7,29 +7,30 @@ import gg.warcraft.monolith.api.entity.{
   EntityHealthChangedEvent, EntityPreDamageEvent
 }
 import gg.warcraft.monolith.api.entity.status.Status
+import gg.warcraft.monolith.api.util.typing._
 
 object Sturdiness {
   class StatusEffect(
-      override val source: CombatSource,
-      override val duration: Option[Duration]
+      override val source: CombatSource
   ) extends Status.Effect {
     override val name: String = "Sturdiness"
     override val group: String = "legends.racial"
+    override val duration: Option[Duration] = None
 
     private var percentHealth = 1f
 
     override def handle(event: Event): Unit = event match {
-      case EntityHealthChangedEvent(_, _, _, _, _, newPercentHealth) =>
+      case EntityHealthChangedEvent(_, _, _, _, newPercentHealth) =>
         percentHealth = newPercentHealth
       case _ =>
     }
 
     override def reduce[T <: PreEvent](event: T): T = event match {
-      case it @ EntityPreDamageEvent(_, _, damage, _, _) =>
-        val modifierValue = -0.25f * (1 - percentHealth) // TODO add modifier to config
-        val modifier = CombatValue.Modifier(source, CombatValue.Modifier.PERCENT, modifierValue)
-        it.copy(damage = damage.copy(modifiers = modifier :: damage.modifiers))
-          .asInstanceOf[T]
+      case it @ EntityPreDamageEvent(_, damage, _, _) =>
+        // TODO add modifier to config
+        val modifierValue = -0.25f * (1 - percentHealth)
+        val modifier = CombatValue.Modifier.percent(source, modifierValue)
+        it.copy(damage = damage.copy(modifiers = modifier :: damage.modifiers)).as[T]
       case _ => event
     }
   }

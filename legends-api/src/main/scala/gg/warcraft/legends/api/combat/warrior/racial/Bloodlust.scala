@@ -10,10 +10,9 @@ import gg.warcraft.monolith.api.entity.status.Status
 
 object Bloodlust {
   class StatusEffect(
-      override val source: CombatSource,
-      override val duration: Option[Duration]
-  )(
-      implicit entityService: EntityService
+      override val source: CombatSource
+  )(implicit
+      entityService: EntityService
   ) extends Status.Effect {
     require(source.entityId.isDefined)
 
@@ -24,16 +23,17 @@ object Bloodlust {
 
     override val name: String = "Bloodlust"
     override val group: String = "legends.racial"
+    override val duration: Option[Duration] = None
 
     private var active = false
 
     override def handle(event: Event): Unit = event match {
-      case EntityHealthChangedEvent(_, _, _, _, _, newPercentHealth) =>
+      case EntityHealthChangedEvent(_, _, _, _, newPercentHealth) =>
         if (newPercentHealth <= 0.5f) { // TODO add threshold to config
-          entityService addPotionEffect (source.entityId.get, potionEffect)
+          entityService.addPotionEffect(source.entityId.get, potionEffect)
           active = true
         } else {
-          entityService removePotionEffect (source.entityId.get, potionEffect)
+          entityService.removePotionEffect(source.entityId.get, potionEffect.typed)
           active = false
         }
       case _ =>

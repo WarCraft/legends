@@ -12,8 +12,8 @@ import gg.warcraft.monolith.api.entity.status.Status
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object ArcaneBarrier {
-  class Factory(
-      implicit entityService: EntityService,
+  class Factory(implicit
+      entityService: EntityService,
       worldService: WorldService
   ) extends MeleeAbility.Factory {
     override def create(
@@ -24,21 +24,20 @@ object ArcaneBarrier {
   }
 
   class StatusEffect(
-      override val source: CombatSource,
-      override val duration: Option[Duration]
-  )(
-      implicit abilityService: AbilityService
+      override val source: CombatSource
+  )(implicit
+      abilityService: AbilityService
   ) extends Status.Effect {
     require(source.entityId.isDefined)
 
     override val name: String = "Arcane Barrier"
     override val group: String = "legends.racial"
+    override val duration: Option[Duration] = None
 
     override def handle(event: Event): Unit = event match {
-      case EntityHealthChangedEvent(_, _, _, _, _, newPercentHealth) =>
+      case EntityHealthChangedEvent(_, _, _, _, newPercentHealth) =>
         if (newPercentHealth <= 0.5f)
-          // TODO remove infix operator usage from calls with multiple params?
-          abilityService castAbility (name, source.entityId.get, None)
+          abilityService.castAbility(name, source.entityId.get, None)
       case _ =>
     }
   }
@@ -47,13 +46,13 @@ object ArcaneBarrier {
 class ArcaneBarrier(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit entityService: EntityService,
+)(implicit
+    entityService: EntityService,
     worldService: WorldService
 ) extends MeleeAbility {
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.BLOCK_ENCHANTMENT_TABLE_USE
 
-  entityService addPotionEffect (caster.id, snapshot.absorption)
-  worldService playSound (caster.location, castSound, soundCategory)
+  entityService.addPotionEffect(caster.id, snapshot.absorption)
+  worldService.playSound(caster.location, castSound, soundCategory)
 }

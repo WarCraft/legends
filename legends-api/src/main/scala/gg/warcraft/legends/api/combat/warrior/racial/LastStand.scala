@@ -10,8 +10,8 @@ import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object LastStand {
-  class Factory(
-      implicit statusService: StatusService,
+  class Factory(implicit
+      statusService: StatusService,
       worldService: WorldService
   ) extends MeleeAbility.Factory {
     override def create(
@@ -22,19 +22,19 @@ object LastStand {
   }
 
   class PassiveStatusEffect(
-      override val source: CombatSource,
-      override val duration: Option[Duration]
-  )(
+      override val source: CombatSource
+  )(implicit
       abilityService: AbilityService
   ) extends Status.Effect {
     require(source.entityId.isDefined)
 
     override val name: String = "Last Stand"
     override val group: String = "legends.racial"
+    override val duration: Option[Duration] = None
 
     override def reduce[T <: PreEvent](event: T): T = event match {
       case it: EntityPreFatalDamageEvent =>
-        val ability = abilityService castAbility (name, source.entityId.get, None)
+        val ability = abilityService.castAbility(name, source.entityId.get, None)
         if (ability.isDefined) it.copy(cancelled = true).asInstanceOf[T]
         else event
       case _ => event
@@ -58,14 +58,16 @@ object LastStand {
 class LastStand(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit statusService: StatusService,
+)(implicit
+    statusService: StatusService,
     worldService: WorldService
 ) extends MeleeAbility {
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED
 
-  private val status = new LastStand.ActiveStatusEffect(caster, snapshot.duration)
-  statusService addEffect (caster.id, status)
-  worldService playSound (caster.location, castSound, soundCategory)
+  private val source = CombatSource(caster.name, Some(caster.id))
+  private val duration = Some(snapshot.duration)
+  private val status = new LastStand.ActiveStatusEffect(source, duration)
+  statusService.addEffect(caster.id, status)
+  worldService.playSound(caster.location, castSound, soundCategory)
 }

@@ -23,3 +23,26 @@ class FlameTotem(
   override def onHit(entity: Entity): Boolean = ???
   override def onMiss(entity: Entity): Boolean = ???
 }
+
+/*
+public class OrcMagePassive extends AbstractRacialPassive {
+    private static final String NAME = "Flame Totem";
+    private static final String ABILITY_NAME = "Flame Totem";
+
+    private final AbilityCommandService abilityCommandService;
+
+    @Inject
+    public OrcMagePassive(AbilityCommandService abilityCommandService,
+                          @Assisted UUID entityId) {
+        super(entityId, NAME, null);
+        this.abilityCommandService = abilityCommandService;
+    }
+
+    @Override
+    public void onEntityHealthChangedEvent(EntityHealthChangedEvent event) {
+        if (event.getNewPercentHealth() <= 0.75) {
+            abilityCommandService.castAbility(ABILITY_NAME, getEntityId(), null);
+        }
+    }
+}
+ */
