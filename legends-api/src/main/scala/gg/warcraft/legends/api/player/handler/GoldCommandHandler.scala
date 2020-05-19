@@ -19,10 +19,9 @@ class GoldCommandHandler(implicit
       executor: Principal,
       command: Command,
       args: String*
-  ): Command.Result = executor.principalId match {
-    case Some(playerId) =>
+  ): Command.Result = executor match {
+    case player: Player =>
       if (args.length == 2) {
-        val player = playerService.getPlayer(playerId)
         val target = entityService.getNearbyEntities(player.location, tradeDistance)
           .find { _.name == args(0) }
           .map { _.asInstanceOf[Player] }
@@ -31,7 +30,7 @@ class GoldCommandHandler(implicit
           Command.success
         } else Command.invalid
       } else Command.invalid
-    case None => Command.playersOnly
+    case _ => Command.playersOnly
   }
 }
 

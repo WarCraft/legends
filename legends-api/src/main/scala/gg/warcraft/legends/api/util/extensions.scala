@@ -1,6 +1,6 @@
 package gg.warcraft.legends.api.util
 
-import gg.warcraft.legends.api.player.currency.LegendsCurrency
+import gg.warcraft.legends.api.player.currency.LegendsCurrency._
 import gg.warcraft.legends.api.player.data.{
   LegendsPlayerData, LegendsPlayerDataService
 }
@@ -21,16 +21,14 @@ object legendsplayer {
         levelService: LevelService
     ): Level = levelService.levelForFavor(lifetimeFavor)
 
-    def favor: Int = self.currencies.get(LegendsCurrency.FAVOR)
-    def fragments: Int = self.currencies.get(LegendsCurrency.FRAGMENTS)
-    def gold: Int = self.currencies.get(LegendsCurrency.GOLD)
+    def favor: Int = self.currencies.get(Favor)
+    def lifetimeFavor: Int = self.currencies.getLifetime(Favor)
 
-    def lifetimeFavor: Int =
-      self.currencies.getLifetime(LegendsCurrency.FAVOR)
-    def lifetimeFragments: Int =
-      self.currencies.getLifetime(LegendsCurrency.FRAGMENTS)
-    def lifetimeGold: Int =
-      self.currencies.getLifetime(LegendsCurrency.GOLD)
+    def fragments: Int = self.currencies.get(Fragments)
+    def lifetimeFragments: Int = self.currencies.getLifetime(Fragments)
+
+    def gold: Int = self.currencies.get(Gold)
+    def lifetimeGold: Int = self.currencies.getLifetime(Gold)
   }
 }
 
@@ -38,8 +36,6 @@ object legendsplayer {
     TutorialStep getTutorialStep();
 
     Rank getRank();
-
-    long getSpecializationCooldown();
 
     int getRankUpRewardsClaimed();
  */
