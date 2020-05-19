@@ -6,11 +6,12 @@ import gg.warcraft.monolith.api.core.auth.Principal
 import gg.warcraft.monolith.api.core.command.Command
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.menu.MenuService
-import gg.warcraft.monolith.api.player.Player
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 
 class MenuCommandHandler(implicit
     menuService: MenuService,
+    playerService: PlayerService,
     attributeService: AttributeService,
     currencyService: CurrencyService,
     combatDataService: CombatDataService,
@@ -24,7 +25,7 @@ class MenuCommandHandler(implicit
     case player: Player =>
       val menu = command.name match {
         case "me" | "menu" | "monolith" | "help"  => MainMenu(player)
-        case "team" | "race"                      => TeamMenu(player)
+        case "team" | "race"                      => RaceMenu(player)
         case "class" | "kit" | "kits"             => CombatClassMenu(player)
         case "dec" | "decoration" | "decorations" => DecorationsMenu(player)
         case "pet" | "pets" | "minis" | "mp"      => MiniPetsMenu(player)

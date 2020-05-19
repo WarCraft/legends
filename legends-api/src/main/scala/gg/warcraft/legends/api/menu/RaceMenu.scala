@@ -1,28 +1,25 @@
 package gg.warcraft.legends.api.menu
 
-import gg.warcraft.legends.api.entity.LegendsTeam
+import gg.warcraft.legends.api.entity.LegendsTeam._
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.ItemType
-import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService}
+import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
-import gg.warcraft.monolith.api.player.Player
-import gg.warcraft.monolith.api.player.data.PlayerDataService
 
-object TeamMenu {
-
-  def infoButton(player: Player): Button = {
-    val teamName = player.team.map { _.name }.getOrElse(LegendsTeam.Wayfarers.name)
+object RaceMenu {
+  private def infoButton(player: Player): Button = {
+    val teamName = player.team.map { _.name }.getOrElse(Wayfarers.name)
     Button(
       ItemType.BOOK,
       "Choosing a team",
-      List(
-        "You are currently fighting for the",
-        s"$YELLOW$teamName",
-        "",
-        "At the moment you can switch teams freely,",
-        "but this will be changed at a later time."
-      )
+      "You are currently fighting for the"
+        :: s"$YELLOW$teamName"
+        :: ""
+        :: "At the moment you can switch teams freely,"
+        :: "but this will be changed at a later time."
+        :: Nil
     )
     /*
         builder.addTooltip("You can switch teams freely the first");
@@ -55,62 +52,65 @@ object TeamMenu {
      */
   }
 
-  def humanButton(player: Player)(implicit
-      playerDataService: PlayerDataService
-  ): Button = {
-    Button.skull(
-      "fishb6nes",
-      LegendsTeam.Humans.name,
-      List("[Shift Right Click] To switch to this team"),
-      if (_.isShiftRightClick) {
-        playerDataService.setPlayerData(player.data.copy(team = LegendsTeam.Humans))
-      }
-    )
+  private def humanButton(player: Player)(implicit
+      playerService: PlayerService
+  ): Button = Button.skull(
+    "fishb6nes",
+    Humans.name,
+    "[Shift Right Click] To switch to this team" :: Nil
+  ) { click =>
+    if (click.isShiftRight) {
+      playerService.setTeam(player.data.copy(team = Humans))
+    }
   }
 
-  def orcButton(player: Player): Button = {
-    Button.skull(
-      "fishb6nes",
-      LegendsTeam.Orcs.name,
-      List("[Shift Right Click] To switch to this team"),
-      if (_.isShiftRightClick) {
-        playerDataService.setPlayerData(player.data.copy(team = LegendsTeam.Orcs))
-      }
-    )
+  private def orcButton(player: Player)(implicit
+      playerService: PlayerService
+  ): Button = Button.skull(
+    "fishb6nes",
+    Orcs.name,
+    "[Shift Right Click] To switch to this team" :: Nil
+  ) { click =>
+    if (click.isShiftRight) {
+      playerService.setTeam(player.data.copy(team = Orcs))
+    }
   }
 
-  def dwarfButton(player: Player): Button = {
-    Button.skull(
-      "fishb6nes",
-      LegendsTeam.Dwarves.name,
-      List("[Shift Right Click] To switch to this team"),
-      if (_.isShiftRightClick) {
-        playerDataService.setPlayerData(player.data.copy(team = LegendsTeam.Dwarves))
-      }
-    )
+  private def dwarfButton(player: Player)(implicit
+      playerService: PlayerService
+  ): Button = Button.skull(
+    "fishb6nes",
+    Dwarves.name,
+    "[Shift Right Click] To switch to this team" :: Nil
+  ) { click =>
+    if (click.isShiftRight) {
+      playerService.setTeam(player.data.copy(team = Dwarves))
+    }
   }
 
-  def elfButton(player: Player): Button = {
-    Button.skull(
-      "fishb6nes",
-      LegendsTeam.Elves.name,
-      List("[Shift Right Click] To switch to this team"),
-      if (_.isShiftRightClick) {
-        playerDataService.setPlayerData(player.data.copy(team = LegendsTeam.Elves))
-      }
-    )
+  private def elfButton(player: Player)(implicit
+      playerService: PlayerService
+  ): Button = Button.skull(
+    "fishb6nes",
+    Elves.name,
+    "[Shift Right Click] To switch to this team" :: Nil
+  ) { click =>
+    if (click.isShiftRight) {
+      playerService.setTeam(player.data.copy(team = Elves))
+    }
   }
 
   def apply(
       player: Player
   )(implicit
       menuService: MenuService,
+      playerService: PlayerService,
       attributeService: AttributeService,
       currencyService: CurrencyService
   ): Menu = {
     Menu(
-      "Allegiance",
-      Menu.Size.ONE_ROW,
+      "Race",
+      MenuSize.ONE_ROW,
       Map(
         0 -> infoButton,
         8 -> Button.back(MainMenu.apply),

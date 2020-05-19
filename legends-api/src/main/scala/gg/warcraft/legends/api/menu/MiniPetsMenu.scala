@@ -1,7 +1,10 @@
 package gg.warcraft.legends.api.menu
 
-object MiniPetsMenu {
+import gg.warcraft.monolith.api.menu.Menu
+import gg.warcraft.monolith.api.player.Player
 
+object MiniPetsMenu {
+  def apply(player: Player): Menu = null
 }
 
 /*

@@ -1,46 +1,37 @@
 package gg.warcraft.legends.api.menu
 
-import gg.warcraft.legends.api.entity.LegendsAttribute
-import gg.warcraft.legends.api.player.currency.LegendsCurrency
+import gg.warcraft.legends.api.entity.LegendsAttribute._
+import gg.warcraft.legends.api.player.currency.LegendsCurrency._
 import gg.warcraft.monolith.api.core.ColorCode
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemType, ItemTypeOrVariant}
-import gg.warcraft.monolith.api.menu.{Button, Menu}
-import gg.warcraft.monolith.api.player.currency.{Currencies, CurrencyService}
+import gg.warcraft.monolith.api.menu.{Button, Menu, MenuSize}
+import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.Player
 
 object MainMenu {
-  private def attributesView(player: Player)(implicit
-      attributesService: AttributeService
-  ): List[String] = {
-    val attributes = attributesService.getAttributes(player.id)
-    lazy val strength = attributes.get(LegendsAttribute.Strength).toInt
-    lazy val dexterity = attributes.get(LegendsAttribute.Dexterity).toInt
-    lazy val intellect = attributes.get(LegendsAttribute.Intellect).toInt
-    lazy val vitality = attributes.get(LegendsAttribute.Vitality).toInt
-    lazy val crit = attributes.get(LegendsAttribute.Crit).toInt
-    List(
-      s"${ColorCode.WHITE}Attributes:",
-      if (strength != 0) Some(s"$YELLOW$strength Strength") else None,
-      if (dexterity != 0) Some(s"$YELLOW$dexterity Dexterity") else None,
-      if (intellect != 0) Some(s"$YELLOW$intellect Intellect") else None,
-      if (vitality != 0) Some(s"$YELLOW$vitality Vitality") else None,
-      if (crit != 0) Some(s"$YELLOW$crit Crit") else None
-    ).filter { _.isDefined }
-      .map { _.get } // flatMap?
+  private final val trackedAttributes =
+    Strength :: Dexterity :: Intellect :: Vitality :: Crit :: Nil
+
+  private def attributesView(player: Player): List[String] = {
+    val attributes = player.attributes
+    val formattedAttributes = trackedAttributes.map { attribute =>
+      val value = attributes.get(attribute).toInt
+      if (value != 0) Some(s"$YELLOW$value ${attribute.name}") else None
+    }.filter { _.isDefined }.map { _.get }
+    s"${ColorCode.WHITE}Attributes:" :: formattedAttributes
   }
 
-  private def currenciesView(player: Player)(implicit
-      currencyService: CurrencyService
-  ): List[String] = {
-    val currencies: Currencies = currencyService.getCurrencies(player.id)
-    List(
-      s"${WHITE}Currencies:",
-      s"$YELLOW${currencies.get(LegendsCurrency.GOLD)} Gold",
-      s"$AQUA${currencies.get(LegendsCurrency.FAVOR)} Favor",
-      s"$GOLD${currencies.get(LegendsCurrency.FRAGMENTS)} Fragments"
-    )
+  private final val trackedCurrencies =
+    Favor :: Fragments :: Gold :: Nil
+
+  private def currenciesView(player: Player): List[String] = {
+    val currencies = player.currencies
+    val formattedCurrencies = trackedCurrencies.map { currency =>
+      s"$YELLOW${currencies.get(currency)} ${currency.name}"
+    }
+    s"${ColorCode.WHITE}Currencies:" :: formattedCurrencies
   }
 
   private def levelPassivesView(level: Int): List[String] = {
@@ -167,28 +158,28 @@ object MainMenu {
 
     Menu(
       "WarCraft: Legends",
-      Menu.Size.TWO_ROWS,
+      MenuSize.TWO_ROWS,
       Map(
         // 1st row
         0 -> playerButton,
-        1 -> levelButton,
-        2 -> classButton,
-        3 -> raceButton,
-        // 4
-        5 -> itemStorageButton,
-        6 -> returnButton,
-        // 7
-        8 -> helpButton,
-        // 2nd row
-        9 -> dialyLoginButton,
-        10 -> dailyVoteButton,
-        11 -> challengesButton,
-        // 12
-        // 13
-        14 -> collectablesButton,
-        15 -> leaderboardsButton,
-        // 16
-        17 -> shopButton
+        1 -> levelButton
+//        2 -> classButton,
+//        3 -> raceButton,
+//        // 4
+//        5 -> itemStorageButton,
+//        6 -> returnButton,
+//        // 7
+//        8 -> helpButton,
+//        // 2nd row
+//        9 -> dialyLoginButton,
+//        10 -> dailyVoteButton,
+//        11 -> challengesButton,
+//        // 12
+//        // 13
+//        14 -> collectablesButton,
+//        15 -> leaderboardsButton,
+//        // 16
+//        17 -> shopButton
       )
     )
   }
@@ -520,4 +511,4 @@ public class DefaultMainMenuFactory implements MainMenuFactory {
     }
 }
 
-*/
+ */
