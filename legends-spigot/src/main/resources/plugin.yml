@@ -1,8 +1,9 @@
-name: "WarCraft_Legends"
-version: 1.0.0
+name: Legends
+version: 15.0.0-SNAPSHOT
+api-version: 1.15
+
 author: fishb6nes
-authors: [fishb6nes, cbngu]
 website: http://warcraft.gg
 
 main: gg.warcraft.legends.spigot.LegendsPlugin
-depend: ["WarCraft_Monolith", "WarCraft_Chat", "WarCraft_Combat", "WarCraft_Siege", MythicMobs]
+depend: [Monolith, Chat, Combat, MythicMobs]
