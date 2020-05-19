@@ -94,7 +94,7 @@ class LootCrateService(implicit
       case EPIC      => 300
       case LEGENDARY => 600
     }
-    currencyService.addCurrency(LegendsCurrency.GOLD, amount, playerId)
+    currencyService.addCurrency(LegendsCurrency.Gold, amount, playerId)
     true
   }
 

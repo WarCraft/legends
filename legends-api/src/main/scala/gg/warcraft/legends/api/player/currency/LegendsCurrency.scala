@@ -5,9 +5,9 @@ sealed abstract class LegendsCurrency(val name: String) {
 }
 
 object LegendsCurrency {
-  case object FAVOR extends LegendsCurrency("Favor")
-  case object FRAGMENTS extends LegendsCurrency("Fragments")
-  case object GOLD extends LegendsCurrency("Gold")
+  case object Favor extends LegendsCurrency("Favor")
+  case object Fragments extends LegendsCurrency("Fragments")
+  case object Gold extends LegendsCurrency("Gold")
 
   implicit def toString(currency: LegendsCurrency): String = currency.toString
 }

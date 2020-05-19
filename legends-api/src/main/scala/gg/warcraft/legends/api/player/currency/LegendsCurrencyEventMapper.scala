@@ -1,5 +1,8 @@
 package gg.warcraft.legends.api.player.currency
 
+import gg.warcraft.legends.api.player.currency.LegendsCurrency.{
+  Favor, Fragments, Gold
+}
 import gg.warcraft.monolith.api.core.event.{Event, EventService}
 import gg.warcraft.monolith.api.player.{
   PlayerCurrencyGainedEvent, PlayerCurrencyLostEvent
@@ -9,27 +12,21 @@ class LegendsCurrencyEventMapper(implicit
     eventService: EventService
 ) extends Event.Handler {
   override def handle(event: Event): Unit = event match {
-    case event: PlayerCurrencyGainedEvent =>
-      import event.{amount, currency, newCurrent, newLifeTime, playerId}
-      eventService.publish(currency match {
-        case LegendsCurrency.FAVOR.name =>
-          PlayerFavorGainedEvent(playerId, amount, newCurrent, newLifeTime)
-        case LegendsCurrency.FRAGMENTS.name =>
-          PlayerFragmentsGainedEvent(playerId, amount, newCurrent, newLifeTime)
-        case LegendsCurrency.GOLD.name =>
-          PlayerGoldGainedEvent(playerId, amount, newCurrent, newLifeTime)
-      })
+    case PlayerCurrencyGainedEvent(player, currency, amount, current, lifetime) =>
+      val event = currency match {
+        case Favor.name     => PlayerFavorGainedEvent(player, amount, current, lifetime)
+        case Fragments.name => PlayerFragmentsGainedEvent(player, amount, current, lifetime)
+        case Gold.name      => PlayerGoldGainedEvent(player, amount, current, lifetime)
+      }
+      eventService.publish(event)
 
-    case event: PlayerCurrencyLostEvent =>
-      import event.{amount, currency, newCurrent, playerId}
-      eventService.publish(currency match {
-        case LegendsCurrency.FAVOR.name =>
-          PlayerFavorLostEvent(playerId, amount, newCurrent)
-        case LegendsCurrency.FRAGMENTS.name =>
-          PlayerFragmentsLostEvent(playerId, amount, newCurrent)
-        case LegendsCurrency.GOLD.name =>
-          PlayerGoldLostEvent(playerId, amount, newCurrent)
-      })
+    case PlayerCurrencyLostEvent(player, currency, amount, newCurrent) =>
+      val event = currency match {
+        case Favor.name     => PlayerFavorLostEvent(player, amount, newCurrent)
+        case Fragments.name => PlayerFragmentsLostEvent(player, amount, newCurrent)
+        case Gold.name      => PlayerGoldLostEvent(player, amount, newCurrent)
+      }
+      eventService.publish(event)
 
     case _ =>
   }
