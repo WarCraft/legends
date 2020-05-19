@@ -1,5 +1,6 @@
 package gg.warcraft.legends.api.player.statistic.handler
 
+import gg.warcraft.legends.api.item.crate.LootCrateOpenedEvent
 import gg.warcraft.legends.api.player.statistic.LegendsStatistic
 import gg.warcraft.legends.api.player.statistic.LegendsStatistic._
 import gg.warcraft.monolith.api.core.event.Event
@@ -9,10 +10,11 @@ class CrateStatisticHandler(implicit
     statisticService: StatisticService
 ) extends Event.Handler {
   private final val crateStatistics: List[LegendsStatistic] =
-    List(DAILY_CRATES, MONTHLY_CRATES, ALLTIME_CRATES)
+    DAILY_CRATES :: MONTHLY_CRATES :: ALLTIME_CRATES :: Nil
 
   override def handle(event: Event): Unit = event match {
-    case LLootCrateOpenedEvent(player) =>
-      statisticService.increaseStatistic(player.id, 1, crateStatistics: _*)
+//    case LootCrateOpenedEvent(player, crateType) => TODO
+//      statisticService.increaseStatistic(player.id, 1, crateStatistics: _*)
+    case _ =>
   }
 }

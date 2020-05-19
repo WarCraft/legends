@@ -11,11 +11,12 @@ class KillStatisticHandler(implicit
     statisticService: StatisticService
 ) extends Event.Handler {
   private final val killStatistics: List[LegendsStatistic] =
-    List(DAILY_KILLS, MONTHLY_KILLS, ALLTIME_KILLS)
+    DAILY_KILLS :: MONTHLY_KILLS :: ALLTIME_KILLS :: Nil
 
   override def handle(event: Event): Unit = event match {
     case EntityFatalDamageEvent(entity: Player, _) =>
-      val killers = getAllPeopleWhoAttackedPlayerOverLastXSeconds
-      statisticService.increaseStatistic(killers, 1, killStatistics: _*)
+//      val killers = getAllPeopleWhoAttackedPlayerOverLastXSeconds TODO
+//      statisticService.increaseStatistic(killers, 1, killStatistics: _*)
+    case _ =>
   }
 }

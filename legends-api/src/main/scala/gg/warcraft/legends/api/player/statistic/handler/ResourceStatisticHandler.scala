@@ -9,10 +9,11 @@ class ResourceStatisticHandler(implicit
     statisticService: StatisticService
 ) extends Event.Handler {
   private final val resourceStatistics: List[LegendsStatistic] =
-    List(DAILY_RESOURCES, MONTHLY_RESOURCES, ALLTIME_RESOURCES)
+    DAILY_RESOURCES :: MONTHLY_RESOURCES :: ALLTIME_RESOURCES :: Nil
 
   override def handle(event: Event): Unit = event match {
-    case BlockGatheredEvent | EntityGatheredEvent =>
-      statisticService.increaseStatistic(player.id, 1, resourceStatistics: _*)
+//    case BlockGatheredEvent | EntityGatheredEvent => TODO
+//      statisticService.increaseStatistic(player.id, 1, resourceStatistics: _*)
+    case _ =>
   }
 }
