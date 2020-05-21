@@ -12,7 +12,7 @@ object FlameTotem {
         snapshot: AbilitySnapshot,
         blockTarget: Option[Block],
         entityTarget: Option[Entity]
-    ): RangedAbility = new FlameTotem()
+    ): RangedAbility = ??? // TODO new FlameTotem()
   }
 }
 

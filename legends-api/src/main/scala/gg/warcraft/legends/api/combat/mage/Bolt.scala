@@ -39,7 +39,7 @@ class Bolt(
 ) extends RangedAbility {
   private val location: Location =
     if (entityTarget.isDefined) entityTarget.get.location
-    else blockTarget.get.location.add(0.5f, 1, 0.5f)
+    else blockTarget.get.location.toLocation + (.5f, 1, .5f)
 
   private val movement = Movement.oneOff(location)
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)

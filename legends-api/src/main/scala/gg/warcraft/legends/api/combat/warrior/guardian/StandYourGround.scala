@@ -37,7 +37,7 @@ object StandYourGround {
   ) extends Effect(movement.get) {
     private final val radius = 2.5f
     private final val particleCount = 50
-    private final val particle = Particle.CRIT_MAGIC
+    private final val particle = Particle.CritMagic
 
     cancel(duration)
 
@@ -51,7 +51,7 @@ object StandYourGround {
 
   class StatusEffect(
       override val source: CombatSource,
-      override val duration: Option[Duration]
+      _duration: Duration
   )(implicit
       entityService: EntityService,
       worldService: WorldService
@@ -61,6 +61,7 @@ object StandYourGround {
 
     override val name: String = "Stand Your Ground"
     override val group: String = "buff"
+    override val duration: Option[Duration] = Some(_duration)
 
     override def handle(event: Event): Unit = event match {
       case EntityDamageEvent(entity, _) =>
@@ -98,7 +99,9 @@ class StandYourGround(
     val movement = Movement.entity(caster)
     new StandYourGround.ParticleEffect(movement, snapshot.slow.duration)
 
-    val status = new StandYourGround.StatusEffect(caster, snapshot.slow.duration)
+    // TODO have entity extend combat source like player extends principal?
+    val combatSource = CombatSource(caster.name, Some(caster.id))
+    val status = new StandYourGround.StatusEffect(combatSource, snapshot.slow.duration)
     statusService.addEffect(caster.id, status)
 
     worldService.playSound(caster.location, castSound, soundCategory)

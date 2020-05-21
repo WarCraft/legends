@@ -42,7 +42,7 @@ object Grudge {
       taskService: TaskService,
       particleAdapter: ParticleAdapter
   ) extends Effect(() => movement.get + Vector3f.Offset.aboveHead, 5.ticks) {
-    private val particle = Particle.VILLAGER_ANGRY
+    private val particle = Particle.VillagerAngry
     private val vectors = EffectVectors.origin()
     private val renderer = EffectRenderer(particle, vectors)
     addRenderer(renderer)

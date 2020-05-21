@@ -35,12 +35,12 @@ object Fireball {
     private final val radius = 0.2f
     private final val particleCount = 20
 
-    private val innerParticle = Particle.FLAME
+    private val innerParticle = Particle.Flame
     private val innerVectors = EffectVectors.origin()
     private val innerRenderer = EffectRenderer(innerParticle, innerVectors)
     addRenderer(innerRenderer)
 
-    private val outerParticle = Particle.REDSTONE.color(Particle.Color.ORANGE)
+    private val outerParticle = Particle.Redstone.color(Particle.Color.Orange)
     private val outerVectors = EffectVectors.sphere(radius, particleCount)
     private val outerRenderer = EffectRenderer(outerParticle, outerVectors)
     addRenderer(outerRenderer)
@@ -64,7 +64,7 @@ class Fireball(
   {
     val location = caster.eyeLocation
     val direction = location.rotation
-    val velocity = direction multiply snapshot.velocity.modified
+    val velocity = direction * snapshot.velocity.modified
     val movement = Movement.linear(location, velocity, maxDistance)
     val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
     val effect = new Fireball.ParticleEffect(movement)

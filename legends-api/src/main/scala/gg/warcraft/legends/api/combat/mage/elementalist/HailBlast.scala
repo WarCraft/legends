@@ -38,7 +38,7 @@ object HailBlast {
       particleAdapter: ParticleAdapter
   ) extends Effect(movement.get) {
     private final val iterations = 15
-    private final val particle = Particle.CLOUD
+    private final val particle = Particle.Cloud
 
     private val (pitch, yaw) = direction.toPitchYaw
 

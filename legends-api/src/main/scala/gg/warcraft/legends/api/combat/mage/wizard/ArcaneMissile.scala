@@ -42,12 +42,12 @@ object ArcaneMissile {
     private final val outerParticleCount = 6
 
     private val innerParticle =
-      Particle.ENCHANTMENT_TABLE.speed(innerParticleSpeed, innerParticleCount)
+      Particle.EnchantmentTable.speed(innerParticleSpeed, innerParticleCount)
     private val innerVectors = EffectVectors.origin()
     private val innerRenderer = EffectRenderer(innerParticle, innerVectors)
     addRenderer(innerRenderer)
 
-    private val outerParticle = Particle.DRAGON_BREATH
+    private val outerParticle = Particle.DragonBreath
     private val outerVectors = EffectVectors.sphere(radius, outerParticleCount)
     private val outerRenderer = EffectRenderer(outerParticle, outerVectors)
     addRenderer(outerRenderer)

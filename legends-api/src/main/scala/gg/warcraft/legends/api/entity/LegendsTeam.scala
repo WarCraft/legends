@@ -9,7 +9,7 @@ sealed abstract class LegendsTeam(
     val kind: String,
     override val name: String,
     override val particleColor: Color,
-    override val chatColor: ColorCode.Type
+    override val chatColor: ColorCode
 ) extends Team
 
 object LegendsTeam {
@@ -17,7 +17,7 @@ object LegendsTeam {
       extends LegendsTeam(
         "Dwarf",
         "Dwarves",
-        Particle.Color.PURPLE,
+        Particle.Color.Purple,
         ColorCode.DARK_PURPLE
       )
 
@@ -25,7 +25,7 @@ object LegendsTeam {
       extends LegendsTeam(
         "Elf",
         "Elves",
-        Particle.Color.GREEN,
+        Particle.Color.Green,
         ColorCode.DARK_GREEN
       )
 
@@ -33,7 +33,7 @@ object LegendsTeam {
       extends LegendsTeam(
         "Human",
         "Humans",
-        Particle.Color.BLUE,
+        Particle.Color.Blue,
         ColorCode.DARK_BLUE
       )
 
@@ -41,7 +41,7 @@ object LegendsTeam {
       extends LegendsTeam(
         "Orc",
         "Orcs",
-        Particle.Color.RED,
+        Particle.Color.Red,
         ColorCode.DARK_RED
       )
 
@@ -49,7 +49,7 @@ object LegendsTeam {
       extends LegendsTeam(
         "Wayfarer",
         "Wayfarers",
-        Particle.Color.SILVER,
+        Particle.Color.Silver,
         ColorCode.GRAY
       )
 

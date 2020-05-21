@@ -32,7 +32,7 @@ object MoltenStorm {
     ): RangedAbility = new MoltenStorm(caster, snapshot)
   }
 
-  class FireballParticleEffect() extends Effect {}
+  // TODO class FireballParticleEffect() extends Effect {}
 
   class AreaParticleEffect(
       location: Location,
@@ -44,7 +44,7 @@ object MoltenStorm {
     private final val radius = 7.5f
     private final val particleCount = 100
 
-    private final val particle = Particle.REDSTONE.color(Particle.Color.ORANGE)
+    private final val particle = Particle.Redstone.color(Particle.Color.Orange)
     private final val vectors = EffectVectors.ring(radius, particleCount)
     private final val renderer = EffectRenderer(particle, vectors)
     addRenderer(renderer)
