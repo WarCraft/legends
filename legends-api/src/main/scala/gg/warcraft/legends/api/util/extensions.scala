@@ -11,11 +11,23 @@ object legendsplayer {
   @inline implicit final class LegendsPlayerOps(val self: Player) extends AnyVal {
     def legendsData(implicit
         legendsDataService: LegendsPlayerDataService
-    ): LegendsPlayerData = legendsDataService.getLegendsData(self.id).getOrThrow
+    ): LegendsPlayerData = legendsDataService.legendsData(self.id)
 
     def combatClassCooldown(implicit
         legendsDataService: LegendsPlayerDataService
     ): Long = legendsData.combatClassCooldown
+
+    def tutorialStep()(implicit
+        legendsDataService: LegendsPlayerDataService
+    ): Int = legendsData.tutorialStep
+
+    def levelRewardsClaimed()(implicit
+        legendsDataService: LegendsPlayerDataService
+    ): Int = legendsData.levelRewardsClaimed
+
+    def launchRewardsClaimed()(implicit
+        legendsDataService: LegendsPlayerDataService
+    ): Boolean = legendsData.launchRewardsClaimed
 
     def level(implicit
         levelService: LevelService
@@ -31,11 +43,3 @@ object legendsplayer {
     def lifetimeGold: Int = self.currencies.getLifetime(Gold)
   }
 }
-
-/*
-    TutorialStep getTutorialStep();
-
-    Rank getRank();
-
-    int getRankUpRewardsClaimed();
- */
