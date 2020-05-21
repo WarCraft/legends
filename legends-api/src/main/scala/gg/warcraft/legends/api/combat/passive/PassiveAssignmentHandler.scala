@@ -37,7 +37,7 @@ class PassiveAssignmentHandler(implicit
     groups.foreach { group =>
       player.status.effects
         .filter { _.group == group }
-        .pipe { statusService.removeEffect(player.id, _: _*) }
+        .pipe { effects => statusService.removeEffect(player.id, effects.toSeq: _*) }
     }
 
   private def assignRacialPassive(player: Player): Unit = {

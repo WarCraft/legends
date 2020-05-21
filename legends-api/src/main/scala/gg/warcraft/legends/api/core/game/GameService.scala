@@ -17,7 +17,7 @@ class GameService {
   def currentWar: War = _currentWar
 
   def readConfig(config: LegendsConfig): Unit = {
-    _defaultCaptures = config.defaultCaptures
+    // TODO _defaultCaptures = config.defaultCaptures
   }
 
   def initActiveGame(): Unit = ???

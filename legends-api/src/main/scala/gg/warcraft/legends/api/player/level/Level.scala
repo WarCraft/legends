@@ -4,7 +4,7 @@ import gg.warcraft.monolith.api.core.ColorCode
 
 case class Level(
     value: Int,
-    color: ColorCode.Type,
+    color: ColorCode,
     requiredFavor: Int,
     rewards: List[Unit] // TODO
 )

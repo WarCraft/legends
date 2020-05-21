@@ -9,14 +9,14 @@ class KillAssistHandler(implicit
     killAssistService: KillAssistService
 ) extends Event.Handler {
   override def handle(event: Event): Unit = event match {
-    case EntityDamageEvent(entityId, _, damage) =>
+    case EntityDamageEvent(entity, damage) =>
       damage.source.entityId match {
         case Some(attackerId) =>
-          killAssistService.registerAssist(entityId, attackerId)
+          killAssistService.registerAssist(entity.id, attackerId)
         case None =>
       }
-    case EntityDeathEvent(entityId, _, _) =>
-      taskService.evalNextTick { killAssistService.resetAssists(entityId) }
+    case EntityDeathEvent(entity, _) =>
+      taskService.evalNextTick { killAssistService.resetAssists(entity.id) }
     case _ =>
   }
 }

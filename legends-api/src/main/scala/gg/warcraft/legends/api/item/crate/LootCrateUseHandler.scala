@@ -18,12 +18,12 @@ class LootCrateUseHandler(lootCrateService: LootCrateService) extends Event.Hand
   }
 
   override def reduce[T <: PreEvent](event: T): T = event match {
-    case event @ BlockPreInteractEvent(_, _, playerId, _, mainHand, _, _, _) =>
-      if (onInteract(playerId, mainHand))
+    case event @ BlockPreInteractEvent(_, _, player, _, _) =>
+      if (onInteract(player.id, player.equipment.mainHand))
         event.copy(cancelled = true).asInstanceOf[T]
       else event.asInstanceOf[T]
-    case event @ EntityPreInteractEvent(_, _, playerId, _, mainHand, _, _, _, _) =>
-      if (onInteract(playerId, mainHand))
+    case event @ EntityPreInteractEvent(_, player, _, _, _) =>
+      if (onInteract(player.id, player.equipment.mainHand))
         event.copy(cancelled = true).asInstanceOf[T]
       else event.asInstanceOf[T]
     case _ => event

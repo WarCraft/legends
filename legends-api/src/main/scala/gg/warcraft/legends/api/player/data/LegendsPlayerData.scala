@@ -4,8 +4,8 @@ import java.util.UUID
 
 case class LegendsPlayerData(
     id: UUID,
-    tutorialStep: String,
-    combatClassCooldown: Long,
-    levelRewardsClaimed: Int,
-    launchRewardsClaimed: Boolean
+    tutorialStep: Int = 0,
+    combatClassCooldown: Long = 0,
+    levelRewardsClaimed: Int = 0,
+    launchRewardsClaimed: Boolean = false
 )

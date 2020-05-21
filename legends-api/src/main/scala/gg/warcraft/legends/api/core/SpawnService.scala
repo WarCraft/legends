@@ -34,7 +34,7 @@ class SpawnService(implicit
   }
 
   def warpToSpawn(playerId: UUID): Boolean = {
-    if (playerCooldowns.getOrElse(playerId, 0) <= System.currentTimeMillis) {
+    if (playerCooldowns.getOrElse(playerId, 0L) <= System.currentTimeMillis) {
       entityService.addPotionEffect(playerId, warpEffect)
       entityService.freezeEntity(playerId, warpEffect.duration)
       playerService.sendMessage(playerId, warpMessage)

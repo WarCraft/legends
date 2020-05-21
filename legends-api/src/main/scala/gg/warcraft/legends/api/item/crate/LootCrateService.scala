@@ -11,6 +11,7 @@ import gg.warcraft.monolith.api.core.Message
 import gg.warcraft.monolith.api.item.{Carrot, GoldenApple, GoldenCarrot}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.PlayerService
+import gg.warcraft.monolith.api.util.string._
 
 class LootCrateService(implicit
     logger: Logger,
@@ -66,16 +67,16 @@ class LootCrateService(implicit
   private def awardConsumable(playerId: UUID, rarity: ItemRarity): Boolean = {
     val tooltip = List("Consumable")
     val item = rarity match {
-      case COMMON => // TODO add default values to item case classes
-        Carrot(s"${COMMON.color}Carrot", tooltip, 1, Set.empty, true)
-      case RARE =>
-        GoldenCarrot(s"${RARE.color}Golden Carrot", tooltip, 1, Set.empty, true)
-      case EPIC =>
-        GoldenApple(false, s"${EPIC.color}Golden Apple", tooltip, 1, Set.empty, true)
-      case LEGENDARY =>
+      case Common => // TODO add default values to item case classes
+        Carrot(s"${Common.color}Carrot", tooltip, 1, Set.empty, true)
+      case Rare      =>
+        GoldenCarrot(s"${Rare.color}Golden Carrot", tooltip, 1, Set.empty, true)
+      case Epic      =>
+        GoldenApple(false, s"${Epic.color}Golden Apple", tooltip, 1, Set.empty, true)
+      case Legendary =>
         GoldenApple(
           true,
-          s"${LEGENDARY.color}Enchanted Golden Apple",
+          s"${Legendary.color}Enchanted Golden Apple",
           tooltip,
           1,
           Set.empty,
@@ -83,16 +84,16 @@ class LootCrateService(implicit
         )
     }
     playerService.giveItem(playerId, item)
-    receiveSendNotification(playerId, item.name)
+    // TODO receiveSendNotification(playerId, item.name)
     true
   }
 
   private def awardGold(playerId: UUID, rarity: ItemRarity): Boolean = {
     val amount = rarity match {
-      case COMMON    => 25
-      case RARE      => 100
-      case EPIC      => 300
-      case LEGENDARY => 600
+      case Common => 25
+      case Rare      => 100
+      case Epic      => 300
+      case Legendary => 600
     }
     currencyService.addCurrency(LegendsCurrency.Gold, amount, playerId)
     true
@@ -119,6 +120,7 @@ class LootCrateService(implicit
         }
         return true;
      */
+    false
   }
 }
 

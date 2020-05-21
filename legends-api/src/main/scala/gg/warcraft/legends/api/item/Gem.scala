@@ -1,6 +1,6 @@
 package gg.warcraft.legends.api.item
 
-// case class Gem ()
+case class Gem ()
 
 /*
  EquipmentBuilder createScrollBuilder(String name, ItemRarity rarity);

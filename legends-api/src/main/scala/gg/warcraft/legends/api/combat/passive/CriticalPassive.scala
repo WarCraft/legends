@@ -32,7 +32,7 @@ object CriticalPassive {
         if (random.nextFloat <= critChance) {
           val damageModifier = CombatValue.Modifier.percent(source, critModifier)
           event.copy(damageModifiers = damageModifier :: damageModifiers).as[T]
-        } else event
+        } else event.as[T]
       case _ => event
     }
   }

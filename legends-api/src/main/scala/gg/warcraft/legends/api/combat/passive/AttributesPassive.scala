@@ -45,8 +45,8 @@ object AttributesPassive {
             if (modifierValue != 0) {
               val damageModifier = CombatValue.Modifier.flat(source, modifierValue)
               event.copy(damageModifiers = damageModifier :: damageModifiers).as[T]
-            } else event
-          case None => event
+            } else event.as[T]
+          case None => event.as[T]
         }
       case _ => event
     }

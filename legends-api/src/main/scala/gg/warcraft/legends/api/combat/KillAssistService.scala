@@ -2,7 +2,7 @@ package gg.warcraft.legends.api.combat
 
 import java.util.UUID
 
-import gg.warcraft.monolith.api.util.Ops._
+import gg.warcraft.monolith.api.util.chaining._
 
 class KillAssistService {
   private var _killAssists: Map[UUID, Set[UUID]] = Map.empty
@@ -16,5 +16,5 @@ class KillAssistService {
     }
 
   def resetAssists(targetId: UUID): Unit =
-    _killAssists = _killAssists.updated(targetId, None)
+    _killAssists = _killAssists.updated(targetId, Set.empty)
 }

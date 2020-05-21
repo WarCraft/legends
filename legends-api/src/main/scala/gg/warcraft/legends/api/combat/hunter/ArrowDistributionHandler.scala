@@ -30,7 +30,7 @@ class ArrowDistributionHandler(implicit
         case Some("warcraft.marksman") | Some("warcraft.ranger") =>
           if (!player.inventory.contains(arrow))
             taskService.evalNextTick(playerService.giveItem(player.id, arrow))
-        case None =>
+        case _ =>
       }
 
     case _ =>

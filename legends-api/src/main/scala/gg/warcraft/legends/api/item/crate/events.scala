@@ -5,5 +5,5 @@ import gg.warcraft.monolith.api.player.Player
 
 case class LootCrateOpenedEvent(
     player: Player,
-    crateType: LootCrate.Type
+    crateType: LootCrate
 ) extends Event
