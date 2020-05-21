@@ -9,7 +9,7 @@ class ResourceStatisticHandler(implicit
     statisticService: StatisticService
 ) extends Event.Handler {
   private final val resourceStatistics: List[LegendsStatistic] =
-    DAILY_RESOURCES :: MONTHLY_RESOURCES :: ALLTIME_RESOURCES :: Nil
+    DailyResources :: MonthlyResources :: AlltimeResources :: Nil
 
   override def handle(event: Event): Unit = event match {
 //    case BlockGatheredEvent | EntityGatheredEvent => TODO
