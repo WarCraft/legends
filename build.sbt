@@ -31,6 +31,7 @@ lazy val api = (project in file("legends-api"))
     commonSettings,
     libraryDependencies ++= commonDependencies ++ Seq(
       "gg.warcraft" %% "monolith-api" % "15.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "chat-api" % "15.0.0-SNAPSHOT" % Provided,
       // "gg.warcraft" %% "gathering-api" % "15.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "combat-api" % "15.0.0-SNAPSHOT" % Provided
     )
