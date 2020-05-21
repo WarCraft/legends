@@ -2,6 +2,7 @@ package gg.warcraft.legends.api.menu
 
 import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.monolith.api.core.auth.Principal
 import gg.warcraft.monolith.api.core.command.Command
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
@@ -15,7 +16,8 @@ class MenuCommandHandler(implicit
     attributeService: AttributeService,
     currencyService: CurrencyService,
     combatDataService: CombatDataService,
-    combatClassService: CombatClassService
+    combatClassService: CombatClassService,
+    legendsPlayerDataService: LegendsPlayerDataService
 ) extends Command.Handler {
   override def handle(
       executor: Principal,

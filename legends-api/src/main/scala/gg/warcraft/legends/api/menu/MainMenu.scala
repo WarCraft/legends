@@ -119,19 +119,20 @@ object MainMenu {
         });
         return builder.build();
        */
-    )
+    ) { _ => () }
 
-    val levelButton = Button(
-      levelIcon(???),
-      "Level",
-      List(
-        s"${WHITE}Current level:",
-        s"${YELLOW}Lv. ${???} (${%}%)",
-        "",
-        s"${WHITE}Unlocked passives:",
-        levelPassivesView(???)
-      ).flatten
-    )
+    // TODO
+//    val levelButton = Button(
+//      levelIcon(???),
+//      "Level",
+//      List(
+//        s"${WHITE}Current level:",
+//        s"${YELLOW}Lv. ${???} (${%}%)",
+//        "",
+//        s"${WHITE}Unlocked passives:",
+//        levelPassivesView(???)
+//      ).flatten
+//    )
 
     /*
      Button createRankButton(LegendsPlayer player) {
@@ -161,8 +162,8 @@ object MainMenu {
       MenuSize.TWO_ROWS,
       Map(
         // 1st row
-        0 -> playerButton,
-        1 -> levelButton
+    //    0 -> playerButton
+       // 1 -> levelButton
 //        2 -> classButton,
 //        3 -> raceButton,
 //        // 4

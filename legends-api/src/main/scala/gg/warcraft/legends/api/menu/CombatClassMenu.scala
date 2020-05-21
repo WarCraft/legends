@@ -4,15 +4,17 @@ import gg.warcraft.combat.api.combatclass.{CombatClass, CombatClassService}
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.combatplayer._
 import gg.warcraft.legends.api.combat.LegendsCombatClass._
+import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.util.legendsplayer._
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemType, ItemTypeOrVariant}
 import gg.warcraft.monolith.api.item.variant.AxeVariant
-import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService}
+import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
 import gg.warcraft.monolith.api.player.Player
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.util.TimeUtils
+import gg.warcraft.monolith.api.util.string._
 
 object CombatClassMenu {
   def abilitiesView(combatClass: CombatClass): List[String] = List(
@@ -56,15 +58,17 @@ object CombatClassMenu {
       case None                    => true
     }
 
+    val isLocked = true // TODO
+
     val tooltip = lore ++ List("") ++ abilitiesView(combatClass) ++ List(
       ""
     ) ++ switchView(combatClass, isLocked, canSwitch, cooldown)
     Button(
       icon,
       combatClass.name,
-      tooltip: _*
+      tooltip.toList
     ) { click =>
-      if (!isLocked && cooldown.isEmpty && click.isShiftRightClick) {
+      if (!isLocked && cooldown.isEmpty && click.isShiftRight) {
         val newCombatData =
           player.combatData.copy(combatClass =
             Some(combatClass)
@@ -271,7 +275,8 @@ object CombatClassMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       attributeService: AttributeService,
-      currencyService: CurrencyService
+      currencyService: CurrencyService,
+      legendsDataService: LegendsPlayerDataService
   ): Menu = {
     val combatClass = player.combatClass
     val combatClassName = combatClass.get.name
@@ -292,11 +297,11 @@ object CombatClassMenu {
         "You can change your combat class",
         "once every 10 minutes."
       )
-    )
+    ) { _ => () }
 
     Menu(
       "Combat Class",
-      Menu.Size.ONE_ROW,
+      MenuSize.ONE_ROW,
       Map(
         0 -> infoButton,
         8 -> Button.back(MainMenu.apply),

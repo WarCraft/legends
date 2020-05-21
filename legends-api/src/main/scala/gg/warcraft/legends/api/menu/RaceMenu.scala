@@ -20,7 +20,7 @@ object RaceMenu {
         :: "At the moment you can switch teams freely,"
         :: "but this will be changed at a later time."
         :: Nil
-    )
+    ) { _ => () }
     /*
         builder.addTooltip("You can switch teams freely the first");
         builder.addTooltip("3 days of a war (start of the month).");
@@ -60,7 +60,7 @@ object RaceMenu {
     "[Shift Right Click] To switch to this team" :: Nil
   ) { click =>
     if (click.isShiftRight) {
-      playerService.setTeam(player.data.copy(team = Humans))
+      // TODO playerService.setTeam(player.data.copy(team = Humans))
     }
   }
 
@@ -72,7 +72,7 @@ object RaceMenu {
     "[Shift Right Click] To switch to this team" :: Nil
   ) { click =>
     if (click.isShiftRight) {
-      playerService.setTeam(player.data.copy(team = Orcs))
+      // TODO playerService.setTeam(player.data.copy(team = Orcs))
     }
   }
 
@@ -84,7 +84,7 @@ object RaceMenu {
     "[Shift Right Click] To switch to this team" :: Nil
   ) { click =>
     if (click.isShiftRight) {
-      playerService.setTeam(player.data.copy(team = Dwarves))
+      // TODO playerService.setTeam(player.data.copy(team = Dwarves))
     }
   }
 
@@ -96,7 +96,7 @@ object RaceMenu {
     "[Shift Right Click] To switch to this team" :: Nil
   ) { click =>
     if (click.isShiftRight) {
-      playerService.setTeam(player.data.copy(team = Elves))
+      // TODO playerService.setTeam(player.data.copy(team = Elves))
     }
   }
 
@@ -112,7 +112,7 @@ object RaceMenu {
       "Race",
       MenuSize.ONE_ROW,
       Map(
-        0 -> infoButton,
+        0 -> infoButton(player),
         8 -> Button.back(MainMenu.apply),
         // 1st row
         2 -> humanButton(player),
