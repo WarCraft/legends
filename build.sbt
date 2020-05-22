@@ -47,7 +47,8 @@ lazy val spigot = (project in file("legends-spigot"))
     ),
     libraryDependencies ++= commonDependencies ++ Seq(
       "com.destroystokyo.paper" % "paper-api" % "1.15.2-R0.1-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "monolith-spigot" % "15.0.0-SNAPSHOT" % Provided
+      "gg.warcraft" %% "monolith-spigot" % "15.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "combat-spigot" % "15.0.0-SNAPSHOT" % Provided
     )
   )
   .dependsOn(api)
