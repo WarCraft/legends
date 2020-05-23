@@ -38,7 +38,7 @@ object Focus {
     private final val radius = 0.5f
     private final val frames = 20
 
-    private final val particle = Particle.Redstone
+    private final val particle = Particle.Redstone.color(Particle.Color.Red)
     private final val vectors = EffectVectors.ring(radius, frames)
 
     private val renderer = EffectRenderer.iterative(particle, vectors)
