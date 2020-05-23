@@ -58,7 +58,7 @@ class Trap(
     currentBlock.location,
     TrapdoorVariant.OAK,
     BlockFace.NORTH,
-    BlockBisection.TOP,
+    BlockBisection.BOTTOM,
     powered = false,
     flooded = false,
     open = false
