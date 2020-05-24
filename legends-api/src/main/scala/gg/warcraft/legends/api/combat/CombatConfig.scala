@@ -9,7 +9,9 @@ import gg.warcraft.legends.api.combat.hunter.ranger.{Disengage, ToxicArrow, Trap
 import gg.warcraft.legends.api.combat.mage.{Bolt, Fireball}
 import gg.warcraft.legends.api.combat.mage.elementalist.{HailBlast, MoltenStorm}
 import gg.warcraft.legends.api.combat.mage.racial.{ArcaneBarrier, FlameTotem}
-import gg.warcraft.legends.api.combat.mage.wizard.{ArcaneMissile, Teleport}
+import gg.warcraft.legends.api.combat.mage.wizard.{
+  ArcaneFizzle, ArcaneMissile, Teleport
+}
 import gg.warcraft.legends.api.combat.warrior.berserker.{Grudge, Maul, Shatter}
 import gg.warcraft.legends.api.combat.warrior.guardian.{
   Hamstring, Slam, StandYourGround
@@ -54,6 +56,7 @@ class CombatConfig(implicit
     registerAbility("Hail Blast", new HailBlast.Factory())
     registerAbility("Molten Storm", new MoltenStorm.Factory())
     // Wizard
+    registerAbility("Arcane Fizzle", new ArcaneFizzle.Factory())
     registerAbility("Arcane Missile", new ArcaneMissile.Factory())
     registerAbility("Teleport", new Teleport.Factory())
     // Human
