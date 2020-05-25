@@ -20,5 +20,6 @@ class ArrowFriendlyFireHandler(implicit
       } else if (shooter.get.team == target.get.team) {
         it.copy(cancelled = true).asInstanceOf[T]
       } else event
+    case _ => event
   }
 }
