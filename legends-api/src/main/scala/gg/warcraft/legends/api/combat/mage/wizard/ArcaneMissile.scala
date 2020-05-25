@@ -1,17 +1,16 @@
 package gg.warcraft.legends.api.combat.mage.wizard
 
-import gg.warcraft.combat.api.{Hitbox, Movement}
+import gg.warcraft.combat.api.{ Hitbox, Movement }
 import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.ability.RangedAbility.Flag
 import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.core.task.TaskService
-import gg.warcraft.monolith.api.effect.{
-  Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
-}
-import gg.warcraft.monolith.api.entity.{Entity, EntityService}
-import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
+import gg.warcraft.monolith.api.effect.{ Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter }
+import gg.warcraft.monolith.api.entity.{ Entity, EntityService }
+import gg.warcraft.monolith.api.math.Vector3f
+import gg.warcraft.monolith.api.world.{ Sound, SoundCategory, WorldService }
 
 object ArcaneMissile {
   class Factory(implicit
@@ -72,7 +71,7 @@ class ArcaneMissile(
   private val movement = Movement.homing(
     caster.eyeLocation,
     snapshot.velocity.modified,
-    () => target.location
+    () => target.location + Vector3f.Offset.chest
   )
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
   private val effect = new ArcaneMissile.ParticleEffect(movement)

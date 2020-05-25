@@ -11,7 +11,7 @@ import scala.util.Random
 
 class MassBamboozleAdapter(implicit server: Server) extends MassBamboozle.Adapter {
   private final val disguises: List[MobDisguise] =
-    (DisguiseType.COW :: DisguiseType.PIG :: DisguiseType.SHEEP :: Nil)
+    (DisguiseType.COW :: DisguiseType.PIG :: DisguiseType.SHEEP :: DisguiseType.TURTLE :: Nil)
       .map { new MobDisguise(_) }
 
   private def randomDisguise: MobDisguise = {
