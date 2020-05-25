@@ -6,8 +6,10 @@ import gg.warcraft.legends.api.combat.hunter.marksman.{
   Focus, FocusRepository, PowerShot, Sneak
 }
 import gg.warcraft.legends.api.combat.hunter.ranger.{Disengage, ToxicArrow, Trap}
-import gg.warcraft.legends.api.combat.mage.{Bolt, Fireball}
-import gg.warcraft.legends.api.combat.mage.elementalist.{HailBlast, MoltenStorm}
+import gg.warcraft.legends.api.combat.mage.Fireball
+import gg.warcraft.legends.api.combat.mage.elementalist.{
+  Bolt, HailBlast, MoltenStorm
+}
 import gg.warcraft.legends.api.combat.mage.racial.{ArcaneBarrier, FlameTotem}
 import gg.warcraft.legends.api.combat.mage.wizard.{
   ArcaneFizzle, ArcaneMissile, Teleport
@@ -23,8 +25,8 @@ import gg.warcraft.monolith.api.effect.ParticleAdapter
 import gg.warcraft.monolith.api.entity.EntityService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.entity.status.StatusService
-import gg.warcraft.monolith.api.player.hiding.PlayerHidingService
 import gg.warcraft.monolith.api.player.PlayerService
+import gg.warcraft.monolith.api.player.hiding.PlayerHidingService
 import gg.warcraft.monolith.api.world.WorldService
 
 class CombatConfig(implicit

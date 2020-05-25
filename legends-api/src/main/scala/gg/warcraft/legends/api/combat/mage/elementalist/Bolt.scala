@@ -1,17 +1,17 @@
-package gg.warcraft.legends.api.combat.mage
+package gg.warcraft.legends.api.combat.mage.elementalist
 
-import gg.warcraft.combat.api.{Hitbox, Movement}
+import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.RangedAbility.Flag
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
-import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.projectile.ProjectileService
+import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Location, WorldService}
 
 object Bolt {
-  class Factory(
-      implicit entityService: EntityService,
+  class Factory(implicit
+      entityService: EntityService,
       projectileService: ProjectileService,
       worldService: WorldService
   ) extends RangedAbility.Factory {
@@ -32,8 +32,8 @@ class Bolt(
     override val snapshot: AbilitySnapshot,
     blockTarget: Option[Block],
     entityTarget: Option[Entity]
-)(
-    implicit entityService: EntityService,
+)(implicit
+    entityService: EntityService,
     projectileService: ProjectileService,
     worldService: WorldService
 ) extends RangedAbility {
@@ -43,7 +43,7 @@ class Bolt(
 
   private val movement = Movement.oneOff(location)
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
-  projectileService createProjectile (this, movement, hitbox, () => {}) // TODO set default callback
+  projectileService createProjectile (this, movement, hitbox)
 
   worldService strikeLightning (location, true)
 
