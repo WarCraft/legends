@@ -4,10 +4,11 @@ import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.combat.CombatConfig
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.core.types.DatabaseContext
+import gg.warcraft.legends.api.entity.TeamConfig
 import gg.warcraft.legends.spigot.combat.RangerOnlyBowHandler
 import gg.warcraft.monolith.spigot.SpigotMonolithPlugin
 import gg.warcraft.monolith.spigot.implicits._
-import io.getquill.{SnakeCase, SqliteDialect}
+import io.getquill.{ SnakeCase, SqliteDialect }
 
 class LegendsPlugin extends SpigotMonolithPlugin {
   import implicits._
@@ -26,6 +27,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     //  val config = parseConfig[LegendsConfig](getConfig.saveToString())
 
     new CombatConfig().writeConfig()
+    new TeamConfig().writeConfig()
 
     enableHandlers()
     enableTasks()
