@@ -38,9 +38,4 @@ object LegendsStatistic {
   case object AlltimeMobs extends LegendsStatistic("AlltimeMobs")
   case object AlltimeResources extends LegendsStatistic("AlltimeResources")
   case object AlltimeCrates extends LegendsStatistic("AlltimeCrates")
-
-  implicit def toString(statistic: LegendsStatistic): String =
-    statistic.toString
-  implicit def toString(statistics: List[LegendsStatistic]): List[String] =
-    statistics.map { _.toString }
 }
