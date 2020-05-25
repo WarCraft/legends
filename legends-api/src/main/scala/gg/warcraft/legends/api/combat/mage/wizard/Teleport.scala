@@ -4,9 +4,10 @@ import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.ability.RangedAbility.Flag
 import gg.warcraft.combat.api.projectile.ProjectileService
+import gg.warcraft.combat.api.{ Hitbox, Movement }
 import gg.warcraft.monolith.api.block.Block
-import gg.warcraft.monolith.api.entity.{Entity, EntityService}
-import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
+import gg.warcraft.monolith.api.entity.{ Entity, EntityService }
+import gg.warcraft.monolith.api.world.{ Sound, SoundCategory, WorldService }
 
 object Teleport {
   class Factory(implicit
@@ -38,21 +39,11 @@ class Teleport(
   private final val castSound = Sound.ENTITY_ENDERMAN_TELEPORT
   private final val hitSound = Sound.ENTITY_ENDERMAN_TELEPORT
 
-  // TODO
+  private val origin = caster.location
+  private val rotation = caster.eyeLocation.rotation
 
-  worldService.playSound(caster.location, castSound, soundCategory)
 
-  override def onHit(entity: Entity): Boolean = {
-    entityService.damageEntity(entity.id, snapshot.damage)
-    entityService.addPotionEffect(entity.id, snapshot.slow)
-    worldService.playSound(entity.location, hitSound, soundCategory)
-    false
-  }
-
-  override def onMiss(entity: Entity): Boolean = false
-}
-
-/*
+  /* TODO impl relative block utils
     Location originalLocation = caster.getLocation();
     Location teleportLocation;
     float teleportOrientation;
@@ -82,13 +73,22 @@ class Teleport(
                 adjustedLocation.z()
         ).add(0.5f, 1, 0.5f);
         teleportOrientation = caster.getEyeLocation().yaw();
-    }
+  }
+   */
 
-    entityCommandService.teleport(caster.getId(), teleportLocation, directionUtils.toDirection(teleportOrientation));
-    WorldService.playSound(originalLocation, CAST_SOUND, SOUND_CATEGORY);
+  entityService.teleportEntity(caster.id, target, rotation)
+  worldService.playSound(origin, castSound, soundCategory)
 
-    float radius = snapshot.getFloat(AbilityConfigurationValue.RADIUS);
-    Movement movement = movementFactory.createOneOffMovement(teleportLocation);
-    Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius, entity -> entity.getTeam() != caster.getTeam());
-    abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
- */
+  private val movement = Movement.oneOff(target)
+  private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
+  projectileService.createProjectile(this, movement, hitbox)
+
+  override def onHit(entity: Entity): Boolean = {
+    entityService.damageEntity(entity.id, snapshot.damage)
+    entityService.addPotionEffect(entity.id, snapshot.slow)
+    worldService.playSound(entity.location, hitSound, soundCategory)
+    false
+  }
+
+  override def onMiss(entity: Entity): Boolean = false
+}
