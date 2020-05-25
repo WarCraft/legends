@@ -1,10 +1,61 @@
 package gg.warcraft.legends.spigot
 
+import java.util.logging.Logger
+
 import gg.warcraft.legends.api.combat.hunter.marksman.FocusRepository
+import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
+import gg.warcraft.legends.api.core.types.DatabaseContext
+import gg.warcraft.legends.spigot.combat.mage.elementalist.MassBamboozleAdapter
+import gg.warcraft.monolith.api.core.event.EventService
+import gg.warcraft.monolith.api.core.task.TaskService
+import org.bukkit.plugin.Plugin
+import org.bukkit.Server
+
+import scala.concurrent.ExecutionContext
 
 object implicits {
-  def init(): Unit = {}
+  private var _server: Server = _
+  private var _plugin: Plugin = _
+  private var _logger: Logger = _
 
+  private var _database: DatabaseContext = _
+  private var _eventService: EventService = _
+  private var _taskService: TaskService = _
+
+  private[spigot] def init()(implicit
+      server: Server,
+      plugin: Plugin,
+      logger: Logger,
+      database: DatabaseContext,
+      eventService: EventService,
+      taskService: TaskService
+  ): Unit = {
+    _server = server
+    _plugin = plugin
+    _logger = logger
+    _database = database
+    _eventService = eventService
+    _taskService = taskService
+  }
+
+  // Spigot
+  private implicit lazy val server: Server = _server
+  private implicit lazy val plugin: Plugin = _plugin
+  private implicit lazy val logger: Logger = _logger
+
+  // Core
+  private implicit final val context: ExecutionContext = ExecutionContext.global
+  private implicit lazy val database: DatabaseContext = _database
+  private implicit lazy val eventService: EventService = _eventService
+  private implicit lazy val taskService: TaskService = _taskService
+
+  // Marksman
   implicit lazy val focusRepository: FocusRepository =
     new FocusRepository
+
+  // Wizard
+  implicit lazy val massBamboozleRepository: MassBamboozle.Repository =
+    new MassBamboozle.Repository
+  implicit lazy val massBamboozleAdapter: MassBamboozle.Adapter =
+    new MassBamboozleAdapter
 }
