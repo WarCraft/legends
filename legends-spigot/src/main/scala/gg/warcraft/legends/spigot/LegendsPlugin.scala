@@ -2,6 +2,7 @@ package gg.warcraft.legends.spigot
 
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.combat.CombatConfig
+import gg.warcraft.legends.api.combat.hunter.{ ArrowDistributionHandler, ArrowFriendlyFireHandler, ArrowPickUpHandler }
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.core.types.DatabaseContext
 import gg.warcraft.legends.api.entity.TeamConfig
@@ -34,6 +35,9 @@ class LegendsPlugin extends SpigotMonolithPlugin {
   }
 
   private def enableHandlers(): Unit = {
+    eventService.subscribe(new ArrowDistributionHandler)
+    eventService.subscribe(new ArrowFriendlyFireHandler)
+    eventService.subscribe(new ArrowPickUpHandler)
     eventService.subscribe(new MassBamboozle.Handler)
 
     subscribe(new OnePointEightPvPInitHandler)
