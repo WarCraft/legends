@@ -12,7 +12,7 @@ import gg.warcraft.legends.api.combat.mage.elementalist.{
 }
 import gg.warcraft.legends.api.combat.mage.racial.{ArcaneBarrier, FlameTotem}
 import gg.warcraft.legends.api.combat.mage.wizard.{
-  ArcaneFizzle, ArcaneMissile, Teleport
+  ArcaneFizzle, ArcaneMissile, MassBamboozle, Teleport
 }
 import gg.warcraft.legends.api.combat.warrior.berserker.{Grudge, Maul, Shatter}
 import gg.warcraft.legends.api.combat.warrior.guardian.{
@@ -41,7 +41,9 @@ class CombatConfig(implicit
     playerHidingService: PlayerHidingService,
     playerService: PlayerService,
     focusRepository: FocusRepository,
-    blockSpoofingService: BlockSpoofingService
+    blockSpoofingService: BlockSpoofingService,
+    massBamboozleRepository: MassBamboozle.Repository,
+    massBamboozleAdapter: MassBamboozle.Adapter
 ) {
   import abilityService.registerAbility
 
@@ -61,6 +63,7 @@ class CombatConfig(implicit
     registerAbility("Arcane Fizzle", new ArcaneFizzle.Factory())
     registerAbility("Arcane Missile", new ArcaneMissile.Factory())
     registerAbility("Teleport", new Teleport.Factory())
+    registerAbility("Mass Bamboozle", new MassBamboozle.Factory())
     // Human
     registerAbility("Barrier", new ArcaneBarrier.Factory())
     // Orc

@@ -103,7 +103,7 @@ object MassBamboozle {
     def remove(entityId: UUID): Unit = _bamboozled -= entityId
   }
 
-  class Handler(repository: Repository) extends Event.Handler {
+  class Handler(implicit repository: Repository) extends Event.Handler {
     override def reduce[T <: PreEvent](event: T): T = event match {
       case event @ AbilityPreCastEvent(_, caster, _, _, _) =>
         if (!repository.bamboozled.contains(caster.id)) event.as[T]

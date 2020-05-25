@@ -2,6 +2,7 @@ package gg.warcraft.legends.spigot
 
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.combat.CombatConfig
+import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.core.types.DatabaseContext
 import gg.warcraft.legends.spigot.combat.RangerOnlyBowHandler
 import gg.warcraft.monolith.spigot.SpigotMonolithPlugin
@@ -31,6 +32,8 @@ class LegendsPlugin extends SpigotMonolithPlugin {
   }
 
   private def enableHandlers(): Unit = {
+    eventService.subscribe(new MassBamboozle.Handler)
+
     subscribe(new OnePointEightPvPInitHandler)
     subscribe(new RangerOnlyBowHandler)
   }
