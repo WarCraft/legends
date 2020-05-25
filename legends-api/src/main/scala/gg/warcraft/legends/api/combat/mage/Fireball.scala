@@ -13,8 +13,8 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 object Fireball {
-  class Factory(
-      implicit entityService: EntityService,
+  class Factory(implicit
+      entityService: EntityService,
       projectileService: ProjectileService,
       worldService: WorldService,
       particleAdapter: ParticleAdapter,
@@ -28,8 +28,8 @@ object Fireball {
     ): RangedAbility = new Fireball(caster, snapshot)
   }
 
-  class ParticleEffect(movement: Movement)(
-      implicit particleAdapter: ParticleAdapter,
+  class ParticleEffect(movement: Movement)(implicit
+      particleAdapter: ParticleAdapter,
       taskService: TaskService
   ) extends Effect(movement.get) {
     private final val radius = 0.2f
@@ -50,8 +50,8 @@ object Fireball {
 class Fireball(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
-)(
-    implicit entityService: EntityService,
+)(implicit
+    entityService: EntityService,
     projectileService: ProjectileService,
     worldService: WorldService,
     particleAdapter: ParticleAdapter,
