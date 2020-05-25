@@ -2,7 +2,7 @@ package gg.warcraft.legends.api.combat.mage.wizard
 
 import java.util.UUID
 
-import gg.warcraft.combat.api.Movement
+import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.{AbilityPreCastEvent, RangedAbility}
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.ability.RangedAbility.Flag
@@ -20,98 +20,46 @@ import gg.warcraft.monolith.api.world.WorldService
 
 class MassBamboozle(
     override val caster: Entity,
-    override val snapshot: AbilitySnapshot
+    override val snapshot: AbilitySnapshot,
+    blockTarget: Option[Block],
+    entityTarget: Option[Entity]
 )(implicit
     entityService: EntityService,
     projectileService: ProjectileService,
     worldService: WorldService,
     particleAdapter: ParticleAdapter,
-    taskService: TaskService
+    taskService: TaskService,
+    repository: MassBamboozle.Repository,
+    adapter: MassBamboozle.Adapter
 ) extends RangedAbility {
-  override def onHit(entity: Entity): Boolean = ???
-  override def onMiss(entity: Entity): Boolean = ???
+  private val location =
+    if (entityTarget.isDefined) entityTarget.get.location
+    else blockTarget.get.location.toLocation + (.5f, 1f, .5f)
+  private val movement = Movement.oneOff(location)
+  private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
+
+  private val effectMovement = Movement.stationary(location)
+  private val effect = new MassBamboozle.ParticleEffect(effectMovement)
+  taskService.evalLater(
+    snapshot.countdown,
+    projectileService.createProjectile(this, movement, hitbox, effect.cancel)
+  )
+
+  override def onHit(entity: Entity): Boolean = {
+    adapter.disguise(entity.id)
+    repository.save(entity.id)
+    taskService.runLater(
+      snapshot.duration,
+      () => {
+        adapter.reset(entity.id)
+        repository.remove(entity.id)
+      }
+    )
+    false
+  }
+
+  override def onMiss(entity: Entity): Boolean = false
 }
-
-/*
-public class MassBamboozle extends AbstractAbility implements RangedAbility {
-    private static final Random random;
-    private static final List<MobDisguise> disguises;
-
-    static {
-        random = new Random(System.currentTimeMillis());
-        disguises = new ArrayList<>();
-        disguises.add(new MobDisguise(DisguiseType.COW));
-        disguises.add(new MobDisguise(DisguiseType.PIG));
-        disguises.add(new MobDisguise(DisguiseType.SHEEP));
-    }
-
-    private final Server server;
-    private final MassBamboozleRepository massBamboozleRepository;
-    private final TaskService taskService;
-
-    @Inject
-    public MassBamboozle(Server server, AbilityCommandService abilityCommandService, MovementFactory movementFactory,
-                         HitboxFactory hitboxFactory, MageEffectFactory mageEffectFactory, TaskService taskService,
-                         MassBamboozleRepository massBamboozleRepository,
-                         @Assisted AbilitySnapshot snapshot, @Assisted("caster") Entity caster,
-                         @Assisted("target") @Nullable Entity rangedTarget, @Assisted @Nullable Block blockTarget) {
-        super(caster.getId(), snapshot);
-        this.server = server;
-        this.massBamboozleRepository = massBamboozleRepository;
-        this.taskService = taskService;
-        Location location;
-        if (rangedTarget != null) {
-            location = rangedTarget.getLocation();
-        } else if (blockTarget != null) {
-            location = blockTarget.location().toLocation().add(0.5f, 1, 0.5f);
-        } else {
-            throw new IllegalStateException("Failed to cast Mass Bamboozle with null entity and block targets");
-        }
-
-        CombatValue radius = snapshot.getValue(AbilityConfigurationValue.RADIUS);
-        Movement movement = movementFactory.createOneOffMovement(location);
-        Hitbox hitbox = hitboxFactory.createSphericalHitbox(radius.getModifiedValue(), entity -> entity.getTeam() != caster.getTeam());
-
-        Cancellable effect = mageEffectFactory.createMassBamboozleCountdownEffect(location);
-        Duration countdown = snapshot.getDuration("countdown");
-        taskService.runLater(() -> {
-            effect.cancel();
-            abilityCommandService.createProjectile(this, movement, hitbox, () -> {});
-        }, countdown);
-    }
-
-    private MobDisguise getRandomDisguise() {
-        int disguiseCount = disguises.size();
-        int randomIndex = random.nextInt(disguiseCount);
-        return disguises.get(randomIndex);
-    }
-
-    @Override
-    public boolean onHit(Entity entity) {
-        UUID entityId = entity.getId();
-
-        MobDisguise randomDisguise = getRandomDisguise();
-        org.bukkit.entity.Entity spigotEntity = server.getEntity(entityId);
-        DisguiseAPI.disguiseToAll(spigotEntity, randomDisguise);
-
-        massBamboozleRepository.save(entityId);
-        Duration duration = getSnapshot().getDuration();
-        taskService.runLater(() -> {
-            massBamboozleRepository.delete(entityId);
-            DisguiseAPI.undisguiseToAll(spigotEntity);
-        }, duration);
-
-        return false;
-    }
-
-    @Override
-    public boolean onMiss(Entity entity) {
-        // do nothing
-        return false;
-    }
-}
-
- */
 
 object MassBamboozle {
   class Factory(implicit
@@ -119,7 +67,9 @@ object MassBamboozle {
       projectileService: ProjectileService,
       worldService: WorldService,
       particleAdapter: ParticleAdapter,
-      taskService: TaskService
+      taskService: TaskService,
+      repository: MassBamboozle.Repository,
+      adapter: MassBamboozle.Adapter
   ) extends RangedAbility.Factory {
     override val flags: Set[Flag] =
       Set(RangedAbility.TARGET_REQUIRED)
@@ -129,7 +79,7 @@ object MassBamboozle {
         snapshot: AbilitySnapshot,
         blockTarget: Option[Block],
         entityTarget: Option[Entity]
-    ): RangedAbility = new MassBamboozle(caster, snapshot)
+    ): RangedAbility = new MassBamboozle(caster, snapshot, blockTarget, entityTarget)
   }
 
   class ParticleEffect(movement: Movement)(implicit
@@ -160,5 +110,10 @@ object MassBamboozle {
         else event.copy(cancelled = true).as[T]
       case _ => event
     }
+  }
+
+  trait Adapter {
+    def disguise(entityId: UUID): Unit
+    def reset(entityId: UUID): Unit
   }
 }
