@@ -41,6 +41,8 @@ class Shatter(
   private val direction = caster.eyeLocation.rotation
   entityService.leapEntity(caster.id, direction, snapshot.distance.modified)
 
+  private var ticks = 0
+
   override def onHit(entity: Entity): Boolean = {
     entityService.damageEntity(entity.id, snapshot.damage)
     entityService.knockUpEntity(entity.id, snapshot.launch.modified)
@@ -51,7 +53,8 @@ class Shatter(
   override def onMiss(entity: Entity): Boolean = false
 
   override def onTick: Boolean = {
-    if (caster.isGrounded) {
+    ticks += 1
+    if (caster.isGrounded && ticks >= 20) {
       val movement = Movement.oneOff(caster.location)
       val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
       projectileService.createProjectile(this, movement, hitbox)
