@@ -85,7 +85,7 @@ object CombatClassMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = {
-    val combatClass = combatClassService.combatClasses(Guardian)
+    val combatClass = combatClassService.combatClasses(Guardian.name)
     combatClassButton(
       player,
       combatClass,
@@ -116,7 +116,7 @@ object CombatClassMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = {
-    val combatClass = combatClassService.combatClasses(Berserker)
+    val combatClass = combatClassService.combatClasses(Berserker.name)
     combatClassButton(
       player,
       combatClass,
@@ -149,7 +149,7 @@ object CombatClassMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = {
-    val combatClass = combatClassService.combatClasses(Hunter)
+    val combatClass = combatClassService.combatClasses(Hunter.name)
     combatClassButton(
       player,
       combatClass,
@@ -178,7 +178,7 @@ object CombatClassMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = {
-    val combatClass = combatClassService.combatClasses(Marksman)
+    val combatClass = combatClassService.combatClasses(Marksman.name)
     combatClassButton(
       player,
       combatClass,
@@ -209,7 +209,7 @@ object CombatClassMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = {
-    val combatClass = combatClassService.combatClasses(Elementalist)
+    val combatClass = combatClassService.combatClasses(Elementalist.name)
     combatClassButton(
       player,
       combatClass,
@@ -241,7 +241,7 @@ object CombatClassMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = {
-    val combatClass = combatClassService.combatClasses(Wizard)
+    val combatClass = combatClassService.combatClasses(Wizard.name)
     combatClassButton(
       player,
       combatClass,
