@@ -1,10 +1,10 @@
 package gg.warcraft.legends.api.combat.mage.elementalist
 
+import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.RangedAbility.Flag
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
-import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.legends.api.combat.mage.Fireball
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.core.Duration
@@ -52,19 +52,20 @@ class MoltenStorm(
     .map { origin + _ }
 
   // setup tasks
-  private val fireballPeriod =
-    (snapshot.duration.millis / snapshot.count.modified).toInt.ticks
-  private val task = taskService.runTask(fireballPeriod, spawnFireball)
+  private val period =
+    (snapshot.duration.seconds / snapshot.count.modified * 1000).toInt.millis
+  private val task = taskService.runTask(period, spawnFireball)
   taskService.runLater(snapshot.duration, task.cancel)
 
   new MoltenStorm.ParticleEffect(location, snapshot.duration)
   worldService.playSound(caster.location, castSound, soundCategory)
 
   private def spawnFireball(): Unit = {
-    val movement = Movement.linear(spawnLocations.next, velocity, snapshot.range.modified)
-    val effect = new Fireball.ParticleEffect(movement)
-    projectileService.createProjectile(this, movement, hitbox, effect.cancel)
-    worldService.playSound(caster.location, castSound, soundCategory)
+    if (spawnLocations.hasNext) {
+      val movement = Movement.linear(spawnLocations.next, velocity, snapshot.range.modified)
+      val effect = new Fireball.ParticleEffect(movement)
+      projectileService.createProjectile(this, movement, hitbox, effect.cancel)
+    }
   }
 
   override def onHit(entity: Entity): Boolean = {
