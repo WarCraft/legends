@@ -37,7 +37,7 @@ object Hamstring {
     private final val radius = 0.5f
     private final val frames = 20
 
-    private val particle = Particle.SpellMob.color(Particle.Color.White)
+    private val particle = Particle.SpellMob
     private val vectors = EffectVectors.ring(radius, frames)
     private val renderer = EffectRenderer.iterative(particle, vectors)
     addRenderer(renderer)
