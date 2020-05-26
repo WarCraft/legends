@@ -12,6 +12,41 @@ import gg.warcraft.monolith.api.effect.{
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
+class Fireball(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(implicit
+    entityService: EntityService,
+    projectileService: ProjectileService,
+    worldService: WorldService,
+    particleAdapter: ParticleAdapter,
+    taskService: TaskService
+) extends RangedAbility {
+  private final val maxDistance = 30f
+  private final val soundCategory = SoundCategory.HOSTILE
+  private final val castSound = Sound.ENTITY_GHAST_SHOOT
+
+  {
+    val location = caster.eyeLocation
+    val direction = location.rotation
+    val velocity = direction * snapshot.velocity.modified
+    val movement = Movement.linear(location, velocity, maxDistance)
+    val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
+    val effect = new Fireball.ParticleEffect(movement)
+    projectileService.createProjectile(this, movement, hitbox, effect.cancel)
+    worldService.playSound(caster.location, castSound, soundCategory)
+    // TODO play sound at fly locations
+  }
+
+  override def onHit(entity: Entity): Boolean = {
+    entityService.damageEntity(entity.id, snapshot.damage)
+    entityService.burnEntity(entity.id, snapshot.burn)
+    true
+  }
+
+  override def onMiss(entity: Entity): Boolean = false
+}
+
 object Fireball {
   class Factory(implicit
       entityService: EntityService,
@@ -45,40 +80,4 @@ object Fireball {
     private val outerRenderer = EffectRenderer(outerParticle, outerVectors)
     addRenderer(outerRenderer)
   }
-}
-
-class Fireball(
-    override val caster: Entity,
-    override val snapshot: AbilitySnapshot
-)(implicit
-    entityService: EntityService,
-    projectileService: ProjectileService,
-    worldService: WorldService,
-    particleAdapter: ParticleAdapter,
-    taskService: TaskService
-) extends RangedAbility {
-  private final val maxDistance = 30f
-  private final val soundCategory = SoundCategory.HOSTILE
-  private final val castSound = Sound.ENTITY_GHAST_SHOOT
-
-  {
-    val location = caster.eyeLocation
-    val direction = location.rotation
-    val velocity = direction * snapshot.velocity.modified
-    val movement = Movement.linear(location, velocity, maxDistance)
-    val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
-    val effect = new Fireball.ParticleEffect(movement)
-    projectileService createProjectile (this, movement, hitbox, () =>
-      effect.cancel())
-    worldService playSound (caster.location, castSound, soundCategory)
-    // TODO play sound at fly locations (maybe use onTick for this or create something for sound similar to effect)
-  }
-
-  override def onHit(entity: Entity): Boolean = {
-    entityService damageEntity (entity.id, snapshot.damage)
-    entityService burnEntity (entity.id, snapshot.burn)
-    true
-  }
-
-  override def onMiss(entity: Entity): Boolean = false
 }
