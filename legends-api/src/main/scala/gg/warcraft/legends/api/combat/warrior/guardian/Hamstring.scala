@@ -19,6 +19,31 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.math.Vector3f
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
+class Hamstring(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(implicit
+    taskService: TaskService,
+    particleAdapter: ParticleAdapter,
+    entityService: EntityService,
+    worldService: WorldService
+) extends MeleeAbility {
+  private final val soundCategory = SoundCategory.HOSTILE
+  private final val hitSound = Sound.ENTITY_SILVERFISH_DEATH
+  private final val missSound = Sound.ENTITY_FISHING_BOBBER_THROW
+
+  override def onHit(entity: Entity): Unit = {
+    entityService.damageEntity(entity.id, snapshot.damage)
+    entityService.addPotionEffect(entity.id, snapshot.slow)
+    new ParticleEffect(Movement.entity(entity), snapshot.slow.duration)
+    worldService.playSound(entity.location, hitSound, soundCategory)
+  }
+
+  override def onMiss(entity: Entity): Unit = {
+    worldService.playSound(entity.location, missSound, soundCategory)
+  }
+}
+
 object Hamstring {
   class Factory(implicit
       taskService: TaskService,
@@ -49,30 +74,5 @@ object Hamstring {
     addRenderer(renderer)
 
     cancel(duration)
-  }
-}
-
-class Hamstring(
-    override val caster: Entity,
-    override val snapshot: AbilitySnapshot
-)(implicit
-    taskService: TaskService,
-    particleAdapter: ParticleAdapter,
-    entityService: EntityService,
-    worldService: WorldService
-) extends MeleeAbility {
-  private final val soundCategory = SoundCategory.HOSTILE
-  private final val hitSound = Sound.ENTITY_SILVERFISH_DEATH
-  private final val missSound = Sound.ENTITY_FISHING_BOBBER_THROW
-
-  override def onHit(entity: Entity): Unit = {
-    entityService.damageEntity(entity.id, snapshot.damage)
-    entityService.addPotionEffect(entity.id, snapshot.slow)
-    new ParticleEffect(Movement.entity(entity), snapshot.slow.duration)
-    worldService.playSound(entity.location, hitSound, soundCategory)
-  }
-
-  override def onMiss(entity: Entity): Unit = {
-    worldService.playSound(entity.location, missSound, soundCategory)
   }
 }

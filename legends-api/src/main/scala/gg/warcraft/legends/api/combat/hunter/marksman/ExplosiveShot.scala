@@ -4,27 +4,13 @@
  * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
  */
 
-package gg.warcraft.legends.api.combat.hunter
+package gg.warcraft.legends.api.combat.hunter.marksman
 
 import gg.warcraft.combat.api.ability.MeleeAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Location, WorldService}
-
-object ExplosiveShot {
-  class Factory(implicit
-      entityService: EntityService,
-      projectileService: ProjectileService,
-      worldService: WorldService
-  ) extends MeleeAbility.Factory {
-    override def create(
-        caster: Entity,
-        snapshot: AbilitySnapshot,
-        target: Option[Entity]
-    ): MeleeAbility = new ExplosiveShot(caster, snapshot)
-  }
-}
 
 class ExplosiveShot(
     override val caster: Entity,
@@ -43,8 +29,8 @@ class ExplosiveShot(
 
   private def explode(location: Location): Unit = {
     entityService.getNearbyEntities(location, snapshot.radius.modified).foreach { it =>
-      entityService.damageEntity(it.id, snapshot.damage)
-      entityService.knockBackEntity(it.id, knockBackDirection, snapshot.knockBack.modified)
+        entityService.damageEntity(it.id, snapshot.damage)
+        entityService.knockBackEntity(it.id, knockBackDirection, snapshot.knockBack.modified)
     }
     worldService.createExplosion(location, true)
   }
@@ -53,4 +39,18 @@ class ExplosiveShot(
     explode(entity.location)
 
   // TODO explode arrow onGrounded
+}
+
+object ExplosiveShot {
+  class Factory(implicit
+      entityService: EntityService,
+      projectileService: ProjectileService,
+      worldService: WorldService
+  ) extends MeleeAbility.Factory {
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        target: Option[Entity]
+    ): MeleeAbility = new ExplosiveShot(caster, snapshot)
+  }
 }

@@ -15,6 +15,23 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityPreFatalDamageEvent}
 import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
+class LastStand(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(implicit
+    statusService: StatusService,
+    worldService: WorldService
+) extends MeleeAbility {
+  private final val soundCategory = SoundCategory.HOSTILE
+  private final val castSound = Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED
+
+  private val source = CombatSource(caster.name, Some(caster.id))
+  private val duration = Some(snapshot.duration)
+  private val status = new LastStand.ActiveStatusEffect(source, duration)
+  statusService.addEffect(caster.id, status)
+  worldService.playSound(caster.location, castSound, soundCategory)
+}
+
 object LastStand {
   class Factory(implicit
       statusService: StatusService,
@@ -59,21 +76,4 @@ object LastStand {
       case _                             => event
     }
   }
-}
-
-class LastStand(
-    override val caster: Entity,
-    override val snapshot: AbilitySnapshot
-)(implicit
-    statusService: StatusService,
-    worldService: WorldService
-) extends MeleeAbility {
-  private final val soundCategory = SoundCategory.HOSTILE
-  private final val castSound = Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED
-
-  private val source = CombatSource(caster.name, Some(caster.id))
-  private val duration = Some(snapshot.duration)
-  private val status = new LastStand.ActiveStatusEffect(source, duration)
-  statusService.addEffect(caster.id, status)
-  worldService.playSound(caster.location, castSound, soundCategory)
 }

@@ -11,19 +11,6 @@ import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 
-object PowerShot {
-  class Factory(implicit
-      entityService: EntityService,
-      projectileService: ProjectileService
-  ) extends MeleeAbility.Factory {
-    override def create(
-        caster: Entity,
-        snapshot: AbilitySnapshot,
-        target: Option[Entity]
-    ): MeleeAbility = new PowerShot(caster, snapshot)
-  }
-}
-
 class PowerShot(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
@@ -39,5 +26,18 @@ class PowerShot(
   override def onHit(entity: Entity): Unit = {
     entityService.damageEntity(entity.id, snapshot.damage)
     entityService.knockBackEntity(entity.id, direction, snapshot.knockBack.modified)
+  }
+}
+
+object PowerShot {
+  class Factory(implicit
+      entityService: EntityService,
+      projectileService: ProjectileService
+  ) extends MeleeAbility.Factory {
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        target: Option[Entity]
+    ): MeleeAbility = new PowerShot(caster, snapshot)
   }
 }

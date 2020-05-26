@@ -26,6 +26,33 @@ import gg.warcraft.monolith.api.math.Vector3f
 import gg.warcraft.monolith.api.util.option._
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
+class Grudge(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(implicit
+    taskService: TaskService,
+    particleAdapter: ParticleAdapter,
+    statusService: StatusService,
+    worldService: WorldService,
+    entityService: EntityService
+) extends MeleeAbility {
+  private final val soundCategory = SoundCategory.HOSTILE
+  private final val hitSound = Sound.ENTITY_WITHER_SPAWN
+  private final val missSound = Sound.ENTITY_FISHING_BOBBER_THROW
+
+  override def onHit(entity: Entity): Unit = {
+    val source = CombatSource(caster.name, Some(caster.id))
+    val statusEffect = new StatusEffect(source, snapshot.duration, snapshot.heal)
+    statusService.addEffect(entity.id, statusEffect)
+
+    new ParticleEffect(Movement.entity(entity), snapshot.duration)
+    worldService.playSound(entity.location, hitSound, soundCategory)
+  }
+
+  override def onMiss(entity: Entity): Unit =
+    worldService.playSound(entity.location, missSound, soundCategory)
+}
+
 object Grudge {
   class Factory(implicit
       taskService: TaskService,
@@ -78,31 +105,4 @@ object Grudge {
       case _ =>
     }
   }
-}
-
-class Grudge(
-    override val caster: Entity,
-    override val snapshot: AbilitySnapshot
-)(implicit
-    taskService: TaskService,
-    particleAdapter: ParticleAdapter,
-    statusService: StatusService,
-    worldService: WorldService,
-    entityService: EntityService
-) extends MeleeAbility {
-  private final val soundCategory = SoundCategory.HOSTILE
-  private final val hitSound = Sound.ENTITY_WITHER_SPAWN
-  private final val missSound = Sound.ENTITY_FISHING_BOBBER_THROW
-
-  override def onHit(entity: Entity): Unit = {
-    val source = CombatSource(caster.name, Some(caster.id))
-    val statusEffect = new StatusEffect(source, snapshot.duration, snapshot.heal)
-    statusService.addEffect(entity.id, statusEffect)
-
-    new ParticleEffect(Movement.entity(entity), snapshot.duration)
-    worldService.playSound(entity.location, hitSound, soundCategory)
-  }
-
-  override def onMiss(entity: Entity): Unit =
-    worldService.playSound(entity.location, missSound, soundCategory)
 }

@@ -21,6 +21,51 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
 import gg.warcraft.monolith.api.player.PlayerService
 
+class Focus(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(implicit
+    taskService: TaskService,
+    entityService: EntityService,
+    playerService: PlayerService,
+    statusService: StatusService,
+    repository: FocusRepository,
+    particleAdapter: ParticleAdapter
+) extends MeleeAbility
+    with Cancellable {
+  private final val maxDuration = Integer.MAX_VALUE.ticks
+  private final val text =
+    "You're currently focussing and can not move, cast [Shift Left Click] again to cancel."
+
+  private var status: Status.Effect = _
+  private var effect: Effect = _
+
+  repository.removeFocus(caster.id) match {
+    case Some(focus) => focus.cancel()
+    case None =>
+      entityService.freezeEntity(caster.id, maxDuration)
+
+      val source = CombatSource(caster.name, Some(caster.id))
+      val modifier = snapshot.combatValue("damage-modifier").modified
+      status = new Focus.StatusEffect(source, None, modifier)
+      statusService.addEffect(caster.id, status)
+
+      val movement = Movement.entity(caster)
+      effect = new Focus.ParticleEffect(movement)
+
+      repository.addFocus(this)
+
+      val message = Message(text, s"${ColorCode.YELLOW}$text")
+      playerService.sendMessage(caster.id, message)
+  }
+
+  override def cancel(): Unit = {
+    entityService.freezeEntity(caster.id, 0.ticks)
+    statusService.removeEffect(caster.id, status)
+    effect.cancel()
+  }
+}
+
 object Focus {
   class Factory(implicit
       taskService: TaskService,
@@ -66,50 +111,5 @@ object Focus {
         event.copy(damageModifiers = modifier :: damageModifiers).asInstanceOf[T]
       case _ => event
     }
-  }
-}
-
-class Focus(
-    override val caster: Entity,
-    override val snapshot: AbilitySnapshot
-)(implicit
-    taskService: TaskService,
-    entityService: EntityService,
-    playerService: PlayerService,
-    statusService: StatusService,
-    repository: FocusRepository,
-    particleAdapter: ParticleAdapter
-) extends MeleeAbility
-    with Cancellable {
-  private final val maxDuration = Integer.MAX_VALUE.ticks
-  private final val text =
-    "You're currently focussing and can not move, cast [Shift Left Click] again to cancel."
-
-  private var status: Status.Effect = _
-  private var effect: Effect = _
-
-  repository.removeFocus(caster.id) match {
-    case Some(focus) => focus.cancel()
-    case None =>
-      entityService.freezeEntity(caster.id, maxDuration)
-
-      val source = CombatSource(caster.name, Some(caster.id))
-      val modifier = snapshot.combatValue("damage-modifier").modified
-      status = new Focus.StatusEffect(source, None, modifier)
-      statusService.addEffect(caster.id, status)
-
-      val movement = Movement.entity(caster)
-      effect = new Focus.ParticleEffect(movement)
-
-      repository.addFocus(this)
-
-      val message = Message(text, s"${ColorCode.YELLOW}$text")
-      playerService.sendMessage(caster.id, message)
-  }
-
-  override def cancel(): Unit = {
-    entityService.freezeEntity(caster.id, 0.ticks)
-    statusService.removeEffect(caster.id, status)
-    effect.cancel()
   }
 }

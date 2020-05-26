@@ -11,22 +11,6 @@ import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
-object Maul {
-  class Factory(implicit
-      entityService: EntityService,
-      worldService: WorldService
-  ) extends MeleeAbility.Factory {
-    override val flags: Set[MeleeAbility.Flag] =
-      Set(MeleeAbility.TARGET_REQUIRED)
-
-    override def create(
-        caster: Entity,
-        snapshot: AbilitySnapshot,
-        target: Option[Entity]
-    ): MeleeAbility = new Maul(caster, snapshot)
-  }
-}
-
 class Maul(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
@@ -48,4 +32,20 @@ class Maul(
 
   override def onMiss(entity: Entity): Unit =
     worldService.playSound(entity.location, missSound, soundCategory)
+}
+
+object Maul {
+  class Factory(implicit
+      entityService: EntityService,
+      worldService: WorldService
+  ) extends MeleeAbility.Factory {
+    override val flags: Set[MeleeAbility.Flag] =
+      Set(MeleeAbility.TARGET_REQUIRED)
+
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        target: Option[Entity]
+    ): MeleeAbility = new Maul(caster, snapshot)
+  }
 }

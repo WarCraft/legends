@@ -22,6 +22,35 @@ import gg.warcraft.monolith.api.entity.{
 import gg.warcraft.monolith.api.entity.status.Status
 import gg.warcraft.monolith.api.world.WorldService
 
+class UnstableBunker(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(implicit
+    taskService: TaskService,
+    entityService: EntityService,
+    projectileService: ProjectileService,
+    worldService: WorldService
+) extends RangedAbility {
+  taskService runLater (2.seconds, () => {
+    val movement = Movement.oneOff(caster.location)
+    val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
+    // TODO add default param value to callback
+    projectileService.createProjectile(this, movement, hitbox, () => {})
+  })
+
+  override def onHit(entity: Entity): Boolean = {
+    entityService.damageEntity(entity.id, snapshot.damage)
+    entityService.knockBackEntity(
+      entity.id,
+      caster.location,
+      snapshot.knockBack.modified
+    )
+    false
+  }
+
+  override def onMiss(entity: Entity): Boolean = false
+}
+
 object UnstableBunker {
   class Factory(implicit
       taskService: TaskService,
@@ -55,33 +84,4 @@ object UnstableBunker {
       case _ =>
     }
   }
-}
-
-class UnstableBunker(
-    override val caster: Entity,
-    override val snapshot: AbilitySnapshot
-)(implicit
-    taskService: TaskService,
-    entityService: EntityService,
-    projectileService: ProjectileService,
-    worldService: WorldService
-) extends RangedAbility {
-  taskService runLater (2.seconds, () => {
-    val movement = Movement.oneOff(caster.location)
-    val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
-    // TODO add default param value to callback
-    projectileService.createProjectile(this, movement, hitbox, () => {})
-  })
-
-  override def onHit(entity: Entity): Boolean = {
-    entityService.damageEntity(entity.id, snapshot.damage)
-    entityService.knockBackEntity(
-      entity.id,
-      caster.location,
-      snapshot.knockBack.modified
-    )
-    false
-  }
-
-  override def onMiss(entity: Entity): Boolean = false
 }

@@ -20,6 +20,47 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.math.Vector3f
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
+class HailBlast(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(implicit
+    taskService: TaskService,
+    entityService: EntityService,
+    projectileService: ProjectileService,
+    worldService: WorldService,
+    particleAdapter: ParticleAdapter
+) extends RangedAbility {
+  private final val soundCategory = SoundCategory.HOSTILE
+  private final val castSound = Sound.BLOCK_SNOW_BREAK
+  private final val castSound2 = Sound.ENTITY_SILVERFISH_HURT
+
+  private val origin = caster.eyeLocation
+  private val velocity = origin.rotation * snapshot.velocity.modified
+  private val movement =
+    Movement.linear(caster.eyeLocation, velocity, snapshot.range.modified)
+  private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
+
+  private val effect = new HailBlast.ParticleEffect(movement, origin.rotation)
+  projectileService.createProjectile(this, movement, hitbox, effect.cancel)
+
+  worldService.playSound(caster.location, castSound, soundCategory)
+  worldService.playSound(caster.location, castSound2, soundCategory, 1, 0.1f)
+  (2 to 12 by 2).foreach { i =>
+    taskService.evalLater(
+      i.ticks,
+      worldService.playSound(caster.location, castSound, soundCategory)
+    )
+  }
+
+  override def onHit(entity: Entity): Boolean = {
+    entityService.damageEntity(entity.id, snapshot.damage)
+    entityService.addPotionEffect(entity.id, snapshot.slow)
+    false
+  }
+
+  override def onMiss(entity: Entity): Boolean = false
+}
+
 object HailBlast {
   class Factory(implicit
       taskService: TaskService,
@@ -65,45 +106,4 @@ object HailBlast {
       iteration += 1
     }
   }
-}
-
-class HailBlast(
-    override val caster: Entity,
-    override val snapshot: AbilitySnapshot
-)(implicit
-    taskService: TaskService,
-    entityService: EntityService,
-    projectileService: ProjectileService,
-    worldService: WorldService,
-    particleAdapter: ParticleAdapter
-) extends RangedAbility {
-  private final val soundCategory = SoundCategory.HOSTILE
-  private final val castSound = Sound.BLOCK_SNOW_BREAK
-  private final val castSound2 = Sound.ENTITY_SILVERFISH_HURT
-
-  private val origin = caster.eyeLocation
-  private val velocity = origin.rotation * snapshot.velocity.modified
-  private val movement =
-    Movement.linear(caster.eyeLocation, velocity, snapshot.range.modified)
-  private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
-
-  private val effect = new HailBlast.ParticleEffect(movement, origin.rotation)
-  projectileService.createProjectile(this, movement, hitbox, effect.cancel)
-
-  worldService.playSound(caster.location, castSound, soundCategory)
-  worldService.playSound(caster.location, castSound2, soundCategory, 1, 0.1f)
-  (2 to 12 by 2).foreach { i =>
-    taskService.evalLater(
-      i.ticks,
-      worldService.playSound(caster.location, castSound, soundCategory)
-    )
-  }
-
-  override def onHit(entity: Entity): Boolean = {
-    entityService.damageEntity(entity.id, snapshot.damage)
-    entityService.addPotionEffect(entity.id, snapshot.slow)
-    false
-  }
-
-  override def onMiss(entity: Entity): Boolean = false
 }

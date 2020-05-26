@@ -11,6 +11,14 @@ import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.entity.Entity
 
+class FlameTotem(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+) extends RangedAbility {
+  override def onHit(entity: Entity): Boolean = ???
+  override def onMiss(entity: Entity): Boolean = ???
+}
+
 object FlameTotem {
   class Factory extends RangedAbility.Factory {
     override def create(
@@ -20,14 +28,6 @@ object FlameTotem {
         entityTarget: Option[Entity]
     ): RangedAbility = ??? // TODO new FlameTotem()
   }
-}
-
-class FlameTotem(
-    override val caster: Entity,
-    override val snapshot: AbilitySnapshot
-) extends RangedAbility {
-  override def onHit(entity: Entity): Boolean = ???
-  override def onMiss(entity: Entity): Boolean = ???
 }
 
 

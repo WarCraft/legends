@@ -11,22 +11,6 @@ import gg.warcraft.combat.api.ability.MeleeAbility
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
-object Slam {
-  class Factory(implicit
-      entityService: EntityService,
-      worldService: WorldService
-  ) extends MeleeAbility.Factory {
-    override val flags: Set[MeleeAbility.Flag] =
-      Set(MeleeAbility.TARGET_REQUIRED)
-
-    override def create(
-        caster: Entity,
-        snapshot: AbilitySnapshot,
-        target: Option[Entity]
-    ): MeleeAbility = new Slam(caster, snapshot)
-  }
-}
-
 class Slam(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
@@ -51,5 +35,21 @@ class Slam(
 
   override def onMiss(entity: Entity): Unit = {
     worldService.playSound(entity.location, missSound, soundCategory)
+  }
+}
+
+object Slam {
+  class Factory(implicit
+      entityService: EntityService,
+      worldService: WorldService
+  ) extends MeleeAbility.Factory {
+    override val flags: Set[MeleeAbility.Flag] =
+      Set(MeleeAbility.TARGET_REQUIRED)
+
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        target: Option[Entity]
+    ): MeleeAbility = new Slam(caster, snapshot)
   }
 }

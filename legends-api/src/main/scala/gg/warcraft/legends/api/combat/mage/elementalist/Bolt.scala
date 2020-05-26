@@ -6,32 +6,14 @@
 
 package gg.warcraft.legends.api.combat.mage.elementalist
 
+import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.RangedAbility.Flag
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
-import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Location, WorldService}
-
-object Bolt {
-  class Factory(implicit
-      entityService: EntityService,
-      projectileService: ProjectileService,
-      worldService: WorldService
-  ) extends RangedAbility.Factory {
-    override val flags: Set[Flag] =
-      Set(RangedAbility.TARGET_REQUIRED)
-
-    override def create(
-        caster: Entity,
-        snapshot: AbilitySnapshot,
-        blockTarget: Option[Block],
-        entityTarget: Option[Entity]
-    ): RangedAbility = new Bolt(caster, snapshot, blockTarget, entityTarget)
-  }
-}
 
 class Bolt(
     override val caster: Entity,
@@ -59,4 +41,22 @@ class Bolt(
   }
 
   override def onMiss(entity: Entity): Boolean = true
+}
+
+object Bolt {
+  class Factory(implicit
+      entityService: EntityService,
+      projectileService: ProjectileService,
+      worldService: WorldService
+  ) extends RangedAbility.Factory {
+    override val flags: Set[Flag] =
+      Set(RangedAbility.TARGET_REQUIRED)
+
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        blockTarget: Option[Block],
+        entityTarget: Option[Entity]
+    ): RangedAbility = new Bolt(caster, snapshot, blockTarget, entityTarget)
+  }
 }

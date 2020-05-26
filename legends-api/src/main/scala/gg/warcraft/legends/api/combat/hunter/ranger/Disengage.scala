@@ -11,19 +11,6 @@ import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
-object Disengage {
-  class Factory(implicit
-      entityService: EntityService,
-      worldService: WorldService
-  ) extends MeleeAbility.Factory {
-    override def create(
-        caster: Entity,
-        snapshot: AbilitySnapshot,
-        target: Option[Entity]
-    ): MeleeAbility = new Disengage(caster, snapshot)
-  }
-}
-
 class Disengage(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
@@ -38,4 +25,17 @@ class Disengage(
   entityService.knockBackEntity(caster.id, direction, snapshot.distance.modified)
 
   worldService.playSound(caster.location, castSound, soundCategory)
+}
+
+object Disengage {
+  class Factory(implicit
+      entityService: EntityService,
+      worldService: WorldService
+  ) extends MeleeAbility.Factory {
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        target: Option[Entity]
+    ): MeleeAbility = new Disengage(caster, snapshot)
+  }
 }

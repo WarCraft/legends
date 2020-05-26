@@ -22,6 +22,44 @@ import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
 import gg.warcraft.monolith.api.math.Vector3f
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
+class StandYourGround(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(implicit
+    entityService: EntityService,
+    attributeService: AttributeService,
+    statusService: StatusService,
+    worldService: WorldService,
+    particleAdapter: ParticleAdapter,
+    taskService: TaskService
+) extends MeleeAbility {
+  private final val soundCategory = SoundCategory.HOSTILE
+  private final val castSound = Sound.ENTITY_IRON_GOLEM_DEATH
+
+  {
+    entityService.addPotionEffect(caster.id, snapshot.resistance)
+    entityService.addPotionEffect(caster.id, snapshot.fireResistance)
+    entityService.addPotionEffect(caster.id, snapshot.slow)
+
+    // TODO
+//    AttributeModifier knockbackModifier =
+//        attributeCommandService.addAttributeModifier(caster.getId(), GenericAttribute.KNOCKBACK_RESISTANCE, 1);
+//    taskService.runLater(() -> attributeCommandService.removeAttributeModifier(caster.getId(), knockbackModifier),
+//      slow.getDuration());
+
+    val movement = Movement.entity(caster)
+    new StandYourGround.ParticleEffect(movement, snapshot.slow.duration)
+
+    // TODO have entity extend combat source like player extends principal?
+    val combatSource = CombatSource(caster.name, Some(caster.id))
+    val status =
+      new StandYourGround.StatusEffect(combatSource, snapshot.slow.duration)
+    statusService.addEffect(caster.id, status)
+
+    worldService.playSound(caster.location, castSound, soundCategory)
+  }
+}
+
 object StandYourGround {
   class Factory(implicit
       taskService: TaskService,
@@ -75,42 +113,5 @@ object StandYourGround {
         worldService.playSound(entity.location, hitSound, soundCategory)
       case _ =>
     }
-  }
-}
-
-class StandYourGround(
-    override val caster: Entity,
-    override val snapshot: AbilitySnapshot
-)(implicit
-    entityService: EntityService,
-    attributeService: AttributeService,
-    statusService: StatusService,
-    worldService: WorldService,
-    particleAdapter: ParticleAdapter,
-    taskService: TaskService
-) extends MeleeAbility {
-  private final val soundCategory = SoundCategory.HOSTILE
-  private final val castSound = Sound.ENTITY_IRON_GOLEM_DEATH
-
-  {
-    entityService.addPotionEffect(caster.id, snapshot.resistance)
-    entityService.addPotionEffect(caster.id, snapshot.fireResistance)
-    entityService.addPotionEffect(caster.id, snapshot.slow)
-
-    // TODO
-//    AttributeModifier knockbackModifier =
-//        attributeCommandService.addAttributeModifier(caster.getId(), GenericAttribute.KNOCKBACK_RESISTANCE, 1);
-//    taskService.runLater(() -> attributeCommandService.removeAttributeModifier(caster.getId(), knockbackModifier),
-//      slow.getDuration());
-
-    val movement = Movement.entity(caster)
-    new StandYourGround.ParticleEffect(movement, snapshot.slow.duration)
-
-    // TODO have entity extend combat source like player extends principal?
-    val combatSource = CombatSource(caster.name, Some(caster.id))
-    val status = new StandYourGround.StatusEffect(combatSource, snapshot.slow.duration)
-    statusService.addEffect(caster.id, status)
-
-    worldService.playSound(caster.location, castSound, soundCategory)
   }
 }

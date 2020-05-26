@@ -22,24 +22,6 @@ import gg.warcraft.monolith.api.world.{
   BlockLocation, Location, Sound, SoundCategory, WorldService
 }
 
-object Trap {
-  class Factory(implicit
-      taskService: TaskService,
-      entityService: EntityService,
-      playerService: PlayerService,
-      worldService: WorldService,
-      projectileService: ProjectileService,
-      blockSpoofingService: BlockSpoofingService
-  ) extends RangedAbility.Factory {
-    override def create(
-        caster: Entity,
-        snapshot: AbilitySnapshot,
-        blockTarget: Option[Block],
-        entityTarget: Option[Entity]
-    ): RangedAbility = new Trap(caster, snapshot)
-  }
-}
-
 class Trap(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
@@ -117,4 +99,22 @@ class Trap(
   }
 
   override def onGrounded(location: Location): Boolean = false
+}
+
+object Trap {
+  class Factory(implicit
+      taskService: TaskService,
+      entityService: EntityService,
+      playerService: PlayerService,
+      worldService: WorldService,
+      projectileService: ProjectileService,
+      blockSpoofingService: BlockSpoofingService
+  ) extends RangedAbility.Factory {
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        blockTarget: Option[Block],
+        entityTarget: Option[Entity]
+    ): RangedAbility = new Trap(caster, snapshot)
+  }
 }

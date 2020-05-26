@@ -14,21 +14,6 @@ import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
-object Shatter {
-  class Factory(implicit
-      entityService: EntityService,
-      projectileService: ProjectileService,
-      worldService: WorldService
-  ) extends RangedAbility.Factory {
-    override def create(
-        caster: Entity,
-        snapshot: AbilitySnapshot,
-        blockTarget: Option[Block],
-        entityTarget: Option[Entity]
-    ): RangedAbility = new Shatter(caster, snapshot)
-  }
-}
-
 class Shatter(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot
@@ -68,5 +53,20 @@ class Shatter(
       worldService.playSound(caster.location, hitSound, soundCategory)
       true
     } else false
+  }
+}
+
+object Shatter {
+  class Factory(implicit
+      entityService: EntityService,
+      projectileService: ProjectileService,
+      worldService: WorldService
+  ) extends RangedAbility.Factory {
+    override def create(
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        blockTarget: Option[Block],
+        entityTarget: Option[Entity]
+    ): RangedAbility = new Shatter(caster, snapshot)
   }
 }

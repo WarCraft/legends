@@ -17,6 +17,20 @@ import gg.warcraft.monolith.api.entity.{
 import gg.warcraft.monolith.api.entity.status.Status
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
+class ArcaneBarrier(
+    override val caster: Entity,
+    override val snapshot: AbilitySnapshot
+)(implicit
+    entityService: EntityService,
+    worldService: WorldService
+) extends MeleeAbility {
+  private final val soundCategory = SoundCategory.HOSTILE
+  private final val castSound = Sound.BLOCK_ENCHANTMENT_TABLE_USE
+
+  entityService.addPotionEffect(caster.id, snapshot.absorption)
+  worldService.playSound(caster.location, castSound, soundCategory)
+}
+
 object ArcaneBarrier {
   class Factory(implicit
       entityService: EntityService,
@@ -47,18 +61,4 @@ object ArcaneBarrier {
       case _ =>
     }
   }
-}
-
-class ArcaneBarrier(
-    override val caster: Entity,
-    override val snapshot: AbilitySnapshot
-)(implicit
-    entityService: EntityService,
-    worldService: WorldService
-) extends MeleeAbility {
-  private final val soundCategory = SoundCategory.HOSTILE
-  private final val castSound = Sound.BLOCK_ENCHANTMENT_TABLE_USE
-
-  entityService.addPotionEffect(caster.id, snapshot.absorption)
-  worldService.playSound(caster.location, castSound, soundCategory)
 }
