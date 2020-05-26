@@ -12,9 +12,8 @@ import gg.warcraft.legends.api.combat.hunter.marksman.{
   Focus, FocusRepository, PowerShot, Sneak
 }
 import gg.warcraft.legends.api.combat.hunter.ranger.{Disengage, ToxicArrow, Trap}
-import gg.warcraft.legends.api.combat.mage.Fireball
 import gg.warcraft.legends.api.combat.mage.elementalist.{
-  Bolt, HailBlast, MoltenStorm
+  Bolt, Fireball, HailBlast, MoltenStorm
 }
 import gg.warcraft.legends.api.combat.mage.racial.{ArcaneBarrier, FlameTotem}
 import gg.warcraft.legends.api.combat.mage.wizard.{
