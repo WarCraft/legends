@@ -1,3 +1,9 @@
+/*
+ * All rights reserved
+ *
+ * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
+ */
+
 package gg.warcraft.legends.api.combat.hunter
 
 import gg.warcraft.combat.api.combatclass.PlayerCombatClassChangedEvent

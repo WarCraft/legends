@@ -6,4 +6,4 @@ author: fishb6nes
 website: http://warcraft.gg
 
 main: gg.warcraft.legends.spigot.LegendsPlugin
-depend: [Monolith, Chat, Combat, MythicMobs]
+depend: [Monolith, Combat, ProtocolLib, LibsDisguises] # Chat, MythicMobs

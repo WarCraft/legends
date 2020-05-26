@@ -1,3 +1,9 @@
+/*
+ * All rights reserved
+ *
+ * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
+ */
+
 package gg.warcraft.legends.spigot
 
 import org.bukkit.attribute.{Attribute, AttributeModifier}
