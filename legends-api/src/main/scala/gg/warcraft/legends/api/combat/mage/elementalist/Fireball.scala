@@ -4,7 +4,7 @@
  * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
  */
 
-package gg.warcraft.legends.api.combat.mage
+package gg.warcraft.legends.api.combat.mage.elementalist
 
 import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.RangedAbility

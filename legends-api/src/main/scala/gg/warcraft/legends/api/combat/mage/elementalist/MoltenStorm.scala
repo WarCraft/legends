@@ -11,7 +11,6 @@ import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.RangedAbility.Flag
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
-import gg.warcraft.legends.api.combat.mage.Fireball
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.core.Duration
 import gg.warcraft.monolith.api.core.Duration._
