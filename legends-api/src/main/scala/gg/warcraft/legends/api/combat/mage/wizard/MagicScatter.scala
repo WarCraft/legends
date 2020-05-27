@@ -30,16 +30,16 @@ class MagicScatter(
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.ENTITY_ENDER_DRAGON_HURT
   private final val hitSound = Sound.ENTITY_ENDER_DRAGON_HURT
-
+  private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
+  //
   private final val location = caster.eyeLocation
   private final val maxDistance = 5f
   private final val direction = location.rotation
   private final val velocity = direction * snapshot.velocity.modified
   private final val maxScatter = 15
-  private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
 
 
-  //Mulitple Random Projectiles - Linear
+  //Multiple scattered projectiles
   private val projectileCount = 5
   for( p <- 0 to projectileCount) {
     val tempVelocity = velocity
@@ -50,7 +50,6 @@ class MagicScatter(
     val effect = new ArcaneMissile.ParticleEffect(movement)
     projectileService.createProjectile(this, movement, hitbox, effect.cancel)
   }
-  //
 
   worldService.playSound(caster.location, castSound, soundCategory)
 
