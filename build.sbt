@@ -6,8 +6,7 @@ lazy val commonSettings = Seq(
     "-language:implicitConversions"
   ),
   resolvers ++= Seq(
-    Resolver.mavenLocal,
-    "Spigot" at "https://repo.md-5.net/content/groups/public/"
+    Resolver.mavenLocal
   )
 )
 
@@ -44,7 +43,9 @@ lazy val spigot = (project in file("legends-spigot"))
     commonSettings,
     assemblySettings,
     resolvers ++= Seq(
-      "PaperMC" at "https://papermc.io/repo/repository/maven-public/"
+      "PaperMC" at "https://papermc.io/repo/repository/maven-public/",
+      "SpigotMC" at "https://repo.md-5.net/content/groups/public/",
+      "ProtocolLib" at "https://repo.dmulloy2.net/nexus/repository/public/"
     ),
     libraryDependencies ++= commonDependencies ++ Seq(
       "com.destroystokyo.paper" % "paper-api" % "1.15.2-R0.1-SNAPSHOT" % Provided,
