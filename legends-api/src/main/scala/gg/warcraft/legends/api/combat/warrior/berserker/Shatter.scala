@@ -9,7 +9,7 @@ package gg.warcraft.legends.api.combat.warrior.berserker
 import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
-import gg.warcraft.combat.api.projectile.ProjectileService
+import gg.warcraft.combat.api.projectile.{Projectile, ProjectileService}
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
@@ -43,7 +43,7 @@ class Shatter(
 
   override def onMiss(entity: Entity): Boolean = false
 
-  override def onTick: Boolean = {
+  override def onTick(projectile: Projectile): Boolean = {
     ticks += 1
     if (caster.isGrounded && ticks >= 20) {
       val movement = Movement.oneOff(caster.location)
