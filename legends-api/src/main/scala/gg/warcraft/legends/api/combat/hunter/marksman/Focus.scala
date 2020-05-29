@@ -40,7 +40,7 @@ class Focus(
   private var status: Status.Effect = _
   private var effect: Effect = _
 
-  repository.removeFocus(caster.id) match {
+  repository.remove(caster.id) match {
     case Some(focus) => focus.cancel()
     case None =>
       entityService.freezeEntity(caster.id, maxDuration)
@@ -53,7 +53,7 @@ class Focus(
       val movement = Movement.entity(caster)
       effect = new Focus.ParticleEffect(movement)
 
-      repository.addFocus(this)
+      repository.add(this)
 
       val message = Message(text, s"${ColorCode.YELLOW}$text")
       playerService.sendMessage(caster.id, message)

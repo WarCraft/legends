@@ -9,7 +9,7 @@ package gg.warcraft.legends.api.combat
 import gg.warcraft.combat.api.ability.AbilityService
 import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.legends.api.combat.hunter.marksman.{
-  Focus, FocusRepository, PowerShot, Sneak
+  Focus, FocusRepository, PowerShot, Sneak, SneakRepository
 }
 import gg.warcraft.legends.api.combat.hunter.ranger.{Disengage, ToxicArrow, Trap}
 import gg.warcraft.legends.api.combat.mage.elementalist.{
@@ -46,6 +46,7 @@ class CombatConfig(implicit
     playerHidingService: PlayerHidingService,
     playerService: PlayerService,
     focusRepository: FocusRepository,
+    sneakRepository: SneakRepository,
     blockSpoofingService: BlockSpoofingService,
     massBamboozleRepository: MassBamboozle.Repository,
     massBamboozleAdapter: MassBamboozle.Adapter

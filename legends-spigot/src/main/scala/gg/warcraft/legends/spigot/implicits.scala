@@ -8,7 +8,9 @@ package gg.warcraft.legends.spigot
 
 import java.util.logging.Logger
 
-import gg.warcraft.legends.api.combat.hunter.marksman.FocusRepository
+import gg.warcraft.legends.api.combat.hunter.marksman.{
+  FocusRepository, SneakRepository
+}
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.core.types.DatabaseContext
 import gg.warcraft.legends.spigot.combat.mage.elementalist.MassBamboozleAdapter
@@ -58,6 +60,8 @@ object implicits {
   // Marksman
   implicit lazy val focusRepository: FocusRepository =
     new FocusRepository
+  implicit lazy val sneakRepository: SneakRepository =
+    new SneakRepository
 
   // Wizard
   implicit lazy val massBamboozleRepository: MassBamboozle.Repository =
