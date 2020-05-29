@@ -9,7 +9,6 @@ package gg.warcraft.legends.api.combat.mage.wizard
 import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
-import gg.warcraft.combat.api.ability.RangedAbility.Flag
 import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
@@ -19,7 +18,7 @@ import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 class Teleport(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot,
-    blockTarget: Block
+    blockTarget: Option[Block]
 )(implicit
     entityService: EntityService,
     projectileService: ProjectileService,
@@ -32,16 +31,20 @@ class Teleport(
   private val origin = caster.location
   private val yaw = caster.eyeLocation.rotation.toPitchYaw._2
 
-  private val targetLocation = blockTarget.location
-  private val relativeLocation = targetLocation + (0, 1, 0)
-  private val relative = worldService.getBlock(relativeLocation)
-  private val target =
-    if (relative.solid) {
-      val targetToCaster = (targetLocation.toLocation - origin).normalized
-      val adjustedLocation =
-        (targetLocation.toLocation + (.5f, .5f, .5f) + targetToCaster).toBlockLocation
-      adjustedLocation.toLocation + (.5f, 1, .5f)
-    } else relativeLocation.toLocation + (.5f, 0, .5f)
+  private val target = blockTarget match {
+    case Some(blockTarget) =>
+      val targetLocation = blockTarget.location
+      val relativeLocation = targetLocation + (0, 1, 0)
+      val relative = worldService.getBlock(relativeLocation)
+      if (relative.solid) {
+        val targetToCaster = (targetLocation.toLocation - origin).normalized
+        val adjustedLocation =
+          (targetLocation.toLocation + (.5f, .5f, .5f) + targetToCaster).toBlockLocation
+        adjustedLocation.toLocation + (.5f, 1, .5f)
+      } else relativeLocation.toLocation + (.5f, 0, .5f)
+    case None =>
+      caster.location + caster.eyeLocation.rotation * snapshot.range.modified
+  }
 
   entityService.teleportEntity(caster.id, target, Vector3f(0, yaw))
   worldService.playSound(origin, castSound, soundCategory)
@@ -66,14 +69,11 @@ object Teleport {
       projectileService: ProjectileService,
       worldService: WorldService
   ) extends RangedAbility.Factory {
-    override val flags: Set[Flag] =
-      Set(RangedAbility.BLOCK_TARGET_REQUIRED)
-
     override def create(
         caster: Entity,
         snapshot: AbilitySnapshot,
         blockTarget: Option[Block],
         entityTarget: Option[Entity]
-    ): RangedAbility = new Teleport(caster, snapshot, blockTarget.get)
+    ): RangedAbility = new Teleport(caster, snapshot, blockTarget)
   }
 }
