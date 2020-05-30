@@ -18,7 +18,7 @@ import gg.warcraft.monolith.api.effect.{
 }
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.math.Vector3f
-import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
+import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
 
 class HailBlast(
     override val caster: Entity,
@@ -59,6 +59,8 @@ class HailBlast(
   }
 
   override def onMiss(entity: Entity): Boolean = false
+
+  override def onGrounded(location: Location): Boolean = false
 }
 
 object HailBlast {

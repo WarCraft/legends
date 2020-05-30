@@ -14,7 +14,8 @@ import gg.warcraft.legends.api.combat.hunter.{
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.core.types.DatabaseContext
 import gg.warcraft.legends.api.entity.TeamConfig
-import gg.warcraft.legends.spigot.combat.RangerOnlyBowHandler
+import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
+import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
 import gg.warcraft.monolith.spigot.SpigotMonolithPlugin
 import gg.warcraft.monolith.spigot.implicits._
 import io.getquill.{SnakeCase, SqliteDialect}
@@ -43,13 +44,14 @@ class LegendsPlugin extends SpigotMonolithPlugin {
   }
 
   private def enableHandlers(): Unit = {
+    eventService.subscribe(new PersonalScoreboardHandler)
     eventService.subscribe(new ArrowDistributionHandler)
     eventService.subscribe(new ArrowFriendlyFireHandler)
     eventService.subscribe(new ArrowPickUpHandler)
     eventService.subscribe(new MassBamboozle.Handler)
 
     subscribe(new OnePointEightPvPInitHandler)
-    subscribe(new RangerOnlyBowHandler)
+    subscribe(new HunterOnlyBowHandler)
   }
 
   private def enableTasks(): Unit = {}

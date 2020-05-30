@@ -15,9 +15,9 @@ class FocusRepository {
 
   def abilities: Map[UUID, Focus] = _abilities
 
-  def addFocus(focus: Focus): Unit =
+  def add(focus: Focus): Unit =
     _abilities += (focus.caster.id -> focus)
 
-  def removeFocus(casterId: UUID): Option[Focus] =
+  def remove(casterId: UUID): Option[Focus] =
     abilities.get(casterId).tap { it => if (it.isDefined) _abilities -= casterId }
 }

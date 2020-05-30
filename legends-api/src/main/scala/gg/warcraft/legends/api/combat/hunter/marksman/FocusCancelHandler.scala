@@ -12,7 +12,7 @@ import gg.warcraft.monolith.api.player.PlayerDisconnectEvent
 class FocusCancelHandler(repository: FocusRepository) extends Event.Handler {
   override def handle(event: Event): Unit = event match {
     case PlayerDisconnectEvent(player) =>
-      repository.removeFocus(player.id).foreach { _.cancel() }
+      repository.remove(player.id).foreach { _.cancel() }
     case _ =>
   }
 }

@@ -105,7 +105,7 @@ object StandYourGround {
     private final val hitSound = Sound.ENTITY_IRON_GOLEM_HURT
 
     override val name: String = "Stand Your Ground"
-    override val group: String = "buff"
+    override val group: String = "legends.buff"
     override val duration: Option[Duration] = Some(_duration)
 
     override def handle(event: Event): Unit = event match {

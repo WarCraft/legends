@@ -91,7 +91,7 @@ object Grudge {
       entityService: EntityService
   ) extends Status.Effect {
     override val name: String = "Grudge"
-    override val group: String = "debuff"
+    override val group: String = "legends.debuff"
 
     private val casterId = source.entityId.get
 
