@@ -102,7 +102,7 @@ object Focus {
       modifierValue: Float
   ) extends Status.Effect {
     override val name: String = "Focus"
-    override val group: String = "buff"
+    override val group: String = "legends.buff"
 
     private val modifier = CombatValue.Modifier.percent(source, modifierValue)
 
