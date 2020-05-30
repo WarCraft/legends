@@ -1,3 +1,9 @@
+/*
+ * All rights reserved
+ *
+ * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
+ */
+
 package gg.warcraft.legends.spigot.combat
 
 import gg.warcraft.legends.api.entity.LegendsTeam._
@@ -57,13 +63,13 @@ class PersonalScoreboard(player: SpigotPlayer)(implicit
   }
 
   private def initializeHealthDisplay(): Unit = {
-    val healthObjective = scoreboard.registerNewObjective(
+    val objective = scoreboard.registerNewObjective(
       healthObjective,
       healthCriteria,
       healthObjective
     )
-    healthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME)
-    healthObjective.setDisplayName(s"${ChatColor.RED}❤")
+    objective.setDisplaySlot(DisplaySlot.BELOW_NAME)
+    objective.setDisplayName(s"${ChatColor.RED}❤")
   }
 
   def trackCooldown(ability: String, cooldown: Duration): Unit =
@@ -79,19 +85,19 @@ class PersonalScoreboard(player: SpigotPlayer)(implicit
       case (ability, cooldown) =>
         val remainingCooldown = cooldown - System.currentTimeMillis
         if (remainingCooldown > 0)
-          currentCooldowns += (ability -> (remainingCooldown / 1000))
+          currentCooldowns += (ability -> (remainingCooldown / 1000).toInt)
     }
 
     if (currentCooldowns.nonEmpty) {
-      val cooldownObjective = scoreboard.registerNewObjective(
+      val objective = scoreboard.registerNewObjective(
         cooldownObjective,
         dummyCriteria,
         cooldownObjective
       )
-      cooldownObjective.setDisplaySlot(DisplaySlot.SIDEBAR)
+      objective.setDisplaySlot(DisplaySlot.SIDEBAR)
       currentCooldowns.foreach {
         case (ability, cooldown) =>
-          cooldownObjective.getScore(ability).setScore(cooldown)
+          objective.getScore(ability).setScore(cooldown)
       }
     }
   }
