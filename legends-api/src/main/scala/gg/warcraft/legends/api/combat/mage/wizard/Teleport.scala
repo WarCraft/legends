@@ -36,12 +36,11 @@ class Teleport(
     case Some(blockTarget) =>
       val targetLocation = blockTarget.location
       val relativeLocation = targetLocation + (0, 1, 0)
-      val relative = worldService.getBlock(relativeLocation)
-      if (relative.solid) {
-        val targetToCaster = (targetLocation.toLocation - origin).normalized
-        val adjustedLocation =
-          (targetLocation.toLocation + (.5f, .5f, .5f) + targetToCaster).toBlockLocation
-        adjustedLocation.toLocation + (.5f, 1, .5f)
+      val relativeBlock = worldService.getBlock(relativeLocation)
+      if (relativeBlock.solid) {
+        val adjustedTarget = targetLocation.toLocation + (.5f, .5f, .5f)
+        val targetToCaster = (adjustedTarget - origin).normalized
+        (adjustedTarget + targetToCaster).toBlockLocation.toLocation + (.5f, 0, .5f)
       } else relativeLocation.toLocation + (.5f, 0, .5f)
     case None =>
       caster.eyeLocation + caster.eyeLocation.rotation * snapshot.range.modified
