@@ -9,6 +9,7 @@ package gg.warcraft.legends.api.combat.mage.wizard
 import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
+import gg.warcraft.combat.api.ability.RangedAbility.Flag
 import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
@@ -43,7 +44,7 @@ class Teleport(
         adjustedLocation.toLocation + (.5f, 1, .5f)
       } else relativeLocation.toLocation + (.5f, 0, .5f)
     case None =>
-      caster.location + caster.eyeLocation.rotation * snapshot.range.modified
+      caster.eyeLocation + caster.eyeLocation.rotation * snapshot.range.modified
   }
 
   entityService.teleportEntity(caster.id, target, Vector3f(0, yaw))
@@ -69,6 +70,9 @@ object Teleport {
       projectileService: ProjectileService,
       worldService: WorldService
   ) extends RangedAbility.Factory {
+    override val flags: Set[Flag] =
+      Set(RangedAbility.BLOCK_TARGET_OPTIONAL)
+
     override def create(
         caster: Entity,
         snapshot: AbilitySnapshot,
