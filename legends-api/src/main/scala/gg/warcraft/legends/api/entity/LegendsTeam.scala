@@ -24,7 +24,7 @@ object LegendsTeam {
         "Dwarf",
         "Dwarves",
         Particle.Color.Purple,
-        ColorCode.DARK_PURPLE
+        ColorCode.LIGHT_PURPLE
       )
 
   case object Elves
@@ -32,7 +32,7 @@ object LegendsTeam {
         "Elf",
         "Elves",
         Particle.Color.Green,
-        ColorCode.DARK_GREEN
+        ColorCode.GREEN
       )
 
   case object Humans
@@ -40,7 +40,7 @@ object LegendsTeam {
         "Human",
         "Humans",
         Particle.Color.Blue,
-        ColorCode.DARK_BLUE
+        ColorCode.BLUE
       )
 
   case object Orcs
@@ -48,7 +48,7 @@ object LegendsTeam {
         "Orc",
         "Orcs",
         Particle.Color.Red,
-        ColorCode.DARK_RED
+        ColorCode.RED
       )
 
   case object Wayfarers
