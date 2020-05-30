@@ -39,7 +39,7 @@ class Teleport(
       val relativeBlock = worldService.getBlock(relativeLocation)
       if (relativeBlock.solid) {
         val adjustedTarget = targetLocation.toLocation + (.5f, .5f, .5f)
-        val targetToCaster = (adjustedTarget - origin).normalized
+        val targetToCaster = (origin - adjustedTarget).normalized
         (adjustedTarget + targetToCaster).toBlockLocation.toLocation + (.5f, 0, .5f)
       } else relativeLocation.toLocation + (.5f, 0, .5f)
     case None =>
