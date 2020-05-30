@@ -7,7 +7,7 @@
 package gg.warcraft.legends.spigot.combat
 
 import gg.warcraft.legends.api.entity.LegendsTeam._
-import gg.warcraft.monolith.api.core.{Cancellable, Duration}
+import gg.warcraft.monolith.api.core.{Cancellable, Duration, FormatCode}
 import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.core.Duration._
 import gg.warcraft.monolith.api.core.event.Event
@@ -49,7 +49,10 @@ class PersonalScoreboard(player: SpigotPlayer)(implicit
   private def initializeTeams(): Unit = {
     (Humans :: Orcs :: Dwarves :: Elves :: Nil).foreach { team =>
       val scoreboardTeam = scoreboard.registerNewTeam(team)
+      scoreboardTeam.setAllowFriendlyFire(false)
+      scoreboardTeam.setColor(ChatColor.getByChar(team.chatColor.code(1)))
       scoreboardTeam.setPrefix(team.chatColor.toString)
+      scoreboardTeam.setSuffix(FormatCode.RESET.code)
     }
 
     playerService.getOnlinePlayers.foreach { player =>
