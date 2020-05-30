@@ -4,7 +4,7 @@
  * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
  */
 
-package gg.warcraft.legends.spigot.combat
+package gg.warcraft.legends.spigot.combat.hunter
 
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.combatplayer._
@@ -16,7 +16,7 @@ import org.bukkit.event.{EventHandler, Listener}
 import org.bukkit.event.entity.EntityShootBowEvent
 import org.bukkit.Material
 
-class RangerOnlyBowHandler(implicit
+class HunterOnlyBowHandler(implicit
     playerService: PlayerService,
     combatDataService: CombatDataService
 ) extends Listener {
