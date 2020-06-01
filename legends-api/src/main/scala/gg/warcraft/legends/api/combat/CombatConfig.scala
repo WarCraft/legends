@@ -8,22 +8,13 @@ package gg.warcraft.legends.api.combat
 
 import gg.warcraft.combat.api.ability.AbilityService
 import gg.warcraft.combat.api.projectile.ProjectileService
-import gg.warcraft.legends.api.combat.hunter.marksman.{
-  Focus, FocusRepository, PowerShot, Sneak, SneakRepository
-}
+import gg.warcraft.legends.api.combat.hunter.marksman.{Focus, FocusRepository, PowerShot, Sneak, SneakRepository}
 import gg.warcraft.legends.api.combat.hunter.ranger.{Disengage, ToxicArrow, Trap}
-import gg.warcraft.legends.api.combat.mage.elementalist.{
-  Bolt, Fireball, HailBlast, MoltenStorm
-}
+import gg.warcraft.legends.api.combat.mage.elementalist.{Bolt, Fireball, HailBlast, MoltenStorm}
 import gg.warcraft.legends.api.combat.mage.racial.{ArcaneBarrier, FlameTotem}
-import gg.warcraft.legends.api.combat.mage.wizard.{
-  ArcaneFizzle, ArcaneMissile, MagicScatter, MagicScatterProjectile, MassBamboozle,
-  Teleport
-}
+import gg.warcraft.legends.api.combat.mage.wizard.{ArcaneFizzle, ArcaneMissile, MagicScatter, MagicScatterProjectile, MassBamboozle, Teleport}
 import gg.warcraft.legends.api.combat.warrior.berserker.{Grudge, Maul, Shatter}
-import gg.warcraft.legends.api.combat.warrior.guardian.{
-  Hamstring, Slam, StandYourGround
-}
+import gg.warcraft.legends.api.combat.warrior.guardian.{Hamstring, Slam, StandYourGround}
 import gg.warcraft.legends.api.combat.warrior.racial.LastStand
 import gg.warcraft.monolith.api.block.spoofing.BlockSpoofingService
 import gg.warcraft.monolith.api.core.task.TaskService
@@ -70,10 +61,7 @@ class CombatConfig(implicit
     registerAbility("Arcane Fizzle", new ArcaneFizzle.Factory())
     registerAbility("Arcane Missile", new ArcaneMissile.Factory())
     registerAbility("Magic Scatter", new MagicScatter.Factory())
-    registerAbility(
-      "Magic Scatter (Projectile)",
-      new MagicScatterProjectile.Factory()
-    )
+    registerAbility("Magic Scatter (Projectile)", new MagicScatterProjectile.Factory())
     registerAbility("Teleport", new Teleport.Factory())
     registerAbility("Mass Bamboozle", new MassBamboozle.Factory())
     // Human

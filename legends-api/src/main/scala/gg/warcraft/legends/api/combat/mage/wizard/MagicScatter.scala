@@ -6,7 +6,7 @@
 
 package gg.warcraft.legends.api.combat.mage.wizard
 
-import gg.warcraft.combat.api.ability.RangedAbility
+import gg.warcraft.combat.api.ability.{AbilityService, RangedAbility}
 import gg.warcraft.combat.api.ability.RangedAbility.Flag
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
@@ -99,43 +99,39 @@ class MagicScatter(
 
 object MagicScatter {
   class Factory(implicit
-                taskService: TaskService,
-                entityService: EntityService,
-                projectileService: ProjectileService,
-                worldService: WorldService,
-                particleAdapter: ParticleAdapter
-               ) extends RangedAbility.Factory {
+      taskService: TaskService,
+      entityService: EntityService,
+      projectileService: ProjectileService,
+      worldService: WorldService,
+      particleAdapter: ParticleAdapter,
+      abilityService: AbilityService
+  ) extends RangedAbility.Factory {
     override val flags: Set[Flag] =
       Set(RangedAbility.ENTITY_TARGET_OPTIONAL)
 
     override def create(
-                         caster: Entity,
-                         snapshot: AbilitySnapshot,
-                         blockTarget: Option[Block],
-                         entityTarget: Option[Entity]
-                       ): RangedAbility = new MagicScatter(caster, snapshot)
+        caster: Entity,
+        snapshot: AbilitySnapshot,
+        blockTarget: Option[Block],
+        entityTarget: Option[Entity]
+    ): RangedAbility = new MagicScatter(caster, snapshot, entityTarget)
   }
 
   class ParticleEffect(movement: Movement)(implicit
-                                           taskService: TaskService,
-                                           particleAdapter: ParticleAdapter
+      taskService: TaskService,
+      particleAdapter: ParticleAdapter
   ) extends Effect(movement.get) {
     private final val radius = 0.1f
-    private final val innerParticleCount = 1
-    private final val innerParticleSpeed = 1
-    private final val outerParticleCount = 6
+    private final val outerParticleCount = 3
 
-    private val innerParticle =
-      Particle.EnchantmentTable.speed(innerParticleSpeed, innerParticleCount)
+    private val innerParticle = Particle.Redstone.color(Particle.Color.Purple)
     private val innerVectors = EffectVectors.origin()
     private val innerRenderer = EffectRenderer(innerParticle, innerVectors)
     addRenderer(innerRenderer)
 
-    private val outerParticle = Particle.DragonBreath
+    private val outerParticle = Particle.Redstone.color(Particle.Color.Fuchsia)
     private val outerVectors = EffectVectors.sphere(radius, outerParticleCount)
     private val outerRenderer = EffectRenderer(outerParticle, outerVectors)
     addRenderer(outerRenderer)
   }
 }
-
-
