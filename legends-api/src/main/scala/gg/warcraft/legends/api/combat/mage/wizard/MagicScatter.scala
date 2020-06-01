@@ -36,7 +36,7 @@ class MagicScatter(
   private final val hitSound = Sound.ENTITY_ENDER_DRAGON_HURT
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
   private final val location = caster.eyeLocation
-  private final val range = snapshot.count.modified
+  private final val range = snapshot.range.modified
   private final val count = snapshot.count.modified
   private final val homingRange = snapshot.distance.modified
   private final val direction = location.rotation
