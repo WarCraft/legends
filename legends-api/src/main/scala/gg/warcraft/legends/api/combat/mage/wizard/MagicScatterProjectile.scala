@@ -7,9 +7,7 @@
 package gg.warcraft.legends.api.combat.mage.wizard
 
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
-import gg.warcraft.combat.api.ability.{
-  Ability, AbilityService, ChildAbility, RangedAbility
-}
+import gg.warcraft.combat.api.ability.{Ability, ChildAbility, RangedAbility}
 import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.monolith.api.core.task.TaskService
@@ -35,7 +33,6 @@ class MagicScatterProjectile(
   private final val castSound = Sound.ENTITY_ENDER_DRAGON_HURT
   private final val hitSound = Sound.ENTITY_ENDER_DRAGON_HURT
   private val target = metadata("target").asInstanceOf[Entity]
-  private var validTarget: Boolean = true
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
   private final val location = metadata("location").asInstanceOf[Location]
 
