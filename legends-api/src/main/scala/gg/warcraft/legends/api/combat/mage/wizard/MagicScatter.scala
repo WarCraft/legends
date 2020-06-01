@@ -13,41 +13,50 @@ import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.core.task.TaskService
-import gg.warcraft.monolith.api.effect.{Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter}
+import gg.warcraft.monolith.api.effect.{
+  Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
+}
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
-import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
+import gg.warcraft.monolith.api.math.Vector3f
+import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
 
 class MagicScatter(
     override val caster: Entity,
-    override val snapshot: AbilitySnapshot
+    override val snapshot: AbilitySnapshot,
+    target: Option[Entity]
 )(implicit
     taskService: TaskService,
     entityService: EntityService,
     projectileService: ProjectileService,
     worldService: WorldService,
-    particleAdapter: ParticleAdapter
+    particleAdapter: ParticleAdapter,
+    abilityService: AbilityService
 ) extends RangedAbility {
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.ENTITY_ENDER_DRAGON_HURT
   private final val hitSound = Sound.ENTITY_ENDER_DRAGON_HURT
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
-  //
   private final val location = caster.eyeLocation
-  private final val maxDistance = 5f
+  private final val range = snapshot.count.modified
+  private final val count = snapshot.count.modified
+  private final val homingRange = snapshot.distance.modified
   private final val direction = location.rotation
   private final val velocity = direction * snapshot.velocity.modified
-  private final val maxScatter = 15
 
+  private final val maxInaccuracyAngle = 35f
 
-  //Multiple scattered projectiles
-  private val projectileCount = 5
-  for( p <- 0 to projectileCount) {
-    val tempVelocity = velocity
-    tempVelocity.rotateX(Math.toRadians(Math.random() * maxScatter).toFloat)
-    tempVelocity.rotateY(Math.toRadians(Math.random() * maxScatter).toFloat)
-    tempVelocity.rotateZ(Math.toRadians(Math.random() * maxScatter).toFloat)
-    val movement = Movement.linear(caster.eyeLocation, tempVelocity, maxDistance)
-    val effect = new ArcaneMissile.ParticleEffect(movement)
+  (0 to count.toInt).foreach { _ =>
+    val modifiedVelocity =
+      velocity
+        .rotateX(((Math.random() - 0.5) * maxInaccuracyAngle).toRadians.toFloat)
+        .rotateZ(((Math.random() - 0.5) * maxInaccuracyAngle).toRadians.toFloat)
+        .rotateY(((Math.random() - 0.5) * maxInaccuracyAngle).toRadians.toFloat)
+    val movement = Movement.linear(
+      caster.eyeLocation,
+      modifiedVelocity,
+      range
+    )
+    val effect = new MagicScatter.ParticleEffect(movement)
     projectileService.createProjectile(this, movement, hitbox, effect.cancel)
   }
 
@@ -60,6 +69,33 @@ class MagicScatter(
   }
 
   override def onMiss(entity: Entity): Boolean = false
+
+  override def onMaxRange(location: Location): Boolean = {
+    val entityList = entityService.getNearbyEntities(location, homingRange).filter {
+      _.team != caster.team
+    }
+    if (target.nonEmpty || entityList.nonEmpty) {
+      val projectileTarget =
+        if (target.isDefined) target.get
+        else {
+          var nearest: Entity = null
+          var nearestDistance = Float.NaN
+          for (entity <- entityList) {
+            val distance = entity.location.distanceTo(location)
+            if (
+              (nearest == null || nearestDistance == Float.NaN) || (distance < nearestDistance)
+            ) {
+              nearest = entity
+              nearestDistance = distance
+            }
+          }
+          nearest
+        }
+      val metadata = Map("location" -> location, "target" -> projectileTarget)
+      abilityService.spawnChild("Projectile", this, metadata)
+    }
+    true
+  }
 }
 
 object MagicScatter {
@@ -71,7 +107,7 @@ object MagicScatter {
                 particleAdapter: ParticleAdapter
                ) extends RangedAbility.Factory {
     override val flags: Set[Flag] =
-      Set(RangedAbility.ENTITY_TARGET_REQUIRED)
+      Set(RangedAbility.ENTITY_TARGET_OPTIONAL)
 
     override def create(
                          caster: Entity,
