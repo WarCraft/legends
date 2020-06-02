@@ -6,7 +6,9 @@ import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.core.task.TaskService
-import gg.warcraft.monolith.api.effect.{Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter}
+import gg.warcraft.monolith.api.effect.{
+  Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
+}
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.math.Vector3f
 import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
