@@ -75,9 +75,9 @@ object MagicScatterProjectile {
       taskService: TaskService,
       particleAdapter: ParticleAdapter
   ) extends Effect(movement.get) {
-    private val innerParticle = Particle.Redstone.color(Particle.Color.Purple)
-    private val innerVectors = EffectVectors.origin()
-    private val innerRenderer = EffectRenderer(innerParticle, innerVectors)
-    addRenderer(innerRenderer)
+    private val particle = Particle.Redstone.color(Particle.Color.Purple)
+    private val vectors = EffectVectors.origin()
+    private val renderer = EffectRenderer(particle, vectors)
+    addRenderer(renderer)
   }
 }
