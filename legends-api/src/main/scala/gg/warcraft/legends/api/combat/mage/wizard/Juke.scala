@@ -23,8 +23,8 @@ class Juke(
   private val casterLocation = caster.location
   private val targetLocation = target.location
 
-  entityService.teleportEntity(caster.id, target.location)
-  entityService.teleportEntity(target.id, caster.location)
+  entityService.teleportEntity(caster.id, targetLocation)
+  entityService.teleportEntity(target.id, casterLocation)
   worldService.playSound(casterLocation, castSound, soundCategory)
   worldService.playSound(targetLocation, castSound, soundCategory)
 
