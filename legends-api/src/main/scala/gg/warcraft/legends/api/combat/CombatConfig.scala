@@ -17,7 +17,8 @@ import gg.warcraft.legends.api.combat.mage.elementalist.{
 }
 import gg.warcraft.legends.api.combat.mage.racial.{ArcaneBarrier, FlameTotem}
 import gg.warcraft.legends.api.combat.mage.wizard.{
-  ArcaneFizzle, ArcaneMissile, MassBamboozle, Teleport
+  ArcaneFizzle, ArcaneMissile, MagicScatter, MagicScatterProjectile, MassBamboozle,
+  Teleport
 }
 import gg.warcraft.legends.api.combat.warrior.berserker.{Grudge, Maul, Shatter}
 import gg.warcraft.legends.api.combat.warrior.guardian.{
@@ -68,6 +69,11 @@ class CombatConfig(implicit
     // Wizard
     registerAbility("Arcane Fizzle", new ArcaneFizzle.Factory())
     registerAbility("Arcane Missile", new ArcaneMissile.Factory())
+    registerAbility("Magic Scatter", new MagicScatter.Factory())
+    registerAbility(
+      "Magic Scatter (Projectile)",
+      new MagicScatterProjectile.Factory()
+    )
     registerAbility("Teleport", new Teleport.Factory())
     registerAbility("Mass Bamboozle", new MassBamboozle.Factory())
     // Human
