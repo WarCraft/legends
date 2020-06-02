@@ -34,17 +34,16 @@ class MagicScatter(
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.ENTITY_ENDER_DRAGON_HURT
   private final val hitSound = Sound.ENTITY_ENDER_DRAGON_HURT
-  private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
-  private final val location = caster.eyeLocation
-  private final val range = snapshot.range.modified
-  private final val count = snapshot.count.modified
-  private final val homingRange = snapshot.distance.modified
-  private final val direction = location.rotation
-  private final val velocity = direction * snapshot.velocity.modified
-
   private final val maxInaccuracyAngle = 35f
+  private val range = snapshot.range.modified
+  private val count = snapshot.count.modified
+  private val homingRange = snapshot.distance.modified
+  private val location = caster.eyeLocation
+  private val direction = location.rotation
+  private val velocity = direction * snapshot.velocity.modified
+  private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
 
-  (0 to count.toInt).foreach { _ =>
+  (1 to count.toInt).foreach { _ =>
     val modifiedVelocity =
       velocity
         .rotateX(((Math.random() - 0.5) * maxInaccuracyAngle).toRadians.toFloat)
@@ -70,27 +69,16 @@ class MagicScatter(
   override def onMiss(entity: Entity): Boolean = false
 
   override def onMaxRange(location: Location): Boolean = {
-    val entityList = entityService.getNearbyEntities(location, homingRange).filter {
-      _.team != caster.team
+    val projectileTarget: Option[Entity] = target.orElse {
+      entityService.getNearbyEntities(location, homingRange)
+        .filter { _.team != caster.team }
+        .foldLeft((None, Float.MaxValue): (Option[Entity], Float)) { (accumulator, entity) =>
+          val distance = entity.location.distanceTo(location)
+          if (distance < accumulator._2) (Some(entity), distance) else accumulator
+        }._1
     }
-    if (target.nonEmpty || entityList.nonEmpty) {
-      val projectileTarget =
-        if (target.isDefined) target.get
-        else {
-          var nearest: Entity = null
-          var nearestDistance = Float.NaN
-          for (entity <- entityList) {
-            val distance = entity.location.distanceTo(location)
-            if (
-              (nearest == null || nearestDistance == Float.NaN) || (distance < nearestDistance)
-            ) {
-              nearest = entity
-              nearestDistance = distance
-            }
-          }
-          nearest
-        }
-      val metadata = Map("location" -> location, "target" -> projectileTarget)
+    if(projectileTarget.isDefined) {
+      val metadata = Map("location" -> location, "target" -> projectileTarget.get)
       abilityService.spawnChild("Projectile", this, metadata)
     }
     true

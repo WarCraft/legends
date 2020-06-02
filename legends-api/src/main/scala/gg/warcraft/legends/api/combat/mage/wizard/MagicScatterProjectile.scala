@@ -34,7 +34,7 @@ class MagicScatterProjectile(
   private final val hitSound = Sound.ENTITY_ENDER_DRAGON_HURT
   private val target = metadata("target").asInstanceOf[Entity]
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
-  private final val location = metadata("location").asInstanceOf[Location]
+  private val location = metadata("location").asInstanceOf[Location]
 
   private val movement = Movement.homing(
     location,
