@@ -77,11 +77,15 @@ object ArcaneShield {
   ) extends Effect(movement.get) {
 
     private val radius = 0.1f
-    private val count = 3
+    private val count = 1
+    private val witchParticleSpeed = 0f
 
-    private val particle = Particle.Redstone.color(Particle.Color.Purple)
+    private val particlePurple = Particle.Redstone.color(Particle.Color.Purple)
+    private val particleWitch = Particle.SpellWitch.speed(witchParticleSpeed, count)
     private val vectors = EffectVectors.sphere(radius, count)
-    private val renderer = EffectRenderer(particle, vectors)
-    addRenderer(renderer)
+    private val rendererPurple = EffectRenderer(particlePurple, vectors)
+    private val rendererWitch = EffectRenderer(particleWitch, vectors)
+    addRenderer(rendererPurple)
+    addRenderer(rendererWitch)
   }
 }
