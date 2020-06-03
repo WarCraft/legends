@@ -20,19 +20,18 @@ class Juke(
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.ENTITY_ENDERMAN_TELEPORT
   private val casterLocation = caster.location
+  private val targetLocation = target.location
 
-  override def onHit(entity: Entity): Boolean = {
-    val targetLocation = entity.location
-    entityService.teleportEntity(caster.id, targetLocation)
-    entityService.teleportEntity(entity.id, casterLocation)
-    worldService.playSound(casterLocation, castSound, soundCategory)
-    worldService.playSound(targetLocation, castSound, soundCategory)
+  entityService.teleportEntity(caster.id, targetLocation)
+  entityService.teleportEntity(target.id, casterLocation)
+  worldService.playSound(casterLocation, castSound, soundCategory)
+  worldService.playSound(targetLocation, castSound, soundCategory)
 
-    entityService.damageEntity(entity.id, snapshot.damage)
-    entityService.addPotionEffect(entity.id, snapshot.blindness)
-    entityService.addPotionEffect(entity.id, snapshot.nausea)
-    true
-  }
+  entityService.damageEntity(target.id, snapshot.damage)
+  entityService.addPotionEffect(target.id, snapshot.blindness)
+  entityService.addPotionEffect(target.id, snapshot.nausea)
+
+  override def onHit(entity: Entity): Boolean = true
 
   override def onMiss(entity: Entity): Boolean = false
 }
