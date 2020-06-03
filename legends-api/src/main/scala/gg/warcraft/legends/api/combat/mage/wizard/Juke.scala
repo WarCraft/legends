@@ -19,19 +19,18 @@ class Juke(
 ) extends RangedAbility {
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.ENTITY_ENDERMAN_TELEPORT
-
   private val casterLocation = caster.location
-  private val targetLocation = target.location
 
   override def onHit(entity: Entity): Boolean = {
+    val targetLocation = entity.location
     entityService.teleportEntity(caster.id, targetLocation)
-    entityService.teleportEntity(target.id, casterLocation)
+    entityService.teleportEntity(entity.id, casterLocation)
     worldService.playSound(casterLocation, castSound, soundCategory)
     worldService.playSound(targetLocation, castSound, soundCategory)
 
-    entityService.damageEntity(target.id, snapshot.damage)
-    entityService.addPotionEffect(target.id, snapshot.blindness)
-    entityService.addPotionEffect(target.id, snapshot.nausea)
+    entityService.damageEntity(entity.id, snapshot.damage)
+    entityService.addPotionEffect(entity.id, snapshot.blindness)
+    entityService.addPotionEffect(entity.id, snapshot.nausea)
     true
   }
 
