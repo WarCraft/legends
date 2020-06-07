@@ -1,3 +1,9 @@
+/*
+ * All rights reserved
+ *
+ * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
+ */
+
 package gg.warcraft.legends.api.item.equipment;
 
 public enum EquipmentType {
@@ -5,6 +11,7 @@ public enum EquipmentType {
     SWORD,
     AXE,
     BOW,
+    CROSSBOW,
     WAND,
     STAFF,
 

@@ -10,7 +10,9 @@ import gg.warcraft.monolith.api.entity.attribute.Attribute
 
 sealed abstract class LegendsAttribute(
     override val name: String
-) extends Attribute
+) extends Attribute {
+  override def toString: String = name
+}
 
 object LegendsAttribute {
   case object Strength extends LegendsAttribute("Strength")

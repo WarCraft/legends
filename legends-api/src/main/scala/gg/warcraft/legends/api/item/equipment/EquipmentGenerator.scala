@@ -1,29 +1,52 @@
-package gg.warcraft.legends.app.item.equipment;
+/*
+ * All rights reserved
+ *
+ * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
+ */
 
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.combat.LegendsSpecializationType;
-import gg.warcraft.legends.api.entity.LegendsAttribute;
-import gg.warcraft.legends.api.entity.LegendsTeam;
-import gg.warcraft.legends.api.item.AttributeDistribution;
-import gg.warcraft.legends.api.item.ItemRarity;
-import gg.warcraft.legends.api.item.config.AttributeRollConfiguration;
-import gg.warcraft.legends.api.item.config.EquipmentConfiguration;
-import gg.warcraft.legends.api.item.config.EquipmentLoreConfiguration;
-import gg.warcraft.legends.api.item.config.service.EquipmentConfigurationRepository;
-import gg.warcraft.legends.api.item.equipment.EquipmentBuilder;
-import gg.warcraft.legends.api.item.equipment.EquipmentBuilderFactory;
-import gg.warcraft.legends.api.item.equipment.EquipmentGenerator;
-import gg.warcraft.legends.api.item.equipment.EquipmentType;
-import gg.warcraft.monolith.api.world.item.Item;
-import gg.warcraft.monolith.api.world.item.ItemService;
-import gg.warcraft.monolith.api.world.item.ItemType;
-import gg.warcraft.monolith.api.world.item.ItemTypeOrVariant;
+package gg.warcraft.legends.api.item.equipment
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import gg.warcraft.legends.api.combat.LegendsCombatClass
+import gg.warcraft.legends.api.entity.LegendsTeam
+import gg.warcraft.legends.api.item.ItemRarity
+import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
+import gg.warcraft.monolith.api.item.{ Item, ItemService }
+
+class EquipmentGenerator(implicit
+    itemService: ItemService,
+                         equipmentConfigRepository: EquipmentConfigRepository
+) {
+  def generate(combatClass: LegendsCombatClass, team: LegendsTeam): Item = {
+
+  }
+
+  def generate(
+      combatClass: LegendsCombatClass,
+      team: LegendsTeam,
+      typ: EquipmentType
+  ): Item = {
+
+  }
+
+  def generate(
+      combatClass: LegendsCombatClass,
+      team: LegendsTeam,
+      rarity: ItemRarity
+  ): Item = {
+
+  }
+
+  def generate(
+      combatClass: LegendsCombatClass,
+      team: LegendsTeam,
+      typ: EquipmentType,
+      rarity: ItemRarity
+  ): Item = {
+
+  }
+}
+
+/*
 
 public class SimpleEquipmentGenerator implements EquipmentGenerator {
     private final EquipmentConfiguration equipmentConfiguration;
@@ -195,3 +218,4 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
         return builder.build();
     }
 }
+ */
