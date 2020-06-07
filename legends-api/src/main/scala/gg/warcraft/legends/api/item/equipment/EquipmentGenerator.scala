@@ -17,7 +17,7 @@ class EquipmentGenerator(implicit
                          equipmentConfigRepository: EquipmentConfigRepository
 ) {
   def generate(combatClass: LegendsCombatClass, team: LegendsTeam): Item = {
-
+    ???
   }
 
   def generate(
@@ -25,7 +25,7 @@ class EquipmentGenerator(implicit
       team: LegendsTeam,
       typ: EquipmentType
   ): Item = {
-
+    ???
   }
 
   def generate(
@@ -33,7 +33,7 @@ class EquipmentGenerator(implicit
       team: LegendsTeam,
       rarity: ItemRarity
   ): Item = {
-
+    ???
   }
 
   def generate(
@@ -42,7 +42,7 @@ class EquipmentGenerator(implicit
       typ: EquipmentType,
       rarity: ItemRarity
   ): Item = {
-
+    ???
   }
 }
 
