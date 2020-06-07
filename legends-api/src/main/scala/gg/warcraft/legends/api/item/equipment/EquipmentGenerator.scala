@@ -6,178 +6,59 @@
 
 package gg.warcraft.legends.api.item.equipment
 
-import gg.warcraft.legends.api.combat.LegendsCombatClass
-import gg.warcraft.legends.api.entity.LegendsTeam
+import gg.warcraft.legends.api.combat.LegendsCombatArchetype
+import gg.warcraft.legends.api.entity.{LegendsAttribute, LegendsTeam}
 import gg.warcraft.legends.api.item.ItemRarity
-import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
-import gg.warcraft.monolith.api.item.{ Item, ItemService }
+import gg.warcraft.legends.api.item.equipment.config.{
+  AttributeRollConfig, EquipmentConfigRepository
+}
+import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig.AttributeDistributionConfig
+import gg.warcraft.monolith.api.item.{Item, ItemService}
+
+import scala.util.Random
 
 class EquipmentGenerator(implicit
     itemService: ItemService,
-                         equipmentConfigRepository: EquipmentConfigRepository
+    equipmentConfigRepository: EquipmentConfigRepository
 ) {
-  def generate(combatClass: LegendsCombatClass, team: LegendsTeam): Item = {
-    ???
+  private final val attributeDistributions = AttributeDistribution.values()
+
+  private lazy val config = equipmentConfigRepository.config
+
+  def generate(archetype: LegendsCombatArchetype, team: LegendsTeam): Item = {
+    val typ = randomEquipmentType(archetype)
+    generate(archetype, team, typ)
   }
 
   def generate(
-      combatClass: LegendsCombatClass,
+      archetype: LegendsCombatArchetype,
       team: LegendsTeam,
       typ: EquipmentType
   ): Item = {
-    ???
+    val rarityRoll = Random.nextFloat * 100
+    val rarity = config.itemRarities.floorEntry(rarityRoll).getValue
+    generate(archetype, team, typ, rarity)
   }
 
   def generate(
-      combatClass: LegendsCombatClass,
+      archetype: LegendsCombatArchetype,
       team: LegendsTeam,
       rarity: ItemRarity
   ): Item = {
-    ???
+    val typ = randomEquipmentType(archetype)
+    generate(archetype, team, typ, rarity)
   }
 
   def generate(
-      combatClass: LegendsCombatClass,
+      archetype: LegendsCombatArchetype,
       team: LegendsTeam,
       typ: EquipmentType,
       rarity: ItemRarity
   ): Item = {
     ???
-  }
-}
 
-/*
-
-public class SimpleEquipmentGenerator implements EquipmentGenerator {
-    private final EquipmentConfiguration equipmentConfiguration;
-    private final EquipmentBuilderFactory equipmentBuilderFactory;
-    private final ItemService itemService;
-    private final Random random;
-
-    @Inject
-    public SimpleEquipmentGenerator(EquipmentConfigurationRepository equipmentConfigurationRepository,
-                                    EquipmentBuilderFactory equipmentBuilderFactory, Random random,
-                                    ItemService itemService) {
-        this.equipmentConfiguration = equipmentConfigurationRepository.getConfiguration();
-        this.equipmentBuilderFactory = equipmentBuilderFactory;
-        this.random = random;
-        this.itemService = itemService;
-    }
-
-    private AttributeDistribution getRandomAttributeDistribution() {
-        AttributeDistribution[] values = AttributeDistribution.values();
-        return values[random.nextInt(values.length)];
-    }
-
-    private EquipmentType getRandomEquipmentTypeFor(LegendsSpecializationType specialization) {
-        List<EquipmentType> validTypes = equipmentConfiguration.getValidTypes().get(specialization);
-        int typeRoll = random.nextInt(validTypes.size());
-        return validTypes.get(typeRoll);
-    }
-
-    private Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>>
-    getAttributeConfigurationsFor(ItemRarity rarity) {
-        switch (rarity) {
-            case LEGENDARY:
-                return equipmentConfiguration.getLegendaryRolls();
-            case ANCIENT:
-                return equipmentConfiguration.getAncientRolls();
-            case COMMON:
-            case RARE:
-            case EPIC:
-            default:
-                return equipmentConfiguration.getAttributeRolls();
-        }
-    }
-
-    private Map<LegendsSpecializationType, Map<AttributeDistribution, List<List<AttributeRollConfiguration>>>>
-    getOffhandAttributeConfigurationsFor(ItemRarity rarity) {
-        switch (rarity) {
-            case LEGENDARY:
-                return equipmentConfiguration.getOffhandLegendaryRolls();
-            case ANCIENT:
-                return equipmentConfiguration.getOffhandAncientRolls();
-            case COMMON:
-            case RARE:
-            case EPIC:
-            default:
-                return equipmentConfiguration.getOffhandAttributeRolls();
-        }
-    }
-
-    private int getRandomRollFor(List<AttributeRollConfiguration> attributeRolls, ItemRarity rarity) {
-        int totalLowRoll = 0;
-        int totalHighRoll = 0;
-        for (AttributeRollConfiguration roll : attributeRolls) {
-            totalLowRoll += roll.getLowRoll();
-            totalHighRoll += roll.getHighRoll();
-        }
-
-        int deltaRoll = totalHighRoll - totalLowRoll;
-        int halfDeltaRoll = (int) (0.5f * deltaRoll);
-        switch (rarity) {
-            case COMMON:
-                return totalLowRoll + random.nextInt(halfDeltaRoll + 1);
-            case RARE:
-                int randomHalfDeltaRoll = halfDeltaRoll > 1
-                        ? random.nextInt(halfDeltaRoll - 1)
-                        : 0;
-                return totalHighRoll - 1 - randomHalfDeltaRoll;
-            default:
-                return totalHighRoll;
-        }
-    }
-
-    private Map<LegendsAttribute, Integer> getRandomAttributesFor(List<AttributeRollConfiguration> attributeRolls,
-                                                                  int roll) {
-        Map<LegendsAttribute, Integer> randomAttributeRolls = new LinkedHashMap<>();
-        Map<LegendsAttribute, Integer> highRolls = new HashMap<>();
-        int remainingRoll = roll;
-        for (AttributeRollConfiguration attr : attributeRolls) {
-            randomAttributeRolls.put(attr.getAttribute(), attr.getLowRoll());
-            highRolls.put(attr.getAttribute(), attr.getHighRoll());
-            remainingRoll -= attr.getLowRoll();
-        }
-        while (remainingRoll > 0) {
-            LegendsAttribute randomAttribute = attributeRolls.get(random.nextInt(attributeRolls.size())).getAttribute();
-            int currentRoll = randomAttributeRolls.get(randomAttribute);
-            int maxRoll = highRolls.get(randomAttribute);
-            if (currentRoll < maxRoll) {
-                int newRoll = currentRoll + 1;
-                randomAttributeRolls.put(randomAttribute, newRoll);
-                remainingRoll -= 1;
-            }
-        }
-        return randomAttributeRolls;
-    }
-
-    @Override
-    public Item generate(LegendsSpecializationType specialization, LegendsTeam team) {
-        EquipmentType type = getRandomEquipmentTypeFor(specialization);
-        return generate(specialization, type, team);
-    }
-
-    @Override
-    public Item generate(LegendsSpecializationType specialization, EquipmentType type, LegendsTeam team) {
-        float rarityRoll = random.nextFloat() * 100;
-        ItemRarity itemRarity = equipmentConfiguration.getItemRarities().floorEntry(rarityRoll).getValue();
-        if (itemRarity == ItemRarity.ANCIENT) {
-            // TODO remove when ancient items are supported
-            itemRarity = ItemRarity.LEGENDARY;
-        }
-        return generate(specialization, type, itemRarity, team);
-    }
-
-    @Override
-    public Item generate(LegendsSpecializationType specialization, ItemRarity rarity, LegendsTeam team) {
-        EquipmentType type = getRandomEquipmentTypeFor(specialization);
-        return generate(specialization, type, rarity, team);
-    }
-
-    @Override
-    public Item generate(LegendsSpecializationType specialization, EquipmentType type, ItemRarity rarity,
-                         LegendsTeam team) {
-        if (team == null || team == LegendsTeam.WAYFARER) {
+    /*
+            if (team == null || team == LegendsTeam.WAYFARER) {
             // TODO do we want to return for a random team here?
             return null;
         }
@@ -216,6 +97,79 @@ public class SimpleEquipmentGenerator implements EquipmentGenerator {
 
         builder.withAvailableUpgrades(random.nextInt(4));
         return builder.build();
+     */
+  }
+
+  private def randomAttributeDistribution: AttributeDistribution =
+    attributeDistributions(Random.nextInt(attributeDistributions.size))
+
+  private def randomEquipmentType(
+      archetype: LegendsCombatArchetype
+  ): EquipmentType = {
+    val validTypes = config.validTypes(archetype)
+    validTypes(Random.nextInt(validTypes.size))
+  }
+
+  private def attributeDistributions(
+      rarity: ItemRarity
+  ): Map[LegendsCombatArchetype, AttributeDistributionConfig] = rarity match {
+    case ItemRarity.Legendary => config.legendaryRolls
+    case _                    => config.attributeRolls
+  }
+
+  private def offhandAttributeDistributions(
+      rarity: ItemRarity
+  ): Map[LegendsCombatArchetype, AttributeDistributionConfig] = rarity match {
+    case ItemRarity.Legendary => config.offhandLegendaryRolls
+    case _                    => config.offhandAttributeRolls
+  }
+
+  private def randomRollFor(
+      rolls: List[AttributeRollConfig],
+      rarity: ItemRarity
+  ): Int = {
+    var totalLowRoll = 0
+    var totalHighRoll = 0
+    rolls.foreach { roll =>
+      totalLowRoll += roll.low
+      totalHighRoll += roll.high
     }
+
+    val deltaRoll = totalHighRoll - totalLowRoll
+    val halfDeltaRoll = deltaRoll / 2
+    rarity match {
+      case ItemRarity.Common => totalLowRoll + Random.nextInt(halfDeltaRoll + 1)
+      case ItemRarity.Rare =>
+        val randomHalfDeltaRoll =
+          if (halfDeltaRoll > 1) Random.nextInt(halfDeltaRoll - 1)
+          else 0
+        totalHighRoll - 1 - randomHalfDeltaRoll
+      case _ => totalHighRoll
+    }
+  }
+
+  private def randomAttributes(
+      rolls: List[AttributeRollConfig],
+      roll: Int
+  ): Map[LegendsAttribute, Int] = {
+    var randomAttributeRolls: Map[LegendsAttribute, Int] = Map.empty
+    var highRolls: Map[LegendsAttribute, Int] = Map.empty
+    var remainingRoll = roll
+    rolls.foreach { roll =>
+      randomAttributeRolls += (roll.attribute -> roll.low)
+      highRolls += (roll.attribute -> roll.high)
+      remainingRoll -= roll.low
+    }
+    while (remainingRoll > 0) {
+      val randomAttribute = rolls(Random.nextInt(rolls.size)).attribute
+      val currentRoll = randomAttributeRolls(randomAttribute)
+      val maxRoll = highRolls(randomAttribute)
+      if (currentRoll < maxRoll) {
+        val newRoll = currentRoll + 1
+        randomAttributeRolls += (randomAttribute -> newRoll)
+        remainingRoll -= 1
+      }
+    }
+    randomAttributeRolls
+  }
 }
- */

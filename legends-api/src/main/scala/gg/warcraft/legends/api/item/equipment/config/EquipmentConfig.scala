@@ -18,6 +18,8 @@ import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig.{
 import gg.warcraft.monolith.api.item.ItemTypeOrVariant
 
 case class EquipmentConfig(
+    validTypes: Map[LegendsCombatArchetype, List[EquipmentType]],
+    validOffhandTypes: Map[LegendsCombatArchetype, List[EquipmentType]],
     itemRarities: RarityRollConfig,
     offhandTypes: List[EquipmentType],
     itemTypes: EquipmentItemTypeConfig,

@@ -6,10 +6,10 @@
 
 package gg.warcraft.legends.api.item.equipment.config
 
-import gg.warcraft.monolith.api.entity.attribute.Attribute
+import gg.warcraft.legends.api.entity.LegendsAttribute
 
 case class AttributeRollConfig(
-    attribute: Attribute,
+    attribute: LegendsAttribute,
     low: Int,
     high: Int
 )
