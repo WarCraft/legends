@@ -8,7 +8,7 @@ package gg.warcraft.legends.api.item.equipment.config
 
 import java.util
 
-import gg.warcraft.legends.api.combat.{LegendsCombatArchetype, LegendsCombatClass}
+import gg.warcraft.legends.api.combat.LegendsCombatArchetype
 import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.legends.api.item.equipment.{AttributeDistribution, EquipmentType}
@@ -28,7 +28,7 @@ case class EquipmentConfig(
     offhandAttributeRolls: Map[LegendsCombatArchetype, AttributeDistributionConfig],
     offhandLegendaryRolls: Map[LegendsCombatArchetype, AttributeDistributionConfig],
     tooltips:
-        Map[LegendsCombatClass,
+        Map[LegendsCombatArchetype,
             Map[LegendsTeam,
                 Map[AttributeDistribution,
                     Map[EquipmentType,
