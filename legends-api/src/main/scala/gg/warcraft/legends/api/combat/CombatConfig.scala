@@ -18,7 +18,7 @@ import gg.warcraft.legends.api.combat.mage.elementalist.{
 import gg.warcraft.legends.api.combat.mage.racial.{ArcaneBarrier, FlameTotem}
 import gg.warcraft.legends.api.combat.mage.wizard.{
   ArcaneFizzle, ArcaneMissile, ArcaneShield, Juke, MagicScatter,
-  MagicScatterProjectile, MassBamboozle, Teleport
+  MagicScatterProjectile, MassBamboozle, MysticBeam, Teleport
 }
 import gg.warcraft.legends.api.combat.warrior.berserker.{Grudge, Maul, Shatter}
 import gg.warcraft.legends.api.combat.warrior.guardian.{
@@ -72,6 +72,7 @@ class CombatConfig(implicit
     registerAbility("Teleport", new Teleport.Factory())
     registerAbility("Mass Bamboozle", new MassBamboozle.Factory())
     // Wizard Alternate
+    registerAbility("Mystic Beam", new MysticBeam.Factory())
     registerAbility("Magic Scatter", new MagicScatter.Factory())
     registerAbility(
       "Magic Scatter (Projectile)",

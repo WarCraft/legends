@@ -46,7 +46,7 @@ class ArcaneShield(
     val effect = new ArcaneShield.ParticleEffect(movement)
     projectileService.createProjectile(this, movement, hitbox, effect.cancel)
   }
-  worldService playSound (caster.location, castSound, soundCategory)
+  worldService.playSound(caster.location, castSound, soundCategory)
 
   override def onHit(entity: Entity): Boolean = {
     entityService.damageEntity(entity.id, snapshot.damage)
@@ -78,9 +78,9 @@ object ArcaneShield {
       particleAdapter: ParticleAdapter
   ) extends Effect(movement.get) {
 
-    private val radius = 0.1f
-    private val count = 1
-    private val witchParticleSpeed = 0f
+    private final val radius = 0.1f
+    private final val count = 1
+    private final val witchParticleSpeed = 0f
 
     private val particlePurple = Particle.Redstone.color(Particle.Color.Purple)
     private val particleWitch = Particle.SpellWitch.speed(witchParticleSpeed, count)
