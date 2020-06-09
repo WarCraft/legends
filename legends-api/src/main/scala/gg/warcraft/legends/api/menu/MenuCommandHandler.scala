@@ -32,11 +32,11 @@ class MenuCommandHandler(implicit
   ): Command.Result = executor match {
     case player: Player =>
       val menu = command.name match {
-        case "me" | "menu" | "monolith" | "help"  => MainMenu(player)
-        case "team" | "race"                      => RaceMenu(player)
-        case "class" | "kit" | "kits"             => CombatClassMenu(player)
-        case "dec" | "decoration" | "decorations" => DecorationsMenu(player)
-        case "pet" | "pets" | "minis" | "mp"      => MiniPetsMenu(player)
+        case "Menu"        => MainMenu(player)
+        case "Team"        => RaceMenu(player)
+        case "Class"       => CombatClassMenu(player)
+        case "Decorations" => DecorationsMenu(player)
+        case "Minipets"    => MiniPetsMenu(player)
       }
       menuService.showMenu(player.id, menu)
       Command.success

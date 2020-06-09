@@ -15,6 +15,7 @@ import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.core.types.DatabaseContext
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
+import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.spigot.combat.mage.elementalist.MassBamboozleAdapter
 import gg.warcraft.monolith.api.core.event.EventService
 import gg.warcraft.monolith.api.core.task.TaskService
@@ -77,4 +78,8 @@ object implicits {
     new EquipmentConfigRepository
   implicit lazy val equipmentGenerator: EquipmentGenerator =
     new EquipmentGenerator
+
+  // Player
+  implicit lazy val legendsPlayerDataService: LegendsPlayerDataService =
+    new LegendsPlayerDataService
 }

@@ -10,13 +10,12 @@ import java.io.File
 
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.combat.CombatConfig
-import gg.warcraft.legends.api.combat.hunter.{
-  ArrowDistributionHandler, ArrowFriendlyFireHandler, ArrowPickUpHandler
-}
+import gg.warcraft.legends.api.combat.hunter.{ ArrowDistributionHandler, ArrowFriendlyFireHandler, ArrowPickUpHandler }
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.core.types.DatabaseContext
 import gg.warcraft.legends.api.entity.TeamConfig
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
+import gg.warcraft.legends.api.menu.MenuConfig
 import gg.warcraft.legends.api.util.circe._
 import gg.warcraft.monolith.api.core.Codecs.Circe._
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
@@ -26,7 +25,7 @@ import gg.warcraft.monolith.spigot.SpigotMonolithPlugin
 import gg.warcraft.monolith.spigot.implicits._
 import io.circe.Decoder
 import io.circe.generic.auto._
-import io.getquill.{SnakeCase, SqliteDialect}
+import io.getquill.{ SnakeCase, SqliteDialect }
 import org.bukkit.configuration.file.YamlConfiguration
 
 class LegendsPlugin extends SpigotMonolithPlugin {
@@ -57,6 +56,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
     new CombatConfig().writeConfig()
     new TeamConfig().writeConfig()
+    new MenuConfig().writeConfig()
 
     enableHandlers()
     enableTasks()
