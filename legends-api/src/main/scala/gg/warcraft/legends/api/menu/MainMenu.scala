@@ -8,6 +8,8 @@ package gg.warcraft.legends.api.menu
 
 import gg.warcraft.legends.api.entity.LegendsAttribute._
 import gg.warcraft.legends.api.player.currency.LegendsCurrency._
+import gg.warcraft.legends.api.player.level.{Level, LevelService}
+import gg.warcraft.legends.api.util.legendsplayer._
 import gg.warcraft.monolith.api.core.ColorCode
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
@@ -40,8 +42,34 @@ object MainMenu {
     s"${ColorCode.WHITE}Currencies:" :: formattedCurrencies
   }
 
-  private def levelPassivesView(level: Int): List[String] = {
-    Nil
+  private def playerButton(player: Player): Button = Button.skull(
+    player.name,
+    player.name,
+    ("This is you!" :: "" :: Nil)
+      ++ attributesView(player)
+      ++ ("" :: Nil)
+      ++ currenciesView(player)
+    /*
+     // TODO make sure that rank rewards are always stored in the item storage and then remove from rank impl
+      if (player.getRankUpRewardsClaimed() < player.getRank().getLevel()) {
+          if (!(player.getRankUpRewardsClaimed() == 0 && player.getRank().getLevel() == 1)) {
+              builder.addTooltip("");
+              builder.addTooltip(ColorCode.GREEN + "[SHIFT RIGHT CLICK] To claim your rank up rewards");
+          }
+      }
+
+      builder.withAction(action -> {
+          if (action.isShiftRightClick()) {
+              commandCommandService.dispatchCommandFor("claimrankuprewards", playerId);
+              menuCommandService.closeMenu(playerId);
+          }
+      });
+      return builder.build();
+     */
+  ) { _ => () }
+
+  private def levelPassivesView(level: Level): List[String] = {
+    "None" :: Nil // TODO
   }
 
   /*
@@ -83,7 +111,7 @@ object MainMenu {
     }
    */
 
-  private def levelIcon(level: Int): ItemTypeOrVariant = level % 10 match {
+  private def levelIcon(level: Level): ItemTypeOrVariant = level.value % 10 match {
     case 0 => ItemType.PLANKS
     case 1 => ItemType.STONE
     case 2 => ItemType.IRON_BLOCK
@@ -95,81 +123,55 @@ object MainMenu {
     case _ => ItemType.NETHER_STAR
   }
 
+  private def levelButton(player: Player)(implicit
+      levelService: LevelService
+  ): Button = {
+    val level = player.level
+    Button(
+      levelIcon(level),
+      "Level",
+      (s"${WHITE}Current level:"
+        :: s"${YELLOW}Lv. ${level.value}" // TODO show percent to next (${%}%)
+        :: ""
+        :: s"${WHITE}Unlocked passives:" :: Nil)
+        ++ levelPassivesView(level)
+    )
+  }
+
+  /*
+   Button createRankButton(LegendsPlayer player) {
+      UUID playerId = player.getId();
+      String rank = player.getRank().getColor() + player.getRank().getFormattedName();
+      ItemType rankIcon = getRankIcon(rank);
+      int level = player.getRank().getLevel();
+      int levelUpPercentage = (int) (((float) (player.getLifetimeFavor() - player.getRank().getFavor()) /
+              (float) player.getRank().getRequiredFavor() - player.getRank().getFavor()) * 100);
+      ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(rankIcon, "Level & Rank");
+      builder.addTooltip("Rank text");
+      builder.addTooltip("");
+      builder.addTooltip(ColorCode.WHITE + "Current level:");
+      builder.addTooltip(ColorCode.YELLOW + "Lv. " + level + " (" + levelUpPercentage + "%)");
+      builder.addTooltip("");
+      builder.addTooltip(ColorCode.WHITE + "Current Rank:");
+      builder.addTooltip(rank);
+      builder.addTooltip("");
+      builder.addTooltip(ColorCode.WHITE + "Rank passives:");
+      createRankPassivesView(level).forEach(builder::addTooltip);
+      return builder.build();
+  }
+   */
+
   def apply(player: Player)(implicit
       attributesService: AttributeService,
-      currencyService: CurrencyService
-  ): Menu = {
-    val playerButton = Button.skull(
-      player.name,
-      player.name,
-      List(
-        List("This is you!", ""),
-        attributesView(player),
-        List(""),
-        currenciesView(player)
-      ).flatten
-      /*
-       // TODO make sure that rank rewards are always stored in the item storage and then remove from rank impl
-        if (player.getRankUpRewardsClaimed() < player.getRank().getLevel()) {
-            if (!(player.getRankUpRewardsClaimed() == 0 && player.getRank().getLevel() == 1)) {
-                builder.addTooltip("");
-                builder.addTooltip(ColorCode.GREEN + "[SHIFT RIGHT CLICK] To claim your rank up rewards");
-            }
-        }
-
-        builder.withAction(action -> {
-            if (action.isShiftRightClick()) {
-                commandCommandService.dispatchCommandFor("claimrankuprewards", playerId);
-                menuCommandService.closeMenu(playerId);
-            }
-        });
-        return builder.build();
-       */
-    ) { _ => () }
-
-    // TODO
-//    val levelButton = Button(
-//      levelIcon(???),
-//      "Level",
-//      List(
-//        s"${WHITE}Current level:",
-//        s"${YELLOW}Lv. ${???} (${%}%)",
-//        "",
-//        s"${WHITE}Unlocked passives:",
-//        levelPassivesView(???)
-//      ).flatten
-//    )
-
-    /*
-     Button createRankButton(LegendsPlayer player) {
-        UUID playerId = player.getId();
-        String rank = player.getRank().getColor() + player.getRank().getFormattedName();
-        ItemType rankIcon = getRankIcon(rank);
-        int level = player.getRank().getLevel();
-        int levelUpPercentage = (int) (((float) (player.getLifetimeFavor() - player.getRank().getFavor()) /
-                (float) player.getRank().getRequiredFavor() - player.getRank().getFavor()) * 100);
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(rankIcon, "Level & Rank");
-        builder.addTooltip("Rank text");
-        builder.addTooltip("");
-        builder.addTooltip(ColorCode.WHITE + "Current level:");
-        builder.addTooltip(ColorCode.YELLOW + "Lv. " + level + " (" + levelUpPercentage + "%)");
-        builder.addTooltip("");
-        builder.addTooltip(ColorCode.WHITE + "Current Rank:");
-        builder.addTooltip(rank);
-        builder.addTooltip("");
-        builder.addTooltip(ColorCode.WHITE + "Rank passives:");
-        createRankPassivesView(level).forEach(builder::addTooltip);
-        return builder.build();
-    }
-     */
-
-    Menu(
-      "WarCraft: Legends",
-      MenuSize.TWO_ROWS,
-      Map(
-        // 1st row
-    //    0 -> playerButton
-       // 1 -> levelButton
+      currencyService: CurrencyService,
+      levelService: LevelService
+  ): Menu = Menu(
+    "WarCraft: Legends",
+    MenuSize.TWO_ROWS,
+    Map(
+      // 1st row
+      0 -> playerButton(player),
+      1 -> levelButton(player)
 //        2 -> classButton,
 //        3 -> raceButton,
 //        // 4
@@ -178,7 +180,7 @@ object MainMenu {
 //        // 7
 //        8 -> helpButton,
 //        // 2nd row
-//        9 -> dialyLoginButton,
+//        9 -> dailyLoginButton,
 //        10 -> dailyVoteButton,
 //        11 -> challengesButton,
 //        // 12
@@ -187,9 +189,8 @@ object MainMenu {
 //        15 -> leaderboardsButton,
 //        // 16
 //        17 -> shopButton
-      )
     )
-  }
+  )
 }
 
 /*
