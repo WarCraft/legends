@@ -18,6 +18,7 @@ import gg.warcraft.legends.api.core.types.DatabaseContext
 import gg.warcraft.legends.api.entity.TeamConfig
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
 import gg.warcraft.legends.api.util.circe._
+import gg.warcraft.monolith.api.core.Codecs.Circe._
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
 import gg.warcraft.monolith.api.item.ItemTypeOrVariant
@@ -44,13 +45,15 @@ class LegendsPlugin extends SpigotMonolithPlugin {
   override def onEnable(): Unit = {
     //  val config = parseConfig[LegendsConfig](getConfig.saveToString())
 
-    implicit val itemTypeDecoder: Decoder[ItemTypeOrVariant] = itemTypeDecoder
+    implicit val itemTypeVariantDecoder: Decoder[ItemTypeOrVariant] = itemDataDecoder
 
     val equipmentConfigFile =
       new File(s"${getDataFolder.getAbsolutePath}${File.separator}equipment.yml")
-    val equipmentConfig = parseConfig[EquipmentConfig](
-      YamlConfiguration.loadConfiguration(equipmentConfigFile).saveToString
-    )
+    val equipmentConfig: EquipmentConfig = ??? // parseConfig[EquipmentConfig](
+//      YamlConfiguration.loadConfiguration(equipmentConfigFile).saveToString
+//    )
+
+    equipmentConfigRepository.readConfig(equipmentConfig)
 
     new CombatConfig().writeConfig()
     new TeamConfig().writeConfig()
