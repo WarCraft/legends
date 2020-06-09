@@ -13,9 +13,12 @@ import gg.warcraft.legends.api.combat.hunter.marksman.{
 }
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.core.types.DatabaseContext
+import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
+import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
 import gg.warcraft.legends.spigot.combat.mage.elementalist.MassBamboozleAdapter
 import gg.warcraft.monolith.api.core.event.EventService
 import gg.warcraft.monolith.api.core.task.TaskService
+import gg.warcraft.monolith.spigot.implicits._
 import org.bukkit.plugin.Plugin
 import org.bukkit.Server
 
@@ -68,4 +71,10 @@ object implicits {
     new MassBamboozle.Repository
   implicit lazy val massBamboozleAdapter: MassBamboozle.Adapter =
     new MassBamboozleAdapter
+
+  // Equipment
+  implicit lazy val equipmentConfigRepository: EquipmentConfigRepository =
+    new EquipmentConfigRepository
+  implicit lazy val equipmentGenerator: EquipmentGenerator =
+    new EquipmentGenerator
 }
