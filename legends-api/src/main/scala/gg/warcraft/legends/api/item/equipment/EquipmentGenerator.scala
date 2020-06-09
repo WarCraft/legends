@@ -55,49 +55,32 @@ class EquipmentGenerator(implicit
       typ: EquipmentType,
       rarity: ItemRarity
   ): Item = {
-    ???
+    if (team == LegendsTeam.Wayfarers) throw new IllegalArgumentException
 
-    /*
-            if (team == null || team == LegendsTeam.WAYFARER) {
-            // TODO do we want to return for a random team here?
-            return null;
-        }
+    val attrDistro = randomAttributeDistribution
+    val itemType = config.itemTypes(typ)(rarity)
 
-        // TODO remove when Ancient is ready
-        if (rarity == ItemRarity.ANCIENT) {
-            rarity = ItemRarity.LEGENDARY;
-        }
+    val tooltips = config.tooltips(archetype)(team)(attrDistro)(typ)(rarity)
+    val tooltip = tooltips(Random.nextInt(tooltips.size))
 
-        AttributeDistribution attributeDistribution = getRandomAttributeDistribution();
-        String itemTypeString = equipmentConfiguration.getItemTypes().get(type).get(rarity);
-        ItemTypeOrVariant itemType = itemService.parseData(itemTypeString);
+    val builder = new EquipmentBuilder(itemType, rarity, tooltip.name)
+    tooltip.flavorText match {
+      case Some(text) if text.nonEmpty => builder.withFlavorText(text)
+      case _                           =>
+    }
 
-        List<EquipmentLoreConfiguration> loreConfigurations = equipmentConfiguration.getItemLores().get(specialization)
-                .get(team).get(attributeDistribution).get(type).get(rarity);
-        EquipmentLoreConfiguration loreConfiguration =
-                loreConfigurations.get(random.nextInt(loreConfigurations.size()));
+    val attributeRolls =
+      if (config.offhandTypes.contains(typ))
+        offhandAttributeDistributions(rarity)(archetype)(attrDistro)
+      else attributeDistributions(rarity)(archetype)(attrDistro)
+    val attributeRoll = attributeRolls(Random.nextInt(attributeRolls.size))
 
-        String itemName = loreConfiguration.getName();
-        List<String> itemLore = loreConfiguration.getFlavorText();
-        EquipmentBuilder builder = equipmentBuilderFactory.createEquipmentBuilder(itemType, rarity, itemName);
-        if (itemLore != null && !itemLore.isEmpty()) {
-            builder.withFlavorText(itemLore);
-        }
+    val randomRoll = randomRollFor(attributeRoll, rarity)
+    val randomAttributeRoll = randomAttributes(attributeRoll, randomRoll)
+    builder.withAttributes(randomAttributeRoll)
 
-        List<List<AttributeRollConfiguration>> attributeRolls;
-        if (equipmentConfiguration.getOffhandTypes().contains(type)) {
-            attributeRolls = getOffhandAttributeConfigurationsFor(rarity).get(specialization).get(attributeDistribution);
-        } else {
-            attributeRolls = getAttributeConfigurationsFor(rarity).get(specialization).get(attributeDistribution);
-        }
-        List<AttributeRollConfiguration> attributeRoll = attributeRolls.get(random.nextInt(attributeRolls.size()));
-        int randomRoll = getRandomRollFor(attributeRoll, rarity);
-        Map<LegendsAttribute, Integer> randomAttributeRoll = getRandomAttributesFor(attributeRoll, randomRoll);
-        builder.withAttributes(randomAttributeRoll);
-
-        builder.withAvailableUpgrades(random.nextInt(4));
-        return builder.build();
-     */
+    builder.withAvailableUpgrades(Random.nextInt(4))
+    builder.build()
   }
 
   private def randomAttributeDistribution: AttributeDistribution =
