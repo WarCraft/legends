@@ -37,7 +37,7 @@ case class EquipmentConfig(
 )
 
 object EquipmentConfig {
-  type RarityRollConfig = util.NavigableMap[Float, ItemRarity]
+  type RarityRollConfig = Map[Float, ItemRarity] // TODO util.NavigableMap
   type EquipmentItemTypeConfig =
     Map[EquipmentType, Map[ItemRarity, ItemTypeOrVariant]]
   type AttributeDistributionConfig =

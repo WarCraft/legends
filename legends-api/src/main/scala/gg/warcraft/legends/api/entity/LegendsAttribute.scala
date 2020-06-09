@@ -20,4 +20,14 @@ object LegendsAttribute {
   case object Intellect extends LegendsAttribute("Intellect")
   case object Vitality extends LegendsAttribute("Vitality")
   case object Crit extends LegendsAttribute("Crit")
+
+  def parseName(name: String): LegendsAttribute = name match {
+    case "Strength"  => Strength
+    case "Dexterity" => Dexterity
+    case "Intellect" => Intellect
+    case "Vitality"  => Vitality
+    case "Crit"      => Crit
+  }
+
+  implicit def toString(attr: LegendsAttribute): String = attr.toString
 }

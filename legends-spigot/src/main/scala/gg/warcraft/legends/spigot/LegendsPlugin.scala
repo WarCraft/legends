@@ -6,6 +6,8 @@
 
 package gg.warcraft.legends.spigot
 
+import java.io.File
+
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.combat.CombatConfig
 import gg.warcraft.legends.api.combat.hunter.{
@@ -14,11 +16,17 @@ import gg.warcraft.legends.api.combat.hunter.{
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.core.types.DatabaseContext
 import gg.warcraft.legends.api.entity.TeamConfig
+import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
+import gg.warcraft.legends.api.util.circe._
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
+import gg.warcraft.monolith.api.item.ItemTypeOrVariant
 import gg.warcraft.monolith.spigot.SpigotMonolithPlugin
 import gg.warcraft.monolith.spigot.implicits._
+import io.circe.Decoder
+import io.circe.generic.auto._
 import io.getquill.{SnakeCase, SqliteDialect}
+import org.bukkit.configuration.file.YamlConfiguration
 
 class LegendsPlugin extends SpigotMonolithPlugin {
   import implicits._
@@ -35,6 +43,14 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
   override def onEnable(): Unit = {
     //  val config = parseConfig[LegendsConfig](getConfig.saveToString())
+
+    implicit val itemTypeDecoder: Decoder[ItemTypeOrVariant] = itemTypeDecoder
+
+    val equipmentConfigFile =
+      new File(s"${getDataFolder.getAbsolutePath}${File.separator}equipment.yml")
+    val equipmentConfig = parseConfig[EquipmentConfig](
+      YamlConfiguration.loadConfiguration(equipmentConfigFile).saveToString
+    )
 
     new CombatConfig().writeConfig()
     new TeamConfig().writeConfig()

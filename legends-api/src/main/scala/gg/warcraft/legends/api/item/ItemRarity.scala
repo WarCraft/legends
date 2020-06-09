@@ -15,4 +15,13 @@ object ItemRarity {
   case object Rare extends ItemRarity("Rare", ColorCode.DARK_BLUE)
   case object Epic extends ItemRarity("Epic", ColorCode.DARK_PURPLE)
   case object Legendary extends ItemRarity("Legendary", ColorCode.GOLD)
+
+  def parseName(name: String): ItemRarity = name match {
+    case "Common"    => Common
+    case "Rare"      => Rare
+    case "Epic"      => Epic
+    case "Legendary" => Legendary
+  }
+
+  implicit def toString(rarity: ItemRarity): String = rarity.toString
 }
