@@ -11,13 +11,14 @@ import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.combatplayer._
 import gg.warcraft.legends.api.combat.LegendsCombatClass._
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
+import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.util.legendsplayer._
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemType, ItemTypeOrVariant}
 import gg.warcraft.monolith.api.item.variant.AxeVariant
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
-import gg.warcraft.monolith.api.player.Player
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.util.TimeUtils
 import gg.warcraft.monolith.api.util.string._
@@ -25,10 +26,10 @@ import gg.warcraft.monolith.api.util.string._
 object CombatClassMenu {
   def abilitiesView(combatClass: CombatClass): List[String] = List(
     "Abilities:",
-    s"[Left Click]$YELLOW${combatClass.leftClick}",
-    s"[Right Click]$YELLOW${combatClass.rightClick}",
-    s"[Shift Left Click]$YELLOW${combatClass.shiftLeftClick}",
-    s"[Shift Right Click]$YELLOW${combatClass.shiftRightClick}"
+    s"[Left Click]$YELLOW${combatClass.leftClick.getOrElse("Basic Attack")}",
+    s"[Right Click]$YELLOW${combatClass.rightClick.getOrElse("Basic Attack")}",
+    s"[Shift Left Click]$YELLOW${combatClass.shiftLeftClick.getOrElse("Basic Attack")}",
+    s"[Shift Right Click]$YELLOW${combatClass.shiftRightClick.getOrElse("Basic Attack")}"
   )
 
   def switchView(
@@ -148,35 +149,6 @@ object CombatClassMenu {
     )
   }
 
-  def hunterButton(
-      player: Player,
-      cooldown: Option[String]
-  )(implicit
-      combatDataService: CombatDataService,
-      combatClassService: CombatClassService
-  ): Button = {
-    val combatClass = combatClassService.combatClasses(Hunter.name)
-    combatClassButton(
-      player,
-      combatClass,
-      ItemType.BOW,
-      cooldown,
-      "Hunters use bow and arrow. Their skills",
-      "offer damage, control, and mobility.",
-      "",
-      s"$YELLOW[Left Click] Toxic Arrow",
-      "Fire a poisoned arrow damaging your target",
-      "and applying poison for a short duration.",
-      s"$YELLOW[Right Click] Shoot",
-      "A normal Minecraft bow shot.",
-      s"$YELLOW[Shift Left Click] Trap",
-      "Place a trap at your feet which roots",
-      "any enemies that trigger it.",
-      s"$YELLOW[Shift Right Click] Disengage",
-      "Leap backwards a sizable distance."
-    )
-  }
-
   def marksmanButton(
       player: Player,
       cooldown: Option[String]
@@ -205,6 +177,35 @@ object CombatClassMenu {
       s"$YELLOW[Shift Right Click] Sneak",
       "Gain a speed boost and hide in plain",
       "sight, becoming invisible to enemies."
+    )
+  }
+
+  def rangerButton(
+      player: Player,
+      cooldown: Option[String]
+  )(implicit
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService
+  ): Button = {
+    val combatClass = combatClassService.combatClasses(Ranger.name)
+    combatClassButton(
+      player,
+      combatClass,
+      ItemType.BOW,
+      cooldown,
+      "Hunters use bow and arrow. Their skills",
+      "offer damage, control, and mobility.",
+      "",
+      s"$YELLOW[Left Click] Toxic Arrow",
+      "Fire a poisoned arrow damaging your target",
+      "and applying poison for a short duration.",
+      s"$YELLOW[Right Click] Shoot",
+      "A normal Minecraft bow shot.",
+      s"$YELLOW[Shift Left Click] Trap",
+      "Place a trap at your feet which roots",
+      "any enemies that trigger it.",
+      s"$YELLOW[Shift Right Click] Disengage",
+      "Leap backwards a sizable distance."
     )
   }
 
@@ -278,10 +279,12 @@ object CombatClassMenu {
       player: Player
   )(implicit
       menuService: MenuService,
+      playerService: PlayerService,
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       attributeService: AttributeService,
       currencyService: CurrencyService,
+      levelService: LevelService,
       legendsDataService: LegendsPlayerDataService
   ): Menu = {
     val combatClass = player.combatClass
@@ -314,8 +317,8 @@ object CombatClassMenu {
         // 1st row
         2 -> guardianButton(player, cooldownText),
         3 -> berserkerButton(player, cooldownText),
-        4 -> hunterButton(player, cooldownText),
-        5 -> marksmanButton(player, cooldownText),
+        4 -> marksmanButton(player, cooldownText),
+        5 -> rangerButton(player, cooldownText),
         6 -> elementalistButton(player, cooldownText),
         7 -> wizardButton(player, cooldownText)
       )

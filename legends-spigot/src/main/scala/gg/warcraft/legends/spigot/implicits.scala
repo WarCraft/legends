@@ -16,6 +16,7 @@ import gg.warcraft.legends.api.core.types.DatabaseContext
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
+import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.spigot.combat.mage.elementalist.MassBamboozleAdapter
 import gg.warcraft.monolith.api.core.event.EventService
 import gg.warcraft.monolith.api.core.task.TaskService
@@ -82,4 +83,6 @@ object implicits {
   // Player
   implicit lazy val legendsPlayerDataService: LegendsPlayerDataService =
     new LegendsPlayerDataService
+  implicit lazy val levelService: LevelService =
+    new LevelService
 }

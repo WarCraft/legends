@@ -6,11 +6,15 @@
 
 package gg.warcraft.legends.api.menu
 
+import gg.warcraft.combat.api.combatclass.CombatClassService
+import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
+import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.monolith.api.core.ColorCode
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.ItemType
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
-import gg.warcraft.monolith.api.player.Player
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 
 object HelpMenu {
@@ -289,7 +293,12 @@ object HelpMenu {
   )(implicit
       menuService: MenuService,
       attributeService: AttributeService,
-      currencyService: CurrencyService
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService
   ): Menu = {
     Menu(
       "Help Menu",

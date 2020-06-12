@@ -9,6 +9,7 @@ package gg.warcraft.legends.api.menu
 import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
+import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.monolith.api.core.auth.Principal
 import gg.warcraft.monolith.api.core.command.Command
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
@@ -20,6 +21,7 @@ class MenuCommandHandler(implicit
     menuService: MenuService,
     playerService: PlayerService,
     attributeService: AttributeService,
+    levelService: LevelService,
     currencyService: CurrencyService,
     combatDataService: CombatDataService,
     combatClassService: CombatClassService,

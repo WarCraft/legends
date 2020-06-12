@@ -10,23 +10,26 @@ import java.io.File
 
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.combat.CombatConfig
-import gg.warcraft.legends.api.combat.hunter.{ ArrowDistributionHandler, ArrowFriendlyFireHandler, ArrowPickUpHandler }
+import gg.warcraft.legends.api.combat.hunter.{
+  ArrowDistributionHandler, ArrowFriendlyFireHandler, ArrowPickUpHandler
+}
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.core.types.DatabaseContext
 import gg.warcraft.legends.api.entity.TeamConfig
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
 import gg.warcraft.legends.api.menu.MenuConfig
+import gg.warcraft.legends.api.player.level.Level
 import gg.warcraft.legends.api.util.circe._
-import gg.warcraft.monolith.api.core.Codecs.Circe._
+import gg.warcraft.legends.api.LegendsConfig
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
+import gg.warcraft.monolith.api.core.Codecs.Circe._
+import gg.warcraft.monolith.api.core.ColorCode
 import gg.warcraft.monolith.api.item.ItemTypeOrVariant
 import gg.warcraft.monolith.spigot.SpigotMonolithPlugin
 import gg.warcraft.monolith.spigot.implicits._
 import io.circe.Decoder
-import io.circe.generic.auto._
-import io.getquill.{ SnakeCase, SqliteDialect }
-import org.bukkit.configuration.file.YamlConfiguration
+import io.getquill.{SnakeCase, SqliteDialect}
 
 class LegendsPlugin extends SpigotMonolithPlugin {
   import implicits._
@@ -42,16 +45,29 @@ class LegendsPlugin extends SpigotMonolithPlugin {
   }
 
   override def onEnable(): Unit = {
-    //  val config = parseConfig[LegendsConfig](getConfig.saveToString())
+    //  TODO val config = parseConfig[LegendsConfig](getConfig.saveToString())
+    val config = LegendsConfig(
+      Map.empty,
+      Level(1, ColorCode.WHITE, 0, Nil) :: Nil,
+      Map.empty,
+      Map.empty,
+      0,
+      0,
+      0,
+      Nil,
+      Nil,
+      Nil
+    )
 
     implicit val itemTypeVariantDecoder: Decoder[ItemTypeOrVariant] = itemDataDecoder
 
     val equipmentConfigFile =
       new File(s"${getDataFolder.getAbsolutePath}${File.separator}equipment.yml")
-    val equipmentConfig: EquipmentConfig = ??? // parseConfig[EquipmentConfig](
+    val equipmentConfig: EquipmentConfig = null // parseConfig[EquipmentConfig](
 //      YamlConfiguration.loadConfiguration(equipmentConfigFile).saveToString
 //    )
 
+    levelService.readConfig(config)
     equipmentConfigRepository.readConfig(equipmentConfig)
 
     new CombatConfig().writeConfig()

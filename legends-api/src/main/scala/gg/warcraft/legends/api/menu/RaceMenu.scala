@@ -6,7 +6,11 @@
 
 package gg.warcraft.legends.api.menu
 
+import gg.warcraft.combat.api.combatclass.CombatClassService
+import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.legends.api.entity.LegendsTeam._
+import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
+import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.ItemType
@@ -111,8 +115,12 @@ object RaceMenu {
   )(implicit
       menuService: MenuService,
       playerService: PlayerService,
-      attributeService: AttributeService,
-      currencyService: CurrencyService
+      combatDataService: CombatDataService,
+      attributesService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService
   ): Menu = {
     Menu(
       "Race",
