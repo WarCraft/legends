@@ -36,7 +36,7 @@ class PassiveAssignmentHandler(implicit
   private final val genericGroup = "legends.passive"
   private final val racialGroup = "legends.racial"
   private final val warriorClasses = List(Guardian.name, Berserker.name)
-  private final val rangerClasses = List(Hunter.name, Marksman.name)
+  private final val rangerClasses = List(Ranger.name, Marksman.name)
   private final val mageClasses = List(Elementalist.name, Wizard.name)
 
   private def cleanStatus(player: Player, groups: String*): Unit =

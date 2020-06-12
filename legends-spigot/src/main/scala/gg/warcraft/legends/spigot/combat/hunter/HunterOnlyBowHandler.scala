@@ -21,7 +21,7 @@ class HunterOnlyBowHandler(implicit
     combatDataService: CombatDataService
 ) extends Listener {
   private final val bowClasses: List[String] =
-    LegendsCombatClass.Hunter.name :: LegendsCombatClass.Marksman.name :: Nil
+    LegendsCombatClass.Ranger.name :: LegendsCombatClass.Marksman.name :: Nil
   private final val message = Message.server(
     "You clumsily attempt to fire the bow, but failed (Bows can only be used by Ranger classes)."
   )

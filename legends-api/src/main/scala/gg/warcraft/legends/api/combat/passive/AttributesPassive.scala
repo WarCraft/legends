@@ -28,7 +28,7 @@ object AttributesPassive {
     require(source.entityId.isDefined)
 
     private final val strengthClasses = List(Guardian.name, Berserker.name)
-    private final val dexterityClasses = List(Hunter.name, Marksman.name)
+    private final val dexterityClasses = List(Ranger.name, Marksman.name)
     private final val intellectClasses = List(Elementalist.name, Wizard.name)
 
     override val name: String = "Attributes"
