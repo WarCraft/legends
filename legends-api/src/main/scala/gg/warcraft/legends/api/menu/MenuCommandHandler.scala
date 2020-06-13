@@ -35,7 +35,7 @@ class MenuCommandHandler(implicit
     case player: Player =>
       val menu = command.name match {
         case "Menu"        => MainMenu(player)
-        case "Team"        => RaceMenu(player)
+        case "Race"        => RaceMenu(player)
         case "Class"       => CombatClassMenu(player)
         case "Decorations" => DecorationsMenu(player)
         case "Minipets"    => MiniPetsMenu(player)
