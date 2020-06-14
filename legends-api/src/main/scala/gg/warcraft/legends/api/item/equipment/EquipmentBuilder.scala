@@ -76,7 +76,9 @@ class EquipmentBuilder(
 
     // add flavor text
     item = if (flavorText.nonEmpty) item.addTooltip("") else item
-    flavorText.foreach { it => item.addTooltip(s"$reset${FormatCode.ITALIC}$it") }
+    flavorText.foreach { it =>
+      item = item.addTooltip(s"$reset${FormatCode.ITALIC}$it")
+    }
 
     item.withHideAttributes(true)
   }
