@@ -29,10 +29,10 @@ object LegendsTeam {
   case object Wayfarers extends LegendsTeam("Wayfarer", "Wayfarers", Silver, GRAY)
 
   def parseName(name: String): LegendsTeam = name match {
-    case "DWARF"   => Dwarves
-    case "ELF"     => Elves
-    case "HUMAN"    => Humans
-    case "ORC"      => Orcs
+    case "DWARF" => Dwarves
+    case "ELF"   => Elves
+    case "HUMAN" => Humans
+    case "ORC"   => Orcs
   }
 
   def random: LegendsTeam = Random.nextInt(4) match {
