@@ -12,7 +12,7 @@ sealed abstract class ItemRarity(val name: String, val color: ColorCode)
 
 object ItemRarity {
   case object Common extends ItemRarity("Common", ColorCode.WHITE)
-  case object Rare extends ItemRarity("Rare", ColorCode.DARK_BLUE)
+  case object Rare extends ItemRarity("Rare", ColorCode.BLUE)
   case object Epic extends ItemRarity("Epic", ColorCode.DARK_PURPLE)
   case object Legendary extends ItemRarity("Legendary", ColorCode.GOLD)
 
