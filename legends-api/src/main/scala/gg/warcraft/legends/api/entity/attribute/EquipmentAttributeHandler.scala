@@ -30,7 +30,7 @@ class EquipmentAttributeHandler(implicit
 
   private def updateModifiers(player: Player): Unit = {
     val currentModifiers = modifiers.getOrElse(player.id, Nil)
-    currentModifiers.foreach { attributeService.removeModifier(player.id, _) }
+    attributeService.removeModifier(player.id, currentModifiers: _*)
 
     val (strength, dexterity, intellect, vitality, crit) =
       player.equipment.items.foldLeft((0, 0, 0, 0, 0)) { (stats, item) =>
