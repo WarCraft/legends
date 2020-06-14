@@ -60,7 +60,7 @@ class EquipmentBuilder(
     var item = itemService.create(typ).withName(s"${rarity.color}$upgradedName")
 
     // set type at top of tooltip
-    item.addTooltip(s"${reset}Equipment")
+    item = item.addTooltip(s"${reset}Equipment")
 
     // add stats
     item = if (attributes.nonEmpty) item.addTooltip("") else item
