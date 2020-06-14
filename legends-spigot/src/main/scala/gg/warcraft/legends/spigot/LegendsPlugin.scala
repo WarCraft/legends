@@ -19,8 +19,8 @@ import gg.warcraft.legends.api.entity.TeamConfig
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
 import gg.warcraft.legends.api.menu.MenuConfig
 import gg.warcraft.legends.api.player.level.Level
-import gg.warcraft.legends.api.util.circe._
 import gg.warcraft.legends.api.LegendsConfig
+import gg.warcraft.legends.api.util.circe._
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
 import gg.warcraft.monolith.api.core.Codecs.Circe._
@@ -29,7 +29,9 @@ import gg.warcraft.monolith.api.item.ItemTypeOrVariant
 import gg.warcraft.monolith.spigot.SpigotMonolithPlugin
 import gg.warcraft.monolith.spigot.implicits._
 import io.circe.Decoder
+import io.circe.generic.auto._
 import io.getquill.{SnakeCase, SqliteDialect}
+import org.bukkit.configuration.file.YamlConfiguration
 
 class LegendsPlugin extends SpigotMonolithPlugin {
   import implicits._
@@ -63,9 +65,9 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
     val equipmentConfigFile =
       new File(s"${getDataFolder.getAbsolutePath}${File.separator}equipment.yml")
-    val equipmentConfig: EquipmentConfig = null // parseConfig[EquipmentConfig](
-//      YamlConfiguration.loadConfiguration(equipmentConfigFile).saveToString
-//    )
+    val equipmentConfig: EquipmentConfig = parseConfig[EquipmentConfig](
+      YamlConfiguration.loadConfiguration(equipmentConfigFile).saveToString
+    )
 
     levelService.readConfig(config)
     equipmentConfigRepository.readConfig(equipmentConfig)

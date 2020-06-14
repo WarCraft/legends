@@ -11,39 +11,54 @@ import gg.warcraft.legends.api.entity.{LegendsAttribute, LegendsTeam}
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.legends.api.item.equipment.{AttributeDistribution, EquipmentType}
 import gg.warcraft.monolith.api.core.Codecs.Circe._
-import io.circe.{Decoder, Encoder}
+import io.circe.{Decoder, Encoder, KeyDecoder}
 
 import scala.util.Try
 
 object circe {
-  implicit lazy val attributeDecoder: Decoder[LegendsAttribute] =
-    Decoder.decodeString.emapTry { it => Try { LegendsAttribute.parseName(it) } }
-  implicit lazy val attributeEncoder: Encoder[LegendsAttribute] =
-    Encoder.encodeString.contramap { _.name }
-
-  implicit lazy val attributeDistributionDecoder: Decoder[AttributeDistribution] =
-    enumDecoder(AttributeDistribution.valueOf)
-  implicit lazy val attributeDistributionEncoder: Encoder[AttributeDistribution] =
-    enumEncoder[AttributeDistribution]
-
-  implicit lazy val combatArchetypeDecoder: Decoder[LegendsCombatArchetype] =
+  implicit val archetypeDecoder: Decoder[LegendsCombatArchetype] =
     enumDecoder(LegendsCombatArchetype.valueOf)
-  implicit lazy val combatArchetypeEncoder: Encoder[LegendsCombatArchetype] =
+  implicit val archetypeKeyDecoder: KeyDecoder[LegendsCombatArchetype] =
+    KeyDecoder.instance(it => Some(LegendsCombatArchetype.valueOf(it)))
+  implicit val archetypeEncoder: Encoder[LegendsCombatArchetype] =
     enumEncoder[LegendsCombatArchetype]
 
-  implicit lazy val equipmentTypeDecoder: Decoder[EquipmentType] =
-    enumDecoder(EquipmentType.valueOf)
-  implicit lazy val equipmentTypeEncoder: Encoder[EquipmentType] =
-    enumEncoder[EquipmentType]
-
-  implicit lazy val itemRarityDecoder: Decoder[ItemRarity] =
-    Decoder.decodeString.emapTry { it => Try { ItemRarity.parseName(it) } }
-  implicit lazy val itemRarityEncoder: Encoder[ItemRarity] =
+  implicit val attributeDecoder: Decoder[LegendsAttribute] =
+    Decoder.decodeString.emapTry { it => Try { LegendsAttribute.parseName(it) } }
+  implicit val attributeKeyDecoder: KeyDecoder[LegendsAttribute] =
+    KeyDecoder.instance(it => Some(LegendsAttribute.parseName(it)))
+  implicit val attributeEncoder: Encoder[LegendsAttribute] =
     Encoder.encodeString.contramap { _.name }
 
-  implicit lazy val teamDecoder: Decoder[LegendsTeam] =
+  implicit val attributeDistroDecoder: Decoder[AttributeDistribution] =
+    enumDecoder(AttributeDistribution.valueOf)
+  implicit val attributeDistroKeyDecoder: KeyDecoder[AttributeDistribution] =
+    KeyDecoder.instance(it => Some(AttributeDistribution.valueOf(it)))
+  implicit val attributeDistroEncoder: Encoder[AttributeDistribution] =
+    enumEncoder[AttributeDistribution]
+
+  implicit val equipmentTypeDecoder: Decoder[EquipmentType] =
+    enumDecoder(EquipmentType.valueOf)
+  implicit val equipmentTypeKeyDecoder: KeyDecoder[EquipmentType] =
+    KeyDecoder.instance(it => Some(EquipmentType.valueOf(it)))
+  implicit val equipmentTypeEncoder: Encoder[EquipmentType] =
+    enumEncoder[EquipmentType]
+
+  implicit val floatKeyDecoder: KeyDecoder[Float] =
+    KeyDecoder.instance(it => Some(it.toFloat))
+
+  implicit val itemRarityDecoder: Decoder[ItemRarity] =
+    Decoder.decodeString.emapTry { it => Try { ItemRarity.parseName(it) } }
+  implicit val itemRarityKeyDecoder: KeyDecoder[ItemRarity] =
+    KeyDecoder.instance(it => Some(ItemRarity.parseName(it)))
+  implicit val itemRarityEncoder: Encoder[ItemRarity] =
+    Encoder.encodeString.contramap { _.name }
+
+  implicit val teamDecoder: Decoder[LegendsTeam] =
     Decoder.decodeString.emapTry { it => Try { LegendsTeam.parseName(it) } }
-  implicit lazy val teamEncoder: Encoder[LegendsTeam] =
+  implicit val teamKeyDecoder: KeyDecoder[LegendsTeam] =
+    KeyDecoder.instance(it => Some(LegendsTeam.parseName(it)))
+  implicit val teamEncoder: Encoder[LegendsTeam] =
     Encoder.encodeString.contramap { _.name }
 }
 
