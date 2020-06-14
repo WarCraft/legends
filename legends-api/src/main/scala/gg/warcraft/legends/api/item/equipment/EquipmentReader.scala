@@ -14,16 +14,16 @@ import gg.warcraft.monolith.api.util.string._
 import scala.jdk.CollectionConverters._
 
 class EquipmentReader(item: Item) {
-  private val tooltip = item.getTooltip.asScala
+  private lazy val tooltip = item.getTooltip.asScala
 
-  def isEquipment: Boolean =
+  lazy val isEquipment: Boolean =
     tooltip.nonEmpty && tooltip.head.stripChatCodes == "Equipment"
 
-  def strength: Int = findAttributeValue(Strength)
-  def dexterity: Int = findAttributeValue(Dexterity)
-  def intellect: Int = findAttributeValue(Intellect)
-  def vitality: Int = findAttributeValue(Vitality)
-  def crit: Int = findAttributeValue(Crit)
+  lazy val strength: Int = findAttributeValue(Strength)
+  lazy val dexterity: Int = findAttributeValue(Dexterity)
+  lazy val intellect: Int = findAttributeValue(Intellect)
+  lazy val vitality: Int = findAttributeValue(Vitality)
+  lazy val crit: Int = findAttributeValue(Crit)
 
   private def findAttributeValue(attribute: LegendsAttribute): Int =
     tooltip.find { _.contains(attribute) } match {
