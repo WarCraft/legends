@@ -117,7 +117,7 @@ object EquipmentGeneratorTeamMenu {
     s"[Click] to generate a Dwarven $archetype item"
       :: s"[Right Click] to build a Dwarven $archetype item"
       :: Nil
-  )
+  ) { _ => () }
 
   def elvenButton(archetype: LegendsCombatArchetype): Button = Button(
     WoolVariant.GREEN,
@@ -125,7 +125,7 @@ object EquipmentGeneratorTeamMenu {
     s"[Click] to generate an Elven $archetype item"
       :: s"[Right Click] to build an Elven $archetype item"
       :: Nil
-  )
+  ) { _ => () }
 
   def humanButton(archetype: LegendsCombatArchetype): Button = Button(
     WoolVariant.CYAN,
@@ -133,7 +133,7 @@ object EquipmentGeneratorTeamMenu {
     s"[Click] to generate a Human $archetype item"
       :: s"[Right Click] to build a Human $archetype item"
       :: Nil
-  )
+  ) { _ => () }
 
   def orcishButton(archetype: LegendsCombatArchetype): Button = Button(
     WoolVariant.RED,
@@ -141,7 +141,7 @@ object EquipmentGeneratorTeamMenu {
     s"[Click] to generate a Orcish $archetype item"
       :: s"[Right Click] to build an Orcish $archetype item"
       :: Nil
-  )
+  ) { _ => () }
 
   def apply(archetype: LegendsCombatArchetype)(implicit
       menuService: MenuService,
