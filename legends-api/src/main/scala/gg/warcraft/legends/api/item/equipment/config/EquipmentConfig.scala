@@ -30,9 +30,7 @@ case class EquipmentConfig(
         Map[LegendsCombatArchetype,
             Map[LegendsTeam,
                 Map[AttributeDistribution,
-                    Map[EquipmentType,
-                        Map[ItemRarity,
-                            List[EquipmentTooltipConfig]]]]]]
+                    Map[EquipmentType, EquipmentTooltipsConfig]]]]
 )
 
 object EquipmentConfig {
