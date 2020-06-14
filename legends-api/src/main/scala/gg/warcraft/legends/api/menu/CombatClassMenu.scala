@@ -24,14 +24,6 @@ import gg.warcraft.monolith.api.util.TimeUtils
 import gg.warcraft.monolith.api.util.string._
 
 object CombatClassMenu {
-  def abilitiesView(combatClass: CombatClass): List[String] = List(
-    "Abilities:",
-    s"[Left Click]$YELLOW${combatClass.leftClick.getOrElse("Basic Attack")}",
-    s"[Right Click]$YELLOW${combatClass.rightClick.getOrElse("Basic Attack")}",
-    s"[Shift Left Click]$YELLOW${combatClass.shiftLeftClick.getOrElse("Basic Attack")}",
-    s"[Shift Right Click]$YELLOW${combatClass.shiftRightClick.getOrElse("Basic Attack")}"
-  )
-
   def switchView(
       combatClass: CombatClass,
       isLocked: Boolean,
@@ -67,19 +59,16 @@ object CombatClassMenu {
 
     val isLocked = true // TODO
 
-    val tooltip = lore ++ List("") ++ abilitiesView(combatClass) ++ List(
-      ""
-    ) ++ switchView(combatClass, isLocked, canSwitch, cooldown)
+    val tooltip =
+      lore ++ List("") ++ switchView(combatClass, isLocked, canSwitch, cooldown)
     Button(
       icon,
       combatClass.name,
       tooltip.toList
     ) { click =>
       if (!isLocked && cooldown.isEmpty && click.isShiftRight) {
-        val newCombatData =
-          player.combatData.copy(combatClass =
-            Some(combatClass)
-          ) // TODO does this belong in a CombatClassService which then calls combat data?
+        // TODO does this belong in a CombatClassService which then calls combat data?
+        val newCombatData = player.combatData.copy(combatClass = Some(combatClass))
         combatDataService.setCombatData(newCombatData)
       }
     }
@@ -101,7 +90,7 @@ object CombatClassMenu {
       "Guardians wield a sword and a shield.",
       "Their skills focus on control and defense.",
       "",
-      s"$YELLOW[Left Click] Melee",
+      s"$YELLOW[Left Click] Basic Attack",
       "A normal Minecraft melee swing.",
       s"$YELLOW[Right Click] Hamstring",
       "Damage your enemy and slow them for a",
@@ -132,7 +121,7 @@ object CombatClassMenu {
       "Berserkers dual wield axes. Their skills",
       "focus on damage and recovering health.",
       "",
-      s"$YELLOW[Left Click] Melee",
+      s"$YELLOW[Left Click] Basic Attack",
       "A normal Minecraft melee swing.",
       s"$YELLOW[Right Click] Maul",
       "Maul your enemy for damage and receive",
@@ -168,7 +157,7 @@ object CombatClassMenu {
       s"$YELLOW[Left Click] Power Shot",
       "Fire a high velocity shot dealing damage",
       "and knocking back your target.",
-      s"$YELLOW[Right Click] Shoot",
+      s"$YELLOW[Right Click] Basic Attack",
       "A normal Minecraft bow shot.",
       s"$YELLOW[Shift Left Click] Focus",
       "Focus your vision and greatly increase",
@@ -199,7 +188,7 @@ object CombatClassMenu {
       s"$YELLOW[Left Click] Toxic Arrow",
       "Fire a poisoned arrow damaging your target",
       "and applying poison for a short duration.",
-      s"$YELLOW[Right Click] Shoot",
+      s"$YELLOW[Right Click] Basic Attack",
       "A normal Minecraft bow shot.",
       s"$YELLOW[Shift Left Click] Trap",
       "Place a trap at your feet which roots",
