@@ -10,7 +10,7 @@ import gg.warcraft.combat.api.combatclass.{CombatClass, CombatClassService}
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.combatplayer._
 import gg.warcraft.legends.api.combat.LegendsCombatClass._
-import gg.warcraft.legends.api.entity.LegendsAttribute._
+import gg.warcraft.legends.api.entity.attribute.LegendsAttribute._
 import gg.warcraft.legends.api.entity.LegendsTeam._
 import gg.warcraft.legends.api.player.currency.LegendsCurrency._
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService

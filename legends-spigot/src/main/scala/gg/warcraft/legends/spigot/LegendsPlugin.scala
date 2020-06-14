@@ -20,6 +20,7 @@ import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
 import gg.warcraft.legends.api.menu.MenuConfig
 import gg.warcraft.legends.api.player.level.Level
 import gg.warcraft.legends.api.LegendsConfig
+import gg.warcraft.legends.api.entity.attribute.EquipmentAttributeHandler
 import gg.warcraft.legends.api.util.circe._
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
@@ -81,6 +82,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
   }
 
   private def enableHandlers(): Unit = {
+    eventService.subscribe(new EquipmentAttributeHandler)
     eventService.subscribe(new PersonalScoreboardHandler)
     eventService.subscribe(new ArrowDistributionHandler)
     eventService.subscribe(new ArrowFriendlyFireHandler)
