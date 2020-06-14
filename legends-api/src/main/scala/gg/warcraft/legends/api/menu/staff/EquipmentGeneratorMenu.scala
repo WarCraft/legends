@@ -9,8 +9,9 @@ package gg.warcraft.legends.api.menu.staff
 import gg.warcraft.legends.api.combat.LegendsCombatArchetype
 import gg.warcraft.legends.api.combat.LegendsCombatArchetype._
 import gg.warcraft.legends.api.entity.LegendsTeam
-import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
-import gg.warcraft.monolith.api.block.variant.WoolVariant
+import gg.warcraft.legends.api.item.equipment.{EquipmentGenerator, EquipmentType}
+import gg.warcraft.legends.api.item.equipment.EquipmentType._
+import gg.warcraft.monolith.api.block.variant.{MobHeadVariant, WoolVariant}
 import gg.warcraft.monolith.api.item.ItemType
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
@@ -24,6 +25,18 @@ object EquipmentGeneratorMenu {
     playerService.giveItem(player.id, item)
   }
 
+  private def generate(
+      player: Player,
+      archetype: LegendsCombatArchetype,
+      typ: EquipmentType
+  )(implicit
+      playerService: PlayerService,
+      equipmentGenerator: EquipmentGenerator
+  ): Unit = {
+    val item = equipmentGenerator.generate(archetype, LegendsTeam.random, typ)
+    playerService.giveItem(player.id, item)
+  }
+
   private def build(player: Player, archetype: LegendsCombatArchetype)(implicit
       menuService: MenuService,
       playerService: PlayerService,
@@ -33,7 +46,7 @@ object EquipmentGeneratorMenu {
     // TODO menuService.showMenu(player.id, menu)
   }
 
-  def warriorButton()(implicit
+  def warriorButton(implicit
       menuService: MenuService,
       playerService: PlayerService,
       equipmentGenerator: EquipmentGenerator
@@ -48,7 +61,7 @@ object EquipmentGeneratorMenu {
     else build(click.player, WARRIOR)
   }
 
-  def hunterButton()(implicit
+  def hunterButton(implicit
       menuService: MenuService,
       playerService: PlayerService,
       equipmentGenerator: EquipmentGenerator
@@ -63,7 +76,7 @@ object EquipmentGeneratorMenu {
     else build(click.player, HUNTER)
   }
 
-  def mageButton()(implicit
+  def mageButton(implicit
       menuService: MenuService,
       playerService: PlayerService,
       equipmentGenerator: EquipmentGenerator
@@ -78,17 +91,119 @@ object EquipmentGeneratorMenu {
     else build(click.player, MAGE)
   }
 
+  def headButton: Button = Button(
+    ItemType.PLANKS,
+    "Placeholder",
+    Nil
+  ) { _ => () }
+
+  def chestButton: Button = Button(
+    ItemType.PLANKS,
+    "Placeholder",
+    Nil
+  ) { _ => () }
+
+  def legsButton: Button = Button(
+    ItemType.PLANKS,
+    "Placeholder",
+    Nil
+  ) { _ => () }
+
+  def feetButton: Button = Button(
+    ItemType.PLANKS,
+    "Placeholder",
+    Nil
+  ) { _ => () }
+
+  def swordButton: Button = Button(
+    ItemType.PLANKS,
+    "Placeholder",
+    Nil
+  ) { _ => () }
+
+  def shieldButton: Button = Button(
+    ItemType.PLANKS,
+    "Placeholder",
+    Nil
+  ) { _ => () }
+
+  def axeButton: Button = Button(
+    ItemType.PLANKS,
+    "Placeholder",
+    Nil
+  ) { _ => () }
+
+  def skullButton(implicit
+      playerService: PlayerService,
+      equipmentGenerator: EquipmentGenerator
+  ): Button = Button(
+    MobHeadVariant.SKELETON,
+    "Skull",
+    "[Click] to generate a Skull item"
+      :: "[Right Click] to build a Skull item"
+      :: Nil
+  ) { click =>
+    if (click.isLeft) generate(click.player, WARRIOR, SKULL)
+  // else build(click.player, WARRIOR, SKULL)
+  }
+
+  def bowButton: Button = Button(
+    ItemType.PLANKS,
+    "Placeholder",
+    Nil
+  ) { _ => () }
+
+  def crossbowButton: Button = Button(
+    ItemType.PLANKS,
+    "Placeholder",
+    Nil
+  ) { _ => () }
+
+  def staffButton: Button = Button(
+    ItemType.PLANKS,
+    "Placeholder",
+    Nil
+  ) { _ => () }
+
+  def wandButton: Button = Button(
+    ItemType.PLANKS,
+    "Placeholder",
+    Nil
+  ) { _ => () }
+
+  def bookButton: Button = Button(
+    ItemType.PLANKS,
+    "Placeholder",
+    Nil
+  ) { _ => () }
+
   def apply(implicit
       menuService: MenuService,
       playerService: PlayerService,
       equipmentGenerator: EquipmentGenerator
   ): Menu = Menu(
     "Equipment Generator",
-    MenuSize.ONE_ROW,
+    MenuSize.TWO_ROWS,
     Map(
+      // 1st row
       0 -> warriorButton,
       1 -> hunterButton,
-      2 -> mageButton
+      2 -> mageButton,
+      4 -> headButton,
+      5 -> chestButton,
+      6 -> legsButton,
+      7 -> feetButton,
+      8 -> Button.back(StaffMenu.apply),
+      // 2nd row
+      9 -> swordButton,
+      10 -> shieldButton,
+      11 -> axeButton,
+      12 -> skullButton,
+      13 -> bowButton,
+      14 -> crossbowButton,
+      15 -> staffButton,
+      16 -> wandButton,
+      17 -> bookButton
     )
   )
 }
