@@ -71,11 +71,8 @@ class EquipmentBuilder(
 
     // add upgrades
     item =
-      if (availableUpgrades > 0) {
-        item
-          .addTooltip("")
-          .addTooltip(s"$reset$availableUpgrades Available Upgrades")
-      } else item
+      if (availableUpgrades <= 0) item
+      else item.addTooltip("", s"$reset$availableUpgrades Available Upgrades")
 
     // add flavor text
     item = if (flavorText.nonEmpty) item.addTooltip("") else item
