@@ -36,7 +36,7 @@ class EquipmentGenerator(implicit
       typ: EquipmentType
   ): Item = {
     val rarityRoll = Random.nextFloat * 100
-    val rarity = ??? // config.itemRarities.floorEntry(rarityRoll).getValue
+    val rarity = ItemRarity.Common // TODO config.itemRarities.floorEntry(rarityRoll).getValue
     generate(archetype, team, typ, rarity)
   }
 

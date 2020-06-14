@@ -8,9 +8,11 @@ package gg.warcraft.legends.api.menu
 
 import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
+import gg.warcraft.legends.api.menu.staff.StaffMenu
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
-import gg.warcraft.monolith.api.core.auth.Principal
+import gg.warcraft.monolith.api.core.auth.{AuthService, Principal}
 import gg.warcraft.monolith.api.core.command.Command
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.menu.MenuService
@@ -19,13 +21,15 @@ import gg.warcraft.monolith.api.player.currency.CurrencyService
 
 class MenuCommandHandler(implicit
     menuService: MenuService,
+    authService: AuthService,
     playerService: PlayerService,
     attributeService: AttributeService,
     levelService: LevelService,
     currencyService: CurrencyService,
     combatDataService: CombatDataService,
     combatClassService: CombatClassService,
-    legendsPlayerDataService: LegendsPlayerDataService
+    legendsPlayerDataService: LegendsPlayerDataService,
+    equipmentGenerator: EquipmentGenerator
 ) extends Command.Handler {
   override def handle(
       executor: Principal,
@@ -34,13 +38,16 @@ class MenuCommandHandler(implicit
   ): Command.Result = executor match {
     case player: Player =>
       val menu = command.name match {
-        case "Menu"        => MainMenu(player)
-        case "Race"        => RaceMenu(player)
-        case "Class"       => CombatClassMenu(player)
-        case "Decorations" => DecorationsMenu(player)
-        case "Minipets"    => MiniPetsMenu(player)
+        case "Menu"        => Some(MainMenu(player))
+        case "Race"        => Some(RaceMenu(player))
+        case "Class"       => Some(CombatClassMenu(player))
+        case "Decorations" => Some(DecorationsMenu(player))
+        case "Minipets"    => Some(MiniPetsMenu(player))
+        case "Staff" =>
+          if (authService.isStaff(player)) Some(StaffMenu(player))
+          else None
       }
-      menuService.showMenu(player.id, menu)
+      menu.foreach { menuService.showMenu(player.id, _) }
       Command.success
     case _ => Command.playersOnly
   }

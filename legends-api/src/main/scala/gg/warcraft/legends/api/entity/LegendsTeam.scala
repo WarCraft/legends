@@ -12,6 +12,8 @@ import gg.warcraft.monolith.api.effect.Particle.Color
 import gg.warcraft.monolith.api.effect.Particle.Color._
 import gg.warcraft.monolith.api.entity.team.Team
 
+import scala.util.Random
+
 sealed abstract class LegendsTeam(
     val kind: String,
     override val name: String,
@@ -32,6 +34,13 @@ object LegendsTeam {
     case "Humans"    => Humans
     case "Orcs"      => Orcs
     case "Wayfarers" => Wayfarers
+  }
+
+  def random: LegendsTeam = Random.nextInt(4) match {
+    case 0 => Dwarves
+    case 1 => Elves
+    case 2 => Humans
+    case 3 => Orcs
   }
 
   implicit def toString(team: LegendsTeam): String = team.toString
