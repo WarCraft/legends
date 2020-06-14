@@ -6,7 +6,7 @@
 
 package gg.warcraft.legends.api.item.equipment
 
-import gg.warcraft.legends.api.entity.LegendsAttribute
+import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.monolith.api.core.{ColorCode, FormatCode}
 import gg.warcraft.monolith.api.item.{Item, ItemService, ItemTypeOrVariant}

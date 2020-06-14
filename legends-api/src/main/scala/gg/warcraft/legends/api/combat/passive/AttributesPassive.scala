@@ -10,7 +10,7 @@ import gg.warcraft.combat.api.ability.AbilityPreCastEvent
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.combatplayer._
 import gg.warcraft.legends.api.combat.LegendsCombatClass._
-import gg.warcraft.legends.api.entity.LegendsAttribute
+import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 import gg.warcraft.monolith.api.combat.{CombatSource, CombatValue}
 import gg.warcraft.monolith.api.core.Duration
 import gg.warcraft.monolith.api.core.event.PreEvent

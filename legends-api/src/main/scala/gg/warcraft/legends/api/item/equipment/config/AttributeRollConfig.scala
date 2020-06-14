@@ -6,7 +6,7 @@
 
 package gg.warcraft.legends.api.item.equipment.config
 
-import gg.warcraft.legends.api.entity.LegendsAttribute
+import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 
 case class AttributeRollConfig(
     attribute: LegendsAttribute,

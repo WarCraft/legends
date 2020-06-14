@@ -4,7 +4,7 @@
  * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
  */
 
-package gg.warcraft.legends.api.entity
+package gg.warcraft.legends.api.entity.attribute
 
 import gg.warcraft.monolith.api.entity.attribute.Attribute
 

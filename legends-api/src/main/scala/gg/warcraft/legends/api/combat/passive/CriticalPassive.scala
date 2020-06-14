@@ -7,7 +7,7 @@
 package gg.warcraft.legends.api.combat.passive
 
 import gg.warcraft.combat.api.ability.AbilityPreCastEvent
-import gg.warcraft.legends.api.entity.LegendsAttribute
+import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 import gg.warcraft.monolith.api.combat.{CombatSource, CombatValue}
 import gg.warcraft.monolith.api.core.Duration
 import gg.warcraft.monolith.api.core.event.PreEvent

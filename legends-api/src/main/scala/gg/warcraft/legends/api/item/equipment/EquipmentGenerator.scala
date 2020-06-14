@@ -7,11 +7,10 @@
 package gg.warcraft.legends.api.item.equipment
 
 import gg.warcraft.legends.api.combat.LegendsCombatArchetype
-import gg.warcraft.legends.api.entity.{LegendsAttribute, LegendsTeam}
+import gg.warcraft.legends.api.entity.LegendsTeam
+import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 import gg.warcraft.legends.api.item.ItemRarity
-import gg.warcraft.legends.api.item.equipment.config.{
-  AttributeRollConfig, EquipmentConfigRepository
-}
+import gg.warcraft.legends.api.item.equipment.config.{AttributeRollConfig, EquipmentConfigRepository}
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig.AttributeDistributionConfig
 import gg.warcraft.monolith.api.item.{Item, ItemService}
 

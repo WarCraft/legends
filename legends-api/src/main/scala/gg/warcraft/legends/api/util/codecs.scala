@@ -7,7 +7,8 @@
 package gg.warcraft.legends.api.util
 
 import gg.warcraft.legends.api.combat.LegendsCombatArchetype
-import gg.warcraft.legends.api.entity.{LegendsAttribute, LegendsTeam}
+import gg.warcraft.legends.api.entity.LegendsTeam
+import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.legends.api.item.equipment.{AttributeDistribution, EquipmentType}
 import gg.warcraft.monolith.api.core.Codecs.Circe._
