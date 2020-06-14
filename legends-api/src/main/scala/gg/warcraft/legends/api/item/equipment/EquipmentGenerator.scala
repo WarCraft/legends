@@ -36,7 +36,8 @@ class EquipmentGenerator(implicit
       typ: EquipmentType
   ): Item = {
     val rarityRoll = Random.nextFloat * 100
-    val rarity = ItemRarity.Common // TODO config.itemRarities.floorEntry(rarityRoll).getValue
+    val rarity =
+      ItemRarity.Common // TODO config.itemRarities.floorEntry(rarityRoll).getValue
     generate(archetype, team, typ, rarity)
   }
 
@@ -60,8 +61,13 @@ class EquipmentGenerator(implicit
     val attrDistro = randomAttributeDistribution
     val itemType = config.itemTypes(typ)(rarity)
 
-    val tooltips = config.tooltips(archetype)(team)(attrDistro)(typ)(rarity)
-    val tooltip = tooltips(Random.nextInt(tooltips.size))
+    val tooltips = config.tooltips(archetype)(team)(attrDistro)(typ)
+    val tooltip = rarity match {
+      case ItemRarity.Legendary =>
+        val legendaryTooltips = tooltips.special(rarity)
+        legendaryTooltips(Random.nextInt(legendaryTooltips.size))
+      case _ => tooltips.default
+    }
 
     val builder = new EquipmentBuilder(itemType, rarity, tooltip.name)
     tooltip.flavorText match {

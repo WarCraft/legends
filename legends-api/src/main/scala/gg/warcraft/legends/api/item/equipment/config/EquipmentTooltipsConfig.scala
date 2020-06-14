@@ -10,5 +10,5 @@ import gg.warcraft.legends.api.item.ItemRarity
 
 case class EquipmentTooltipsConfig(
     default: EquipmentTooltipConfig,
-    special: Map[ItemRarity, EquipmentTooltipConfig]
+    special: Map[ItemRarity, List[EquipmentTooltipConfig]]
 )
