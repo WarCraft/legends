@@ -44,9 +44,6 @@ object circe {
   implicit val equipmentTypeEncoder: Encoder[EquipmentType] =
     enumEncoder[EquipmentType]
 
-  implicit val floatKeyDecoder: KeyDecoder[Float] =
-    KeyDecoder.instance(it => Some(it.toFloat))
-
   implicit val itemRarityDecoder: Decoder[ItemRarity] =
     Decoder.decodeString.emapTry { it => Try { ItemRarity.parseName(it) } }
   implicit val itemRarityKeyDecoder: KeyDecoder[ItemRarity] =

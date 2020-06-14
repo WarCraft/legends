@@ -17,10 +17,12 @@ import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig.{
 }
 import gg.warcraft.monolith.api.item.ItemTypeOrVariant
 
+import scala.util.chaining._
+
 case class EquipmentConfig(
     validTypes: Map[LegendsCombatArchetype, List[EquipmentType]],
     offhandTypes: List[EquipmentType],
-    itemRarities: RarityRollConfig,
+    dropRates: RarityRollConfig,
     itemTypes: EquipmentItemTypeConfig,
     attributeRolls: Map[LegendsCombatArchetype, AttributeDistributionConfig],
     legendaryRolls: Map[LegendsCombatArchetype, AttributeDistributionConfig],
@@ -31,10 +33,15 @@ case class EquipmentConfig(
             Map[LegendsTeam,
                 Map[AttributeDistribution,
                     Map[EquipmentType, EquipmentTooltipsConfig]]]]
-)
+) {
+  lazy val navigableDropRates: util.NavigableMap[Float, ItemRarity] =
+    new util.TreeMap[Float, ItemRarity].tap { map =>
+      dropRates.foreach { it => map.put(it._2, it._1) }
+    }
+}
 
 object EquipmentConfig {
-  type RarityRollConfig = Map[Float, ItemRarity] // TODO util.NavigableMap
+  type RarityRollConfig = Map[ItemRarity, Float] // TODO util.NavigableMap
   type EquipmentItemTypeConfig =
     Map[EquipmentType, Map[ItemRarity, ItemTypeOrVariant]]
   type AttributeDistributionConfig =
