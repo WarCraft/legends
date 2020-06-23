@@ -27,6 +27,8 @@ class ToxicArrow(
   override def onHit(entity: Entity): Unit = {
     entityService.damageEntity(entity.id, snapshot.damage)
     entityService.addPotionEffect(entity.id, snapshot.poison)
+    entityService.addPotionEffect(entity.id, snapshot.slow)
+    entityService.addPotionEffect(entity.id, snapshot.nausea)
   }
 }
 

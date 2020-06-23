@@ -43,7 +43,7 @@ class MagicScatter(
   private val velocity = direction * snapshot.velocity.modified
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
 
-  (1 to count.toInt).foreach { _ =>
+  (0 until count.toInt).foreach { _ =>
     val modifiedVelocity =
       velocity
         .rotateX(((Math.random() - 0.5) * maxInaccuracyAngle).toRadians.toFloat)
@@ -77,8 +77,8 @@ class MagicScatter(
           if (distance < accumulator._2) (Some(entity), distance) else accumulator
         }._1
     }
-    if(projectileTarget.isDefined) {
-      val metadata = Map("location" -> location, "target" -> projectileTarget.get)
+    projectileTarget.foreach { it =>
+      val metadata = Map("location" -> location, "target" -> it)
       abilityService.spawnChild("Projectile", this, metadata)
     }
     true
