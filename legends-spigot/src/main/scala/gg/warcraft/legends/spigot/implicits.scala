@@ -17,7 +17,7 @@ import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
-import gg.warcraft.legends.spigot.combat.mage.elementalist.MassBamboozleAdapter
+import gg.warcraft.legends.spigot.combat.mage.wizard.MassBamboozleAdapter
 import gg.warcraft.monolith.api.core.event.EventService
 import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.spigot.implicits._

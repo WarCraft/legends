@@ -4,7 +4,7 @@
  * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
  */
 
-package gg.warcraft.legends.spigot.combat.mage.elementalist
+package gg.warcraft.legends.spigot.combat.mage.wizard
 
 import java.util.UUID
 
