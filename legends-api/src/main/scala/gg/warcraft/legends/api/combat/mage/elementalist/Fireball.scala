@@ -16,7 +16,7 @@ import gg.warcraft.monolith.api.effect.{
   Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
 }
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
-import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
+import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
 
 class Fireball(
     override val caster: Entity,
@@ -39,7 +39,7 @@ class Fireball(
     val movement = Movement.linear(location, velocity, maxDistance)
     val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
     val effect = new Fireball.ParticleEffect(movement)
-    projectileService.createProjectile(this, movement, hitbox, effect.cancel)
+    projectileService.createProjectile(this, movement, hitbox, effect.stop)
     worldService.playSound(caster.location, castSound, soundCategory)
     // TODO play sound at fly locations
   }
@@ -72,18 +72,22 @@ object Fireball {
   class ParticleEffect(movement: Movement)(implicit
       particleAdapter: ParticleAdapter,
       taskService: TaskService
-  ) extends Effect(movement.get) {
+  ) extends Effect {
     private final val radius = 0.2f
     private final val particleCount = 20
 
-    private val innerParticle = Particle.Flame
-    private val innerVectors = EffectVectors.origin()
-    private val innerRenderer = EffectRenderer(innerParticle, innerVectors)
-    addRenderer(innerRenderer)
+    override protected val location: () => Location = movement.get
 
-    private val outerParticle = Particle.Redstone.color(Particle.Color.Orange)
-    private val outerVectors = EffectVectors.sphere(radius, particleCount)
-    private val outerRenderer = EffectRenderer(outerParticle, outerVectors)
-    addRenderer(outerRenderer)
+    {
+      val innerParticle = Particle.Flame
+      val innerVectors = EffectVectors.origin()
+      val innerRenderer = EffectRenderer(innerParticle, innerVectors)
+      addRenderer(innerRenderer)
+
+      val outerParticle = Particle.Redstone.color(Particle.Color.Orange)
+      val outerVectors = EffectVectors.sphere(radius, particleCount)
+      val outerRenderer = EffectRenderer(outerParticle, outerVectors)
+      addRenderer(outerRenderer)
+    }
   }
 }

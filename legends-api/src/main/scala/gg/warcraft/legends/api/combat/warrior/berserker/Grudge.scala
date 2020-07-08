@@ -24,7 +24,7 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityDamageEvent, EntityService
 import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
 import gg.warcraft.monolith.api.math.Vector3f
 import gg.warcraft.monolith.api.util.option._
-import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
+import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
 
 class Grudge(
     override val caster: Entity,
@@ -74,13 +74,17 @@ object Grudge {
   class ParticleEffect(movement: Movement, duration: Duration)(implicit
       taskService: TaskService,
       particleAdapter: ParticleAdapter
-  ) extends Effect(() => movement.get + Vector3f.Offset.aboveHead, 5.ticks) {
-    private val particle = Particle.VillagerAngry
-    private val vectors = EffectVectors.origin()
-    private val renderer = EffectRenderer(particle, vectors)
-    addRenderer(renderer)
+  ) extends Effect {
+    private final val particle = Particle.VillagerAngry
+    private final val vectors = EffectVectors.origin()
+    private final val renderer = EffectRenderer(particle, vectors)
 
-    cancel(duration)
+    override protected val location: () => Location =
+      () => movement.get + Vector3f.Offset.aboveHead
+    override protected val period: Duration = 5.ticks
+
+    addRenderer(renderer)
+    stop(duration)
   }
 
   class StatusEffect(

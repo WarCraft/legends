@@ -41,7 +41,7 @@ class HailBlast(
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
 
   private val effect = new HailBlast.ParticleEffect(movement, origin.rotation)
-  projectileService.createProjectile(this, movement, hitbox, effect.cancel)
+  projectileService.createProjectile(this, movement, hitbox, effect.stop)
 
   worldService.playSound(caster.location, castSound, soundCategory)
   worldService.playSound(caster.location, castSound2, soundCategory, 1, 0.1f)
@@ -85,15 +85,17 @@ object HailBlast {
   )(implicit
       taskService: TaskService,
       particleAdapter: ParticleAdapter
-  ) extends Effect(movement.get) {
+  ) extends Effect {
     private final val iterations = 15
     private final val particle = Particle.Cloud
+
+    override protected val location: () => Location = movement.get
 
     private val (pitch, yaw) = direction.toPitchYaw
 
     private var iteration = 1
 
-    cancel(iterations.ticks)
+    stop(iterations.ticks)
 
     override def tick(): Unit = {
       clearRenderers()

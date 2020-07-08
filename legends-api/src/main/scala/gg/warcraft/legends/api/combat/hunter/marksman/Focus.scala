@@ -20,6 +20,7 @@ import gg.warcraft.monolith.api.effect.{
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
 import gg.warcraft.monolith.api.player.PlayerService
+import gg.warcraft.monolith.api.world.Location
 
 class Focus(
     override val caster: Entity,
@@ -62,7 +63,7 @@ class Focus(
   override def cancel(): Unit = {
     entityService.freezeEntity(caster.id, 0.ticks)
     statusService.removeEffect(caster.id, status)
-    effect.cancel()
+    effect.stop()
   }
 }
 
@@ -85,15 +86,20 @@ object Focus {
   class ParticleEffect(movement: Movement)(implicit
       taskService: TaskService,
       particleAdapter: ParticleAdapter
-  ) extends Effect(() => movement.get + (0, 0.1f, 0)) {
+  ) extends Effect {
     private final val radius = 0.5f
     private final val frames = 20
 
     private final val particle = Particle.Redstone.color(Particle.Color.Red)
     private final val vectors = EffectVectors.ring(radius, frames)
 
-    private val renderer = EffectRenderer.iterative(particle, vectors)
-    addRenderer(renderer)
+    override protected val location: () => Location =
+      () => movement.get + (0, 0.1f, 0)
+
+    {
+      val renderer = EffectRenderer.iterative(particle, vectors)
+      addRenderer(renderer)
+    }
   }
 
   class StatusEffect(

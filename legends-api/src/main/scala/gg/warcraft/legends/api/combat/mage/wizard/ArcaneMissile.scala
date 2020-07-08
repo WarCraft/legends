@@ -18,7 +18,7 @@ import gg.warcraft.monolith.api.effect.{
 }
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.math.Vector3f
-import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
+import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
 
 class ArcaneMissile(
     override val caster: Entity,
@@ -42,7 +42,7 @@ class ArcaneMissile(
   )
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
   private val effect = new ArcaneMissile.ParticleEffect(movement)
-  projectileService.createProjectile(this, movement, hitbox, effect.cancel)
+  projectileService.createProjectile(this, movement, hitbox, effect.stop)
 
   worldService.playSound(caster.location, castSound, soundCategory)
 
@@ -77,21 +77,24 @@ object ArcaneMissile {
   class ParticleEffect(movement: Movement)(implicit
       taskService: TaskService,
       particleAdapter: ParticleAdapter
-  ) extends Effect(movement.get) {
+  ) extends Effect {
     private final val radius = 0.1f
     private final val innerParticleCount = 1
     private final val innerParticleSpeed = 1
     private final val outerParticleCount = 6
 
-    private val innerParticle =
+    private final val innerParticle =
       Particle.EnchantmentTable.speed(innerParticleSpeed, innerParticleCount)
-    private val innerVectors = EffectVectors.origin()
-    private val innerRenderer = EffectRenderer(innerParticle, innerVectors)
-    addRenderer(innerRenderer)
+    private final val innerVectors = EffectVectors.origin()
+    private final val innerRenderer = EffectRenderer(innerParticle, innerVectors)
 
-    private val outerParticle = Particle.DragonBreath
-    private val outerVectors = EffectVectors.sphere(radius, outerParticleCount)
-    private val outerRenderer = EffectRenderer(outerParticle, outerVectors)
+    private final val outerParticle = Particle.DragonBreath
+    private final val outerVectors = EffectVectors.sphere(radius, outerParticleCount)
+    private final val outerRenderer = EffectRenderer(outerParticle, outerVectors)
+
+    override protected val location: () => Location = movement.get
+
+    addRenderer(innerRenderer)
     addRenderer(outerRenderer)
   }
 }

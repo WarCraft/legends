@@ -22,7 +22,7 @@ import gg.warcraft.monolith.api.effect.{
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.math.Vector3f
 import gg.warcraft.monolith.api.util.typing._
-import gg.warcraft.monolith.api.world.WorldService
+import gg.warcraft.monolith.api.world.{Location, WorldService}
 
 class MassBamboozle(
     override val caster: Entity,
@@ -48,7 +48,7 @@ class MassBamboozle(
   private val effect = new MassBamboozle.ParticleEffect(effectMovement)
   taskService.evalLater(
     snapshot.countdown,
-    projectileService.createProjectile(this, movement, hitbox, effect.cancel)
+    projectileService.createProjectile(this, movement, hitbox, effect.stop)
   )
 
   override def onHit(entity: Entity): Boolean = {
@@ -91,13 +91,17 @@ object MassBamboozle {
   class ParticleEffect(movement: Movement)(implicit
       particleAdapter: ParticleAdapter,
       taskService: TaskService
-  ) extends Effect(() => movement.get + Vector3f.Offset.feet) {
+  ) extends Effect {
     private final val radius = 5f
     private final val particleCount = 80
 
-    private val particle = Particle.DragonBreath
-    private val vectors = EffectVectors.ring(radius, particleCount)
-    private val renderer = EffectRenderer(particle, vectors)
+    private final val particle = Particle.DragonBreath
+    private final val vectors = EffectVectors.ring(radius, particleCount)
+    private final val renderer = EffectRenderer(particle, vectors)
+
+    override protected val location: () => Location =
+      () => movement.get + Vector3f.Offset.feet
+
     addRenderer(renderer)
   }
 

@@ -6,11 +6,11 @@
 
 package gg.warcraft.legends.api.combat.mage.wizard
 
+import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.{AbilityService, RangedAbility}
 import gg.warcraft.combat.api.ability.RangedAbility.Flag
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
-import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.effect.{
@@ -55,7 +55,7 @@ class MagicScatter(
       range
     )
     val effect = new MagicScatter.ParticleEffect(movement)
-    projectileService.createProjectile(this, movement, hitbox, effect.cancel)
+    projectileService.createProjectile(this, movement, hitbox, effect.stop)
   }
 
   worldService.playSound(caster.location, castSound, soundCategory)
@@ -72,12 +72,13 @@ class MagicScatter(
     val projectileTarget: Option[Entity] = target.orElse {
       entityService.getNearbyEntities(location, homingRange)
         .filter { _.team != caster.team }
-        .foldLeft((None, Float.MaxValue): (Option[Entity], Float)) { (accumulator, entity) =>
-          val distance = entity.location.distanceTo(location)
-          if (distance < accumulator._2) (Some(entity), distance) else accumulator
+        .foldLeft((None, Float.MaxValue): (Option[Entity], Float)) {
+          (accumulator, entity) =>
+            val distance = entity.location.distanceTo(location)
+            if (distance < accumulator._2) (Some(entity), distance) else accumulator
         }._1
     }
-    if(projectileTarget.isDefined) {
+    if (projectileTarget.isDefined) {
       val metadata = Map("location" -> location, "target" -> projectileTarget.get)
       abilityService.spawnChild("Projectile", this, metadata)
     }
@@ -108,18 +109,21 @@ object MagicScatter {
   class ParticleEffect(movement: Movement)(implicit
       taskService: TaskService,
       particleAdapter: ParticleAdapter
-  ) extends Effect(movement.get) {
+  ) extends Effect {
     private final val radius = 0.1f
     private final val outerParticleCount = 3
 
-    private val innerParticle = Particle.Redstone.color(Particle.Color.Purple)
-    private val innerVectors = EffectVectors.origin()
-    private val innerRenderer = EffectRenderer(innerParticle, innerVectors)
-    addRenderer(innerRenderer)
+    private final val innerParticle = Particle.Redstone.color(Particle.Color.Purple)
+    private final val innerVectors = EffectVectors.origin()
+    private final val innerRenderer = EffectRenderer(innerParticle, innerVectors)
 
-    private val outerParticle = Particle.Redstone.color(Particle.Color.Fuchsia)
-    private val outerVectors = EffectVectors.sphere(radius, outerParticleCount)
-    private val outerRenderer = EffectRenderer(outerParticle, outerVectors)
+    private final val outerParticle = Particle.Redstone.color(Particle.Color.Fuchsia)
+    private final val outerVectors = EffectVectors.sphere(radius, outerParticleCount)
+    private final val outerRenderer = EffectRenderer(outerParticle, outerVectors)
+
+    override protected val location: () => Location = movement.get
+
+    addRenderer(innerRenderer)
     addRenderer(outerRenderer)
   }
 }

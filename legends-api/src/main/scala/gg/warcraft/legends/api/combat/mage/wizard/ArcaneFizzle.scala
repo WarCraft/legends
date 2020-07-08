@@ -16,7 +16,7 @@ import gg.warcraft.monolith.api.effect.{
   Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
 }
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
-import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
+import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
 
 class ArcaneFizzle(
     override val caster: Entity,
@@ -39,7 +39,7 @@ class ArcaneFizzle(
     val movement = Movement.linear(location, velocity, maxDistance)
     val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
     val effect = new ArcaneFizzle.ParticleEffect(movement)
-    projectileService createProjectile (this, movement, hitbox, effect.cancel)
+    projectileService createProjectile (this, movement, hitbox, effect.stop)
     worldService playSound (caster.location, castSound, soundCategory)
     // TODO play sound at fly locations (maybe use onTick for this or create something for sound similar to effect)
   }
@@ -71,13 +71,16 @@ object ArcaneFizzle {
   class ParticleEffect(movement: Movement)(implicit
       particleAdapter: ParticleAdapter,
       taskService: TaskService
-  ) extends Effect(movement.get) {
+  ) extends Effect {
     private final val radius = 0.12f
     private final val particleCount = 10
 
-    private val particle = Particle.Redstone.color(Particle.Color.Fuchsia)
-    private val vectors = EffectVectors.sphere(radius, particleCount)
-    private val renderer = EffectRenderer(particle, vectors)
+    private final val particle = Particle.Redstone.color(Particle.Color.Fuchsia)
+    private final val vectors = EffectVectors.sphere(radius, particleCount)
+    private final val renderer = EffectRenderer(particle, vectors)
+
+    override protected val location: () => Location = movement.get
+
     addRenderer(renderer)
   }
 }

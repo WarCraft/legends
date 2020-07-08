@@ -67,9 +67,10 @@ class MoltenStorm(
 
   private def spawnFireball(): Unit = {
     if (spawnLocations.hasNext) {
-      val movement = Movement.linear(spawnLocations.next, velocity, snapshot.range.modified)
+      val movement =
+        Movement.linear(spawnLocations.next, velocity, snapshot.range.modified)
       val effect = new Fireball.ParticleEffect(movement)
-      projectileService.createProjectile(this, movement, hitbox, effect.cancel)
+      projectileService.createProjectile(this, movement, hitbox, effect.stop)
     }
   }
 
@@ -108,20 +109,23 @@ object MoltenStorm {
   }
 
   class ParticleEffect(
-      location: Location,
+      loc: Location,
       duration: Duration
   )(implicit
       taskService: TaskService,
       particleAdapter: ParticleAdapter
-  ) extends Effect(() => location + Vector3f.Offset.feet) {
+  ) extends Effect {
     private final val radius = 7.5f
     private final val particleCount = 100
 
     private final val particle = Particle.Redstone.color(Particle.Color.Orange)
     private final val vectors = EffectVectors.ring(radius, particleCount)
     private final val renderer = EffectRenderer(particle, vectors)
-    addRenderer(renderer)
 
-    cancel(duration)
+    override protected val location: () => Location =
+      () => loc + Vector3f.Offset.feet
+
+    addRenderer(renderer)
+    stop(duration)
   }
 }
