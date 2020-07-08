@@ -28,7 +28,7 @@ class BlockBreakPlaceHandler(implicit
       } else event.copy(cancelled = true).as[T]
     case event @ BlockPreTriggerEvent(block, _, _, _) =>
       if (block.`type` == BlockType.FARMLAND) event.copy(cancelled = true).as[T]
-      else event
+      else event.as[T]
     case _ => event
   }
 }

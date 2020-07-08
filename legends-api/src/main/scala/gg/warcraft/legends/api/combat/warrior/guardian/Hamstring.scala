@@ -17,7 +17,7 @@ import gg.warcraft.monolith.api.effect.{
 }
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.math.Vector3f
-import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
+import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
 
 class Hamstring(
     override val caster: Entity,
@@ -64,15 +64,18 @@ object Hamstring {
   class ParticleEffect(movement: Movement, duration: Duration)(implicit
       taskService: TaskService,
       particleAdapter: ParticleAdapter
-  ) extends Effect(() => movement.get + Vector3f.Offset.feet) {
+  ) extends Effect {
     private final val radius = 0.5f
     private final val frames = 20
 
-    private val particle = Particle.SpellMob
-    private val vectors = EffectVectors.ring(radius, frames)
-    private val renderer = EffectRenderer.iterative(particle, vectors)
-    addRenderer(renderer)
+    private final val particle = Particle.SpellMob
+    private final val vectors = EffectVectors.ring(radius, frames)
+    private final val renderer = EffectRenderer.iterative(particle, vectors)
 
-    cancel(duration)
+    override protected val location: () => Location =
+      () => movement.get + Vector3f.Offset.feet
+
+    addRenderer(renderer)
+    stop(duration)
   }
 }

@@ -20,7 +20,7 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityDamageEvent, EntityService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
 import gg.warcraft.monolith.api.math.Vector3f
-import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
+import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
 
 class StandYourGround(
     override val caster: Entity,
@@ -79,12 +79,15 @@ object StandYourGround {
   class ParticleEffect(movement: Movement, duration: Duration)(implicit
       particleAdapter: ParticleAdapter,
       taskService: TaskService
-  ) extends Effect(() => movement.get + Vector3f.Offset.legs) {
+  ) extends Effect {
     private final val radius = 2f
     private final val particleCount = 50
     private final val particle = Particle.CritMagic
 
-    cancel(duration)
+    override protected val location: () => Location =
+      () => movement.get + Vector3f.Offset.legs
+
+    stop(duration)
 
     override def tick(): Unit = {
       clearRenderers()
