@@ -22,7 +22,7 @@ sealed abstract class LegendsTeam(
 ) extends Team
 
 object LegendsTeam {
-  case object Dwarves extends LegendsTeam("Dwarf", "Dwarves", Purple, GOLD)
+  case object Dwarves extends LegendsTeam("Dwarf", "Dwarves", Orange, GOLD)
   case object Elves extends LegendsTeam("Elf", "Elves", Green, GREEN)
   case object Humans extends LegendsTeam("Human", "Humans", Blue, AQUA)
   case object Orcs extends LegendsTeam("Orc", "Orcs", Red, RED)
