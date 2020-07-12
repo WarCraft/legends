@@ -1,0 +1,66 @@
+/*
+ * All rights reserved
+ *
+ * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
+ */
+
+package gg.warcraft.legends.api.combat.hunter
+
+import java.util.UUID
+
+import gg.warcraft.combat.api.combatclass.{
+  CombatClass, PlayerCombatClassChangedEvent
+}
+import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.combat.api.util.combatplayer._
+import gg.warcraft.legends.api.ai.CombatPetFactory
+import gg.warcraft.monolith.api.core.event.Event
+import gg.warcraft.monolith.api.entity.{EntityDeathEvent, EntityService}
+import gg.warcraft.monolith.api.player.{PlayerConnectEvent, PlayerDisconnectEvent}
+
+class HunterCombatPetHandler(implicit
+    combatPetFactory: CombatPetFactory,
+    combatDataService: CombatDataService,
+    entityService: EntityService
+) extends Event.Handler {
+  private var ownersToPets: Map[UUID, UUID] = Map.empty
+  private var petsToOwners: Map[UUID, UUID] = Map.empty
+
+  override def handle(event: Event): Unit = event match {
+    case PlayerConnectEvent(player) => spawnPet(player, player.combatClass)
+
+    case PlayerCombatClassChangedEvent(player, _, current) =>
+      removePet(player.id)
+      spawnPet(player, current)
+
+    case EntityDeathEvent(pet, _) if petsToOwners.contains(pet.id) =>
+      val ownerId = petsToOwners(pet.id)
+      ownersToPets -= ownerId
+      petsToOwners -= pet.id
+    // TODO 30 sec pet cooldown
+
+    case PlayerDisconnectEvent(player) => removePet(player.id)
+
+    case _ =>
+  }
+
+  private def spawnPet(
+      playerId: UUID,
+      combatClass: Option[CombatClass]
+  ): Unit = combatClass match {
+    case Some(it) if it.name == "Marksman" || it.name == "Ranger" =>
+      val petId = combatPetFactory.create(playerId)
+      ownersToPets += (playerId -> petId)
+      petsToOwners += (petId -> playerId)
+    case _ =>
+  }
+
+  private def removePet(playerId: UUID): Unit =
+    ownersToPets.updatedWith(playerId) {
+      case Some(petId) =>
+        entityService.removeEntity(petId)
+        petsToOwners -= petId
+        None
+      case None => None
+    }
+}
