@@ -45,8 +45,7 @@ class HunterCombatPetHandler(implicit
       }
 
     case EntityTeamChangedEvent(player: Player, _, current) =>
-      removePet(player.id)
-      spawnPet(player, current)
+      if (removePet(player.id)) spawnPet(player, current)
 
     case EntityDeathEvent(pet, _) if petsToOwners.contains(pet.id) =>
       val ownerId = petsToOwners(pet.id)
@@ -70,12 +69,16 @@ class HunterCombatPetHandler(implicit
     case _ =>
   }
 
-  private def removePet(playerId: UUID): Unit =
+  private def removePet(playerId: UUID): Boolean = {
+    var hasPet = false
     ownersToPets.updatedWith(playerId) {
       case Some(petId) =>
         entityService.removeEntity(petId)
         petsToOwners -= petId
+        hasPet = true
         None
       case None => None
     }
+    hasPet
+  }
 }
