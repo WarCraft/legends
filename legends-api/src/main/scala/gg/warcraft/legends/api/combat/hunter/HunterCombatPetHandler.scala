@@ -16,9 +16,11 @@ import gg.warcraft.combat.api.util.combatplayer._
 import gg.warcraft.legends.api.ai.CombatPetFactory
 import gg.warcraft.monolith.api.core.event.Event
 import gg.warcraft.monolith.api.core.GameMode
-import gg.warcraft.monolith.api.entity.{EntityDeathEvent, EntityService}
+import gg.warcraft.monolith.api.entity.{
+  EntityDeathEvent, EntityService, EntityTeamChangedEvent
+}
 import gg.warcraft.monolith.api.player.{
-  PlayerConnectEvent, PlayerDisconnectEvent, PlayerGameModeChangedEvent
+  Player, PlayerConnectEvent, PlayerDisconnectEvent, PlayerGameModeChangedEvent
 }
 
 class HunterCombatPetHandler(implicit
@@ -41,6 +43,10 @@ class HunterCombatPetHandler(implicit
         case GameMode.SURVIVAL => spawnPet(player.id, player.combatClass)
         case _                 => removePet(player.id)
       }
+
+    case EntityTeamChangedEvent(player: Player, _, current) =>
+      removePet(player.id)
+      spawnPet(player, current)
 
     case EntityDeathEvent(pet, _) if petsToOwners.contains(pet.id) =>
       val ownerId = petsToOwners(pet.id)
