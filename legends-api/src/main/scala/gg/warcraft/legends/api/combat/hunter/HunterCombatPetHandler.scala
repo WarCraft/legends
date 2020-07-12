@@ -44,8 +44,8 @@ class HunterCombatPetHandler(implicit
         case _                 => removePet(player.id)
       }
 
-    case EntityTeamChangedEvent(player: Player, _, current) =>
-      if (removePet(player.id)) spawnPet(player, current)
+    case EntityTeamChangedEvent(player: Player, _, _) =>
+      if (removePet(player.id)) spawnPet(player, player.combatClass)
 
     case EntityDeathEvent(pet, _) if petsToOwners.contains(pet.id) =>
       val ownerId = petsToOwners(pet.id)
