@@ -8,6 +8,7 @@ package gg.warcraft.legends.spigot
 
 import java.util.logging.Logger
 
+import gg.warcraft.legends.api.ai.CombatPetFactory
 import gg.warcraft.legends.api.combat.hunter.marksman.{
   FocusRepository, SneakRepository
 }
@@ -17,6 +18,7 @@ import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
+import gg.warcraft.legends.spigot.ai.SpigotCombatPetFactory
 import gg.warcraft.legends.spigot.combat.mage.wizard.MassBamboozleAdapter
 import gg.warcraft.monolith.api.core.event.EventService
 import gg.warcraft.monolith.api.core.task.TaskService
@@ -61,6 +63,10 @@ object implicits {
   private implicit lazy val database: DatabaseContext = _database
   private implicit lazy val eventService: EventService = _eventService
   private implicit lazy val taskService: TaskService = _taskService
+
+  // AI
+  implicit lazy val combatPetFactory: CombatPetFactory =
+    new SpigotCombatPetFactory
 
   // Marksman
   implicit lazy val focusRepository: FocusRepository =

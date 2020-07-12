@@ -10,7 +10,10 @@ import java.io.File
 
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.combat.CombatConfig
-import gg.warcraft.legends.api.combat.hunter.{ ArrowDistributionHandler, ArrowFriendlyFireHandler, ArrowPickUpHandler }
+import gg.warcraft.legends.api.combat.hunter.{
+  ArrowDistributionHandler, ArrowFriendlyFireHandler, ArrowPickUpHandler,
+  HunterCombatPetHandler
+}
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.core.types.DatabaseContext
 import gg.warcraft.legends.api.entity.TeamConfig
@@ -30,7 +33,7 @@ import gg.warcraft.monolith.spigot.SpigotMonolithPlugin
 import gg.warcraft.monolith.spigot.implicits._
 import io.circe.Decoder
 import io.circe.generic.auto._
-import io.getquill.{ SnakeCase, SqliteDialect }
+import io.getquill.{SnakeCase, SqliteDialect}
 import org.bukkit.configuration.file.YamlConfiguration
 
 class LegendsPlugin extends SpigotMonolithPlugin {
@@ -87,6 +90,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     eventService.subscribe(new ArrowDistributionHandler)
     eventService.subscribe(new ArrowFriendlyFireHandler)
     eventService.subscribe(new ArrowPickUpHandler)
+    eventService.subscribe(new HunterCombatPetHandler)
     eventService.subscribe(new MassBamboozle.Handler)
 
     subscribe(new OnePointEightPvPInitHandler)
