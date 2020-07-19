@@ -67,11 +67,9 @@ object RaceMenu {
   ): Button = Button.skull(
     "fishb6nes",
     Humans.name,
-    "[Shift Right Click] To switch to this team" :: Nil
+    "[Shift Right Click] To fight for the Humans" :: Nil
   ) { click =>
-    if (click.isShiftRight) {
-      // TODO playerService.setTeam(player.data.copy(team = Humans))
-    }
+    if (click.isShiftRight) playerService.setTeam(player.id, Some(Humans))
   }
 
   private def orcButton(player: Player)(implicit
@@ -79,11 +77,9 @@ object RaceMenu {
   ): Button = Button.skull(
     "fishb6nes",
     Orcs.name,
-    "[Shift Right Click] To switch to this team" :: Nil
+    "[Shift Right Click] To fight for the Orcs" :: Nil
   ) { click =>
-    if (click.isShiftRight) {
-      // TODO playerService.setTeam(player.data.copy(team = Orcs))
-    }
+    if (click.isShiftRight) playerService.setTeam(player.id, Some(Orcs))
   }
 
   private def dwarfButton(player: Player)(implicit
@@ -91,11 +87,9 @@ object RaceMenu {
   ): Button = Button.skull(
     "fishb6nes",
     Dwarves.name,
-    "[Shift Right Click] To switch to this team" :: Nil
+    "[Shift Right Click] To fight for the Dwarves" :: Nil
   ) { click =>
-    if (click.isShiftRight) {
-      // TODO playerService.setTeam(player.data.copy(team = Dwarves))
-    }
+    if (click.isShiftRight) playerService.setTeam(player.id, Some(Dwarves))
   }
 
   private def elfButton(player: Player)(implicit
@@ -103,11 +97,9 @@ object RaceMenu {
   ): Button = Button.skull(
     "fishb6nes",
     Elves.name,
-    "[Shift Right Click] To switch to this team" :: Nil
+    "[Shift Right Click] To fight for the Elves" :: Nil
   ) { click =>
-    if (click.isShiftRight) {
-      // TODO playerService.setTeam(player.data.copy(team = Elves))
-    }
+    if (click.isShiftRight) playerService.setTeam(player.id, Some(Elves))
   }
 
   def apply(

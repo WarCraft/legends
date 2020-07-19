@@ -27,7 +27,8 @@ import gg.warcraft.legends.api.util.circe._
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
 import gg.warcraft.legends.spigot.core.{
-  SpigotFurnaceCoalHandler, SpigotKeepInventoryHandler
+  SpigotFirstTimeRaceClassMenuHandler, SpigotFurnaceCoalHandler,
+  SpigotKeepInventoryHandler, SpigotRaceRespawnHandler
 }
 import gg.warcraft.monolith.api.core.Codecs.Circe._
 import gg.warcraft.monolith.api.core.ColorCode
@@ -87,6 +88,8 @@ class LegendsPlugin extends SpigotMonolithPlugin {
   }
 
   private def enableHandlers(): Unit = {
+    val firstTimeRaceClassMenuHandler = new SpigotFirstTimeRaceClassMenuHandler
+
     eventService.subscribe(new BlockBreakPlaceHandler)
     eventService.subscribe(new EquipmentAttributeHandler)
     eventService.subscribe(new PersonalScoreboardHandler)
@@ -95,11 +98,14 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     eventService.subscribe(new ArrowPickUpHandler)
     eventService.subscribe(new HunterCombatPetHandler)
     eventService.subscribe(new MassBamboozle.Handler)
+    eventService.subscribe(new SpigotRaceRespawnHandler)
+    eventService.subscribe(firstTimeRaceClassMenuHandler)
 
     subscribe(new OnePointEightPvPInitHandler)
     subscribe(new HunterOnlyBowHandler)
     subscribe(new SpigotKeepInventoryHandler)
     subscribe(new SpigotFurnaceCoalHandler)
+    subscribe(firstTimeRaceClassMenuHandler)
   }
 
   private def enableTasks(): Unit = {}
