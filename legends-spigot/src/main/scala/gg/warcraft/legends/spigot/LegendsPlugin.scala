@@ -26,7 +26,9 @@ import gg.warcraft.legends.api.entity.attribute.EquipmentAttributeHandler
 import gg.warcraft.legends.api.util.circe._
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
-import gg.warcraft.legends.spigot.core.SpigotKeepInventoryHandler
+import gg.warcraft.legends.spigot.core.{
+  SpigotFurnaceCoalHandler, SpigotKeepInventoryHandler
+}
 import gg.warcraft.monolith.api.core.Codecs.Circe._
 import gg.warcraft.monolith.api.core.ColorCode
 import gg.warcraft.monolith.api.item.ItemTypeOrVariant
@@ -97,6 +99,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     subscribe(new OnePointEightPvPInitHandler)
     subscribe(new HunterOnlyBowHandler)
     subscribe(new SpigotKeepInventoryHandler)
+    subscribe(new SpigotFurnaceCoalHandler)
   }
 
   private def enableTasks(): Unit = {}
