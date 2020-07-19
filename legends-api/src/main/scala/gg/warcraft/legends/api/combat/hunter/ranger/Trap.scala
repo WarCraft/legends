@@ -6,6 +6,8 @@
 
 package gg.warcraft.legends.api.combat.hunter.ranger
 
+import java.util.UUID
+
 import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
@@ -37,10 +39,12 @@ class Trap(
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.BLOCK_IRON_TRAPDOOR_OPEN
   private final val hitSound = Sound.BLOCK_IRON_TRAPDOOR_CLOSE
+  private final val spoofRadius = 30
 
   private var cancelled = false
 
-  private val blockLocation: BlockLocation = caster.location
+  private val casterLocation = caster.location
+  private val blockLocation: BlockLocation = casterLocation
   private val currentBlock = worldService.getBlock(blockLocation)
   private val fakeBlock = Trapdoor(
     currentBlock.location,
@@ -52,13 +56,7 @@ class Trap(
     open = false
   )
 
-  private val spoofedPlayerIds = playerService.getOnlinePlayers
-    .filter { _.team == caster.team }
-    .map { _.id }
-
-  spoofedPlayerIds.foreach {
-    blockSpoofingService.spoofBlock(_, fakeBlock)
-  } // TODO add overload for same block multiple people
+  private var spoofedPlayerIds = spoofTrap(_.team == caster.team)
 
   private val trapLocation = BlockLocation.toLocation(blockLocation) + (.5f, 0, .5f)
   private val movement = Movement.stationary(trapLocation)
@@ -69,18 +67,36 @@ class Trap(
   taskService.runLater(snapshot.duration, cancel)
   worldService.playSound(caster.location, castSound, soundCategory)
 
+  private def spoofTrap(predicate: Entity => Boolean): Set[UUID] = {
+    val spoofedPlayerIds = entityService
+      .getNearbyEntities(casterLocation, spoofRadius)
+      .filter { _.typed == Entity.Type.PLAYER }
+      .filter(predicate)
+      .map { _.id }
+      .toSet
+
+    // TODO add overload for same block multiple players
+    spoofedPlayerIds.foreach { blockSpoofingService.spoofBlock(_, fakeBlock) }
+    spoofedPlayerIds
+  }
+
+  private def unspoofTrap(): Unit =
+    spoofedPlayerIds.foreach { blockSpoofingService.unspoofBlock(_, trapLocation) }
+
   override def cancel(): Unit = if (!cancelled) {
     cancelled = true
     projectileService.removeProjectile(projectileId)
-    spoofedPlayerIds.foreach { blockSpoofingService.unspoofBlock(_, trapLocation) }
+    unspoofTrap()
   }
 
   override def onHit(entity: Entity): Boolean = {
-    val startLocation = entity.location
+    spoofedPlayerIds ++= spoofTrap(_ => true)
+
     entityService.addPotionEffect(entity.id, snapshot.poison)
     entityService.freezeEntity(entity.id, snapshot.root)
 
-    // prevent yeeting into space
+    // prevent target from yeeting into space
+    val startLocation = entity.location
     taskService.runNextTick(() => {
       entityService.teleportEntity(entity.id, startLocation)
       entityService.setVelocity(entity.id, Vector3f())
