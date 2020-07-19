@@ -39,6 +39,8 @@ class SpigotFirstTimeRaceClassMenuHandler(implicit
     legendsDataService: LegendsPlayerDataService
 ) extends Event.Handler
     with Listener {
+  import SpigotRaceRespawnHandler.getSpawn
+
   private var inTutorial: Set[UUID] = Set.empty
 
   private def test(player: Player): Unit = {
@@ -49,7 +51,8 @@ class SpigotFirstTimeRaceClassMenuHandler(implicit
     } else {
       inTutorial -= player.id
       entityService.freezeEntity(player.id, 0.ticks)
-      // TODO spawn entity at racial spawn
+      val spawnLocation = player.location.copy(translation = getSpawn(player.team.get))
+      entityService.teleportEntity(player.id, spawnLocation)
     }
   }
 

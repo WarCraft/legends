@@ -8,28 +8,38 @@ package gg.warcraft.legends.spigot.core
 
 import gg.warcraft.legends.api.entity.LegendsTeam._
 import gg.warcraft.monolith.api.core.event.{Event, PreEvent}
+import gg.warcraft.monolith.api.entity.team.Team
 import gg.warcraft.monolith.api.math.Vector3f
 import gg.warcraft.monolith.api.player.PlayerPreRespawnEvent
 import gg.warcraft.monolith.api.util.typing._
 
 class SpigotRaceRespawnHandler extends Event.Handler {
+  import SpigotRaceRespawnHandler.getSpawn
+
+  override def reduce[T <: PreEvent](event: T): T = event match {
+    case event @ PlayerPreRespawnEvent(player, _) =>
+      val spawnLocation = player.team match {
+        case None       => event.location
+        case Some(team) => event.location.copy(translation = getSpawn(team))
+      }
+      event.copy(location = spawnLocation).as[T]
+
+    case _ => event
+  }
+}
+
+object SpigotRaceRespawnHandler {
   // TODO move this into Monolith configuration, maybe all Team settings into there
   private final val dwarfTranslation = Vector3f(-144, 41, -141)
   private final val elfTranslation = Vector3f(115, 58, 199)
   private final val humanTranslation = Vector3f(-69, 67, 208)
   private final val orcTranslation = Vector3f(139, 57, 48)
 
-  override def reduce[T <: PreEvent](event: T): T = event match {
-    case event @ PlayerPreRespawnEvent(player, _) =>
-      val spawnLocation = player.team match {
-        case Some(Dwarves) => event.location.copy(translation = dwarfTranslation)
-        case Some(Elves)   => event.location.copy(translation = elfTranslation)
-        case Some(Humans)  => event.location.copy(translation = humanTranslation)
-        case Some(Orcs)    => event.location.copy(translation = orcTranslation)
-        case None          => event.location
-      }
-      event.copy(location = spawnLocation).as[T]
-
-    case _ => event
+  def getSpawn(team: Team): Vector3f = team match {
+    case Dwarves => dwarfTranslation
+    case Elves   => elfTranslation
+    case Humans  => humanTranslation
+    case Orcs    => orcTranslation
+    case _       => throw new IllegalArgumentException
   }
 }
