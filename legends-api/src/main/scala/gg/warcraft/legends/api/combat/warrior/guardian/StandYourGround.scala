@@ -87,6 +87,7 @@ object StandYourGround {
     override protected val location: () => Location =
       () => movement.get + Vector3f.Offset.legs
 
+    start()
     stop(duration)
 
     override def tick(): Unit = {

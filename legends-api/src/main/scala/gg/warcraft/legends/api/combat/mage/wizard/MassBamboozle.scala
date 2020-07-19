@@ -103,6 +103,7 @@ object MassBamboozle {
       () => movement.get + Vector3f.Offset.feet
 
     addRenderer(renderer)
+    start()
   }
 
   class Repository {

@@ -125,5 +125,6 @@ object MagicScatter {
 
     addRenderer(innerRenderer)
     addRenderer(outerRenderer)
+    start()
   }
 }

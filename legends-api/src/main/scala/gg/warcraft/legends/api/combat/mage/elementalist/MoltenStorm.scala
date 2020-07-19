@@ -126,6 +126,7 @@ object MoltenStorm {
       () => loc + Vector3f.Offset.feet
 
     addRenderer(renderer)
+    start()
     stop(duration)
   }
 }

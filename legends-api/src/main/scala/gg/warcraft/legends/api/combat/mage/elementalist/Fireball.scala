@@ -88,6 +88,8 @@ object Fireball {
       val outerVectors = EffectVectors.sphere(radius, particleCount)
       val outerRenderer = EffectRenderer(outerParticle, outerVectors)
       addRenderer(outerRenderer)
+
+      start()
     }
   }
 }

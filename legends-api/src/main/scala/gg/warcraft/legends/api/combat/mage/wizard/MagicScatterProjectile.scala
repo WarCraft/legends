@@ -82,5 +82,6 @@ object MagicScatterProjectile {
     override protected val location: () => Location = movement.get
 
     addRenderer(innerRenderer)
+    start()
   }
 }

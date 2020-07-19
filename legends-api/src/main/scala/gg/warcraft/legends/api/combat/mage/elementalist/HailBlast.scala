@@ -95,6 +95,7 @@ object HailBlast {
 
     private var iteration = 1
 
+    start()
     stop(iterations.ticks)
 
     override def tick(): Unit = {

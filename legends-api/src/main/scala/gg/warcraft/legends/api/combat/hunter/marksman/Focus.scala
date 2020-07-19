@@ -99,6 +99,8 @@ object Focus {
     {
       val renderer = EffectRenderer.iterative(particle, vectors)
       addRenderer(renderer)
+
+      start()
     }
   }
 

@@ -96,5 +96,6 @@ object ArcaneMissile {
 
     addRenderer(innerRenderer)
     addRenderer(outerRenderer)
+    start()
   }
 }

@@ -84,6 +84,7 @@ object Grudge {
     override protected val period: Duration = 5.ticks
 
     addRenderer(renderer)
+    start()
     stop(duration)
   }
 

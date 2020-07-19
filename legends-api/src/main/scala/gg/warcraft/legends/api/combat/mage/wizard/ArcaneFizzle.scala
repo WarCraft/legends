@@ -82,5 +82,6 @@ object ArcaneFizzle {
     override protected val location: () => Location = movement.get
 
     addRenderer(renderer)
+    start()
   }
 }
