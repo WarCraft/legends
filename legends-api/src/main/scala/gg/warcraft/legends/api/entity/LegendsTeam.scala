@@ -14,6 +14,7 @@ import gg.warcraft.monolith.api.entity.team.Team
 
 import scala.util.Random
 
+// TODO remove
 sealed abstract class LegendsTeam(
     val kind: String,
     override val name: String,

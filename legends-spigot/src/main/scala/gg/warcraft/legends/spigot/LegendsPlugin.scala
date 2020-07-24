@@ -16,7 +16,6 @@ import gg.warcraft.legends.api.combat.hunter.{
 }
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.core.types.DatabaseContext
-import gg.warcraft.legends.api.entity.TeamConfig
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
 import gg.warcraft.legends.api.menu.MenuConfig
 import gg.warcraft.legends.api.player.level.Level
@@ -80,7 +79,6 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     equipmentConfigRepository.readConfig(equipmentConfig)
 
     new CombatConfig().writeConfig()
-    new TeamConfig().writeConfig()
     new MenuConfig().writeConfig()
 
     enableHandlers()
