@@ -10,9 +10,8 @@ class SneakCancelHandler(implicit
 ) extends Event.Handler {
   override def handle(event: PreEvent): Unit = event match {
     case AbilityPreCastEvent(ability, caster, _, _, _) =>
-      if (ability != "Focus") repository.remove(caster.id).foreach { it =>
-        playerHidingService.reveal(it.caster.id)
-      }
+      if (ability != "Focus")
+        repository.abilities.get(caster.id).foreach { _.cancel() }
     case _ =>
   }
 }

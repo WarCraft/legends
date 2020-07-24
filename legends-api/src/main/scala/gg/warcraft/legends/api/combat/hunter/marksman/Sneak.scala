@@ -29,6 +29,7 @@ class Sneak(
   private final val castSound = Sound.ENTITY_PLAYER_BREATH
 
   entityService.addPotionEffect(caster.id, snapshot.speed)
+  sneakRepository.add(this)
   playerHidingService.hide(caster.id)
   taskService.runLater(snapshot.duration, cancel)
 
