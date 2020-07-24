@@ -101,7 +101,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
     subscribe(new OnePointEightPvPInitHandler)
     subscribe(new HunterOnlyBowHandler)
-    subscribe(new SpigotKeepInventoryHandler)
+    // TODO subscribe(new SpigotKeepInventoryHandler)
     subscribe(new SpigotFurnaceCoalHandler)
     subscribe(firstTimeRaceClassMenuHandler)
   }
