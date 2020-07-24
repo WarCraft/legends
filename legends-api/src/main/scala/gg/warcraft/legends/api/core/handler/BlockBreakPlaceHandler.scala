@@ -12,20 +12,22 @@ import gg.warcraft.monolith.api.block.{
 import gg.warcraft.monolith.api.core.auth.AuthService
 import gg.warcraft.monolith.api.core.event.{Event, PreEvent}
 import gg.warcraft.monolith.api.core.GameMode
+import gg.warcraft.monolith.api.player.Player
 import gg.warcraft.monolith.api.util.typing._
 
 class BlockBreakPlaceHandler(implicit
     authService: AuthService
 ) extends Event.Handler {
+  private def isBuilding(player: Player): Boolean =
+    player.mode == GameMode.CREATIVE && authService.isBuilding(player)
+
   override def reduce[T <: PreEvent](event: T): T = event match {
     case event @ BlockPreBreakEvent(_, player, _, _, _) =>
-      if (player.mode == GameMode.CREATIVE && authService.isModerating(player)) {
-        event.copy(explicitlyAllowed = true).as[T]
-      } else event.copy(cancelled = true).as[T]
+      if (isBuilding(player)) event.copy(explicitlyAllowed = true).as[T]
+      else event.copy(cancelled = true).as[T]
     case event @ BlockPrePlaceEvent(_, _, _, player, _, _) =>
-      if (player.mode == GameMode.CREATIVE && authService.isModerating(player)) {
-        event.copy(explicitlyAllowed = true).as[T]
-      } else event.copy(cancelled = true).as[T]
+      if (isBuilding(player)) event.copy(explicitlyAllowed = true).as[T]
+      else event.copy(cancelled = true).as[T]
     case event @ BlockPreTriggerEvent(block, _, _, _) =>
       if (block.`type` == BlockType.FARMLAND) event.copy(cancelled = true).as[T]
       else event.as[T]
