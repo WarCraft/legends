@@ -6,28 +6,37 @@
 
 package gg.warcraft.legends.api.entity
 
-import gg.warcraft.monolith.api.core.ColorCode
 import gg.warcraft.monolith.api.core.ColorCode._
-import gg.warcraft.monolith.api.effect.Particle.Color
 import gg.warcraft.monolith.api.effect.Particle.Color._
 import gg.warcraft.monolith.api.entity.team.Team
 
 import scala.util.Random
 
 // TODO remove
-sealed abstract class LegendsTeam(
-    val kind: String,
-    override val name: String,
-    override val particleColor: Color,
-    override val chatColor: ColorCode
-) extends Team
+sealed trait LegendsTeam {
+  val kind: String
+}
 
 object LegendsTeam {
-  case object Dwarves extends LegendsTeam("Dwarf", "Dwarves", Orange, GOLD)
-  case object Elves extends LegendsTeam("Elf", "Elves", Green, GREEN)
-  case object Humans extends LegendsTeam("Human", "Humans", Blue, AQUA)
-  case object Orcs extends LegendsTeam("Orc", "Orcs", Red, RED)
-  case object Wayfarers extends LegendsTeam("Wayfarer", "Wayfarers", Silver, GRAY)
+  object Dwarves extends Team("Dwarves", GOLD, Orange) with LegendsTeam {
+    override val kind: String = "Dwarf"
+  }
+
+  object Elves extends Team("Elves", GREEN, Green) with LegendsTeam {
+    override val kind: String = "Elf"
+  }
+
+  object Humans extends Team("Humans", AQUA, Blue) with LegendsTeam {
+    override val kind: String = "Human"
+  }
+
+  object Orcs extends Team("Orcs", RED, Red) with LegendsTeam {
+    override val kind: String = "Orc"
+  }
+
+  object Wayfarers extends Team("Wayfarers", GRAY, Silver) with LegendsTeam {
+    override val kind: String = "Wayfarer"
+  }
 
   def parseName(name: String): LegendsTeam = name match {
     case "DWARF" => Dwarves
@@ -43,5 +52,5 @@ object LegendsTeam {
     case 3 => Orcs
   }
 
-  implicit def toString(team: LegendsTeam): String = team.toString
+  implicit def toString(team: LegendsTeam): String = team.asInstanceOf[Team].name
 }

@@ -12,6 +12,7 @@ import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.legends.api.item.equipment.{AttributeDistribution, EquipmentType}
 import gg.warcraft.monolith.api.core.Codecs.Circe._
+import gg.warcraft.monolith.api.entity.team.Team
 import io.circe.{Decoder, Encoder, KeyDecoder}
 
 import scala.util.Try
@@ -57,7 +58,7 @@ object circe {
   implicit val teamKeyDecoder: KeyDecoder[LegendsTeam] =
     KeyDecoder.instance(it => Some(LegendsTeam.parseName(it)))
   implicit val teamEncoder: Encoder[LegendsTeam] =
-    Encoder.encodeString.contramap { _.name }
+    Encoder.encodeString.contramap { _.asInstanceOf[Team].name }
 }
 
 object quill {}
