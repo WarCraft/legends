@@ -104,6 +104,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     // TODO subscribe(new SpigotKeepInventoryHandler)
     subscribe(new SpigotFurnaceCoalHandler)
     subscribe(firstTimeRaceClassMenuHandler)
+    subscribe(new TempArmorStandHandler)
   }
 
   private def enableTasks(): Unit = {}
