@@ -23,17 +23,8 @@ class EquipmentBuilder(
   private var attributes: Map[LegendsAttribute, Int] = Map.empty
   private var availableUpgrades = 0
   private var upgrades = 0
+  private var customModelData = 0
   private var flavorText: List[String] = Nil
-
-  def addFlavorText(text: String): EquipmentBuilder = {
-    flavorText ::= text
-    this
-  }
-
-  def withFlavorText(text: List[String]): EquipmentBuilder = {
-    flavorText = text
-    this
-  }
 
   def addAttribute(attribute: LegendsAttribute, amount: Int): EquipmentBuilder = {
     attributes += (attribute -> amount)
@@ -55,6 +46,21 @@ class EquipmentBuilder(
     this
   }
 
+  def withCustomModelData(data: Int): EquipmentBuilder = {
+    customModelData = data
+    this
+  }
+
+  def addFlavorText(text: String): EquipmentBuilder = {
+    flavorText ::= text
+    this
+  }
+
+  def withFlavorText(text: List[String]): EquipmentBuilder = {
+    flavorText = text
+    this
+  }
+
   def build(): Item = {
     val upgradedName = if (upgrades > 0) s"$name (+$upgrades)" else name
     var item = itemService.create(typ).withName(s"${rarity.color}$upgradedName")
@@ -73,6 +79,11 @@ class EquipmentBuilder(
     item =
       if (availableUpgrades <= 0) item
       else item.addTooltip("", s"$reset$availableUpgrades Available Upgrades")
+
+    // set custom model data
+    item =
+      if (customModelData == 0) item
+      else item.withCustomModelData(Some(customModelData))
 
     // add flavor text
     item = if (flavorText.nonEmpty) item.addTooltip("") else item

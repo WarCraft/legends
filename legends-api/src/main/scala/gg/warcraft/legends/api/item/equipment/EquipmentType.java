@@ -17,7 +17,6 @@ public enum EquipmentType {
 
     // Offhand weapons
     SHIELD,
-    SKULL,
     BOOK,
 
     // Armor

@@ -8,13 +8,15 @@ package gg.warcraft.legends.api.item.equipment.config
 
 import java.util
 
+import gg.warcraft.combat.api.combatclass.CombatClass
 import gg.warcraft.legends.api.combat.LegendsCombatArchetype
 import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.item.ItemRarity
-import gg.warcraft.legends.api.item.equipment.{AttributeDistribution, EquipmentType}
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig.{
-  AttributeDistributionConfig, EquipmentItemTypeConfig, RarityRollConfig
+  AttributeDistributionConfig, EquipmentItemTypeConfig, CustomModelDataConfig,
+  RarityRollConfig
 }
+import gg.warcraft.legends.api.item.equipment.{AttributeDistribution, EquipmentType}
 import gg.warcraft.monolith.api.item.ItemTypeOrVariant
 
 import scala.util.chaining._
@@ -28,11 +30,13 @@ case class EquipmentConfig(
     legendaryRolls: Map[LegendsCombatArchetype, AttributeDistributionConfig],
     offhandAttributeRolls: Map[LegendsCombatArchetype, AttributeDistributionConfig],
     offhandLegendaryRolls: Map[LegendsCombatArchetype, AttributeDistributionConfig],
+    customModelData: Map[EquipmentType, CustomModelDataConfig],
+    helmetModelData: Map[CombatClass, CustomModelDataConfig],
     tooltips:
-        Map[LegendsCombatArchetype,
-            Map[LegendsTeam,
-                Map[AttributeDistribution,
-                    Map[EquipmentType, EquipmentTooltipsConfig]]]]
+      Map[LegendsCombatArchetype,
+        Map[LegendsTeam,
+          Map[AttributeDistribution,
+            Map[EquipmentType, EquipmentTooltipsConfig]]]]
 ) {
   lazy val navigableDropRates: util.NavigableMap[Float, ItemRarity] =
     new util.TreeMap[Float, ItemRarity].tap { map =>
@@ -46,4 +50,6 @@ object EquipmentConfig {
     Map[EquipmentType, Map[ItemRarity, ItemTypeOrVariant]]
   type AttributeDistributionConfig =
     Map[AttributeDistribution, List[List[AttributeRollConfig]]]
+  type CustomModelDataConfig =
+    Map[ItemRarity, Map[LegendsTeam, Int]]
 }
