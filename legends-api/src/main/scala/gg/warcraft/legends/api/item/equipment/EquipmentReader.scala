@@ -16,8 +16,8 @@ import scala.jdk.CollectionConverters._
 class EquipmentReader(item: Item) {
   private lazy val tooltip = item.getTooltip.asScala
 
-  lazy val isEquipment: Boolean =
-    tooltip.nonEmpty && tooltip.head.stripChatCodes == "Equipment"
+  lazy val isEquipment: Boolean = // TODO replace replaceAll call with stripChatCodes when Monolith updated
+    tooltip.nonEmpty && tooltip.head.replaceAll("§[0-9a-z]", "") == "Equipment"
 
   lazy val strength: Int = findAttributeValue(Strength)
   lazy val dexterity: Int = findAttributeValue(Dexterity)
@@ -28,8 +28,9 @@ class EquipmentReader(item: Item) {
   private def findAttributeValue(attribute: LegendsAttribute): Int =
     tooltip.find { _.contains(attribute) } match {
       case Some(line) =>
-        val spaceIndex = line.indexOf(' ')
-        val statValue = line.substring(1, spaceIndex)
+        val plusIndex = line.indexOf('+')
+        val spaceIndex = line.indexOf(' ', plusIndex)
+        val statValue = line.substring(plusIndex + 1, spaceIndex)
         statValue.toInt
       case None => 0
     }
