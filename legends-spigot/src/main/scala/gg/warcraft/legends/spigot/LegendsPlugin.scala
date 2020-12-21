@@ -108,6 +108,8 @@ class LegendsPlugin extends SpigotMonolithPlugin {
   }
 
   private def enableTasks(): Unit = {}
+
+  // TODO init commands
 }
 
 /*
