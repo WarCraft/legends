@@ -25,7 +25,7 @@ import gg.warcraft.monolith.api.world.Location
 
 import java.util.{Random, UUID}
 
-class ItemDropHandler(implicit
+class DropHandler(implicit
     itemService: ItemService,
     equipmentConfigRepository: EquipmentConfigRepository,
     combatClassService: CombatClassService,
