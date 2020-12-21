@@ -8,18 +8,13 @@ package gg.warcraft.legends.api.combat
 
 import gg.warcraft.combat.api.ability.AbilityService
 import gg.warcraft.combat.api.projectile.ProjectileService
-import gg.warcraft.legends.api.combat.hunter.marksman.{
-  Focus, FocusRepository, PowerShot, Sneak, SneakRepository
-}
+import gg.warcraft.legends.api.combat.hunter.marksman._
 import gg.warcraft.legends.api.combat.hunter.ranger.{Disengage, ToxicArrow, Trap}
 import gg.warcraft.legends.api.combat.mage.elementalist.{
-  Bolt, Fireball, HailBlast, MoltenStorm
+  ChainLightning, Fireball, HailBlast, MoltenStorm
 }
 import gg.warcraft.legends.api.combat.mage.racial.{ArcaneBarrier, FlameTotem}
-import gg.warcraft.legends.api.combat.mage.wizard.{
-  ArcaneFizzle, ArcaneMissile, MagicScatter, MagicScatterProjectile, MassBamboozle,
-  Teleport
-}
+import gg.warcraft.legends.api.combat.mage.wizard._
 import gg.warcraft.legends.api.combat.warrior.berserker.{Grudge, Maul, Shatter}
 import gg.warcraft.legends.api.combat.warrior.guardian.{
   Hamstring, Slam, StandYourGround
@@ -63,7 +58,7 @@ class CombatConfig(implicit
   private def registerMageAbilities(): Unit = {
     // Elementalist
     registerAbility("Fireball", new Fireball.Factory())
-    registerAbility("Bolt", new Bolt.Factory())
+    registerAbility("Chain Lightning", new ChainLightning.Factory())
     registerAbility("Hail Blast", new HailBlast.Factory())
     registerAbility("Molten Storm", new MoltenStorm.Factory())
     // Wizard
