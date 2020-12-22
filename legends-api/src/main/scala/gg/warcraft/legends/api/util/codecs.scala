@@ -11,9 +11,11 @@ import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.legends.api.item.equipment.{AttributeDistribution, EquipmentType}
+import gg.warcraft.legends.api.player.challenge.{Challenge, ChallengeService}
 import gg.warcraft.monolith.api.core.Codecs.Circe._
 import gg.warcraft.monolith.api.entity.team.Team
 import io.circe.{Decoder, Encoder, KeyDecoder}
+import io.getquill.MappedEncoding
 
 import scala.util.Try
 
@@ -61,4 +63,11 @@ object circe {
     Encoder.encodeString.contramap { _.asInstanceOf[Team].name }
 }
 
-object quill {}
+object quill {
+  def challengeDecoder(implicit
+      service: ChallengeService
+  ): MappedEncoding[String, Challenge] =
+    MappedEncoding(service.challengesById)
+  implicit lazy val challengeEncoder: MappedEncoding[Challenge, String] =
+    MappedEncoding { _.id }
+}

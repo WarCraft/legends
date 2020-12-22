@@ -8,32 +8,41 @@ package gg.warcraft.legends.api.player.challenge
 
 import gg.warcraft.legends.api.LegendsConfig
 
+import java.util.UUID
+
 class ChallengeService {
-  private var _dailies: List[Challenge] = Nil
-  private var _monthlies: List[Challenge] = Nil
-  private var _alltimes: List[Challenge] = Nil
+  private var _challenges: Map[String, Challenge] = Map.empty
+  private var dailies: List[Challenge] = Nil
+  private var monthlies: List[Challenge] = Nil
+  private var alltimes: List[Challenge] = Nil
+  def challengesById: Map[String, Challenge] = _challenges
+
   private var _activeDailies: List[Challenge] = Nil
   private var _activeMonthlies: List[Challenge] = Nil
-
-  def dailies: List[Challenge] = _dailies
-  def monthlies: List[Challenge] = _monthlies
-  def alltimes: List[Challenge] = _alltimes
   def activeDailies: List[Challenge] = _activeDailies
   def activeMonthlies: List[Challenge] = _activeMonthlies
 
+  private var _completedChallenges: Map[UUID, Map[String, Challenge]] = Map.empty
+  def completedChallenges: Map[UUID, Map[String, Challenge]] = _completedChallenges
+
   def readConfig(config: LegendsConfig): Unit = {
-    config.challenges.foreach {
-      case it if it.id.contains("DAILY")   => _dailies ::= it
-      case it if it.id.contains("MONTHLY") => _monthlies ::= it
-      case it if it.id.contains("ALLTIME") => _alltimes ::= it
+    config.challenges.foreach { it =>
+      _challenges += (it.id -> it)
+      it match {
+        case it if it.id.startsWith("DAILY")   => dailies ::= it
+        case it if it.id.startsWith("MONTHLY") => monthlies ::= it
+        case it if it.id.startsWith("ALLTIME") => alltimes ::= it
+      }
     }
+
   }
 
-  def rotateDailies(): Unit = {}
+  def rotateDailies(): Unit = {
+    // TODO select new dailys and delete active and completed from db
+  }
 
   def rotateMonthlies(): Unit = {}
 }
-
 
 /*
 public class DefaultChallengeRepository implements ChallengeRepository {
@@ -88,4 +97,34 @@ public class DefaultChallengeRepository implements ChallengeRepository {
     }
 }
 
+ */
+
+/*
+ public ChallengeCycleHandler(ChallengeRepository challengeRepository) {
+        this.challengeRepository = challengeRepository;
+        if (challengeRepository.getDailies().isEmpty()) {
+            cycleDailies();
+        }
+        if (challengeRepository.getWarries().isEmpty()) {
+            cycleWarries();
+        }
+    }
+
+    private List<Challenge> getRandomChallenges(EnumSet<Challenge> challenges, int count) {
+        List<Challenge> shuffledChallenges = new ArrayList<>(challenges);
+        Collections.shuffle(shuffledChallenges);
+        return shuffledChallenges.stream()
+                .limit(count)
+                .collect(Collectors.toList());
+    }
+
+    private void cycleDailies() {
+        List<Challenge> newDailies = getRandomChallenges(Challenge.getDailies(), 3);
+        challengeRepository.setDailies(newDailies);
+    }
+
+    private void cycleWarries() {
+        List<Challenge> newWarries = getRandomChallenges(Challenge.getWarries(), 10);
+        challengeRepository.setWarries(newWarries);
+    }
  */
