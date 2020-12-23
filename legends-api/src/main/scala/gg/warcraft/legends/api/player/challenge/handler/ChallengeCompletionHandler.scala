@@ -22,30 +22,14 @@ class ChallengeCompletionHandler(config: LegendsConfig)(implicit
         case Some(challenges) => challenges
             .filter { it => !it.isDaily || service.activeDailies.contains(it) }
             .filter { it => !it.isMonthly || service.activeMonthlies.contains(it) }
-            .foreach { challenge => if (newCurrent >= challenge.requirement) {
-
-            } }
+            .foreach { challenge =>
+              if (
+                newCurrent >= challenge.requirement &&
+                !service.completedChallenges(player.id).contains(challenge.id)
+              ) service.completeChallenge(player, challenge)
+            }
         case None =>
       }
     case _ =>
   }
 }
-
-/* TODO
-public class ChallengeCompletionHandler {
-            if (event.getNewCurrent() >= challenge.getRequiredStatisticValue()) {
-                String playerDataKey = challenge.getPlayerData().getKey();
-                if (!player.getDataBool(playerDataKey)) {
-                    playerCommandService.setData(playerId, playerDataKey, "true");
-                    playerCommandService.addCurrency(playerId, LegendsCurrency.FAVOR, challenge.getFavorReward());
-                    playerCommandService.sendNotification(playerId, "You have completed the " +
-                            challenge.getName() + " challenge!");
-                    playerCommandService.sendNotification(playerId, "You gained " +
-                            challenge.getFavorReward() + " favor.");
-                }
-            }
-        });
-    }
-}
-
- */
