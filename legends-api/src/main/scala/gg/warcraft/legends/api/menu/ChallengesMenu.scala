@@ -11,6 +11,7 @@ import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.legends.api.player.challenge.{Challenge, ChallengeService}
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
+import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.ItemType
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
@@ -18,12 +19,15 @@ import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.util.ConsoleColor._
 
+import java.time.temporal.ChronoUnit
+
 object ChallengesMenu {
   private final val infoButton = Button.noop(
     ItemType.BOOK,
     "Challenges",
     List(
-      "Complete them all!"
+      "Repeatable tasks that reward you for helping",
+      "your faction increase their influence on Aldmore."
     )
   )
 
@@ -36,16 +40,28 @@ object ChallengesMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      challengeService: ChallengeService
+      challengeService: ChallengeService,
+      serverDataService: ServerDataService
   ): Button = Button(
     ItemType.GUNPOWDER,
     "Daily Challenges",
     List(
-      "Small tasks that reset at midnight server time.",
+      "Smaller tasks that can be completed every day.",
+      s"Time left: $dailyChallengesTimeLeft",
       "",
       "[Click] To view your daily challenges"
     )
   ) { _ => menuService.showMenu(player.id, DailyChallengesMenu(player)) }
+
+  private[menu] def dailyChallengesTimeLeft(implicit
+      serverDataService: ServerDataService
+  ): String = {
+    val serverTime = serverDataService.serverTime
+    val until = serverTime.plusDays(1).truncatedTo(ChronoUnit.DAYS)
+    val hoursLeft = serverTime.until(until, ChronoUnit.HOURS)
+    if (hoursLeft > 0) s"$hoursLeft hours"
+    else s"${serverTime.until(until, ChronoUnit.MINUTES)} minutes"
+  }
 
   private def monthlyChallengesButton(player: Player)(implicit
       menuService: MenuService,
@@ -56,17 +72,28 @@ object ChallengesMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      challengeService: ChallengeService
+      challengeService: ChallengeService,
+      serverDataService: ServerDataService
   ): Button = Button(
     ItemType.TNT,
     "Monthly Challenges",
     List(
-      "Larger tasks that reset at the start of the",
-      "month with a new war.",
+      "Larger tasks that can be completed every war.",
+      s"Time left: $monthlyChallengesTimeLeft",
       "",
       "[Click] To view your monthly challenges"
     )
   ) { _ => menuService.showMenu(player.id, MonthlyChallengesMenu(player)) }
+
+  private[menu] def monthlyChallengesTimeLeft(implicit
+      serverDataService: ServerDataService
+  ): String = {
+    val serverTime = serverDataService.serverTime
+    val until = serverTime.plusMonths(1).truncatedTo(ChronoUnit.MONTHS)
+    val daysLeft = serverTime.until(until, ChronoUnit.DAYS)
+    if (daysLeft > 0) s"$daysLeft days"
+    else dailyChallengesTimeLeft
+  }
 
   private[menu] def challengeButton(player: Player, challenge: Challenge): Button = {
     val playerStatistic = player.statistics.get(challenge.statisticId)
@@ -92,7 +119,8 @@ object ChallengesMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      challengeService: ChallengeService
+      challengeService: ChallengeService,
+      serverDataService: ServerDataService
   ): Menu = Menu(
     "Challenges",
     MenuSize.ONE_ROW,
@@ -107,11 +135,14 @@ object ChallengesMenu {
 }
 
 object DailyChallengesMenu {
-  private final val infoButton = Button.noop(
+  private def infoButton(implicit
+      serverDataService: ServerDataService
+  ) = Button.noop(
     ItemType.BOOK,
     "Daily Challenges",
     List(
-      "Complete them all!"
+      "Smaller tasks that can be completed every day.",
+      s"Time left: ${ChallengesMenu.dailyChallengesTimeLeft}"
     )
   )
 
@@ -124,7 +155,8 @@ object DailyChallengesMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      challengeService: ChallengeService
+      challengeService: ChallengeService,
+      serverDataService: ServerDataService
   ): Menu = {
     var challenges: Map[Int, Button] = Map.empty
     challengeService.activeDailies.foreach { challenge =>
@@ -143,11 +175,14 @@ object DailyChallengesMenu {
 }
 
 object MonthlyChallengesMenu {
-  private final val infoButton = Button.noop(
+  private def infoButton(implicit
+      serverDataService: ServerDataService
+  ) = Button.noop(
     ItemType.BOOK,
     "Monthly Challenges",
     List(
-      "Complete them all!"
+      "Larger tasks that can be completed every war.",
+      s"Time left: ${ChallengesMenu.monthlyChallengesTimeLeft}"
     )
   )
 
@@ -160,7 +195,8 @@ object MonthlyChallengesMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      challengeService: ChallengeService
+      challengeService: ChallengeService,
+      serverDataService: ServerDataService
   ): Menu = {
     var challenges: Map[Int, Button] = Map.empty
     challengeService.activeDailies.foreach { challenge =>
