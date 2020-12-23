@@ -18,7 +18,6 @@ case class Challenge(
 ) {
   lazy val isDaily: Boolean = id.startsWith("DAILY")
   lazy val isMonthly: Boolean = id.startsWith("MONTHLY")
-  lazy val isAlltime: Boolean = id.startsWith("ALLTIME")
 }
 
 case class ActiveChallenge(

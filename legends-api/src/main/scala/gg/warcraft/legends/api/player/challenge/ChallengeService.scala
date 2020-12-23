@@ -28,7 +28,6 @@ class ChallengeService(implicit
   private var _challenges: Map[String, Challenge] = Map.empty
   private var dailies: List[Challenge] = Nil
   private var monthlies: List[Challenge] = Nil
-  private var alltimes: List[Challenge] = Nil
   def challengesById: Map[String, Challenge] = _challenges
 
   private var _activeDailies: List[Challenge] = Nil
@@ -45,7 +44,6 @@ class ChallengeService(implicit
       it match {
         case it if it.id.startsWith("DAILY")   => dailies ::= it
         case it if it.id.startsWith("MONTHLY") => monthlies ::= it
-        case it if it.id.startsWith("ALLTIME") => alltimes ::= it
       }
     }
 
