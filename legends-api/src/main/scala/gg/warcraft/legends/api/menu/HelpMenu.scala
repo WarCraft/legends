@@ -299,30 +299,28 @@ object HelpMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService
-  ): Menu = {
-    Menu(
-      "Help Menu",
-      MenuSize.TWO_ROWS,
-      Map(
-        0 -> infoButton,
-        9 -> Button.back(MainMenu.apply),
-        // 1st row
-        2 -> serverButton,
-        3 -> racesButton,
-        4 -> combatClassesButton,
-        5 -> objectivesButton,
-        6 -> resourcesButton,
-        7 -> siegeButton,
-        8 -> houseButton,
-        // 2nd row
-        11 -> warButton,
-        12 -> skirmishButton,
-        13 -> rewardsButton,
-        14 -> challengesButton,
-        15 -> leaderboardsButton,
-        16 -> shopButton,
-        17 -> staffButton
-      )
+  ): Menu = Menu(
+    "Help Menu",
+    MenuSize.TWO_ROWS,
+    Map(
+      0 -> infoButton,
+      9 -> Button.back(MainMenu.apply),
+      // 1st row
+      2 -> serverButton,
+      3 -> racesButton,
+      4 -> combatClassesButton,
+      5 -> objectivesButton,
+      6 -> resourcesButton,
+      7 -> siegeButton,
+      8 -> houseButton,
+      // 2nd row
+      11 -> warButton,
+      12 -> skirmishButton,
+      13 -> rewardsButton,
+      14 -> challengesButton,
+      15 -> leaderboardsButton,
+      16 -> shopButton,
+      17 -> staffButton
     )
-  }
+  )
 }
