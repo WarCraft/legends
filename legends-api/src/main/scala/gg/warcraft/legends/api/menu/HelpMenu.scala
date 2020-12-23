@@ -14,11 +14,11 @@ import gg.warcraft.monolith.api.core.ColorCode
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.ItemType
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
-import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
 
 object HelpMenu {
-  private final val infoButton = Button(
+  private final val infoButton = Button.noop(
     ItemType.BOOK,
     "Help Menu",
     List(
@@ -30,9 +30,9 @@ object HelpMenu {
       "reading this menu you still have more questions",
       "do not hesitate to contact a member of staff!"
     )
-  ) { _ => () }
+  )
 
-  private final val serverButton: Button = Button(
+  private final val serverButton: Button = Button.noop(
     ItemType.BOOK,
     "WarCraft: Legends",
     List(
@@ -45,9 +45,9 @@ object HelpMenu {
       "it out in its eternal conflict and it appears",
       "you too have been summoned."
     )
-  ) { _ => () }
+  )
 
-  private final val racesButton = Button(
+  private final val racesButton = Button.noop(
     ItemType.BOOK,
     "4 Races",
     List(
@@ -66,9 +66,9 @@ object HelpMenu {
       "You can open the race menu via the main menu",
       "(/help) and then [SHIFT RIGHT CLICK] on yourself."
     )
-  ) { _ => () }
+  )
 
-  private final val combatClassesButton = Button(
+  private final val combatClassesButton = Button.noop(
     ItemType.BOOK,
     "Combat Classes",
     List(
@@ -85,9 +85,9 @@ object HelpMenu {
       "You can open the class menu via the main menu",
       "(/help) and then [SHIFT LEFT CLICK] on yourself."
     )
-  ) { _ => () }
+  )
 
-  private final val objectivesButton = Button(
+  private final val objectivesButton = Button.noop(
     ItemType.BOOK,
     "Objectives",
     List(
@@ -105,9 +105,9 @@ object HelpMenu {
       "Every island has 2 Keeps, 2 Outposts, and",
       "3 Resource camps."
     )
-  ) { _ => () }
+  )
 
-  private final val resourcesButton = Button(
+  private final val resourcesButton = Button.noop(
     ItemType.BOOK,
     "Resources",
     List(
@@ -122,9 +122,9 @@ object HelpMenu {
       "build siege weapons by occupying their lumber",
       "yard or mine."
     )
-  ) { _ => () }
+  )
 
-  private final val siegeButton = Button(
+  private final val siegeButton = Button.noop(
     ItemType.BOOK,
     "Siege Weapons",
     List(
@@ -140,9 +140,9 @@ object HelpMenu {
       "treb after which a final pull of the leaver fires",
       "the projectile!"
     )
-  ) { _ => () }
+  )
 
-  private final val houseButton = Button(
+  private final val houseButton = Button.noop(
     ItemType.BOOK,
     "Housing",
     List(
@@ -159,9 +159,9 @@ object HelpMenu {
       "You can leave your house early via the same sign,",
       "but beware that any items still in the house are lost!"
     )
-  ) { _ => () }
+  )
 
-  private final val warButton = Button(
+  private final val warButton = Button.noop(
     ItemType.BOOK,
     "Warfare",
     List(
@@ -176,9 +176,9 @@ object HelpMenu {
       "War Score determines which race wins the war at the",
       "end of the month."
     )
-  ) { _ => () }
+  )
 
-  private final val skirmishButton = Button(
+  private final val skirmishButton = Button.noop(
     ItemType.BOOK,
     "Skirmishes",
     List(
@@ -196,9 +196,9 @@ object HelpMenu {
       "time and you can find a countdown timer in the TAB-list.",
       "Make sure you bring your friends!"
     )
-  ) { _ => () }
+  )
 
-  private final val rewardsButton = Button(
+  private final val rewardsButton = Button.noop(
     ItemType.BOOK,
     "Rewards",
     List(
@@ -216,9 +216,9 @@ object HelpMenu {
       "Mobs drop gold which is used to pay for your house and",
       "trading with other players."
     )
-  ) { _ => () }
+  )
 
-  private final val challengesButton = Button(
+  private final val challengesButton = Button.noop(
     ItemType.BOOK,
     "Challenges",
     List(
@@ -237,9 +237,9 @@ object HelpMenu {
       "",
       "can you complete them all?"
     )
-  ) { _ => () }
+  )
 
-  private final val leaderboardsButton = Button(
+  private final val leaderboardsButton = Button.noop(
     ItemType.BOOK,
     "Leaderboards",
     List(
@@ -253,9 +253,9 @@ object HelpMenu {
       "Check out who is currently owning the hardest at",
       ColorCode.YELLOW + "warcraft.gg/leaderboard"
     )
-  ) { _ => () }
+  )
 
-  private final val shopButton = Button(
+  private final val shopButton = Button.noop(
     ItemType.BOOK,
     "WarCraft: Shop",
     List(
@@ -272,9 +272,9 @@ object HelpMenu {
       "be bought with Fragments which are available",
       "from the web shop at " + ColorCode.YELLOW + "shop.warcraft.gg"
     )
-  ) { _ => () }
+  )
 
-  private final val staffButton = Button(
+  private final val staffButton = Button.noop(
     ItemType.BOOK,
     "Staff",
     List(
@@ -286,7 +286,7 @@ object HelpMenu {
       "",
       "We're always happy to help!"
     )
-  ) { _ => () }
+  )
 
   def apply(
       player: Player
