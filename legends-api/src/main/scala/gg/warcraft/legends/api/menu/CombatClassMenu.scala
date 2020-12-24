@@ -15,11 +15,11 @@ import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.util.legendsplayer._
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
-import gg.warcraft.monolith.api.item.{ItemType, ItemTypeOrVariant}
 import gg.warcraft.monolith.api.item.variant.AxeVariant
+import gg.warcraft.monolith.api.item.{ItemType, ItemTypeOrVariant}
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
-import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.util.TimeUtils
 import gg.warcraft.monolith.api.util.string._
 
@@ -67,9 +67,7 @@ object CombatClassMenu {
       tooltip.toList
     ) { click =>
       if (!isLocked && cooldown.isEmpty && click.isShiftRight) {
-        // TODO does this belong in a CombatClassService which then calls combat data?
-        val newCombatData = player.combatData.copy(combatClass = Some(combatClass))
-        combatDataService.setCombatData(newCombatData)
+        combatDataService.setCombatClass(combatClass)
       }
     }
   }
@@ -80,30 +78,27 @@ object CombatClassMenu {
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
-  ): Button = {
-    val combatClass = combatClassService.combatClasses(Guardian.name)
-    combatClassButton(
-      player,
-      combatClass,
-      ItemType.SHIELD,
-      cooldown,
-      "Guardians wield a sword and a shield.",
-      "Their skills focus on control and defense.",
-      "",
-      s"$YELLOW[Left Click] Basic Attack",
-      "A normal Minecraft melee swing.",
-      s"$YELLOW[Right Click] Hamstring",
-      "Damage your enemy and slow them for a",
-      "short duration.",
-      s"$YELLOW[Shift Left Click] Slam",
-      "An overpowering blow that damages the",
-      "target, knocks them back, and makes",
-      "them nauseous for a moderate duration.",
-      s"$YELLOW[Shift Right Click] Stand Your Ground",
-      "Bunker down to greatly increase all of your",
-      "resistances for a moderate duration."
-    )
-  }
+  ): Button = combatClassButton(
+    player,
+    combatClassService.combatClasses(Guardian.name),
+    ItemType.SHIELD,
+    cooldown,
+    "Guardians wield a sword and a shield.",
+    "Their skills focus on control and defense.",
+    "",
+    s"$YELLOW[Left Click] Basic Attack",
+    "A normal Minecraft melee swing.",
+    s"$YELLOW[Right Click] Hamstring",
+    "Damage your enemy and slow them for a",
+    "short duration.",
+    s"$YELLOW[Shift Left Click] Slam",
+    "An overpowering blow that damages the",
+    "target, knocks them back, and makes",
+    "them nauseous for a moderate duration.",
+    s"$YELLOW[Shift Right Click] Stand Your Ground",
+    "Bunker down to greatly increase all of your",
+    "resistances for a moderate duration."
+  )
 
   def berserkerButton(
       player: Player,
@@ -111,32 +106,29 @@ object CombatClassMenu {
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
-  ): Button = {
-    val combatClass = combatClassService.combatClasses(Berserker.name)
-    combatClassButton(
-      player,
-      combatClass,
-      AxeVariant.STONE,
-      cooldown,
-      "Berserkers dual wield axes. Their skills",
-      "focus on damage and recovering health.",
-      "",
-      s"$YELLOW[Left Click] Basic Attack",
-      "A normal Minecraft melee swing.",
-      s"$YELLOW[Right Click] Maul",
-      "Maul your enemy for damage and receive",
-      "absorption for a short duration.",
-      s"$YELLOW[Shift Left Click] Grudge",
-      "Mark a player with your grudge for a",
-      "moderate duration. Any attacks made",
-      "against them heal you a little bit.",
-      s"$YELLOW[Shift Right Click] Shatter",
-      "Slam down into the ground in front of",
-      "you, damaging enemies while throwing",
-      "them into the air and making them",
-      "nauseous for a moderate duration."
-    )
-  }
+  ): Button = combatClassButton(
+    player,
+    combatClassService.combatClasses(Berserker.name),
+    AxeVariant.STONE,
+    cooldown,
+    "Berserkers dual wield axes. Their skills",
+    "focus on damage and recovering health.",
+    "",
+    s"$YELLOW[Left Click] Basic Attack",
+    "A normal Minecraft melee swing.",
+    s"$YELLOW[Right Click] Maul",
+    "Maul your enemy for damage and receive",
+    "absorption for a short duration.",
+    s"$YELLOW[Shift Left Click] Grudge",
+    "Mark a player with your grudge for a",
+    "moderate duration. Any attacks made",
+    "against them heal you a little bit.",
+    s"$YELLOW[Shift Right Click] Shatter",
+    "Slam down into the ground in front of",
+    "you, damaging enemies while throwing",
+    "them into the air and making them",
+    "nauseous for a moderate duration."
+  )
 
   def marksmanButton(
       player: Player,
@@ -144,30 +136,27 @@ object CombatClassMenu {
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
-  ): Button = {
-    val combatClass = combatClassService.combatClasses(Marksman.name)
-    combatClassButton(
-      player,
-      combatClass,
-      ItemType.CROSSBOW,
-      cooldown,
-      "Marksmen use a crossbow. Their skills",
-      "focus on damage while sacrificing mobility.",
-      "",
-      s"$YELLOW[Left Click] Power Shot",
-      "Fire a high velocity shot dealing damage",
-      "and knocking back your target.",
-      s"$YELLOW[Right Click] Basic Attack",
-      "A normal Minecraft bow shot.",
-      s"$YELLOW[Shift Left Click] Focus",
-      "Focus your vision and greatly increase",
-      "your damage while becoming immobile",
-      "(cast again to cancel).",
-      s"$YELLOW[Shift Right Click] Sneak",
-      "Gain a speed boost and hide in plain",
-      "sight, becoming invisible to enemies."
-    )
-  }
+  ): Button = combatClassButton(
+    player,
+    combatClassService.combatClasses(Marksman.name),
+    ItemType.CROSSBOW,
+    cooldown,
+    "Marksmen use a crossbow. Their skills",
+    "focus on damage while sacrificing mobility.",
+    "",
+    s"$YELLOW[Left Click] Power Shot",
+    "Fire a high velocity shot dealing damage",
+    "and knocking back your target.",
+    s"$YELLOW[Right Click] Basic Attack",
+    "A normal Minecraft bow shot.",
+    s"$YELLOW[Shift Left Click] Focus",
+    "Focus your vision and greatly increase",
+    "your damage while becoming immobile",
+    "(cast again to cancel).",
+    s"$YELLOW[Shift Right Click] Sneak",
+    "Gain a speed boost and hide in plain",
+    "sight, becoming invisible to enemies."
+  )
 
   def rangerButton(
       player: Player,
@@ -175,28 +164,25 @@ object CombatClassMenu {
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
-  ): Button = {
-    val combatClass = combatClassService.combatClasses(Ranger.name)
-    combatClassButton(
-      player,
-      combatClass,
-      ItemType.BOW,
-      cooldown,
-      "Hunters use bow and arrow. Their skills",
-      "offer damage, control, and mobility.",
-      "",
-      s"$YELLOW[Left Click] Toxic Arrow",
-      "Fire a poisoned arrow damaging your target",
-      "and applying poison for a short duration.",
-      s"$YELLOW[Right Click] Basic Attack",
-      "A normal Minecraft bow shot.",
-      s"$YELLOW[Shift Left Click] Trap",
-      "Place a trap at your feet which roots",
-      "any enemies that trigger it.",
-      s"$YELLOW[Shift Right Click] Disengage",
-      "Leap backwards a sizable distance."
-    )
-  }
+  ): Button = combatClassButton(
+    player,
+    combatClassService.combatClasses(Ranger.name),
+    ItemType.BOW,
+    cooldown,
+    "Hunters use bow and arrow. Their skills",
+    "offer damage, control, and mobility.",
+    "",
+    s"$YELLOW[Left Click] Toxic Arrow",
+    "Fire a poisoned arrow damaging your target",
+    "and applying poison for a short duration.",
+    s"$YELLOW[Right Click] Basic Attack",
+    "A normal Minecraft bow shot.",
+    s"$YELLOW[Shift Left Click] Trap",
+    "Place a trap at your feet which roots",
+    "any enemies that trigger it.",
+    s"$YELLOW[Shift Right Click] Disengage",
+    "Leap backwards a sizable distance."
+  )
 
   def elementalistButton(
       player: Player,
@@ -204,31 +190,28 @@ object CombatClassMenu {
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
-  ): Button = {
-    val combatClass = combatClassService.combatClasses(Elementalist.name)
-    combatClassButton(
-      player,
-      combatClass,
-      ItemType.HOE,
-      cooldown,
-      "Elementalists wield a staff (hoe). Their",
-      "skills offer large area damage.",
-      "", // TODO refactor these skill descriptions into combat class config
-      s"$YELLOW[Left Click] Fireball",
-      "Fling a ball of fire at your target",
-      "dealing damage and setting them on fire",
-      s"$YELLOW[Right Click] Bolt",
-      "Call down lightning at your targeted",
-      "location damaging nearby enemies.",
-      s"$YELLOW[Shift Left Click] Hail Blast",
-      "Blast an icy torrent in front of you",
-      "damaging and slowing enemies.",
-      s"$YELLOW[Shift Right Click] Molten Storm",
-      "Conjure a storm of molten rocks at your",
-      "targeted location. Each fireball damages",
-      "and briefly sets enemies on fire."
-    )
-  }
+  ): Button = combatClassButton(
+    player,
+    combatClassService.combatClasses(Elementalist.name),
+    ItemType.HOE,
+    cooldown,
+    "Elementalists wield a staff (hoe). Their",
+    "skills offer large area damage.",
+    "", // TODO refactor these skill descriptions into combat class config
+    s"$YELLOW[Left Click] Fireball",
+    "Fling a ball of fire at your target",
+    "dealing damage and setting them on fire",
+    s"$YELLOW[Right Click] Bolt",
+    "Call down lightning at your targeted",
+    "location damaging nearby enemies.",
+    s"$YELLOW[Shift Left Click] Hail Blast",
+    "Blast an icy torrent in front of you",
+    "damaging and slowing enemies.",
+    s"$YELLOW[Shift Right Click] Molten Storm",
+    "Conjure a storm of molten rocks at your",
+    "targeted location. Each fireball damages",
+    "and briefly sets enemies on fire."
+  )
 
   def wizardButton(
       player: Player,
@@ -236,33 +219,30 @@ object CombatClassMenu {
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
-  ): Button = {
-    val combatClass = combatClassService.combatClasses(Wizard.name)
-    combatClassButton(
-      player,
-      combatClass,
-      ItemType.STICK,
-      cooldown,
-      "Wizards wield wand (stick) and book. Their",
-      "skills focus on area control, and mobility.",
-      "",
-      s"$YELLOW[Left Click] Fireball",
-      "Fling a ball of fire at your target",
-      "dealing damage and setting them on fire",
-      s"$YELLOW[Right Click] Arcane Missile",
-      "Cast an arcane missile damaging nearby",
-      "enemies on impact.",
-      s"$YELLOW[Shift Left Click] Teleport",
-      "Teleport to your targeted location, releasing",
-      "an arcane explosion around you on arrival",
-      "damaging and slowing nearby enemies.",
-      s"$YELLOW[Shift Right Click] Mass Piggify",
-      "Conjure chaotic energies at your targeted",
-      "location, which after a short delay force",
-      "your enemies to ride uncontrollable pigs",
-      "making them nauseous."
-    )
-  }
+  ): Button = combatClassButton(
+    player,
+    combatClassService.combatClasses(Wizard.name),
+    ItemType.STICK,
+    cooldown,
+    "Wizards wield wand (stick) and book. Their",
+    "skills focus on area control, and mobility.",
+    "",
+    s"$YELLOW[Left Click] Fireball",
+    "Fling a ball of fire at your target",
+    "dealing damage and setting them on fire",
+    s"$YELLOW[Right Click] Arcane Missile",
+    "Cast an arcane missile damaging nearby",
+    "enemies on impact.",
+    s"$YELLOW[Shift Left Click] Teleport",
+    "Teleport to your targeted location, releasing",
+    "an arcane explosion around you on arrival",
+    "damaging and slowing nearby enemies.",
+    s"$YELLOW[Shift Right Click] Mass Piggify",
+    "Conjure chaotic energies at your targeted",
+    "location, which after a short delay force",
+    "your enemies to ride uncontrollable pigs",
+    "making them nauseous."
+  )
 
   def apply(
       player: Player
@@ -285,17 +265,15 @@ object CombatClassMenu {
       if (cooldown <= System.currentTimeMillis) None
       else Some(TimeUtils.timeUntil(cooldown))
 
-    val infoButton = Button(
+    val infoButton = Button.noop(
       ItemType.BOOK,
       "Choosing a Combat Class",
-      List(
-        s"You are currently fighting as $combatClassPrefix",
-        s"$YELLOW$combatClassName",
-        "",
-        "You can change your combat class",
-        "once every 10 minutes."
-      )
-    ) { _ => () }
+      s"You are currently fighting as $combatClassPrefix",
+      s"$YELLOW$combatClassName",
+      "",
+      "You can change your combat class",
+      "once every 10 minutes."
+    )
 
     Menu(
       "Combat Class",

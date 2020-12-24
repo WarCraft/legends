@@ -6,18 +6,18 @@
 
 package gg.warcraft.legends.api.item.crate
 
-import java.util.UUID
-import java.util.logging.Logger
-
 import gg.warcraft.legends.api.LegendsConfig
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.legends.api.item.ItemRarity._
 import gg.warcraft.legends.api.player.currency.LegendsCurrency
 import gg.warcraft.monolith.api.core.Message
 import gg.warcraft.monolith.api.item.{Carrot, GoldenApple, GoldenCarrot}
-import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.PlayerService
+import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.util.string._
+
+import java.util.UUID
+import java.util.logging.Logger
 
 class LootCrateService(implicit
     logger: Logger,
@@ -25,7 +25,6 @@ class LootCrateService(implicit
     currencyService: CurrencyService
 ) {
   private var _crates: Map[String, LootCrate] = Map.empty
-
   def crates: Map[String, LootCrate] = _crates
 
   def readConfig(config: LegendsConfig): Unit =
@@ -75,9 +74,9 @@ class LootCrateService(implicit
     val item = rarity match {
       case Common => // TODO add default values to item case classes
         Carrot(s"${Common.color}Carrot", tooltip, 1, Set.empty, true)
-      case Rare      =>
+      case Rare =>
         GoldenCarrot(s"${Rare.color}Golden Carrot", tooltip, 1, Set.empty, true)
-      case Epic      =>
+      case Epic =>
         GoldenApple(false, s"${Epic.color}Golden Apple", tooltip, 1, Set.empty, true)
       case Legendary =>
         GoldenApple(
@@ -96,7 +95,7 @@ class LootCrateService(implicit
 
   private def awardGold(playerId: UUID, rarity: ItemRarity): Boolean = {
     val amount = rarity match {
-      case Common => 25
+      case Common    => 25
       case Rare      => 100
       case Epic      => 300
       case Legendary => 600
