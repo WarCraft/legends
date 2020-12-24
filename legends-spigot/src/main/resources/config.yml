@@ -45,57 +45,6 @@ skirmishTimes:
   - 20 # UTC = 15 NYT
   - 23 # UTC = 18 NYT
 
-levels:
-  - { value: 1, color: WHITE, requiredFavor: 0, rewards: [] }
-  - { value: 2, color: WHITE, requiredFavor: 1000, rewards: [] }
-  - { value: 3, color: WHITE, requiredFavor: 2000, rewards: [] }
-  - { value: 4, color: WHITE, requiredFavor: 3000, rewards: [] }
-  - { value: 5, color: WHITE, requiredFavor: 4000, rewards: [] }
-  - { value: 6, color: WHITE, requiredFavor: 5000, rewards: [] }
-  - { value: 7, color: WHITE, requiredFavor: 6000, rewards: [] }
-  - { value: 8, color: WHITE, requiredFavor: 7000, rewards: [] }
-  - { value: 9, color: WHITE, requiredFavor: 8000, rewards: [] }
-  - { value: 10, color: WHITE, requiredFavor: 9000, rewards: [] }
-  - { value: 11, color: WHITE, requiredFavor: 11000, rewards: [] }
-  - { value: 12, color: WHITE, requiredFavor: 13000, rewards: [] }
-  - { value: 13, color: WHITE, requiredFavor: 15000, rewards: [] }
-  - { value: 14, color: WHITE, requiredFavor: 17000, rewards: [] }
-  - { value: 15, color: WHITE, requiredFavor: 19000, rewards: [] }
-  - { value: 16, color: WHITE, requiredFavor: 21000, rewards: [] }
-  - { value: 17, color: WHITE, requiredFavor: 23000, rewards: [] }
-  - { value: 18, color: WHITE, requiredFavor: 25000, rewards: [] }
-  - { value: 19, color: WHITE, requiredFavor: 27000, rewards: [] }
-  - { value: 20, color: WHITE, requiredFavor: 29000, rewards: [] }
-  - { value: 21, color: WHITE, requiredFavor: 33000, rewards: [] }
-  - { value: 22, color: WHITE, requiredFavor: 37000, rewards: [] }
-  - { value: 23, color: WHITE, requiredFavor: 41000, rewards: [] }
-  - { value: 24, color: WHITE, requiredFavor: 45000, rewards: [] }
-  - { value: 25, color: WHITE, requiredFavor: 49000, rewards: [] }
-  - { value: 26, color: WHITE, requiredFavor: 53000, rewards: [] }
-  - { value: 27, color: WHITE, requiredFavor: 57000, rewards: [] }
-  - { value: 28, color: WHITE, requiredFavor: 61000, rewards: [] }
-  - { value: 29, color: WHITE, requiredFavor: 65000, rewards: [] }
-  - { value: 30, color: WHITE, requiredFavor: 69000, rewards: [] }
-  - { value: 31, color: WHITE, requiredFavor: 77000, rewards: [] }
-  - { value: 32, color: WHITE, requiredFavor: 85000, rewards: [] }
-  - { value: 33, color: WHITE, requiredFavor: 93000, rewards: [] }
-  - { value: 34, color: WHITE, requiredFavor: 101000, rewards: [] }
-  - { value: 35, color: WHITE, requiredFavor: 109000, rewards: [] }
-  - { value: 36, color: WHITE, requiredFavor: 117000, rewards: [] }
-  - { value: 37, color: WHITE, requiredFavor: 125000, rewards: [] }
-  - { value: 38, color: WHITE, requiredFavor: 133000, rewards: [] }
-  - { value: 39, color: WHITE, requiredFavor: 141000, rewards: [] }
-  - { value: 41, color: WHITE, requiredFavor: 149000, rewards: [] }
-  - { value: 42, color: WHITE, requiredFavor: 165000, rewards: [] }
-  - { value: 43, color: WHITE, requiredFavor: 181000, rewards: [] }
-  - { value: 44, color: WHITE, requiredFavor: 197000, rewards: [] }
-  - { value: 45, color: WHITE, requiredFavor: 213000, rewards: [] }
-  - { value: 46, color: WHITE, requiredFavor: 229000, rewards: [] }
-  - { value: 47, color: WHITE, requiredFavor: 245000, rewards: [] }
-  - { value: 48, color: WHITE, requiredFavor: 261000, rewards: [] }
-  - { value: 49, color: WHITE, requiredFavor: 277000, rewards: [] }
-  - { value: 50, color: WHITE, requiredFavor: 293000, rewards: [] }
-
 challenges:
   # dailies
   - id: DAILY_KILLS
@@ -219,3 +168,84 @@ challenges:
     description:
     requirement: 30
     reward: 500
+
+dailyRewards:
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "LEGEND_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "LEGEND_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 2 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 2 }
+  - { crate: "WAR_CRATE", count: 1 }
+  - { crate: "WAR_CRATE", count: 2 }
+  - { crate: "LEGEND_CRATE", count: 2 }
+  - { crate: "WAR_CRATE", count: 2 }
+  - { crate: "WAR_CRATE", count: 2 }
+  - { crate: "WAR_CRATE", count: 2 }
+  - { crate: "WAR_CRATE", count: 2 }
+  - { crate: "WAR_CRATE", count: 2 }
+  - { crate: "WAR_CRATE", count: 2 }
+  - { crate: "TITAN_CRATE", count: 1 }
+
+levels:
+  - { value: 1, color: WHITE, requiredFavor: 0, rewards: [] }
+  - { value: 2, color: WHITE, requiredFavor: 1000, rewards: [] }
+  - { value: 3, color: WHITE, requiredFavor: 2000, rewards: [] }
+  - { value: 4, color: WHITE, requiredFavor: 3000, rewards: [] }
+  - { value: 5, color: WHITE, requiredFavor: 4000, rewards: [] }
+  - { value: 6, color: WHITE, requiredFavor: 5000, rewards: [] }
+  - { value: 7, color: WHITE, requiredFavor: 6000, rewards: [] }
+  - { value: 8, color: WHITE, requiredFavor: 7000, rewards: [] }
+  - { value: 9, color: WHITE, requiredFavor: 8000, rewards: [] }
+  - { value: 10, color: WHITE, requiredFavor: 9000, rewards: [] }
+  - { value: 11, color: WHITE, requiredFavor: 11000, rewards: [] }
+  - { value: 12, color: WHITE, requiredFavor: 13000, rewards: [] }
+  - { value: 13, color: WHITE, requiredFavor: 15000, rewards: [] }
+  - { value: 14, color: WHITE, requiredFavor: 17000, rewards: [] }
+  - { value: 15, color: WHITE, requiredFavor: 19000, rewards: [] }
+  - { value: 16, color: WHITE, requiredFavor: 21000, rewards: [] }
+  - { value: 17, color: WHITE, requiredFavor: 23000, rewards: [] }
+  - { value: 18, color: WHITE, requiredFavor: 25000, rewards: [] }
+  - { value: 19, color: WHITE, requiredFavor: 27000, rewards: [] }
+  - { value: 20, color: WHITE, requiredFavor: 29000, rewards: [] }
+  - { value: 21, color: WHITE, requiredFavor: 33000, rewards: [] }
+  - { value: 22, color: WHITE, requiredFavor: 37000, rewards: [] }
+  - { value: 23, color: WHITE, requiredFavor: 41000, rewards: [] }
+  - { value: 24, color: WHITE, requiredFavor: 45000, rewards: [] }
+  - { value: 25, color: WHITE, requiredFavor: 49000, rewards: [] }
+  - { value: 26, color: WHITE, requiredFavor: 53000, rewards: [] }
+  - { value: 27, color: WHITE, requiredFavor: 57000, rewards: [] }
+  - { value: 28, color: WHITE, requiredFavor: 61000, rewards: [] }
+  - { value: 29, color: WHITE, requiredFavor: 65000, rewards: [] }
+  - { value: 30, color: WHITE, requiredFavor: 69000, rewards: [] }
+  - { value: 31, color: WHITE, requiredFavor: 77000, rewards: [] }
+  - { value: 32, color: WHITE, requiredFavor: 85000, rewards: [] }
+  - { value: 33, color: WHITE, requiredFavor: 93000, rewards: [] }
+  - { value: 34, color: WHITE, requiredFavor: 101000, rewards: [] }
+  - { value: 35, color: WHITE, requiredFavor: 109000, rewards: [] }
+  - { value: 36, color: WHITE, requiredFavor: 117000, rewards: [] }
+  - { value: 37, color: WHITE, requiredFavor: 125000, rewards: [] }
+  - { value: 38, color: WHITE, requiredFavor: 133000, rewards: [] }
+  - { value: 39, color: WHITE, requiredFavor: 141000, rewards: [] }
+  - { value: 41, color: WHITE, requiredFavor: 149000, rewards: [] }
+  - { value: 42, color: WHITE, requiredFavor: 165000, rewards: [] }
+  - { value: 43, color: WHITE, requiredFavor: 181000, rewards: [] }
+  - { value: 44, color: WHITE, requiredFavor: 197000, rewards: [] }
+  - { value: 45, color: WHITE, requiredFavor: 213000, rewards: [] }
+  - { value: 46, color: WHITE, requiredFavor: 229000, rewards: [] }
+  - { value: 47, color: WHITE, requiredFavor: 245000, rewards: [] }
+  - { value: 48, color: WHITE, requiredFavor: 261000, rewards: [] }
+  - { value: 49, color: WHITE, requiredFavor: 277000, rewards: [] }
+  - { value: 50, color: WHITE, requiredFavor: 293000, rewards: [] }

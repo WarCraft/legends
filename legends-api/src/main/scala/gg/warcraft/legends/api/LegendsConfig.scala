@@ -22,5 +22,11 @@ case class LegendsConfig(
     eliteMobKillFavor: Int,
     lootCrates: List[LootCrate],
     challenges: List[Challenge],
+    dailyRewards: List[DailyReward],
     skirmishTimes: List[Int]
+)
+
+case class DailyReward(
+    crateId: String,
+    count: Int
 )
