@@ -8,11 +8,11 @@ package gg.warcraft.legends.api.item.crate.reward
 
 import gg.warcraft.legends.api.LegendsConfig
 import gg.warcraft.legends.api.item.crate.{LootCrate, LootCrateService}
+import gg.warcraft.monolith.api.core.Message
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.item.ItemService
 import gg.warcraft.monolith.api.player.PlayerService
 
-import java.time.LocalDate
 import java.util.UUID
 import scala.util.chaining._
 
@@ -23,8 +23,6 @@ class LoginRewardService(implicit
     playerService: PlayerService,
     itemService: ItemService
 ) {
-  private val timeZone = serverDataService.serverTimeZone
-
   private var _rewards: Map[Int, LootCrate] = Map.empty
   def rewards: Map[Int, LootCrate] = _rewards
 
@@ -41,14 +39,23 @@ class LoginRewardService(implicit
 
   def claimReward(playerId: UUID): Unit = {
     val outdated = _rewardsClaimed(playerId)
-    val today = LocalDate.now(timeZone)
+    val today = serverDataService.today
     if (today.isAfter(outdated.date)) {
       val updated = outdated.copy(counter = outdated.counter + 1, date = today)
       val rewards = _rewards(updated.counter)
-      itemService.giveTo(playerId, rewards)
+      if (itemService.giveTo(playerId, rewards)) {
+        _rewardsClaimed += (playerId -> updated)
+        repository.save(updated)
 
-      _rewardsClaimed += (playerId -> updated)
-      repository.save(updated)
+        val plural = if (rewards.count > 1) "s" else ""
+        val message = Message.server(
+          s"""Welcome back to WarCraft!
+             |You received ${rewards.count} ${rewards.name}$plural just for logging in today,
+             |we hope you have fun and to see you again tomorrow for even greater rewards.
+             |""".stripMargin.replace('\n', ' ')
+        )
+        playerService.sendMessage(playerId, message)
+      }
     }
   }
 

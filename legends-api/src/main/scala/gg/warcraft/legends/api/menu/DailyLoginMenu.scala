@@ -6,241 +6,84 @@
 
 package gg.warcraft.legends.api.menu
 
+import gg.warcraft.combat.api.combatclass.CombatClassService
+import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.legends.api.item.crate.LootCrate
+import gg.warcraft.legends.api.item.crate.reward.{
+  LoginRewardService, LoginRewardsClaimed
+}
+import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
+import gg.warcraft.legends.api.player.level.LevelService
+import gg.warcraft.monolith.api.block.variant.GlassVariant
+import gg.warcraft.monolith.api.core.ColorCode
+import gg.warcraft.monolith.api.core.data.ServerDataService
+import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.item.{ItemType, ItemTypeOrVariant}
+import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
+import gg.warcraft.monolith.api.player.currency.CurrencyService
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
+
 object DailyLoginMenu {
+  private final val infoButton = Button.noop(
+    ItemType.BOOK,
+    "Daily Login",
+    "Every day you get a reward just for",
+    "logging in! The more often you log in, the",
+    "greater the rewards. And don't worry; missing",
+    "a day or two does not reset your progress."
+  )
 
+  private def rewardButton(
+      player: Player,
+      claimed: LoginRewardsClaimed,
+      day: Int,
+      reward: LootCrate
+  )(implicit
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService
+  ): Button = {
+    val plural = if (reward.count > 1) "s" else ""
+    val icon: ItemTypeOrVariant =
+      if (claimed.counter >= day) {
+        if (day % 7 == 0) GlassVariant.BLACK else GlassVariant.BROWN
+      } else reward.chestVariant
+    val canClaim = serverDataService.today.isAfter(claimed.date) &&
+      day == (claimed.counter - 1)
+    val claimText =
+      if (canClaim) s"${ColorCode.GREEN}[Click] To claim today's reward!"
+      else s"${ColorCode.GOLD}Come back tomorrow for another reward."
+    Button(
+      icon,
+      s"Day $day",
+      s"${reward.count} ${reward.name}$plural",
+      "",
+      claimText
+    ) { _ => if (canClaim) loginRewardService.claimReward(player.id) }
+  }
+
+  def apply(player: Player)(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService
+  ): Menu = {
+    val claimed = loginRewardService.rewardsClaimed(player.id)
+    Menu(
+      "Login Rewards",
+      MenuSize.FOUR_ROWS,
+      Map(
+        0 -> infoButton,
+        9 -> Button.back(MainMenu.apply)
+      ) ++ loginRewardService.rewards.map { it =>
+        val offset = (1 + (it._1 - 1) / 7) * 2
+        (it._1 + offset) -> rewardButton(player, claimed, it._1, it._2)
+      }
+    )
+  }
 }
-
-/*
-public class DefaultDailyLoginMenuFactory extends AbstractMenuFactory implements DailyLoginMenuFactory {
-    private static final String DAILY_LOGIN_COUNTER_DATA = "dailyLoginCounter";
-    private static final String DAILY_LOGIN_LAST_CLAIMED_DATA = "dailyLoginLastClaimed";
-    private static final NavigableMap<Integer, Item> DAILY_REWARDS = new TreeMap<>();
-
-    private final PlayerQueryService playerQueryService;
-    private final PlayerCommandService playerCommandService;
-    private final MenuCommandService menuCommandService;
-    private final MainMenuFactory mainMenuFactory;
-    private final Logger pluginLogger;
-
-    @Inject
-    public DefaultDailyLoginMenuFactory(PlayerQueryService playerQueryService,
-                                        PlayerCommandService playerCommandService,
-                                        MenuCommandService menuCommandService,
-                                        MenuBuilderFactory menuBuilderFactory,
-                                        ButtonBuilderFactory buttonBuilderFactory,
-                                        MainMenuFactory mainMenuFactory,
-                                        LootCrateBuilderFactory lootCrateBuilderFactory,
-                                        @PluginLogger Logger pluginLogger) {
-        super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
-        this.playerQueryService = playerQueryService;
-        this.playerCommandService = playerCommandService;
-        this.menuCommandService = menuCommandService;
-        this.mainMenuFactory = mainMenuFactory;
-        this.pluginLogger = pluginLogger;
-
-        if (DAILY_REWARDS.isEmpty()) {
-            StackableItem warCrate = (StackableItem) lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.WAR_CRATE).build();
-            StackableItem legendCrate = (StackableItem) lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.LEGEND_CRATE).build();
-            StackableItem titanCrate = (StackableItem) lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.TITAN_CRATE).build();
-
-            DAILY_REWARDS.put(1, warCrate);
-            DAILY_REWARDS.put(7, legendCrate);
-            DAILY_REWARDS.put(8, warCrate);
-            DAILY_REWARDS.put(14, legendCrate);
-            DAILY_REWARDS.put(15, warCrate.withCount(2));
-            DAILY_REWARDS.put(21, legendCrate.withCount(2));
-            DAILY_REWARDS.put(22, warCrate.withCount(2));
-            DAILY_REWARDS.put(28, titanCrate);
-        }
-    }
-
-    int getClaimCounter(Player player) {
-        String counterAsString = player.getData(DAILY_LOGIN_COUNTER_DATA);
-        int counter;
-        if (counterAsString == null) {
-            counter = 0;
-        } else {
-            try {
-                counter = Integer.parseInt(counterAsString);
-            } catch (NumberFormatException ex) {
-                pluginLogger.warning("Failed to create daily login menu for player " + player.getId() +
-                        ", could not parse counter data.");
-                return Integer.MAX_VALUE;
-            }
-        }
-        return counter;
-    }
-
-    LocalDate getLastClaimed(Player player) {
-        String lastClaimedAsString = player.getData(DAILY_LOGIN_LAST_CLAIMED_DATA);
-        LocalDate lastClaimed;
-        if (lastClaimedAsString == null) {
-            lastClaimed = LocalDate.now().minusDays(1);
-        } else {
-            try {
-                lastClaimed = LocalDate.parse(lastClaimedAsString);
-            } catch (DateTimeParseException ex) {
-                pluginLogger.warning("Failed to create daily login menu for player " + player.getId() +
-                        ", could not parse last claimed data.");
-                return LocalDate.now();
-            }
-        }
-        return lastClaimed;
-    }
-
-    Button createInfoButton() {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Daily Login");
-        builder.addTooltip("Every day you can get a reward just for");
-        builder.addTooltip("logging in! The more often you log in, the");
-        builder.addTooltip("more interesting the rewards. And don't");
-        builder.addTooltip("worry; missing a day or two does not reset");
-        builder.addTooltip("your progress.");
-        return builder.build();
-    }
-
-    Button createRewardButton(UUID playerId, int day, int claimed, boolean canClaim, boolean isSpecial) {
-        boolean dayClaimed = day <= claimed;
-        ItemType icon;
-        if (isSpecial) {
-            icon = dayClaimed ? ItemType.BARRIER : ItemType.CHEST; // TODO was icon = dayClaimed ? ItemType.BLACK_STAINED_GLASS : ItemType.ENDER_CHEST;
-        } else {
-            icon = dayClaimed ? ItemType.BARRIER : ItemType.CHEST; // TODO was icon = dayClaimed ? ItemType.BROWN_STAINED_GLASS : ItemType.CHEST;
-        }
-
-        LootCrateType lootCrateType;
-        ButtonBuilder builder = createSimpleButtonBuilder(icon, "Day " + day);
-        switch (day) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-                builder.addTooltip("1x War Crate");
-                lootCrateType = LootCrateType.WAR_CRATE;
-                break;
-            case 7:
-            case 14:
-                builder.addTooltip("1x Legend Crate");
-                lootCrateType = LootCrateType.LEGEND_CRATE;
-                break;
-            case 15:
-            case 16:
-            case 17:
-            case 18:
-            case 19:
-            case 20:
-            case 22:
-            case 23:
-            case 24:
-            case 25:
-            case 26:
-            case 27:
-                builder.addTooltip("2x War Crate");
-                lootCrateType = LootCrateType.WAR_CRATE;
-                break;
-            case 21:
-                builder.addTooltip("2x Legend Crate");
-                lootCrateType = LootCrateType.LEGEND_CRATE;
-                break;
-            case 28:
-                builder.addTooltip("1x Titan Crate");
-                lootCrateType = LootCrateType.TITAN_CRATE;
-                break;
-            default:
-                builder.addTooltip("Unknown");
-                lootCrateType = LootCrateType.WAR_CRATE;
-                break;
-        }
-        builder.addTooltip("");
-
-        if (canClaim) {
-            builder.addTooltip(ColorCode.GREEN + "[CLICK] To claim today's reward!");
-
-            builder.withAction(action -> {
-                Player player = playerQueryService.getPlayer(playerId);
-                int claimCounter = getClaimCounter(player);
-                LocalDate lastClaimed = getLastClaimed(player);
-                LocalDate now = LocalDate.now();
-                if (lastClaimed.isBefore(now)) {
-                    if (player.getInventory().hasSpace(1)) {
-                        int newClaimCounter = claimCounter + 1;
-                        playerCommandService.setData(playerId, DAILY_LOGIN_COUNTER_DATA, "" + newClaimCounter);
-                        playerCommandService.setData(playerId, DAILY_LOGIN_LAST_CLAIMED_DATA, now.toString());
-
-                        Item reward = DAILY_REWARDS.floorEntry(newClaimCounter).getValue();
-                        playerCommandService.giveItem(playerId, reward, false);
-                    } else {
-                        playerCommandService.sendNotification(playerId, "Please make sure you have at least 1 free inventory slot.");
-                    }
-                }
-
-                menuCommandService.closeMenu(playerId);
-            });
-        } else {
-            builder.addTooltip(ColorCode.GOLD + "Come back tomorrow for another reward!");
-        }
-        return builder.build();
-    }
-
-    @Override
-    public Menu createDailyLoginMenu(UUID playerId) {
-        Player player = playerQueryService.getPlayer(playerId);
-        int claimCounter = getClaimCounter(player);
-        LocalDate lastClaimed = getLastClaimed(player);
-        boolean canClaim = lastClaimed.isBefore(LocalDate.now());
-        if (canClaim && claimCounter >= 28) {
-            claimCounter = 0;
-        }
-
-        MenuBuilder builder = createMenuBuilder("Daily Login", MenuSize.FOUR_ROWS);
-        builder.addButton(0, createInfoButton());
-        builder.addButton(9, createBackButton(playerId, mainMenuFactory::createMainMenu));
-
-        // Week 1
-        builder.addButton(2, createRewardButton(playerId, 1, claimCounter, canClaim, false));
-        builder.addButton(3, createRewardButton(playerId, 2, claimCounter, canClaim, false));
-        builder.addButton(4, createRewardButton(playerId, 3, claimCounter, canClaim, false));
-        builder.addButton(5, createRewardButton(playerId, 4, claimCounter, canClaim, false));
-        builder.addButton(6, createRewardButton(playerId, 5, claimCounter, canClaim, false));
-        builder.addButton(7, createRewardButton(playerId, 6, claimCounter, canClaim, false));
-        builder.addButton(8, createRewardButton(playerId, 7, claimCounter, canClaim, true));
-
-        // Week 2
-        builder.addButton(11, createRewardButton(playerId, 8, claimCounter, canClaim, false));
-        builder.addButton(12, createRewardButton(playerId, 9, claimCounter, canClaim, false));
-        builder.addButton(13, createRewardButton(playerId, 10, claimCounter, canClaim, false));
-        builder.addButton(14, createRewardButton(playerId, 11, claimCounter, canClaim, false));
-        builder.addButton(15, createRewardButton(playerId, 12, claimCounter, canClaim, false));
-        builder.addButton(16, createRewardButton(playerId, 13, claimCounter, canClaim, false));
-        builder.addButton(17, createRewardButton(playerId, 14, claimCounter, canClaim, true));
-
-        // Week 3
-        builder.addButton(20, createRewardButton(playerId, 15, claimCounter, canClaim, false));
-        builder.addButton(21, createRewardButton(playerId, 16, claimCounter, canClaim, false));
-        builder.addButton(22, createRewardButton(playerId, 17, claimCounter, canClaim, false));
-        builder.addButton(23, createRewardButton(playerId, 18, claimCounter, canClaim, false));
-        builder.addButton(24, createRewardButton(playerId, 19, claimCounter, canClaim, false));
-        builder.addButton(25, createRewardButton(playerId, 20, claimCounter, canClaim, false));
-        builder.addButton(26, createRewardButton(playerId, 21, claimCounter, canClaim, true));
-
-        // Week 4
-        builder.addButton(29, createRewardButton(playerId, 22, claimCounter, canClaim, false));
-        builder.addButton(30, createRewardButton(playerId, 23, claimCounter, canClaim, false));
-        builder.addButton(31, createRewardButton(playerId, 24, claimCounter, canClaim, false));
-        builder.addButton(32, createRewardButton(playerId, 25, claimCounter, canClaim, false));
-        builder.addButton(33, createRewardButton(playerId, 26, claimCounter, canClaim, false));
-        builder.addButton(34, createRewardButton(playerId, 27, claimCounter, canClaim, false));
-        builder.addButton(35, createRewardButton(playerId, 28, claimCounter, canClaim, true));
-
-        return builder.build();
-    }
-}
-
- */
