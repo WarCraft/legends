@@ -25,10 +25,8 @@ object ChallengesMenu {
   private final val infoButton = Button.noop(
     ItemType.BOOK,
     "Challenges",
-    List(
-      "Repeatable tasks that reward you for helping",
-      "your faction increase their influence on Aldmore."
-    )
+    "Repeatable tasks that reward you for helping",
+    "your faction increase their influence on Aldmore."
   )
 
   private def dailyChallengesButton(player: Player)(implicit
@@ -45,12 +43,10 @@ object ChallengesMenu {
   ): Button = Button(
     ItemType.GUNPOWDER,
     "Daily Challenges",
-    List(
-      "Smaller tasks that can be completed every day.",
-      s"Time left: $dailyChallengesTimeLeft",
-      "",
-      "[Click] To view your daily challenges"
-    )
+    "Smaller tasks that can be completed every day.",
+    s"Time left: $dailyChallengesTimeLeft",
+    "",
+    "[Click] To view your daily challenges"
   ) { _ => menuService.showMenu(player.id, DailyChallengesMenu(player)) }
 
   private[menu] def dailyChallengesTimeLeft(implicit
@@ -77,12 +73,10 @@ object ChallengesMenu {
   ): Button = Button(
     ItemType.TNT,
     "Monthly Challenges",
-    List(
-      "Larger tasks that can be completed every war.",
-      s"Time left: $monthlyChallengesTimeLeft",
-      "",
-      "[Click] To view your monthly challenges"
-    )
+    "Larger tasks that can be completed every war.",
+    s"Time left: $monthlyChallengesTimeLeft",
+    "",
+    "[Click] To view your monthly challenges"
   ) { _ => menuService.showMenu(player.id, MonthlyChallengesMenu(player)) }
 
   private[menu] def monthlyChallengesTimeLeft(implicit
@@ -102,11 +96,9 @@ object ChallengesMenu {
     Button.noop(
       if (challenge.isDaily) ItemType.GUNPOWDER else ItemType.TNT,
       challenge.name,
-      List(
-        challenge.description,
-        "",
-        s"$color$progress/${challenge.requirement}"
-      )
+      challenge.description,
+      "",
+      s"$color$progress/${challenge.requirement}"
     )
   }
 
@@ -140,10 +132,8 @@ object DailyChallengesMenu {
   ) = Button.noop(
     ItemType.BOOK,
     "Daily Challenges",
-    List(
-      "Smaller tasks that can be completed every day.",
-      s"Time left: ${ChallengesMenu.dailyChallengesTimeLeft}"
-    )
+    "Smaller tasks that can be completed every day.",
+    s"Time left: ${ChallengesMenu.dailyChallengesTimeLeft}"
   )
 
   def apply(player: Player)(implicit
@@ -180,10 +170,8 @@ object MonthlyChallengesMenu {
   ) = Button.noop(
     ItemType.BOOK,
     "Monthly Challenges",
-    List(
-      "Larger tasks that can be completed every war.",
-      s"Time left: ${ChallengesMenu.monthlyChallengesTimeLeft}"
-    )
+    "Larger tasks that can be completed every war.",
+    s"Time left: ${ChallengesMenu.monthlyChallengesTimeLeft}"
   )
 
   def apply(player: Player)(implicit
