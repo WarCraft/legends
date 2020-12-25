@@ -15,22 +15,22 @@ import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.ItemType
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
-import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
+import gg.warcraft.monolith.api.util.option._
 
-object RaceMenu {
+object FactionMenu {
   private def infoButton(player: Player): Button = {
     val teamName = player.team.map { _.name }.getOrElse(Wayfarers.name)
-    Button(
+    Button.noop(
       ItemType.BOOK,
-      "Choosing a team",
-      "You are currently fighting for the"
-        :: s"$YELLOW$teamName"
-        :: ""
-        :: "At the moment you can switch teams freely,"
-        :: "but this will be changed at a later time."
-        :: Nil
-    ) { _ => () }
+      "Choosing a faction",
+      "You are currently fighting for the",
+      s"$YELLOW$teamName",
+      "",
+      "At the moment you can switch factions freely,",
+      "but this will be changed at a later time."
+    )
     /*
         builder.addTooltip("You can switch teams freely the first");
         builder.addTooltip("3 days of a war (start of the month).");
@@ -67,40 +67,32 @@ object RaceMenu {
   ): Button = Button.skull(
     "fishb6nes",
     Humans.name,
-    "[Shift Right Click] To fight for the Humans" :: Nil
-  ) { click =>
-    if (click.isShiftRight) playerService.setTeam(player.id, Some(Humans))
-  }
+    "[Shift Right Click] To fight for the Humans"
+  ) { click => if (click.isShiftRight) playerService.setTeam(player.id, Humans) }
 
   private def orcButton(player: Player)(implicit
       playerService: PlayerService
   ): Button = Button.skull(
     "fishb6nes",
     Orcs.name,
-    "[Shift Right Click] To fight for the Orcs" :: Nil
-  ) { click =>
-    if (click.isShiftRight) playerService.setTeam(player.id, Some(Orcs))
-  }
+    "[Shift Right Click] To fight for the Orcs"
+  ) { click => if (click.isShiftRight) playerService.setTeam(player.id, Orcs) }
 
   private def dwarfButton(player: Player)(implicit
       playerService: PlayerService
   ): Button = Button.skull(
     "fishb6nes",
     Dwarves.name,
-    "[Shift Right Click] To fight for the Dwarves" :: Nil
-  ) { click =>
-    if (click.isShiftRight) playerService.setTeam(player.id, Some(Dwarves))
-  }
+    "[Shift Right Click] To fight for the Dwarves"
+  ) { click => if (click.isShiftRight) playerService.setTeam(player.id, Dwarves) }
 
   private def elfButton(player: Player)(implicit
       playerService: PlayerService
   ): Button = Button.skull(
     "fishb6nes",
     Elves.name,
-    "[Shift Right Click] To fight for the Elves" :: Nil
-  ) { click =>
-    if (click.isShiftRight) playerService.setTeam(player.id, Some(Elves))
-  }
+    "[Shift Right Click] To fight for the Elves"
+  ) { click => if (click.isShiftRight) playerService.setTeam(player.id, Elves) }
 
   def apply(
       player: Player
@@ -115,16 +107,18 @@ object RaceMenu {
       legendsDataService: LegendsPlayerDataService
   ): Menu = {
     Menu(
-      "Race",
+      "Faction",
       MenuSize.ONE_ROW,
       Map(
         0 -> infoButton(player),
-        8 -> Button.back(MainMenu.apply),
-        // 1st row
+        // 1
         2 -> humanButton(player),
         3 -> orcButton(player),
         4 -> dwarfButton(player),
-        5 -> elfButton(player)
+        5 -> elfButton(player),
+        // 6
+        // 7
+        8 -> Button.back(MainMenu.apply)
       )
     )
   }

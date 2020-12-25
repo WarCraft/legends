@@ -10,8 +10,8 @@ import gg.warcraft.combat.api.combatclass.{CombatClass, CombatClassService}
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.combatplayer._
 import gg.warcraft.legends.api.combat.LegendsCombatClass._
-import gg.warcraft.legends.api.entity.attribute.LegendsAttribute._
 import gg.warcraft.legends.api.entity.LegendsTeam._
+import gg.warcraft.legends.api.entity.attribute.LegendsAttribute._
 import gg.warcraft.legends.api.player.currency.LegendsCurrency._
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.{Level, LevelService}
@@ -23,8 +23,8 @@ import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.entity.team.Team
 import gg.warcraft.monolith.api.item.{ItemType, ItemTypeOrVariant}
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
-import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.util.string._
 
 object MainMenu {
@@ -150,12 +150,12 @@ object MainMenu {
   private def abilitiesView(combatClass: Option[CombatClass]): List[String] =
     combatClass match {
       case Some(it) => (
-          s"[Left Click] ${it.leftClick.getOrElse("Basic Attack")}"
-            :: s"[Right Click] ${it.rightClick.getOrElse("Basic Attack")}"
-            :: s"[Shift Left Click] ${it.shiftLeftClick.getOrElse("Basic Attack")}"
-            :: s"[Shift Right Click] ${it.shiftRightClick.getOrElse("Basic Attack")}"
-            :: Nil
-        )
+        s"[Left Click] ${it.leftClick.getOrElse("Basic Attack")}"
+          :: s"[Right Click] ${it.rightClick.getOrElse("Basic Attack")}"
+          :: s"[Shift Left Click] ${it.shiftLeftClick.getOrElse("Basic Attack")}"
+          :: s"[Shift Right Click] ${it.shiftRightClick.getOrElse("Basic Attack")}"
+          :: Nil
+      )
 
       case None => "None" :: Nil
     }
@@ -197,62 +197,62 @@ object MainMenu {
     (team, combatClass) match {
       // Warrior
       case (Dwarves, Berserker.name | Guardian.name) => (
-          s"${YELLOW}Sturdiness"
-            :: "You take up to 25% less damage depending"
-            :: "on how much damage you've already taken."
-            :: Nil
-        )
+        s"${YELLOW}Sturdiness"
+          :: "You take up to 25% less damage depending"
+          :: "on how much damage you've already taken."
+          :: Nil
+      )
       case (Elves, Berserker.name | Guardian.name) => (
-          s"${YELLOW}Blade Dance"
-            :: "Every 3rd outgoing melee attack you'll dodge"
-            :: "the first incoming melee attack for 3 seconds."
-            :: Nil
-        )
+        s"${YELLOW}Blade Dance"
+          :: "Every 3rd outgoing melee attack you'll dodge"
+          :: "the first incoming melee attack for 3 seconds."
+          :: Nil
+      )
       case (Humans, Berserker.name | Guardian.name) => (
-          s"${YELLOW}Last Stand"
-            :: "Upon receiving a fatal blow you instead"
-            :: "become invulnerable for 3 seconds."
-            :: Nil
-        )
+        s"${YELLOW}Last Stand"
+          :: "Upon receiving a fatal blow you instead"
+          :: "become invulnerable for 3 seconds."
+          :: Nil
+      )
       case (Orcs, Berserker.name | Guardian.name) => (
-          s"${YELLOW}Bloodlust"
-            :: "While below half health your crit chance"
-            :: "is doubled."
-            :: Nil
-        )
+        s"${YELLOW}Bloodlust"
+          :: "While below half health your crit chance"
+          :: "is doubled."
+          :: Nil
+      )
 
       // Hunter
       case (_, Marksman.name | Ranger.name) => (
-          s"${YELLOW}Hunter Pet"
-            :: "Your pet fights by your side, attacking"
-            :: "everything you're attacking."
-            :: Nil
-        )
+        s"${YELLOW}Hunter Pet"
+          :: "Your pet fights by your side, attacking"
+          :: "everything you're attacking."
+          :: Nil
+      )
 
       // Mage
       case (Dwarves, Elementalist.name | Wizard.name) => (
-          s"${YELLOW}Unstable Bunker"
-            :: "When falling below half health and"
-            :: "after a short delay you damage and push"
-            :: "nearby enemies back."
-            :: Nil
-        )
+        s"${YELLOW}Unstable Bunker"
+          :: "When falling below half health and"
+          :: "after a short delay you damage and push"
+          :: "nearby enemies back."
+          :: Nil
+      )
       case (Elves, Elementalist.name | Wizard.name) => (
-          s"${YELLOW}Regrowth"
-            :: Nil
-        )
+        s"${YELLOW}Regrowth"
+          :: Nil
+      )
       case (Humans, Elementalist.name | Wizard.name) => (
-          s"${YELLOW}Arcane Barrier"
-            :: "When falling below half health you"
-            :: "receive an arcane shield."
-            :: Nil
-        )
+        s"${YELLOW}Arcane Barrier"
+          :: "When falling below half health you"
+          :: "receive an arcane shield."
+          :: Nil
+      )
       case (Orcs, Elementalist.name | Wizard.name) => (
-          s"${YELLOW}Flame Totem"
-            :: "When falling below 75% health you"
-            :: "summon a totem to attack nearby enemies."
-            :: Nil
-        )
+        s"${YELLOW}Flame Totem"
+          :: "When falling below 75% health you"
+          :: "summon a totem to attack nearby enemies."
+          :: Nil
+      )
 
       // Default
       case _ => s"${GRAY}None" :: Nil
@@ -282,7 +282,7 @@ object MainMenu {
       ++ racialPassiveView(player, team, combatClass)
       ++ (""
         :: "[Click] to change your race" :: Nil)
-  ) { click => menuService.showMenu(click.player.id, RaceMenu(click.player)) }
+  ) { click => menuService.showMenu(click.player.id, FactionMenu(click.player)) }
 
   private def itemStorageButton(player: Player): Button = {
     ???

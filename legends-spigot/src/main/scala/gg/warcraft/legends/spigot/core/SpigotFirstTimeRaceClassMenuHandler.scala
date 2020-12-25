@@ -6,26 +6,26 @@
 
 package gg.warcraft.legends.spigot.core
 
-import java.util.UUID
-
 import gg.warcraft.combat.api.combatclass.{
   CombatClassService, PlayerCombatClassChangedEvent
 }
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.combatplayer._
-import gg.warcraft.legends.api.menu.{CombatClassMenu, RaceMenu}
+import gg.warcraft.legends.api.menu.{CombatClassMenu, FactionMenu}
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.monolith.api.core.Duration._
 import gg.warcraft.monolith.api.core.event.Event
-import gg.warcraft.monolith.api.entity.{EntityService, EntityTeamChangedEvent}
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.entity.{EntityService, EntityTeamChangedEvent}
 import gg.warcraft.monolith.api.menu.MenuService
-import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
-import org.bukkit.event.{EventHandler, Listener}
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.{EventHandler, Listener}
+
+import java.util.UUID
 
 class SpigotFirstTimeRaceClassMenuHandler(implicit
     entityService: EntityService,
@@ -45,13 +45,14 @@ class SpigotFirstTimeRaceClassMenuHandler(implicit
 
   private def test(player: Player): Unit = {
     if (player.team.isEmpty) {
-      menuService.showMenu(player.id, RaceMenu(player))
+      menuService.showMenu(player.id, FactionMenu(player))
     } else if (player.combatClass.isEmpty) {
       menuService.showMenu(player.id, CombatClassMenu(player))
     } else {
       inTutorial -= player.id
       entityService.freezeEntity(player.id, 0.ticks)
-      val spawnLocation = player.location.copy(translation = getSpawn(player.team.get))
+      val spawnLocation =
+        player.location.copy(translation = getSpawn(player.team.get))
       entityService.teleportEntity(player.id, spawnLocation)
     }
   }

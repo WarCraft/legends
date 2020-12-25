@@ -80,9 +80,9 @@ object DailyLoginMenu {
       Map(
         0 -> infoButton,
         9 -> Button.back(MainMenu.apply)
-      ) ++ loginRewardService.rewards.map { it =>
-        val offset = (1 + (it._1 - 1) / 7) * 2
-        (it._1 + offset) -> rewardButton(player, claimed, it._1, it._2)
+      ) ++ loginRewardService.rewards.map { case (day, reward) =>
+        val slot = day + (1 + (day - 1) / 7) * 2
+        slot -> rewardButton(player, claimed, day, reward)
       }
     )
   }
