@@ -9,8 +9,8 @@ package gg.warcraft.legends.api.player.statistic.handler
 import gg.warcraft.legends.api.player.currency.LegendsCurrency._
 import gg.warcraft.legends.api.player.statistic.LegendsStatistic._
 import gg.warcraft.monolith.api.core.event.Event
-import gg.warcraft.monolith.api.player.statistic.StatisticService
 import gg.warcraft.monolith.api.player.PlayerCurrencyGainedEvent
+import gg.warcraft.monolith.api.player.statistic.StatisticService
 
 class CurrencyStatisticHandler(implicit
     service: StatisticService
