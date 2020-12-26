@@ -6,29 +6,44 @@
 
 package gg.warcraft.legends.api.core.leaderboard
 
-import gg.warcraft.monolith.api.player.statistic.Statistic
+import gg.warcraft.legends.api.player.statistic.LegendsStatistic.LegendsStatistic
+import gg.warcraft.monolith.api.player.statistic.StatisticRepository
 import gg.warcraft.monolith.api.player.{OfflinePlayer, Player, PlayerService}
 
 import java.util.UUID
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
 
 class Leaderboard(
-    statistics: List[Statistic]
-)(implicit playerService: PlayerService) {
-  import Leaderboard.maxEntries
+    val statistic: LegendsStatistic,
+    val name: String,
+    val description: String
+)(implicit
+    statisticRepository: StatisticRepository,
+    playerService: PlayerService
+) {
+  private final val maxEntries = 100
 
   private val _rankings: Array[(OfflinePlayer, Long)] = Array(maxEntries)
   private var players: Map[UUID, Int] = Map.empty
-
-  statistics.zipWithIndex.foreach { it =>
-    val player = playerService.getOfflinePlayer(it._1.playerId)
-    _rankings(it._2) = (player, it._1.value)
-    players += (player.id -> it._2)
-  }
 
   private var _rankingsCache: List[(OfflinePlayer, Long)] = _
   def rankings: List[(OfflinePlayer, Long)] = {
     if (_rankingsCache == null) _rankingsCache = _rankings.toList
     _rankingsCache
+  }
+
+  val isDaily: Boolean = statistic.startsWith("DAILY_")
+  val isMonthly: Boolean = statistic.startsWith("MONTHLY_")
+
+  statisticRepository.queryTop(maxEntries, statistic).onComplete {
+    case Success(rankings) =>
+      rankings.zipWithIndex.foreach { it =>
+        val player = playerService.getOfflinePlayer(it._1.playerId)
+        _rankings(it._2) = (player, it._1.value)
+        players += (player.id -> it._2)
+      }
+    case Failure(exception) =>
   }
 
   private[leaderboard] def update(player: Player, value: Long): Unit =
@@ -74,8 +89,4 @@ class Leaderboard(
     players += (player.id -> newIndex)
     removed
   }
-}
-
-object Leaderboard {
-  final val maxEntries = 100
 }

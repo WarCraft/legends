@@ -10,6 +10,7 @@ import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.item.crate.LootCrate
 import gg.warcraft.legends.api.player.challenge.Challenge
 import gg.warcraft.legends.api.player.level.Level
+import gg.warcraft.legends.api.player.statistic.LegendsStatistic.LegendsStatistic
 import gg.warcraft.monolith.api.world.Location
 
 case class LegendsConfig(
@@ -20,13 +21,26 @@ case class LegendsConfig(
     playerKillFavor: Int,
     mobKillFavor: Int,
     eliteMobKillFavor: Int,
+    leaderboards: LeaderboardsConfig,
     lootCrates: List[LootCrate],
     challenges: List[Challenge],
-    dailyRewards: List[DailyReward],
+    dailyRewards: List[RewardConfig],
     skirmishTimes: List[Int]
 )
 
-case class DailyReward(
-    crateId: String,
+case class RewardConfig(
+    crate: String,
     count: Int
+)
+
+case class LeaderboardsConfig(
+    leaderboards: List[LeaderboardConfig],
+    dailyPrizes: List[RewardConfig],
+    monthlyPrizes: List[RewardConfig]
+)
+
+case class LeaderboardConfig(
+    statistic: LegendsStatistic,
+    name: String,
+    description: String
 )

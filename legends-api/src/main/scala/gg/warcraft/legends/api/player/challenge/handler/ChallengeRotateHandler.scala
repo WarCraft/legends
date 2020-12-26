@@ -13,8 +13,8 @@ import gg.warcraft.monolith.api.core.event.Event
 
 class ChallengeRotateHandler(service: ChallengeService) extends Event.Handler {
   override def handle(event: Event): Unit = event match {
-    case DailyTickEvent()   => service.rotateDailies()
-    case WarStartedEvent(_) => service.rotateMonthlies()
-    case _                  =>
+    case DailyTickEvent(_, _) => service.rotateDailies()
+    case WarStartedEvent(_)   => service.rotateMonthlies()
+    case _                    =>
   }
 }
