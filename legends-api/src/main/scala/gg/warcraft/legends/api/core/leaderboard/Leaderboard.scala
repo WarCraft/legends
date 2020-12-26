@@ -6,10 +6,76 @@
 
 package gg.warcraft.legends.api.core.leaderboard
 
+import gg.warcraft.monolith.api.player.statistic.Statistic
+import gg.warcraft.monolith.api.player.{OfflinePlayer, Player, PlayerService}
+
 import java.util.UUID
 
-class Leaderboard(val entries: List[Leaderboard.Entry])
+class Leaderboard(
+    statistics: List[Statistic]
+)(implicit playerService: PlayerService) {
+  import Leaderboard.maxEntries
+
+  private val _rankings: Array[(OfflinePlayer, Long)] = Array(maxEntries)
+  private var players: Map[UUID, Int] = Map.empty
+
+  statistics.zipWithIndex.foreach { it =>
+    val player = playerService.getOfflinePlayer(it._1.playerId)
+    _rankings(it._2) = (player, it._1.value)
+    players += (player.id -> it._2)
+  }
+
+  private var _rankingsCache: List[(OfflinePlayer, Long)] = _
+  def rankings: List[(OfflinePlayer, Long)] = {
+    if (_rankingsCache == null) _rankingsCache = _rankings.toList
+    _rankingsCache
+  }
+
+  private[leaderboard] def update(player: Player, value: Long): Unit =
+    players.get(player.id) match {
+      case Some(index) =>
+        val newIndex = findIndexFor(value, index)
+        if (newIndex != index) {
+          val offlinePlayer = _rankings(index)._1
+          updateIndices(offlinePlayer, newIndex, value, updateInPlace = true)
+        } else _rankings(index) = _rankings(index).copy(_2 = value)
+      case None =>
+        if (players.size < maxEntries || value > _rankings.last._2) {
+          val newIndex = findIndexFor(value, lastIndex + 1)
+          val offlinePlayer = playerService.getOfflinePlayer(player.id)
+          updateIndices(offlinePlayer, newIndex, value).foreach { players -= _ }
+        }
+    }
+
+  private def lastIndex: Int = players.size - 1
+
+  private def findIndexFor(value: Long, from: Int): Int = {
+    var index = from
+    while (index > 0 && value > _rankings(index - 1)._2) index -= 1
+    index
+  }
+
+  private def updateIndices(
+      player: OfflinePlayer,
+      newIndex: Int,
+      value: Long,
+      updateInPlace: Boolean = false
+  ): Option[UUID] = {
+    var removed: Option[UUID] = None
+    if (!updateInPlace && newIndex <= lastIndex) {
+      var copyLength = lastIndex - newIndex
+      if (players.size < maxEntries) copyLength += 1
+      else removed = Some(_rankings.last._1.id)
+      Array.copy(_rankings, newIndex, _rankings, newIndex + 1, copyLength)
+    }
+
+    _rankings(newIndex) = (player, value)
+    _rankingsCache = null
+    players += (player.id -> newIndex)
+    removed
+  }
+}
 
 object Leaderboard {
-  class Entry(val playerId: UUID, rank: Int, score: Int)
+  final val maxEntries = 100
 }
