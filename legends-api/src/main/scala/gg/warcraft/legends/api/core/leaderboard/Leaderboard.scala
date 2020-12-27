@@ -24,7 +24,7 @@ class Leaderboard(
 ) {
   private final val maxEntries = 100
 
-  private val _rankings: Array[(OfflinePlayer, Long)] = Array(maxEntries)
+  private var _rankings: Array[(OfflinePlayer, Long)] = Array(maxEntries)
   private var _rankingsCache: List[(OfflinePlayer, Long)] = _
   def rankings: List[(OfflinePlayer, Long)] = {
     if (_rankingsCache == null) _rankingsCache = _rankings.toList
@@ -45,6 +45,12 @@ class Leaderboard(
         _players += (player.id -> it._2)
       }
     case Failure(exception) =>
+  }
+
+  private[leaderboard] def clear(): Unit = {
+    _rankings = Array(maxEntries)
+    _rankingsCache = null
+    _players = Map.empty
   }
 
   private[leaderboard] def update(player: Player, value: Long): Unit =

@@ -60,5 +60,7 @@ class LeaderboardRewardHandler(config: LegendsConfig)(implicit
         )
         playerService.sendMessage(winner.id, prizeMessage)
     }
+
+    leaderboard.clear()
   }
 }
