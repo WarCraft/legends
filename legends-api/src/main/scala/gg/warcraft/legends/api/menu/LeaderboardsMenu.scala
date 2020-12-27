@@ -6,203 +6,242 @@
 
 package gg.warcraft.legends.api.menu
 
+import gg.warcraft.combat.api.combatclass.CombatClassService
+import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.legends.api.core.leaderboard.{Leaderboard, LeaderboardService}
+import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
+import gg.warcraft.legends.api.player.level.LevelService
+import gg.warcraft.monolith.api.block.variant.BannerVariant
+import gg.warcraft.monolith.api.core.ColorCode._
+import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.item.ItemType
+import gg.warcraft.monolith.api.menu.Button.{noop, updateButton, updateMenu}
+import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
+import gg.warcraft.monolith.api.player.currency.CurrencyService
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
+
 object LeaderboardsMenu {
+  private final val infoButton = Button.noop(
+    ItemType.BOOK,
+    "Leaderboards",
+    "Your actions on the server do not go unnoticed.",
+    "The Titans keep track of all the legends forged",
+    "on Aldmore and reward those that are the greatest!"
+  )
 
+  private def dailyLeaderboardsButton(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      leaderboardService: LeaderboardService
+  ) = Button(
+    BannerVariant.YELLOW,
+    "Daily Leaderboards",
+    "[Click] To view the daily leaderboards"
+  ) { _ => updateMenu(DailyLeaderboardsMenu.apply) }
+
+  private def monthlyLeaderboardsButton(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      leaderboardService: LeaderboardService
+  ) = Button(
+    BannerVariant.ORANGE,
+    "Monthly Leaderboards",
+    "[Click] To view the monthly leaderboards"
+  ) { _ => updateMenu(MonthlyLeaderboardsMenu.apply) }
+
+  private def alltimeLeaderboardsButton(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      leaderboardService: LeaderboardService
+  ) = Button(
+    BannerVariant.RED,
+    "All-time Leaderboards",
+    "[Click] To view the all-time leaderboards"
+  ) { _ => updateMenu(AlltimeLeaderboardsMenu.apply) }
+
+  private[menu] def leaderboardButton(
+      leaderboard: Leaderboard,
+      player: Player,
+      page: Int
+  ): Button = {
+    val icon = leaderboard match {
+      case _ if leaderboard.isDaily   => BannerVariant.YELLOW
+      case _ if leaderboard.isMonthly => BannerVariant.ORANGE
+      case _                          => BannerVariant.RED
+    }
+    val pages = leaderboard.players.size / 10
+    val rank = leaderboard.players.get(player.id)
+      .map { it => f"${it + 1}%3s" }
+      .getOrElse("???")
+    val score = player.statistics.get(leaderboard.statistic)
+    val cursor = page * 10
+    val rankings = leaderboard.rankings
+      .slice(cursor, cursor + 10)
+      .map { case (player, score) => s"$YELLOW$rank. ${player.name} $score" }
+    Button(
+      icon,
+      leaderboard.name,
+      List(
+        s"$YELLOW$rank. ${player.name} $score",
+        ""
+      ) ++ rankings ++ List(
+        "",
+        s"[Click] Previous  (Page ${page + 1}/${pages + 1})  Next [Right Click]"
+      )
+    ) { click =>
+      if (click.isLeft && page > 0) {
+        updateButton(leaderboardButton(leaderboard, player, page + 1))
+      } else if (click.isRight && page < pages) {
+        updateButton(leaderboardButton(leaderboard, player, page - 1))
+      } else noop
+    }
+  }
+
+  private[menu] def leaderboardMenu(
+      name: String,
+      filter: Leaderboard => Boolean,
+      player: Player
+  )(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      leaderboardService: LeaderboardService
+  ): Menu = {
+    val buttons = leaderboardService.leaderboards.values
+      .filter(filter)
+      .zipWithIndex
+      .map { case (leaderboard, index) =>
+        val slot = index + (1 + (index - 1) / 7) * 2
+        slot -> LeaderboardsMenu.leaderboardButton(leaderboard, player, 0)
+      }
+    Menu(
+      name,
+      MenuSize.TWO_ROWS,
+      Map(
+        0 -> infoButton,
+        9 -> Button.back(MainMenu.apply)
+      ) ++ buttons
+    )
+  }
+
+  def apply(player: Player)(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      leaderboardService: LeaderboardService
+  ): Menu = Menu(
+    "Leaderboards",
+    MenuSize.ONE_ROW,
+    0 -> infoButton,
+    2 -> dailyLeaderboardsButton,
+    3 -> monthlyLeaderboardsButton,
+    4 -> alltimeLeaderboardsButton,
+    8 -> Button.back(MainMenu.apply)
+  )
 }
 
-/*
-public class DefaultLeaderboardsMenuFactory extends AbstractMenuFactory implements LeaderboardsMenuFactory {
-    private final LegendsPlayerQueryService playerQueryService;
-    private final LeaderboardQueryService leaderboardQueryService;
-    private final MainMenuFactory mainMenuFactory;
-    private final LeaderboardsMenuFactory leaderboardsMenuFactory;
+object DailyLeaderboardsMenu {
+  private final val infoButton = Button.noop(
+    ItemType.BOOK,
+    "Daily Leaderboards",
+    "Your actions on the server do not go unnoticed.",
+    "The Titans keep track of all the legends forged",
+    "on Aldmore and reward those that are the greatest!"
+  )
 
-    @Inject
-    public DefaultLeaderboardsMenuFactory(LegendsPlayerQueryService playerQueryService,
-                                          MenuCommandService menuCommandService,
-                                          LeaderboardQueryService leaderboardQueryService,
-                                          MenuBuilderFactory menuBuilderFactory,
-                                          ButtonBuilderFactory buttonBuilderFactory,
-                                          MainMenuFactory mainMenuFactory,
-                                          LeaderboardsMenuFactory leaderboardsMenuFactory) {
-        super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
-        this.playerQueryService = playerQueryService;
-        this.leaderboardQueryService = leaderboardQueryService;
-        this.leaderboardsMenuFactory = leaderboardsMenuFactory;
-        this.mainMenuFactory = mainMenuFactory;
-    }
-
-    Button createInfoButton() {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Leaderboards");
-        builder.addTooltip("Your actions on the server do not go unnoticed.");
-        builder.addTooltip("The Titans keep track of all the greatest warriors");
-        builder.addTooltip("and reward those who finish first, second, or third");
-        builder.addTooltip("on any of the daily, war, and all-time leaderboard!");
-        return builder.build();
-    }
-
-    Button createDailyLeaderboardsButton(LegendsPlayer player) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Daily Leaderboards");
-        builder.addTooltip("");
-        builder.addTooltip("[CLICK] To view the daily leaderboards");
-
-        builder.withAction(action -> {
-            Menu menu = leaderboardsMenuFactory.createDailyLeaderboardsMenu(player.getId());
-            showMenu(menu, player.getId());
-        });
-        return builder.build();
-    }
-
-    Button createWarLeaderboardsButton(LegendsPlayer player) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "War Leaderboards");
-        builder.addTooltip("");
-        builder.addTooltip("[CLICK] To view the war leaderboards");
-
-        builder.withAction(action -> {
-            Menu menu = leaderboardsMenuFactory.createWarLeaderboardsMenu(player.getId());
-            showMenu(menu, player.getId());
-        });
-        return builder.build();
-    }
-
-    Button createAlltimeLeaderboardsButton(LegendsPlayer player) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "All-time Leaderboards");
-        builder.addTooltip("");
-        builder.addTooltip("[CLICK] To view the all-time leaderboards");
-
-        builder.withAction(action -> {
-            Menu menu = leaderboardsMenuFactory.createAlltimeLeaderboardsMenu(player.getId());
-            showMenu(menu, player.getId());
-        });
-        return builder.build();
-    }
-
-    @Override
-    public Menu createLeaderboardsMenu(UUID playerId) {
-        LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        MenuBuilder builder = createMenuBuilder("Leaderboards", MenuSize.ONE_ROW);
-
-        builder.addButton(0, createInfoButton());
-        builder.addButton(2, createDailyLeaderboardsButton(player));
-        builder.addButton(3, createWarLeaderboardsButton(player));
-        builder.addButton(4, createAlltimeLeaderboardsButton(player));
-        builder.addButton(8, createBackButton(playerId, mainMenuFactory::createMainMenu));
-
-        return builder.build();
-    }
-
-    Button createDailyInfoButton() {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Daily Leaderboards");
-
-        return builder.build();
-    }
-
-    Button createWarInfoButton() {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "War Leaderboards");
-
-        return builder.build();
-    }
-
-    Button createAlltimeInfoButton() {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "All-time Leaderboards");
-
-        return builder.build();
-    }
-
-    Button createLeaderboardButton(LegendsStatistic statistic, LegendsPlayer player) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BANNER, statistic.getName());
-
-        List<LeaderboardEntry> leaders = leaderboardQueryService.getLeaders(statistic, 10);
-        Set<UUID> leaderIds = new HashSet<>();
-        for (LeaderboardEntry leaderboardEntry : leaders) {
-            Player leaderPlayer = playerQueryService.getPlayer(leaderboardEntry.getPlayerId());
-            builder.addTooltip(ColorCode.YELLOW.toString() + leaderboardEntry.getRank() + "." +
-                    " " + leaderPlayer.getName() + " (" + leaderboardEntry.getScore() + ")");
-            leaderIds.add(leaderboardEntry.getPlayerId());
-        }
-
-        if (!leaderIds.contains(player.getId())) {
-            builder.addTooltip("");
-            builder.addTooltip("??. " + player.getName() + " (" + player.getStatistic(statistic.getKey()) + ")");
-        }
-
-        return builder.build();
-    }
-
-    @Override
-    public Menu createDailyLeaderboardsMenu(UUID playerId) {
-        LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        MenuBuilder builder = createMenuBuilder("Daily Leaderboards", MenuSize.TWO_ROWS);
-
-        builder.addButton(0, createDailyInfoButton());
-        builder.addButton(2, createLeaderboardButton(LegendsStatistic.DAILY_KILLS, player));
-        builder.addButton(3, createLeaderboardButton(LegendsStatistic.DAILY_DAMAGE_DONE, player));
-        builder.addButton(4, createLeaderboardButton(LegendsStatistic.DAILY_MONSTER_KILLS, player));
-        builder.addButton(5, createLeaderboardButton(LegendsStatistic.DAILY_RESOURCES_GATHERED, player));
-        builder.addButton(6, createLeaderboardButton(LegendsStatistic.DAILY_TIME_PLAYED, player));
-        builder.addButton(7, createLeaderboardButton(LegendsStatistic.DAILY_FAVOR_GAINED, player));
-        builder.addButton(8, createLeaderboardButton(LegendsStatistic.DAILY_GOLD_GAINED, player));
-        builder.addButton(11, createLeaderboardButton(LegendsStatistic.DAILY_CAMPS_CAPTURED, player));
-        builder.addButton(12, createLeaderboardButton(LegendsStatistic.DAILY_CAMPS_DEFENDED, player));
-        builder.addButton(13, createLeaderboardButton(LegendsStatistic.DAILY_OUTPOSTS_CAPTURED, player));
-        builder.addButton(14, createLeaderboardButton(LegendsStatistic.DAILY_OUTPOSTS_DEFENDED, player));
-        builder.addButton(15, createLeaderboardButton(LegendsStatistic.DAILY_KEEPS_CAPTURED, player));
-        builder.addButton(16, createLeaderboardButton(LegendsStatistic.DAILY_KEEPS_DEFENDED, player));
-        builder.addButton(17, createLeaderboardButton(LegendsStatistic.DAILY_CRATES_OPENED, player));
-        builder.addButton(9, createBackButton(playerId, leaderboardsMenuFactory::createLeaderboardsMenu));
-
-        return builder.build();
-    }
-
-    @Override
-    public Menu createWarLeaderboardsMenu(UUID playerId) {
-        LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        MenuBuilder builder = createMenuBuilder("War Leaderboards", MenuSize.TWO_ROWS);
-
-        builder.addButton(0, createDailyInfoButton());
-        builder.addButton(2, createLeaderboardButton(LegendsStatistic.WARRY_KILLS, player));
-        builder.addButton(3, createLeaderboardButton(LegendsStatistic.WARRY_DAMAGE_DONE, player));
-        builder.addButton(4, createLeaderboardButton(LegendsStatistic.WARRY_MONSTER_KILLS, player));
-        builder.addButton(5, createLeaderboardButton(LegendsStatistic.WARRY_RESOURCES_GATHERED, player));
-        builder.addButton(6, createLeaderboardButton(LegendsStatistic.WARRY_TIME_PLAYED, player));
-        builder.addButton(7, createLeaderboardButton(LegendsStatistic.WARRY_FAVOR_GAINED, player));
-        builder.addButton(8, createLeaderboardButton(LegendsStatistic.WARRY_GOLD_GAINED, player));
-        builder.addButton(11, createLeaderboardButton(LegendsStatistic.WARRY_CAMPS_CAPTURED, player));
-        builder.addButton(12, createLeaderboardButton(LegendsStatistic.WARRY_CAMPS_DEFENDED, player));
-        builder.addButton(13, createLeaderboardButton(LegendsStatistic.WARRY_OUTPOSTS_CAPTURED, player));
-        builder.addButton(14, createLeaderboardButton(LegendsStatistic.WARRY_OUTPOSTS_DEFENDED, player));
-        builder.addButton(15, createLeaderboardButton(LegendsStatistic.WARRY_KEEPS_CAPTURED, player));
-        builder.addButton(16, createLeaderboardButton(LegendsStatistic.WARRY_KEEPS_DEFENDED, player));
-        builder.addButton(17, createLeaderboardButton(LegendsStatistic.WARRY_CRATES_OPENED, player));
-        builder.addButton(9, createBackButton(playerId, leaderboardsMenuFactory::createLeaderboardsMenu));
-
-        return builder.build();
-    }
-
-    @Override
-    public Menu createAlltimeLeaderboardsMenu(UUID playerId) {
-        LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        MenuBuilder builder = createMenuBuilder("All-time Leaderboards", MenuSize.TWO_ROWS);
-
-        builder.addButton(0, createDailyInfoButton());
-        builder.addButton(2, createLeaderboardButton(LegendsStatistic.ALLTIME_KILLS, player));
-        builder.addButton(3, createLeaderboardButton(LegendsStatistic.ALLTIME_DAMAGE_DONE, player));
-        builder.addButton(4, createLeaderboardButton(LegendsStatistic.ALLTIME_MONSTER_KILLS, player));
-        builder.addButton(5, createLeaderboardButton(LegendsStatistic.ALLTIME_RESOURCES_GATHERED, player));
-        builder.addButton(6, createLeaderboardButton(LegendsStatistic.ALLTIME_TIME_PLAYED, player));
-        builder.addButton(7, createLeaderboardButton(LegendsStatistic.ALLTIME_FAVOR_GAINED, player));
-        builder.addButton(8, createLeaderboardButton(LegendsStatistic.ALLTIME_GOLD_GAINED, player));
-        builder.addButton(11, createLeaderboardButton(LegendsStatistic.ALLTIME_CAMPS_CAPTURED, player));
-        builder.addButton(12, createLeaderboardButton(LegendsStatistic.ALLTIME_CAMPS_DEFENDED, player));
-        builder.addButton(13, createLeaderboardButton(LegendsStatistic.ALLTIME_OUTPOSTS_CAPTURED, player));
-        builder.addButton(14, createLeaderboardButton(LegendsStatistic.ALLTIME_OUTPOSTS_DEFENDED, player));
-        builder.addButton(15, createLeaderboardButton(LegendsStatistic.ALLTIME_KEEPS_CAPTURED, player));
-        builder.addButton(16, createLeaderboardButton(LegendsStatistic.ALLTIME_KEEPS_DEFENDED, player));
-        builder.addButton(17, createLeaderboardButton(LegendsStatistic.ALLTIME_CRATES_OPENED, player));
-        builder.addButton(9, createBackButton(playerId, leaderboardsMenuFactory::createLeaderboardsMenu));
-
-        return builder.build();
-    }
+  def apply(player: Player)(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      leaderboardService: LeaderboardService
+  ): Menu = LeaderboardsMenu.leaderboardMenu(
+    "Daily Leaderboard",
+    { _.isDaily },
+    player
+  )
 }
 
- */
+object MonthlyLeaderboardsMenu {
+  private final val infoButton = Button.noop(
+    ItemType.BOOK,
+    "MonthlyLeaderboards",
+    "Your actions on the server do not go unnoticed.",
+    "The Titans keep track of all the legends forged",
+    "on Aldmore and reward those that are the greatest!"
+  )
+
+  def apply(player: Player)(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      leaderboardService: LeaderboardService
+  ): Menu = LeaderboardsMenu.leaderboardMenu(
+    "Monthly Leaderboard",
+    { _.isMonthly },
+    player
+  )
+}
+
+object AlltimeLeaderboardsMenu {
+  private final val infoButton = Button.noop(
+    ItemType.BOOK,
+    "All-time Leaderboards",
+    "Your actions on the server do not go unnoticed.",
+    "The Titans keep track of all the legends forged",
+    "on Aldmore and reward those that are the greatest!"
+  )
+
+  def apply(player: Player)(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      leaderboardService: LeaderboardService
+  ): Menu = LeaderboardsMenu.leaderboardMenu(
+    "All-time Leaderboard",
+    { it => !it.isDaily && !it.isMonthly },
+    player
+  )
+}

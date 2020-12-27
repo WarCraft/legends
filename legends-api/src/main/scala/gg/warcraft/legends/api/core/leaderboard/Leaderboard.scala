@@ -25,13 +25,14 @@ class Leaderboard(
   private final val maxEntries = 100
 
   private val _rankings: Array[(OfflinePlayer, Long)] = Array(maxEntries)
-  private var players: Map[UUID, Int] = Map.empty
-
   private var _rankingsCache: List[(OfflinePlayer, Long)] = _
   def rankings: List[(OfflinePlayer, Long)] = {
     if (_rankingsCache == null) _rankingsCache = _rankings.toList
     _rankingsCache
   }
+
+  private var _players: Map[UUID, Int] = Map.empty
+  def players: Map[UUID, Int] = _players
 
   val isDaily: Boolean = statistic.startsWith("DAILY_")
   val isMonthly: Boolean = statistic.startsWith("MONTHLY_")
@@ -41,13 +42,13 @@ class Leaderboard(
       rankings.zipWithIndex.foreach { it =>
         val player = playerService.getOfflinePlayer(it._1.playerId)
         _rankings(it._2) = (player, it._1.value)
-        players += (player.id -> it._2)
+        _players += (player.id -> it._2)
       }
     case Failure(exception) =>
   }
 
   private[leaderboard] def update(player: Player, value: Long): Unit =
-    players.get(player.id) match {
+    _players.get(player.id) match {
       case Some(index) =>
         val newIndex = findIndexFor(value, index)
         if (newIndex != index) {
@@ -55,14 +56,14 @@ class Leaderboard(
           updateIndices(offlinePlayer, newIndex, value, updateInPlace = true)
         } else _rankings(index) = _rankings(index).copy(_2 = value)
       case None =>
-        if (players.size < maxEntries || value > _rankings.last._2) {
+        if (_players.size < maxEntries || value > _rankings.last._2) {
           val newIndex = findIndexFor(value, lastIndex + 1)
           val offlinePlayer = playerService.getOfflinePlayer(player.id)
-          updateIndices(offlinePlayer, newIndex, value).foreach { players -= _ }
+          updateIndices(offlinePlayer, newIndex, value).foreach { _players -= _ }
         }
     }
 
-  private def lastIndex: Int = players.size - 1
+  private def lastIndex: Int = _players.size - 1
 
   private def findIndexFor(value: Long, from: Int): Int = {
     var index = from
@@ -79,14 +80,14 @@ class Leaderboard(
     var removed: Option[UUID] = None
     if (!updateInPlace && newIndex <= lastIndex) {
       var copyLength = lastIndex - newIndex
-      if (players.size < maxEntries) copyLength += 1
+      if (_players.size < maxEntries) copyLength += 1
       else removed = Some(_rankings.last._1.id)
       Array.copy(_rankings, newIndex, _rankings, newIndex + 1, copyLength)
     }
 
     _rankings(newIndex) = (player, value)
     _rankingsCache = null
-    players += (player.id -> newIndex)
+    _players += (player.id -> newIndex)
     removed
   }
 }
