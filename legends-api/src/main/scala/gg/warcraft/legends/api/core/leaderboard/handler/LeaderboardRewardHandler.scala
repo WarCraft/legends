@@ -6,130 +6,59 @@
 
 package gg.warcraft.legends.api.core.leaderboard.handler
 
-class LeaderboardRewardHandler {
+import gg.warcraft.legends.api.LegendsConfig
+import gg.warcraft.legends.api.core.game.WarStartedEvent
+import gg.warcraft.legends.api.core.leaderboard.{Leaderboard, LeaderboardService}
+import gg.warcraft.legends.api.item.crate.LootCrateService
+import gg.warcraft.monolith.api.core.event.Event
+import gg.warcraft.monolith.api.core.{DailyTickEvent, Message}
+import gg.warcraft.monolith.api.item.{Chest, ItemService}
+import gg.warcraft.monolith.api.player.PlayerService
 
+class LeaderboardRewardHandler(config: LegendsConfig)(implicit
+    leaderboardService: LeaderboardService,
+    lootCrateService: LootCrateService,
+    itemService: ItemService,
+    playerService: PlayerService
+) extends Event.Handler {
+  private final val appendix: List[String] =
+    "st" :: "nd" :: "rd" :: "th" :: "th" :: "th" :: "th" :: "th" :: "th" :: "th" :: Nil
+
+  private val dailyRewards = config.leaderboards.dailyPrizes
+    .map { it => lootCrateService.crates(it.crate).copy(count = it.count) }
+  private val monthlyRewards = config.leaderboards.monthlyPrizes
+    .map { it => lootCrateService.crates(it.crate).copy(count = it.count) }
+
+  override def handle(event: Event): Unit = event match {
+    case DailyTickEvent(_, _) =>
+      leaderboardService.leaderboards.values
+        .filter { _.isDaily }
+        .foreach { awardPrizes(_, dailyRewards) }
+    case WarStartedEvent(_) =>
+      leaderboardService.leaderboards.values
+        .filter { _.isMonthly }
+        .foreach { awardPrizes(_, monthlyRewards) }
+    case _ =>
+  }
+
+  private def awardPrizes(leaderboard: Leaderboard, prizes: List[Chest]): Unit = {
+    val rankings = leaderboard.rankings
+    prizes.zipWithIndex.foreach {
+      case (prize, index) if rankings.size > index =>
+        val (winner, score) = rankings(index)
+        itemService.giveTo(winner.id, prize)
+
+        val messageTail =
+          s"${index + 1}${appendix(index)} on the ${leaderboard.name} with $score!"
+        if (index == 0) {
+          val winnerMessage = Message.server(s"${winner.name} placed $messageTail")
+          playerService.getOnlinePlayers.foreach { _.sendMessage(winnerMessage) }
+        }
+        val plural = if (prize.count > 1) "s" else ""
+        val prizeMessage = Message.server(
+          s"You received ${prize.count} ${prize.name}$plural for placing $messageTail"
+        )
+        playerService.sendMessage(winner.id, prizeMessage)
+    }
+  }
 }
-
-
-/*TODO
-public class LeaderboardRewardHandler {
-    private final LeaderboardQueryService leaderboardQueryService;
-    private final PlayerCommandService playerCommandService;
-    private final PlayerQueryService playerQueryService;
-    private final StackableItem warCrate;
-    private final StackableItem legendCrate;
-    private final StackableItem titanCrate;
-
-    @Inject
-    public LeaderboardRewardHandler(LeaderboardQueryService leaderboardQueryService,
-                                    PlayerCommandService playerCommandService,
-                                    PlayerQueryService playerQueryService,
-                                    LootCrateBuilderFactory lootCrateBuilderFactory) {
-        this.leaderboardQueryService = leaderboardQueryService;
-        this.playerCommandService = playerCommandService;
-        this.playerQueryService = playerQueryService;
-        this.warCrate = (StackableItem) lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.WAR_CRATE).build();
-        this.legendCrate = (StackableItem) lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.LEGEND_CRATE).build();
-        this.titanCrate = (StackableItem) lootCrateBuilderFactory.createLootCrateBuilder(LootCrateType.TITAN_CRATE).build();
-    }
-
-    @Subscribe
-    public void onDailyTickEvent(DailyTickEvent event) {
-        LegendsStatistic.getDailies().forEach(daily -> {
-            List<UUID> leaders = leaderboardQueryService.getLeaders(daily, 3).stream()
-                    .map(LeaderboardEntry::getPlayerId)
-                    .collect(Collectors.toList());
-            if (leaders.isEmpty()) {
-                return;
-            }
-
-            for (int i = 1; i <= 3; i += 1) {
-                UUID playerId = leaders.get(i - 1);
-                StackableItem crates;
-                String placing;
-                switch (i) {
-                    case 1:
-                        crates = legendCrate.withCount(1);
-                        placing = "first";
-                        break;
-                    case 2:
-                        crates = warCrate.withCount(2);
-                        placing = "second";
-                        break;
-                    case 3:
-                        crates = warCrate.withCount(1);
-                        placing = "third";
-                        break;
-                    default:
-                        crates = null;
-                        placing = null;
-                        break;
-                }
-                playerCommandService.giveItem(playerId, crates, false);
-                playerCommandService.sendNotification(playerId, "You received " + crates.count() + " " +
-                        crates.name() + " for finishing " + placing + " on the " + daily.getName() + " Leaderboard!");
-            }
-        });
-    }
-
-    @Subscribe
-    public void onWarFinishedEvent(WarFinishedEvent event) {
-        LegendsStatistic.getWarries().forEach(warry -> {
-            List<UUID> leaders = leaderboardQueryService.getLeaders(warry, 9).stream()
-                    .map(LeaderboardEntry::getPlayerId)
-                    .collect(Collectors.toList());
-            for (int i = 1; i <= 9; i += 1) {
-                UUID playerId = leaders.get(i - 1);
-                StackableItem crates;
-                String placing;
-                switch (i) {
-                    case 1:
-                        crates = titanCrate.withCount(3);
-                        placing = "first";
-                        break;
-                    case 2:
-                        crates = titanCrate.withCount(2);
-                        placing = "second";
-                        break;
-                    case 3:
-                        crates = titanCrate.withCount(1);
-                        placing = "third";
-                        break;
-                    case 4:
-                        crates = legendCrate.withCount(3);
-                        placing = "fourth";
-                        break;
-                    case 5:
-                        crates = legendCrate.withCount(2);
-                        placing = "fifth";
-                        break;
-                    case 6:
-                        crates = legendCrate.withCount(1);
-                        placing = "sixth";
-                        break;
-                    case 7:
-                        crates = warCrate.withCount(3);
-                        placing = "seventh";
-                        break;
-                    case 8:
-                        crates = warCrate.withCount(2);
-                        placing = "eighth";
-                        break;
-                    case 9:
-                        crates = warCrate.withCount(1);
-                        placing = "ninth";
-                        break;
-                    default:
-                        crates = null;
-                        placing = null;
-                        break;
-                }
-                playerCommandService.giveItem(playerId, crates, false);
-                playerCommandService.sendNotification(playerId, "You received " + crates.count() + " " +
-                        crates.name() + " for finishing " + placing + " on the " + warry.getName() + " Leaderboard!");
-            }
-        });
-    }
-}
-
- */
