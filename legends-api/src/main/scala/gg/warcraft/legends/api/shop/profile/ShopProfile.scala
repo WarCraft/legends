@@ -10,7 +10,7 @@ import java.util.UUID
 
 case class ShopProfile(
     playerId: UUID,
-    unlocked: Set[String]
-){
-  lazy val grandfathered:Boolean = unlocked.contains("GRANDFATHERED")
+    unlocked: Set[String] = Set.empty
+) {
+  lazy val grandfathered: Boolean = unlocked.contains("GRANDFATHERED")
 }
