@@ -12,6 +12,7 @@ import gg.warcraft.combat.api.util.combatplayer._
 import gg.warcraft.legends.api.combat.LegendsCombatClass._
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
+import gg.warcraft.legends.api.shop.profile.{ShopProfile, ShopProfileService}
 import gg.warcraft.legends.api.util.legendsplayer._
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
@@ -57,6 +58,7 @@ object CombatClassMenu {
 
   private def combatClassButton(
       player: Player,
+      shopProfile: ShopProfile,
       combatClass: CombatClass,
       icon: ItemTypeOrVariant,
       cooldown: Option[String],
@@ -64,15 +66,11 @@ object CombatClassMenu {
   )(implicit
       combatDataService: CombatDataService
   ): Button = {
-    // TODO val combatClassShopId = ???
-    // TODO val isLocked = !shopProfileService.getProfile(player.id).hasCombatClass(combatClassShopId);
+    val isLocked = shopProfile.unlocked.contains(combatClass.id)
     val canSwitch = player.combatClass match {
       case Some(playerCombatClass) => playerCombatClass != combatClass
       case None                    => true
     }
-
-    val isLocked = true // TODO
-
     val tooltip =
       lore ++ List("") ++ switchView(combatClass, isLocked, canSwitch, cooldown)
     Button(
@@ -88,13 +86,14 @@ object CombatClassMenu {
 
   def guardianButton(
       player: Player,
+      shopProfile: ShopProfile,
       cooldown: Option[String]
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    combatClassService.combatClasses(Guardian.name),
+    combatClassService.combatClasses(Guardian.id),
     ItemType.SHIELD,
     cooldown,
     "Guardians wield a sword and a shield.",
@@ -116,13 +115,14 @@ object CombatClassMenu {
 
   def berserkerButton(
       player: Player,
+      shopProfile: ShopProfile,
       cooldown: Option[String]
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    combatClassService.combatClasses(Berserker.name),
+    combatClassService.combatClasses(Berserker.id),
     AxeVariant.STONE,
     cooldown,
     "Berserkers dual wield axes. Their skills",
@@ -146,13 +146,14 @@ object CombatClassMenu {
 
   def marksmanButton(
       player: Player,
+      shopProfile: ShopProfile,
       cooldown: Option[String]
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    combatClassService.combatClasses(Marksman.name),
+    combatClassService.combatClasses(Marksman.id),
     ItemType.CROSSBOW,
     cooldown,
     "Marksmen use a crossbow. Their skills",
@@ -174,13 +175,14 @@ object CombatClassMenu {
 
   def rangerButton(
       player: Player,
+      shopProfile: ShopProfile,
       cooldown: Option[String]
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    combatClassService.combatClasses(Ranger.name),
+    combatClassService.combatClasses(Ranger.id),
     ItemType.BOW,
     cooldown,
     "Hunters use bow and arrow. Their skills",
@@ -200,13 +202,14 @@ object CombatClassMenu {
 
   def elementalistButton(
       player: Player,
+      shopProfile: ShopProfile,
       cooldown: Option[String]
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    combatClassService.combatClasses(Elementalist.name),
+    combatClassService.combatClasses(Elementalist.id),
     ItemType.HOE,
     cooldown,
     "Elementalists wield a staff (hoe). Their",
@@ -229,13 +232,14 @@ object CombatClassMenu {
 
   def wizardButton(
       player: Player,
+      shopProfile: ShopProfile,
       cooldown: Option[String]
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    combatClassService.combatClasses(Wizard.name),
+    combatClassService.combatClasses(Wizard.id),
     ItemType.STICK,
     cooldown,
     "Wizards wield wand (stick) and book. Their",
@@ -268,25 +272,26 @@ object CombatClassMenu {
       attributeService: AttributeService,
       currencyService: CurrencyService,
       levelService: LevelService,
-      legendsDataService: LegendsPlayerDataService
+      legendsDataService: LegendsPlayerDataService,
+    shopProfileService: ShopProfileService
   ): Menu = {
+    val shopProfile = shopProfileService.profile(player.id)
     val cooldown = player.combatClassCooldown
     val cooldownText = // TODO add utils.string implicit ops in Monolith
       if (cooldown <= System.currentTimeMillis) None
       else Some(TimeUtils.timeUntil(cooldown))
-
     Menu(
       "Combat Class",
       MenuSize.TWO_ROWS,
       0 -> infoButton(player.combatClass),
       9 -> Button.back(MainMenu.apply),
       // 1st row
-      2 -> guardianButton(player, cooldownText),
-      3 -> berserkerButton(player, cooldownText),
-      4 -> marksmanButton(player, cooldownText),
-      5 -> rangerButton(player, cooldownText),
-      6 -> elementalistButton(player, cooldownText),
-      7 -> wizardButton(player, cooldownText)
+      2 -> guardianButton(player, shopProfile, cooldownText),
+      3 -> berserkerButton(player, shopProfile, cooldownText),
+      4 -> marksmanButton(player, shopProfile, cooldownText),
+      5 -> rangerButton(player, shopProfile, cooldownText),
+      6 -> elementalistButton(player, shopProfile, cooldownText),
+      7 -> wizardButton(player, shopProfile, cooldownText)
     )
   }
 }
