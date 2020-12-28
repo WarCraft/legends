@@ -14,6 +14,7 @@ import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.ItemType
+import gg.warcraft.monolith.api.menu.Button.updateMenu
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
@@ -47,7 +48,7 @@ object ChallengesMenu {
     s"Time left: $dailyChallengesTimeLeft",
     "",
     "[Click] To view your daily challenges"
-  ) { _ => menuService.showMenu(player.id, DailyChallengesMenu(player)) }
+  ) { _ => updateMenu(DailyChallengesMenu.apply) }
 
   private[menu] def dailyChallengesTimeLeft(implicit
       serverDataService: ServerDataService
@@ -77,7 +78,7 @@ object ChallengesMenu {
     s"Time left: $monthlyChallengesTimeLeft",
     "",
     "[Click] To view your monthly challenges"
-  ) { _ => menuService.showMenu(player.id, MonthlyChallengesMenu(player)) }
+  ) { _ => updateMenu(MonthlyChallengesMenu.apply) }
 
   private[menu] def monthlyChallengesTimeLeft(implicit
       serverDataService: ServerDataService
@@ -116,13 +117,10 @@ object ChallengesMenu {
   ): Menu = Menu(
     "Challenges",
     MenuSize.ONE_ROW,
-    Map(
-      0 -> infoButton,
-      2 -> dailyChallengesButton(player),
-      3 -> monthlyChallengesButton(player),
-      // TODO 4 -> puzzleChallengesButton(player),
-      8 -> Button.back(MainMenu.apply)
-    )
+    0 -> infoButton,
+    2 -> dailyChallengesButton(player),
+    3 -> monthlyChallengesButton(player),
+    8 -> Button.back(MainMenu.apply)
   )
 }
 
