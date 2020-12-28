@@ -1,19 +1,16 @@
-package gg.warcraft.legends.spigot.OLD.shop;
+/*
+ * All rights reserved
+ *
+ * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
+ */
 
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.shop.MiniPetFactory;
-import gg.warcraft.monolith.api.core.event.ServerShutdownEvent;
-import gg.warcraft.monolith.api.entity.EntityType;
-import org.bukkit.Server;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+package gg.warcraft.legends.spigot.ai
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+class SpigotMiniPetFactory {
+
+}
+
+/* TODO
 
 public class SpigotMiniPetFactory implements MiniPetFactory {
     private static final Map<UUID, UUID> playerIdToPetId = new HashMap<>();
@@ -83,3 +80,4 @@ public class SpigotMiniPetFactory implements MiniPetFactory {
         });
     }
 }
+ */

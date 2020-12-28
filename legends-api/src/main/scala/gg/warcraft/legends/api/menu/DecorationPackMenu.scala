@@ -11,7 +11,7 @@ import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.profile.{ShopProfile, ShopProfileService}
-import gg.warcraft.legends.api.shop.{Decoration, DecorationPack}
+import gg.warcraft.legends.api.shop.{Decoration, DecorationPack, ShopService}
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
 import gg.warcraft.monolith.api.menu.Button.noop
@@ -20,22 +20,31 @@ import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.util.ConsoleColor.{GREEN, RED}
 
+import scala.util.chaining.scalaUtilChainingOps
+
 object DecorationPackMenu {
-  private def infoButton(pack: DecorationPack): Button = Button.noop(
-    ItemType.BOOK,
-    pack.name,
-    pack.tooltip: _*
-  )
+  private var infoButtons: Map[String, Button] = Map.empty
+  private def infoButton(pack: DecorationPack): Button =
+    infoButtons.get(pack.id) match {
+      case Some(button) => button
+      case None =>
+        val button = Button.noop(
+          ItemType.BOOK,
+          pack.name,
+          pack.tooltip: _*
+        )
+        button.tap { it => infoButtons += (pack.id -> it) }
+    }
 
   private def decorationButton(
       decoration: Decoration,
-      shopProfile: ShopProfile
+      profile: ShopProfile
   )(implicit
       itemService: ItemService
   ): Button = {
-    val unlocked = shopProfile.grandfathered ||
-      shopProfile.unlocked.contains(decoration.pack) ||
-      shopProfile.unlocked.contains(decoration.id)
+    val unlocked = profile.grandfathered ||
+      profile.unlocked.contains(decoration.pack) ||
+      profile.unlocked.contains(decoration.id)
     val unlockedText =
       if (unlocked) s"$GREEN[Click] To take out a stack of ${decoration.name}"
       else s"${RED}Locked"
@@ -44,7 +53,8 @@ object DecorationPackMenu {
       decoration.name,
       decoration.tooltip ++ List("", unlockedText)
     ) { _ =>
-      if (unlocked) itemService.giveTo(shopProfile.playerId, decoration.stack); noop
+      if (unlocked) itemService.giveTo(profile.playerId, decoration.stack)
+      noop
     }
   }
 
@@ -58,7 +68,8 @@ object DecorationPackMenu {
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
       itemService: ItemService,
-      shopProfileService: ShopProfileService
+      shopProfileService: ShopProfileService,
+      shopService: ShopService
   ): Menu = {
     val rowCount =
       if (pack.decorations.size <= 14) 2

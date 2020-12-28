@@ -45,7 +45,8 @@ object DecorationsMenu {
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
       itemService: ItemService,
-      shopProfileService: ShopProfileService
+      shopProfileService: ShopProfileService,
+      shopService: ShopService
   ): Button = decorationPackButtons.get(pack.id) match {
     case Some(button) => button
     case None =>
