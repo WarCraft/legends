@@ -19,6 +19,7 @@ import gg.warcraft.monolith.api.core.ColorCode
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemType, ItemTypeOrVariant}
+import gg.warcraft.monolith.api.menu.Button.noop
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
@@ -58,7 +59,7 @@ object DailyLoginMenu {
       s"${reward.count} ${reward.name}$plural",
       "",
       claimText
-    ) { _ => if (canClaim) loginRewardService.claimReward(player.id) }
+    ) { _ => if (canClaim) loginRewardService.claimReward(player.id); noop }
   }
 
   def apply(player: Player)(implicit

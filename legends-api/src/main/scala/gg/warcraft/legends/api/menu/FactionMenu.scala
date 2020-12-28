@@ -14,6 +14,7 @@ import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.ItemType
+import gg.warcraft.monolith.api.menu.Button.noop
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
@@ -68,7 +69,9 @@ object FactionMenu {
     "fishb6nes",
     Humans.name,
     "[Shift Right Click] To fight for the Humans"
-  ) { click => if (click.isShiftRight) playerService.setTeam(player.id, Humans) }
+  ) { click =>
+    if (click.isShiftRight) playerService.setTeam(player.id, Humans); noop
+  }
 
   private def orcButton(player: Player)(implicit
       playerService: PlayerService
@@ -76,7 +79,7 @@ object FactionMenu {
     "fishb6nes",
     Orcs.name,
     "[Shift Right Click] To fight for the Orcs"
-  ) { click => if (click.isShiftRight) playerService.setTeam(player.id, Orcs) }
+  ) { click => if (click.isShiftRight) playerService.setTeam(player.id, Orcs); noop }
 
   private def dwarfButton(player: Player)(implicit
       playerService: PlayerService
@@ -84,7 +87,9 @@ object FactionMenu {
     "fishb6nes",
     Dwarves.name,
     "[Shift Right Click] To fight for the Dwarves"
-  ) { click => if (click.isShiftRight) playerService.setTeam(player.id, Dwarves) }
+  ) { click =>
+    if (click.isShiftRight) playerService.setTeam(player.id, Dwarves); noop
+  }
 
   private def elfButton(player: Player)(implicit
       playerService: PlayerService
@@ -92,7 +97,9 @@ object FactionMenu {
     "fishb6nes",
     Elves.name,
     "[Shift Right Click] To fight for the Elves"
-  ) { click => if (click.isShiftRight) playerService.setTeam(player.id, Elves) }
+  ) { click =>
+    if (click.isShiftRight) playerService.setTeam(player.id, Elves); noop
+  }
 
   def apply(
       player: Player
@@ -109,17 +116,13 @@ object FactionMenu {
     Menu(
       "Faction",
       MenuSize.ONE_ROW,
-      Map(
-        0 -> infoButton(player),
-        // 1
-        2 -> humanButton(player),
-        3 -> orcButton(player),
-        4 -> dwarfButton(player),
-        5 -> elfButton(player),
-        // 6
-        // 7
-        8 -> Button.back(MainMenu.apply)
-      )
+      0 -> infoButton(player),
+      8 -> Button.back(MainMenu.apply),
+      // 1st row
+      2 -> humanButton(player),
+      3 -> orcButton(player),
+      4 -> dwarfButton(player),
+      5 -> elfButton(player)
     )
   }
 }
