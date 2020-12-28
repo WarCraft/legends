@@ -20,10 +20,13 @@ class ShopService(implicit
   private var _itemsById: Map[String, ShopItem] = Map.empty
   def itemsById: Map[String, ShopItem] = _itemsById
 
-  private var _itemsByType: Map[ShopItem.Type, Map[ItemRarity, List[ShopItem]]] =
+  private var _itemsByType: Map[ShopItem.Type, List[ShopItem]] = Map.empty
+  def itemsByType: Map[ShopItem.Type, List[ShopItem]] = _itemsByType
+
+  private var _itemsByRarity: Map[ShopItem.Type, Map[ItemRarity, List[ShopItem]]] =
     Map.empty
-  def itemsByType: Map[ShopItem.Type, Map[ItemRarity, List[ShopItem]]] =
-    _itemsByType
+  def itemsByRarity: Map[ShopItem.Type, Map[ItemRarity, List[ShopItem]]] =
+    _itemsByRarity
 
   private var _availableItems: List[ShopItem] = Nil
   def availableItems: List[ShopItem] = Nil
@@ -37,12 +40,10 @@ class ShopService(implicit
 
     _itemsByType = itemsById.values
       .groupBy { _.typ }
-      .map { case (typ, items) =>
-        val itemsByRarity = items
-          .groupBy { _.rarity }
-          .map { case (rarity, items) => rarity -> items.toList }
-        typ -> itemsByRarity
-      }
+      .map { case (typ, items) => typ -> items.toList }
+
+    _itemsByRarity = itemsByType
+      .map { case (typ, items) => typ -> items.groupBy { _.rarity } }
 
     _availableItems = availableShopItemRepository.loadAvailable()
     if (availableItems == Nil) rotateAvailable()
@@ -50,11 +51,11 @@ class ShopService(implicit
 
   private[shop] def rotateAvailable(): Unit = {
     val filler = (1 to 5).map { _ =>
-      val list = itemsByType(randomFillerType)(randomFillerRarity)
+      val list = itemsByRarity(randomFillerType)(randomFillerRarity)
       list(Random.nextInt(list.size))
     }.toList
     val premium = (1 to 5).map { _ =>
-      val list = itemsByType(randomPremiumType)(randomPremiumRarity)
+      val list = itemsByRarity(randomPremiumType)(randomPremiumRarity)
       list(Random.nextInt(list.size))
     }.toList
 

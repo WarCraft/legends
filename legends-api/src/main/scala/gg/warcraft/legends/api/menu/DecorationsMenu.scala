@@ -6,86 +6,85 @@
 
 package gg.warcraft.legends.api.menu
 
-import gg.warcraft.monolith.api.menu.Menu
-import gg.warcraft.monolith.api.player.Player
+import gg.warcraft.combat.api.combatclass.CombatClassService
+import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
+import gg.warcraft.legends.api.player.level.LevelService
+import gg.warcraft.legends.api.shop.profile.ShopProfileService
+import gg.warcraft.legends.api.shop.{DecorationPack, ShopItem, ShopService}
+import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.item.{ItemService, ItemType}
+import gg.warcraft.monolith.api.menu.Button.updateMenu
+import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
+import gg.warcraft.monolith.api.player.currency.CurrencyService
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
+import gg.warcraft.monolith.api.util.ConsoleColor.GREEN
+
+import scala.util.chaining.scalaUtilChainingOps
 
 object DecorationsMenu {
-  def apply(player: Player): Menu = null
+  private final val infoButton = Button.noop(
+    ItemType.BOOK,
+    "Decorations",
+    "Did you know you can rent a house in your",
+    "faction's capital city? Did you know you can",
+    "completely decorate it however you want!",
+    "",
+    "You can unlock decorations in the /shop or",
+    "by opening loot crates."
+  )
+
+  private var decorationPackButtons: Map[String, Button] = Map.empty
+  private def decorationPackButton(pack: DecorationPack)(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      itemService: ItemService,
+      shopProfileService: ShopProfileService
+  ): Button = decorationPackButtons.get(pack.id) match {
+    case Some(button) => button
+    case None =>
+      val button = Button(
+        pack.icon.get,
+        pack.name,
+        pack.tooltip ++
+          List("", s"$GREEN[Click] To view your", s"${pack.name} decorations")
+      ) { _ => updateMenu(DecorationPackMenu(pack)) }
+      button.tap { it => decorationPackButtons += (pack.id -> it) }
+  }
+
+  def apply(player: Player)(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      itemService: ItemService,
+      shopProfileService: ShopProfileService,
+      shopService: ShopService
+  ): Menu = {
+    val packs = shopService.itemsByType(ShopItem.DecorationPack)
+    val rowCount = if (packs.size <= 14) 2 else Math.ceil(packs.size / 7f).toInt
+    val menuSize = MenuSize.fromRows(rowCount)
+    val buttons = packs.zipWithIndex.map { case (pack, i) =>
+      val slot = i + (1 + (i - 1) / 7) * 2
+      slot -> decorationPackButton(pack.asInstanceOf[DecorationPack])
+    }
+    Menu(
+      "Decorations",
+      menuSize,
+      Map(
+        0 -> infoButton,
+        9 -> Button.back(CollectiblesMenu.apply)
+      ) ++ buttons
+    )
+  }
 }
-
-/*
-public class DefaultDecorationsMenuFactory extends AbstractMenuFactory implements DecorationsMenuFactory {
-    private static final String GREEN = ColorCode.GREEN.toString();
-
-    private final ShopQueryService shopQueryService;
-    private final LegendsMenuFactory legendsMenuFactory;
-
-    @Inject
-    public DefaultDecorationsMenuFactory(ShopQueryService shopQueryService,
-                                         MenuCommandService menuCommandService,
-                                         LegendsMenuFactory legendsMenuFactory,
-                                         MenuBuilderFactory menuBuilderFactory,
-                                         ButtonBuilderFactory buttonBuilderFactory) {
-        super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
-        this.shopQueryService = shopQueryService;
-        this.legendsMenuFactory = legendsMenuFactory;
-    }
-
-    Button createInfoButton() {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Decorations");
-        builder.addTooltip("Did you know you can rent a house?");
-        builder.addTooltip("Did you know you can completely");
-        builder.addTooltip("decorate it however you want!?");
-        builder.addTooltip("");
-        builder.addTooltip("You can unlock decorations via the");
-        builder.addTooltip("shop and opening loot crates.");
-        return builder.build();
-    }
-
-    Button createDecorationButton(UUID playerId, DecorationPackId decorationPackId) {
-        DecorationPack pack = shopQueryService.getDecorationPack(decorationPackId.toString());
-        ButtonBuilder builder = createSimpleButtonBuilder(pack.getIcon(), pack.getName());
-        pack.getLore().forEach(builder::addTooltip);
-        builder.addTooltip("");
-        builder.addTooltip(GREEN + "[CLICK] To browse your " + pack.getName() + " decorations");
-
-        builder.withAction(action -> {
-            Menu packMenu = legendsMenuFactory.createDecorationPackMenu(playerId, decorationPackId);
-            showMenu(packMenu, playerId);
-        });
-        return builder.build();
-    }
-
-    @Override
-    public Menu createDecorationsMenu(UUID playerId) {
-        MenuBuilder builder = createMenuBuilder("Decorations", MenuSize.THREE_ROWS);
-        builder.addButton(0, createInfoButton());
-        builder.addButton(9, createBackButton(playerId, legendsMenuFactory::createCollectablesMenuFactory));
-
-        builder.addButton(2, createDecorationButton(playerId, DecorationPackId.BASIC));
-        builder.addButton(3, createDecorationButton(playerId, DecorationPackId.FABRICS));
-        builder.addButton(4, createDecorationButton(playerId, DecorationPackId.GLASS));
-        builder.addButton(5, createDecorationButton(playerId, DecorationPackId.STONE));
-        builder.addButton(6, createDecorationButton(playerId, DecorationPackId.WOOD));
-        builder.addButton(7, createDecorationButton(playerId, DecorationPackId.DESERT));
-        builder.addButton(8, createDecorationButton(playerId, DecorationPackId.TERRACOTTA));
-
-        builder.addButton(11, createDecorationButton(playerId, DecorationPackId.NATURE));
-        builder.addButton(12, createDecorationButton(playerId, DecorationPackId.GARDENING));
-        builder.addButton(13, createDecorationButton(playerId, DecorationPackId.FLOWERS));
-        builder.addButton(14, createDecorationButton(playerId, DecorationPackId.ORES));
-        builder.addButton(15, createDecorationButton(playerId, DecorationPackId.GEMSTONES));
-        builder.addButton(16, createDecorationButton(playerId, DecorationPackId.CONCRETE));
-        builder.addButton(17, createDecorationButton(playerId, DecorationPackId.GLAZED_TERRACOTTA));
-
-        builder.addButton(20, createDecorationButton(playerId, DecorationPackId.BLURPLE));
-        builder.addButton(21, createDecorationButton(playerId, DecorationPackId.NETHER));
-        builder.addButton(22, createDecorationButton(playerId, DecorationPackId.ICE_AND_FIRE));
-        builder.addButton(23, createDecorationButton(playerId, DecorationPackId.ART));
-        builder.addButton(24, createDecorationButton(playerId, DecorationPackId.MOB_HEADS));
-        builder.addButton(25, createDecorationButton(playerId, DecorationPackId.MUSIC));
-        return builder.build();
-    }
-}
-
- */
