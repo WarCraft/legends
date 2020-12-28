@@ -12,6 +12,7 @@ import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.legends.api.item.equipment.{AttributeDistribution, EquipmentType}
 import gg.warcraft.legends.api.player.challenge.{Challenge, ChallengeService}
+import gg.warcraft.legends.api.shop.{ShopItem, ShopService}
 import gg.warcraft.monolith.api.core.Codecs.Circe._
 import gg.warcraft.monolith.api.entity.team.Team
 import io.circe.{Decoder, Encoder, KeyDecoder}
@@ -69,5 +70,12 @@ object quill {
   ): MappedEncoding[String, Challenge] =
     MappedEncoding(service.challengesById)
   implicit lazy val challengeEncoder: MappedEncoding[Challenge, String] =
+    MappedEncoding { _.id }
+
+  def shopItemDecoder(implicit
+      service: ShopService
+  ): MappedEncoding[String, ShopItem] =
+    MappedEncoding(service.items)
+  implicit lazy val shopItemEncoder: MappedEncoding[ShopItem, String] =
     MappedEncoding { _.id }
 }
