@@ -75,7 +75,7 @@ object quill {
   def shopItemDecoder(implicit
       service: ShopService
   ): MappedEncoding[String, ShopItem] =
-    MappedEncoding(service.items)
+    MappedEncoding(service.itemsById)
   implicit lazy val shopItemEncoder: MappedEncoding[ShopItem, String] =
     MappedEncoding { _.id }
 }
