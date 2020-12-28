@@ -74,11 +74,12 @@ object MiniPetsMenu {
       miniPetFactory: MiniPetFactory
   ): Menu = {
     val pets = shopService.itemsByType(ShopItem.MiniPet)
+    val profile = shopProfileService.profile(player.id)
     val rowCount = if (pets.size <= 14) 2 else Math.ceil(pets.size / 7f).toInt
     val menuSize = MenuSize.fromRows(rowCount)
     val buttons = pets.zipWithIndex.map { case (pet, i) =>
       val slot = i + (1 + (i - 1) / 7) * 2
-      slot -> miniPetButton(pet.asInstanceOf[MiniPet])
+      slot -> miniPetButton(pet.asInstanceOf[MiniPet], profile)
     }
     Menu(
       "Mini Pets",
@@ -86,7 +87,7 @@ object MiniPetsMenu {
       Map(
         0 -> infoButton,
         9 -> Button.back(CollectiblesMenu.apply)
-      ) ++ buttons ++ dismissButton(player)
+      ) ++ buttons + (16 -> dismissButton(player))
     )
   }
 }
