@@ -30,7 +30,7 @@ object ChallengesMenu {
     "your faction increase their influence on Aldmore."
   )
 
-  private def dailyChallengesButton(player: Player)(implicit
+  private def dailyChallengesButton(implicit
       menuService: MenuService,
       attributeService: AttributeService,
       currencyService: CurrencyService,
@@ -60,7 +60,7 @@ object ChallengesMenu {
     else s"${serverTime.until(until, ChronoUnit.MINUTES)} minutes"
   }
 
-  private def monthlyChallengesButton(player: Player)(implicit
+  private def monthlyChallengesButton(implicit
       menuService: MenuService,
       attributeService: AttributeService,
       currencyService: CurrencyService,
@@ -118,8 +118,8 @@ object ChallengesMenu {
     "Challenges",
     MenuSize.ONE_ROW,
     0 -> infoButton,
-    2 -> dailyChallengesButton(player),
-    3 -> monthlyChallengesButton(player),
+    2 -> dailyChallengesButton,
+    3 -> monthlyChallengesButton,
     8 -> Button.back(MainMenu.apply)
   )
 }

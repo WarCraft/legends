@@ -24,6 +24,20 @@ import gg.warcraft.monolith.api.util.TimeUtils
 import gg.warcraft.monolith.api.util.string._
 
 object CombatClassMenu {
+  private def infoButton(combatClass: Option[CombatClass]): Button = {
+    val name = combatClass.map { _.name }.getOrElse("Adventurer")
+    val prefix = if (name(0).isVowel) "an" else "a"
+    Button.noop(
+      ItemType.BOOK,
+      "Choosing a Combat Class",
+      s"You are currently fighting as $prefix",
+      s"$YELLOW$name",
+      "",
+      "You can change your combat class",
+      "once every 10 minutes."
+    )
+  }
+
   def switchView(
       combatClass: CombatClass,
       isLocked: Boolean,
@@ -256,39 +270,23 @@ object CombatClassMenu {
       levelService: LevelService,
       legendsDataService: LegendsPlayerDataService
   ): Menu = {
-    val combatClass = player.combatClass
-    val combatClassName = combatClass.get.name
-    val combatClassPrefix = if (combatClassName(0).isVowel) "an" else "a"
-
     val cooldown = player.combatClassCooldown
     val cooldownText = // TODO add utils.string implicit ops in Monolith
       if (cooldown <= System.currentTimeMillis) None
       else Some(TimeUtils.timeUntil(cooldown))
 
-    val infoButton = Button.noop(
-      ItemType.BOOK,
-      "Choosing a Combat Class",
-      s"You are currently fighting as $combatClassPrefix",
-      s"$YELLOW$combatClassName",
-      "",
-      "You can change your combat class",
-      "once every 10 minutes."
-    )
-
     Menu(
       "Combat Class",
-      MenuSize.ONE_ROW,
-      Map(
-        0 -> infoButton,
-        8 -> Button.back(MainMenu.apply),
-        // 1st row
-        2 -> guardianButton(player, cooldownText),
-        3 -> berserkerButton(player, cooldownText),
-        4 -> marksmanButton(player, cooldownText),
-        5 -> rangerButton(player, cooldownText),
-        6 -> elementalistButton(player, cooldownText),
-        7 -> wizardButton(player, cooldownText)
-      )
+      MenuSize.TWO_ROWS,
+      0 -> infoButton(player.combatClass),
+      9 -> Button.back(MainMenu.apply),
+      // 1st row
+      2 -> guardianButton(player, cooldownText),
+      3 -> berserkerButton(player, cooldownText),
+      4 -> marksmanButton(player, cooldownText),
+      5 -> rangerButton(player, cooldownText),
+      6 -> elementalistButton(player, cooldownText),
+      7 -> wizardButton(player, cooldownText)
     )
   }
 }
