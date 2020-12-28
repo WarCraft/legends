@@ -6,90 +6,93 @@
 
 package gg.warcraft.legends.api.menu
 
+import gg.warcraft.combat.api.combatclass.CombatClassService
+import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.legends.api.item.equipment.EquipmentBuilder
+import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
+import gg.warcraft.legends.api.player.level.LevelService
+import gg.warcraft.legends.api.shop.profile.{ShopProfile, ShopProfileService}
+import gg.warcraft.legends.api.shop.{Promotion, ShopItem, ShopService}
+import gg.warcraft.monolith.api.core.Message
+import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.item.{ItemService, ItemType}
+import gg.warcraft.monolith.api.menu.Button.{closeMenu, noop}
+import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
+import gg.warcraft.monolith.api.player.currency.CurrencyService
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
+import gg.warcraft.monolith.api.util.ConsoleColor.{GREEN, RED}
+
 object PromotionsMenu {
+  private final val infoButton = Button.noop(
+    ItemType.BOOK,
+    "Promotions",
+    "Unique items that commemorate a special",
+    "occasion."
+  )
 
+  private final val noHelmetMessage =
+    Message.server("Please remove your current equipment first.")
+  private def promotionButton(
+      promotion: Promotion,
+      profile: ShopProfile,
+      player: Player
+  )(implicit
+      itemService: ItemService,
+      playerService: PlayerService
+  ): Button = {
+    val unlocked = profile.grandfathered || profile.unlocked.contains(promotion.id)
+    val unlockedText = if (unlocked) s"$GREEN[Click] To equip" else s"${RED}Locked"
+    Button(
+      promotion.icon.get,
+      promotion.name,
+      promotion.tooltip ++ List("", unlockedText): _*
+    ) { _ =>
+      if (unlocked) {
+        if (player.equipment.get(promotion.slot).nonEmpty) {
+          val item = new EquipmentBuilder(
+            promotion.itemType,
+            promotion.rarity,
+            promotion.name
+          ).withAttributes(promotion.attributes)
+            .withFlavorText(promotion.tooltip)
+            .build()
+          playerService.setEquipment(player.id, promotion.slot, item)
+          closeMenu
+        } else closeMenu(noHelmetMessage)
+      } else noop
+    }
+  }
+
+  def apply(player: Player)(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      itemService: ItemService,
+      shopProfileService: ShopProfileService,
+      shopService: ShopService
+  ): Menu = {
+    val promotions = shopService.itemsByType(ShopItem.Promotion)
+    val profile = shopProfileService.profile(player.id)
+    val rowCount =
+      if (promotions.size <= 14) 2
+      else Math.ceil(promotions.size / 7f).toInt
+    val menuSize = MenuSize.fromRows(rowCount)
+    val buttons = promotions.zipWithIndex.map { case (promotion, i) =>
+      val slot = i + (1 + (i - 1) / 7) * 2
+      slot -> promotionButton(promotion.asInstanceOf[Promotion], profile)
+    }
+    Menu(
+      "Promotions",
+      menuSize,
+      Map(
+        0 -> infoButton,
+        9 -> Button.back(CollectiblesMenu.apply)
+      ) ++ buttons
+    )
+  }
 }
-
-/*
-public class DefaultPromotionsMenuFactory extends AbstractMenuFactory implements PromotionsMenuFactory {
-    private static final String GREEN = ColorCode.GREEN.toString();
-    private static final String ORANGE = ColorCode.GOLD.toString();
-
-    private final ShopQueryService shopQueryService;
-    private final ShopProfileQueryService shopProfileQueryService;
-    private final LegendsPlayerQueryService legendsPlayerQueryService;
-    private final LegendsPlayerCommandService legendsPlayerCommandService;
-    private final CollectablesMenuFactory collectablesMenuFactory;
-    private final EquipmentBuilderFactory equipmentBuilderFactory;
-
-    @Inject
-    public DefaultPromotionsMenuFactory(ShopQueryService shopQueryService,
-                                        ShopProfileQueryService shopProfileQueryService,
-                                        LegendsPlayerQueryService legendsPlayerQueryService,
-                                        LegendsPlayerCommandService legendsPlayerCommandService,
-                                        MenuCommandService menuCommandService,
-                                        MenuBuilderFactory menuBuilderFactory,
-                                        ButtonBuilderFactory buttonBuilderFactory,
-                                        CollectablesMenuFactory collectablesMenuFactory,
-                                        EquipmentBuilderFactory equipmentBuilderFactory) {
-        super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
-        this.shopQueryService = shopQueryService;
-        this.shopProfileQueryService = shopProfileQueryService;
-        this.legendsPlayerCommandService = legendsPlayerCommandService;
-        this.legendsPlayerQueryService = legendsPlayerQueryService;
-        this.collectablesMenuFactory = collectablesMenuFactory;
-        this.equipmentBuilderFactory = equipmentBuilderFactory;
-    }
-
-    Button createInfoButton() {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Promotions");
-        builder.addTooltip("Unique items that commemorate a");
-        builder.addTooltip("special occasion. Promotions can");
-        builder.addTooltip("generally only be obtained for a");
-        builder.addTooltip("limited amount of time.");
-        return builder.build();
-    }
-
-    Button createPromotionButton(PromotionId promotionId, ShopProfile shopProfile) {
-        UUID playerId = shopProfile.getPlayerId();
-        boolean hasUnlocked = shopProfile.isGrandfathered() || shopProfile.hasPromotion(promotionId);
-        Promotion promotion = shopQueryService.getPromotion(promotionId.toString());
-        ButtonBuilder builder = createSimpleButtonBuilder(promotion.getIcon(), promotion.getName());
-        promotion.getLore().forEach(builder::addTooltip);
-        builder.addTooltip("");
-        if (hasUnlocked) {
-            builder.addTooltip(GREEN + "[CLICK] To equip");
-        } else {
-            builder.addTooltip(ORANGE + "You haven't unlocked this promotion");
-        }
-
-        builder.withAction(action -> {
-            if (hasUnlocked) {
-                LegendsPlayer player = legendsPlayerQueryService.getPlayer(playerId);
-                Equipment equipment = player.getEquipment();
-                if (equipment.getSlot(EquipmentSlot.HEAD) == null) {
-                    EquipmentBuilder itemBuilder = equipmentBuilderFactory.createEquipmentBuilder(
-                            promotion.getItemType(), promotion.getRarity(), promotion.getName());
-                    itemBuilder.withAttributes(promotion.getAttributes());
-                    itemBuilder.withFlavorText(promotion.getLore());
-                    legendsPlayerCommandService.setEquipment(playerId, EquipmentSlot.HEAD, itemBuilder.build());
-                } else {
-                    legendsPlayerCommandService.sendNotification(playerId, "Please remove your current helmet first");
-                }
-                closeMenu(playerId);
-            }
-        });
-        return builder.build();
-    }
-
-    @Override
-    public Menu createPromotionsMenu(UUID playerId) {
-        ShopProfile shopProfile = shopProfileQueryService.getProfile(playerId);
-        MenuBuilder builder = createMenuBuilder("Promotions", MenuSize.ONE_ROW);
-        builder.addButton(0, createInfoButton());
-        builder.addButton(2, createPromotionButton(PromotionId.FIVE_YEAR_OLD_CAKE, shopProfile));
-        builder.addButton(8, createBackButton(playerId, collectablesMenuFactory::createCollectablesMenu));
-        return builder.build();
-    }
-}
- */

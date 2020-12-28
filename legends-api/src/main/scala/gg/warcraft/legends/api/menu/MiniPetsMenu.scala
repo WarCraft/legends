@@ -15,7 +15,7 @@ import gg.warcraft.legends.api.shop.profile.{ShopProfile, ShopProfileService}
 import gg.warcraft.legends.api.shop.{MiniPet, ShopItem, ShopService}
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
-import gg.warcraft.monolith.api.menu.Button.closeMenu
+import gg.warcraft.monolith.api.menu.Button.{closeMenu, noop}
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
@@ -43,8 +43,10 @@ object MiniPetsMenu {
       pet.name,
       pet.tooltip ++ List("", unlockedText): _*
     ) { _ =>
-      if (unlocked) miniPetFactory.create(pet.entityType, profile.playerId)
-      closeMenu
+      if (unlocked) {
+        miniPetFactory.create(pet.entityType, profile.playerId)
+        closeMenu
+      } else noop
     }
   }
 

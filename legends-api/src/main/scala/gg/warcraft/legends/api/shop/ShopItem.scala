@@ -106,6 +106,6 @@ case class Promotion(
     name: String,
     tooltip: List[String],
     itemType: ItemTypeOrVariant,
-    slot: Option[Equipment.Slot],
+    slot: Equipment.Slot,
     attributes: Map[LegendsAttribute, Int]
 ) extends ShopItem
