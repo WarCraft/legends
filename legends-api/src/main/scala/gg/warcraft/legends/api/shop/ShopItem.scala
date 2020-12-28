@@ -9,7 +9,9 @@ package gg.warcraft.legends.api.shop
 import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.monolith.api.entity.{Entity, Equipment}
-import gg.warcraft.monolith.api.item.ItemTypeOrVariant
+import gg.warcraft.monolith.api.item.{Item, ItemService, ItemTypeOrVariant}
+
+import scala.util.chaining.scalaUtilChainingOps
 
 trait ShopItem {
   val id: String
@@ -55,13 +57,19 @@ case class Decoration(
     typ: ShopItem.Type,
     rarity: ItemRarity,
     price: Int,
-    icon: Option[ItemTypeOrVariant],
     skull: Option[String],
     name: String,
     tooltip: List[String],
     itemType: ItemTypeOrVariant,
     pack: String
-) extends ShopItem
+) extends ShopItem {
+  val icon: Option[ItemTypeOrVariant] = Some(itemType)
+
+  private var _stack: Item = _
+  def stack(implicit itemService: ItemService): Item =
+    if (_stack != null) _stack
+    else itemService.create(itemType).withTooltip("Decoration").tap { _stack = _ }
+}
 
 case class DecorationPack(
     id: String,
