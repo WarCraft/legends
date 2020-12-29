@@ -8,7 +8,7 @@ package gg.warcraft.legends.api.item
 
 import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.combat.api.data.CombatDataService
-import gg.warcraft.combat.api.util.combatplayer._
+import gg.warcraft.combat.api.util.entity._
 import gg.warcraft.legends.api.combat.LegendsCombatArchetype
 import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
@@ -18,12 +18,13 @@ import gg.warcraft.monolith.api.core.Duration.DurationOps
 import gg.warcraft.monolith.api.core.auth.Principal
 import gg.warcraft.monolith.api.core.command.Command
 import gg.warcraft.monolith.api.core.event.{Event, PreEvent}
+import gg.warcraft.monolith.api.entity.EntityService
 import gg.warcraft.monolith.api.item.{ItemPrePickupEvent, ItemService}
 import gg.warcraft.monolith.api.player.statistic.StatisticService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.world.Location
 
-import java.util.{Random, UUID}
+import java.util.UUID
 
 class DropHandler(implicit
     itemService: ItemService,
@@ -31,13 +32,13 @@ class DropHandler(implicit
     combatClassService: CombatClassService,
     playerService: PlayerService,
     combatDataService: CombatDataService,
-    statisticService: StatisticService
+    statisticService: StatisticService,
+    entityService: EntityService
 ) extends Command.Handler
     with Event.Handler {
-  private val RESERVE_DURATION = 60.seconds
+  private final val RESERVE_DURATION = 60.seconds
 
   private val generator = new EquipmentGenerator()
-  private val random = new Random(System.currentTimeMillis)
 
   private var reservedFor: Map[UUID, UUID] = Map.empty
   private var reservedUntil: Map[UUID, Long] = Map.empty
@@ -53,18 +54,18 @@ class DropHandler(implicit
       try {
         val mobType = args(0)
         val mobId = UUID.fromString(args(1))
+        val mob = entityService.getEntity(mobId)
         val world = args(2)
         val x = args(3).toFloat
         val y = args(4).toFloat
         val z = args(5).toFloat
 
-        val damagers: Set[UUID] = whoDamagedWhoRepository.damagers(mobId)
-        damagers.foreach { damagerId =>
-          playerService.getPlayerOption(damagerId).foreach { player =>
+        mob.combatData.attackedBy.foreach { attackerId =>
+          playerService.getPlayerOption(attackerId).foreach { player =>
             val combatClass = player.combatClass match {
               case Some(it) => it
               case None =>
-                throw new IllegalStateException(s"$damagerId has no combat class")
+                throw new IllegalStateException(s"$attackerId has no combat class")
             }
             val archetype = combatClass.name match {
               case "Berserker"    => LegendsCombatArchetype.WARRIOR
@@ -80,12 +81,12 @@ class DropHandler(implicit
               player.team.get.asInstanceOf[LegendsTeam]
             )
             if (player.location.world.name != world)
-              throw new IllegalStateException(s"$damagerId has left $world")
+              throw new IllegalStateException(s"$attackerId has left $world")
             val location = new Location(player.location.world, x, y, z)
             val dropped = itemService.dropItems(location, drop)
             val droppedId = dropped(0)
 
-            reservedFor += (droppedId -> damagerId)
+            reservedFor += (droppedId -> attackerId)
             reservedUntil += (droppedId -> (System.currentTimeMillis + RESERVE_DURATION.millis))
 
             /*
@@ -117,11 +118,11 @@ class DropHandler(implicit
              */
 
             statisticService.increaseStatistic(
-              damagerId,
+              attackerId,
               1,
-              LegendsStatistic.DailyMobs.id,
-              LegendsStatistic.MonthlyMobs.id,
-              LegendsStatistic.AlltimeMobs.id
+              LegendsStatistic.DailyMobs,
+              LegendsStatistic.MonthlyMobs,
+              LegendsStatistic.AlltimeMobs
             )
           }
         }
