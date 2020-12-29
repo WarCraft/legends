@@ -34,7 +34,8 @@ lazy val api = (project in file("legends-api"))
       "gg.warcraft" %% "monolith-api" % "15.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "chat-api" % "15.0.0-SNAPSHOT" % Provided,
       // "gg.warcraft" %% "gathering-api" % "15.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "combat-api" % "15.0.0-SNAPSHOT" % Provided
+      "gg.warcraft" %% "combat-api" % "15.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "siege-api" % "15.0.0-SNAPSHOT" % Provided
     )
   )
 
@@ -52,7 +53,7 @@ lazy val spigot = (project in file("legends-spigot"))
       "com.destroystokyo.paper" % "paper-api" % "1.15.2-R0.1-SNAPSHOT" % Provided,
       "gg.warcraft" %% "monolith-spigot" % "15.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "combat-spigot" % "15.0.0-SNAPSHOT" % Provided,
-      "LibsDisguises" % "LibsDisguises" % "10.0.12" % Provided intransitive()
+      "LibsDisguises" % "LibsDisguises" % "10.0.12" % Provided intransitive ()
     )
   )
   .dependsOn(api)
