@@ -47,7 +47,7 @@ class ShopProfileService(implicit
   }
 
   private def takePayment(id: String, profile: ShopProfile): Boolean = {
-    val item = shopService.items(id)
+    val item = shopService.itemsById(id)
     val player = playerService.getPlayer(profile.playerId)
     val discountedPrice = item.price - calculateDiscount(item, profile)
     if (player.fragments >= discountedPrice) {

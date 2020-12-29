@@ -6,207 +6,120 @@
 
 package gg.warcraft.legends.api.menu
 
+import gg.warcraft.combat.api.combatclass.CombatClassService
+import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
+import gg.warcraft.legends.api.player.level.LevelService
+import gg.warcraft.legends.api.shop.profile.{ShopProfile, ShopProfileService}
+import gg.warcraft.legends.api.shop.{DecorationPack, ShopItem, ShopService}
+import gg.warcraft.legends.api.util.legendsplayer._
+import gg.warcraft.monolith.api.core.ColorCode._
+import gg.warcraft.monolith.api.core.Message
+import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.item.ItemType
+import gg.warcraft.monolith.api.menu.Button.{closeMenu, noop, updateMenu}
+import gg.warcraft.monolith.api.menu._
+import gg.warcraft.monolith.api.player.currency.CurrencyService
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
+
 object ShopMenu {
+  private final val purchaseFailureMessage = Message.server(
+    "Something went wrong unlocking that item. Do you have enough Fragments? Please re-open the shop and try again."
+  )
 
+  private final val infoButton = Button.noop(
+    ItemType.BOOK,
+    "WarCraft: Shop",
+    "To go even further beyond in supporting the",
+    "server the WarCraft: Shop has 12 different",
+    "items for sale every day. These items can",
+    "be bought with Fragments which are available",
+    s"from the web shop at ${YELLOW}shop.warcraft.gg"
+  )
+
+  private def itemButton(
+      item: ShopItem,
+      player: Player,
+      profile: ShopProfile
+  )(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService
+  ): Button = {
+    val unlocked = item match {
+      case DecorationPack(_, _, _, _, _, _, _, _, decorations) =>
+        profile.unlocked.contains(item.id) ||
+          decorations.forall { it => profile.unlocked.contains(it.id) }
+      case _ =>
+        profile.unlocked.contains(item.id)
+    }
+    lazy val discountedPrice = item.price -
+      shopProfileService.calculateDiscount(item, profile)
+    lazy val canBuy = player.fragments >= discountedPrice
+
+    var tooltip = item.typ :: "" :: (
+      if (unlocked) "You have unlocked this item"
+      else if (!canBuy) s"$RED$discountedPrice Fragments"
+      else s"$GREEN[Shift Right Click 2x] To unlock for $discountedPrice Fragments"
+    ) :: Nil
+    if (discountedPrice != item.price) {
+      val discount = 100 - discountedPrice / item.price
+      tooltip ::= s"$discount% discounted for duplicate decorations"
+    }
+
+    val action = (click: Click) => {
+      var counter = 0
+      if (!unlocked && canBuy && click.isShiftRight) {
+        counter += 1
+        if (counter == 2) {
+          if (shopProfileService.unlock(item.id, player.id)) {
+            val unlockMessage =
+              Message.server(s"You successfully unlocked ${item.name}!")
+            playerService.sendMessage(player.id, unlockMessage)
+            updateMenu(ShopMenu.apply)
+          } else closeMenu(purchaseFailureMessage)
+        } else noop
+      } else noop
+    }
+
+    val name = s"${item.rarity.color}${item.name}"
+    item.skull match {
+      case Some(skull) => Button.skull(skull, name, tooltip: _*)(action)
+      case None        => Button(item.icon.get, name, tooltip)(action)
+    }
+  }
+
+  def apply(player: Player)(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService
+  ): Menu = {
+    val profile = shopProfileService.profile(player.id)
+    val buttons = shopService.availableItems.zipWithIndex.map { case (item, i) =>
+      val slot = if (i <= 6) 2 + i else 4 + i
+      slot -> itemButton(item, player, profile)
+    }
+    Menu(
+      "WarCraft: Shop",
+      MenuSize.TWO_ROWS,
+      Map(
+        0 -> infoButton,
+        9 -> Button.back(MainMenu.apply)
+      ) ++ buttons
+    )
+  }
 }
-
-/*
-public class DefaultShopMenuFactory extends AbstractMenuFactory implements ShopMenuFactory {
-    private final LegendsPlayerQueryService playerQueryService;
-    private final PlayerCommandService playerCommandService;
-    private final ShopProfileCommandService shopProfileCommandService;
-    private final ShopProfileQueryService shopProfileQueryService;
-    private final ShopRepository shopRepository;
-    private final MainMenuFactory mainMenuFactory;
-
-    @Inject
-    public DefaultShopMenuFactory(MenuCommandService menuCommandService,
-                                  PlayerCommandService playerCommandService,
-                                  LegendsPlayerQueryService playerQueryService,
-                                  ShopProfileCommandService shopProfileCommandService,
-                                  ShopProfileQueryService shopProfileQueryService,
-                                  ShopRepository shopRepository,
-                                  MenuBuilderFactory menuBuilderFactory,
-                                  ButtonBuilderFactory buttonBuilderFactory,
-                                  MainMenuFactory mainMenuFactory) {
-        super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
-        this.playerQueryService = playerQueryService;
-        this.playerCommandService = playerCommandService;
-        this.shopProfileCommandService = shopProfileCommandService;
-        this.shopProfileQueryService = shopProfileQueryService;
-        this.shopRepository = shopRepository;
-        this.mainMenuFactory = mainMenuFactory;
-    }
-
-    Button createInfoButton() {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "WarCraft: Shop");
-        builder.addTooltip("Running a server is a lot of fun and super");
-        builder.addTooltip("rewarding, but it also requires large amounts");
-        builder.addTooltip("of time and funds. Purchasing items in the");
-        builder.addTooltip("shop is entirely optional as everything can");
-        builder.addTooltip("also be obtained via loot crates that you get");
-        builder.addTooltip("for simply playing on the server.");
-        builder.addTooltip("");
-        builder.addTooltip("To go even further beyond in supporting the");
-        builder.addTooltip("server the WarCraft: Shop has ten different");
-        builder.addTooltip("items for sale every day. These items can");
-        builder.addTooltip("be bought with Fragments which are available");
-        builder.addTooltip("from the web shop at " + ColorCode.YELLOW + "shop.warcraft.gg");
-        return builder.build();
-    }
-
-    Button createItemButton(ShopItem item, LegendsPlayer player, ShopProfile profile) {
-        ButtonBuilder builder;
-        if (item.getIcon() != null) {
-            builder = createSimpleButtonBuilder(item.getIcon(), item.getRarity().getColor() + item.getName());
-        } else if (item.getSkull() != null) {
-            builder = createSkullButtonBuilder(item.getSkull(), item.getRarity().getColor() + item.getName());
-        } else {
-            throw new IllegalArgumentException("Failed to create shop button for item with no icon/skull: " + item.getId());
-        }
-
-        builder.addTooltip(item.getType().toString());
-
-        boolean hasUnlocked;
-        boolean isDecorationPack = false;
-        int decorationCount = 0;
-        int decorationsUnlocked = 0;
-        switch (item.getType()) {
-            case DECORATION:
-                DecorationId decorationId = DecorationId.valueOf(item.getId());
-                hasUnlocked = profile.hasDecoration(decorationId);
-                break;
-            case DECORATION_PACK:
-                isDecorationPack = true;
-                DecorationPack pack = (DecorationPack) item;
-                decorationCount = pack.getDecorations().size();
-                decorationsUnlocked = (int) pack.getDecorations().stream()
-                        .map(Decoration::getId)
-                        .map(DecorationId::valueOf)
-                        .filter(profile::hasDecoration)
-                        .count();
-                hasUnlocked = decorationCount == decorationsUnlocked;
-                break;
-            case MINI_PET:
-                MiniPetId miniPetId = MiniPetId.valueOf(item.getId());
-                hasUnlocked = profile.hasMiniPet(miniPetId);
-                break;
-            case SPECIALIZATION:
-                SpecializationId specializationId = SpecializationId.valueOf(item.getId());
-                hasUnlocked = profile.hasSpecialization(specializationId);
-                break;
-            case PROMOTION:
-                PromotionId promotionId = PromotionId.valueOf(item.getId());
-                hasUnlocked = profile.hasPromotion(promotionId);
-                break;
-            default:
-                hasUnlocked = false;
-                break;
-        }
-
-        boolean hasFavor = item.getPrice() <= player.getFragments();
-
-        builder.addTooltip("");
-        if (!isDecorationPack) {
-            if (hasUnlocked) {
-                builder.addTooltip("You already have this item unlocked.");
-            } else if (hasFavor) {
-                builder.addTooltip(ColorCode.GREEN + "[SHIFT RIGHT CLICK] To unlock for " + item.getPrice() + " Fragments");
-            } else {
-                builder.addTooltip(ColorCode.RED + "Costs " + item.getPrice() + " Fragments to unlock");
-            }
-        } else {
-            int price = item.getPrice() - ((int) (item.getPrice() * 0.33f * ((float) decorationsUnlocked / (float) decorationCount)));
-            if (hasUnlocked) {
-                builder.addTooltip("You already have this item unlocked.");
-            } else if (hasFavor) {
-                int newCount = decorationCount - decorationsUnlocked;
-                String decorationPlural = newCount == 1 ? " new decoration" : " new decorations";
-                builder.addTooltip("This pack will unlock " + newCount + decorationPlural + " for you.");
-                builder.addTooltip("The price has been adjusted for those you have");
-                builder.addTooltip("already unlocked.");
-                builder.addTooltip("");
-                builder.addTooltip(ColorCode.GREEN + "[SHIFT RIGHT CLICK] To unlock for " + price + " Fragments");
-            } else {
-                builder.addTooltip(ColorCode.RED + "Costs " + price + " Fragments to unlock");
-            }
-        }
-
-        builder.withAction(click -> {
-            if (hasUnlocked) {
-                return;
-            }
-
-            if (click.isShiftRightClick()) {
-                ShopProfile currentProfile = shopProfileQueryService.getProfile(player.getId());
-                if (hasFavor) {
-                    switch (item.getType()) {
-                        case DECORATION:
-                            DecorationId decorationId = DecorationId.valueOf(item.getId());
-                            if (!currentProfile.hasDecoration(decorationId)) {
-                                shopProfileCommandService.unlockDecoration(decorationId, player.getId(), true);
-                                playerCommandService.sendNotification(player.getId(), "You successfully purchased " + item.getName());
-                                showMenu(createShopMenu(player.getId()), player.getId());
-                            }
-                            break;
-                        case DECORATION_PACK:
-                            DecorationPackId decorationPackId = DecorationPackId.valueOf(item.getId());
-                            shopProfileCommandService.unlockDecorationPack(decorationPackId, player.getId(), true);
-                            playerCommandService.sendNotification(player.getId(), "You successfully purchased " + item.getName());
-                            showMenu(createShopMenu(player.getId()), player.getId());
-                            break;
-                        case MINI_PET:
-                            MiniPetId miniPetId = MiniPetId.valueOf(item.getId());
-                            if (!currentProfile.hasMiniPet(miniPetId)) {
-                                shopProfileCommandService.unlockMiniPet(miniPetId, player.getId(), true);
-                                playerCommandService.sendNotification(player.getId(), "You successfully purchased " + item.getName());
-                                showMenu(createShopMenu(player.getId()), player.getId());
-                            }
-                            break;
-                        case SPECIALIZATION:
-                            SpecializationId specializationId = SpecializationId.valueOf(item.getId());
-                            if (!currentProfile.hasSpecialization(specializationId)) {
-                                shopProfileCommandService.unlockSpecialization(specializationId, player.getId(), true);
-                                playerCommandService.sendNotification(player.getId(), "You successfully purchased " + item.getName());
-                                showMenu(createShopMenu(player.getId()), player.getId());
-                            }
-                            break;
-                        case PROMOTION:
-                            PromotionId promotionId = PromotionId.valueOf(item.getId());
-                            if (!currentProfile.hasPromotion(promotionId)) {
-                                shopProfileCommandService.unlockPromotion(promotionId, player.getId(), true);
-                                playerCommandService.sendNotification(player.getId(), "You successfully purchased " + item.getName());
-                                showMenu(createShopMenu(player.getId()), player.getId());
-                            }
-                            break;
-                    }
-                }
-            }
-        });
-
-        return builder.build();
-    }
-
-    @Override
-    public Menu createShopMenu(UUID playerId) {
-        LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        ShopProfile profile = shopProfileQueryService.getProfile(playerId);
-
-        MenuBuilder builder = createMenuBuilder("WarCraft: Shop", MenuSize.TWO_ROWS);
-        builder.addButton(0, createInfoButton());
-
-        int slot = 2;
-        for (ShopItem item : shopRepository.getAvailableItems()) {
-            builder.addButton(slot, createItemButton(item, player, profile));
-            slot += 1;
-            if (slot == 7) {
-                slot = 11;
-            }
-        }
-
-        builder.addButton(8, createBackButton(playerId, mainMenuFactory::createMainMenu));
-        return builder.build();
-    }
-}
-
- */
