@@ -50,11 +50,11 @@ class ShopService(implicit
   }
 
   private[shop] def rotateAvailable(): Unit = {
-    val filler = (1 to 5).map { _ =>
+    val filler = (1 to 6).map { _ =>
       val list = itemsByRarity(randomFillerType)(randomFillerRarity)
       list(Random.nextInt(list.size))
     }.toList
-    val premium = (1 to 5).map { _ =>
+    val premium = (1 to 6).map { _ =>
       val list = itemsByRarity(randomPremiumType)(randomPremiumRarity)
       list(Random.nextInt(list.size))
     }.toList
