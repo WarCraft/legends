@@ -18,16 +18,16 @@ class CurrencyStatisticHandler(implicit
   import service._
 
   private final val goldStatistics: List[String] =
-    DailyGold.id :: MonthlyGold.id :: AlltimeGold.id :: Nil
+    DailyGold :: MonthlyGold :: AlltimeGold :: Nil
   private final val favorStatistics: List[String] =
-    DailyFavor.id :: MonthlyFavor.id :: AlltimeFavor.id :: Nil
+    DailyFavor :: MonthlyFavor :: AlltimeFavor :: Nil
 
   override def handle(event: Event): Unit = event match {
     case PlayerCurrencyGainedEvent(player, currency, amount, _, _) =>
       currency match {
-        case Gold.name  => increaseStatistic(player.id, amount, goldStatistics: _*)
-        case Favor.name => increaseStatistic(player.id, amount, favorStatistics: _*)
-        case _          =>
+        case Gold  => increaseStatistics(goldStatistics, amount, player.id)
+        case Favor => increaseStatistics(favorStatistics, amount, player.id)
+        case _     =>
       }
   }
 }

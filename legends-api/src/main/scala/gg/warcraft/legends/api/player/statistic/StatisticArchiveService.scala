@@ -15,7 +15,6 @@ class StatisticArchiveService(implicit
     statisticRepository: StatisticRepository,
     statisticArchiveRepository: StatisticArchiveRepository
 ) {
-
   def archiveDailies(day: LocalDate): Unit =
     archiveStatistics("DAILY%", day)
 

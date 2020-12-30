@@ -6,27 +6,27 @@
 
 package gg.warcraft.legends.api.player.statistic.handler
 
-class PlaytimeStatisticHandler {
+import gg.warcraft.legends.api.player.statistic.LegendsStatistic._
+import gg.warcraft.monolith.api.player.statistic.StatisticService
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
 
+class PlaytimeStatisticHandler(implicit
+    playerService: PlayerService,
+    statisticService: StatisticService
+) extends Runnable {
+  private final val playtimeStatistics: List[LegendsStatistic] =
+    DailyPlaytime :: MonthlyPlaytime :: AlltimePlaytime :: Nil
+
+  private var previousOnlinePlayers: List[Player] = Nil
+
+  override def run(): Unit = {
+    val onlinePlayers = playerService.getOnlinePlayers
+    val tickPlayers = onlinePlayers.intersect(previousOnlinePlayers)
+    statisticService.increaseStatistics(
+      playtimeStatistics,
+      10,
+      tickPlayers.map { _.id }
+    )
+    previousOnlinePlayers = onlinePlayers
+  }
 }
-
-
-/*
-public class TimePlayedStatisticHandler {
-    private final LegendsPlayerCommandService playerCommandService;
-
-    @Inject
-    public TimePlayedStatisticHandler(LegendsPlayerCommandService playerCommandService) {
-        this.playerCommandService = playerCommandService;
-    }
-
-    @Subscribe TODO is this event still fired? Should it be fired from monolith for this stat or should all stats be implemented by server?
-    public void onPlayerStatisticChangedEvent(PlayerStatisticChangedEvent event) {
-        if (event.getStatistic() == MonolithStatistic.TIME_PLAYED) {
-            playerCommandService.increaseStatistics(event.getPlayerId(), event.getAmount(),
-                    LegendsStatistic.DAILY_TIME_PLAYED, LegendsStatistic.WARRY_TIME_PLAYED, LegendsStatistic.ALLTIME_TIME_PLAYED);
-        }
-    }
-}
-
- */

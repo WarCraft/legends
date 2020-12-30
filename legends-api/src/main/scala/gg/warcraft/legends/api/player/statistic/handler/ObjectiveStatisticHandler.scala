@@ -6,116 +6,31 @@
 
 package gg.warcraft.legends.api.player.statistic.handler
 
-class ObjectiveStatisticHandler {
+import gg.warcraft.legends.api.player.statistic.LegendsStatistic._
+import gg.warcraft.monolith.api.core.event.Event
+import gg.warcraft.monolith.api.player.statistic.StatisticService
+import gg.warcraft.monolith.api.util.option._
+import gg.warcraft.siege.api.objective.ObjectiveCaptureEvent
 
+class ObjectiveStatisticHandler(implicit
+    statisticService: StatisticService
+) extends Event.Handler {
+  private final val fortStatistics: List[LegendsStatistic] =
+    DailyForts :: MonthlyForts :: AlltimeForts :: Nil
+
+  private final val strongholdStatistics: List[LegendsStatistic] =
+    DailyStrongholds :: MonthlyStrongholds :: AlltimeStrongholds :: Nil
+
+  override def handle(event: Event): Unit = event match {
+    case ObjectiveCaptureEvent(objective, _, attackers) =>
+      val statistics: Option[List[LegendsStatistic]] = objective match {
+        case it if it.id.contains("FORT")       => fortStatistics
+        case it if it.id.contains("STRONGHOLD") => strongholdStatistics
+        case _                                  => None
+      }
+      statistics.foreach { statistics =>
+        statisticService.increaseStatistics(statistics, 1, attackers.map { _.id })
+      }
+    case _ =>
+  }
 }
-
-
-/*
-
-public class ObjectiveStatisticHandler {
-    private final LegendsPlayerCommandService playerCommandService;
-
-    @Inject
-    public ObjectiveStatisticHandler(LegendsPlayerCommandService playerCommandService) {
-        this.playerCommandService = playerCommandService;
-    }
-
-    @Subscribe
-    public void onObjectiveCapturedEvent(ObjectiveCapturedEvent event) {
-        String objectiveType = event.getObjective().getType();
-        LegendsStatistic[] statistics;
-        switch (objectiveType) {
-            case "RESOURCE":
-                statistics = new LegendsStatistic[]{
-                        LegendsStatistic.DAILY_CAMPS_CAPTURED,
-                        LegendsStatistic.WARRY_CAMPS_CAPTURED,
-                        LegendsStatistic.ALLTIME_CAMPS_CAPTURED};
-                break;
-            case "OUTPOST":
-                statistics = new LegendsStatistic[]{
-                        LegendsStatistic.DAILY_OUTPOSTS_CAPTURED,
-                        LegendsStatistic.WARRY_OUTPOSTS_CAPTURED,
-                        LegendsStatistic.ALLTIME_OUTPOSTS_CAPTURED};
-                break;
-            case "KEEP":
-                statistics = new LegendsStatistic[]{
-                        LegendsStatistic.DAILY_KEEPS_CAPTURED,
-                        LegendsStatistic.WARRY_KEEPS_CAPTURED,
-                        LegendsStatistic.ALLTIME_KEEPS_CAPTURED};
-                break;
-            default:
-                statistics = new LegendsStatistic[]{};
-                break;
-        }
-
-        event.getAttackerIds().forEach(attackerId ->
-                playerCommandService.increaseStatistics(attackerId, 1, statistics));
-    }
-
-    @Subscribe
-    public void onObjectiveNeutralizedEvent(ObjectiveNeutralizedEvent event) {
-        String objectiveType = event.getObjective().getType();
-        LegendsStatistic[] statistics;
-        switch (objectiveType) {
-            case "RESOURCE":
-                statistics = new LegendsStatistic[]{
-                        LegendsStatistic.DAILY_CAMPS_NEUTRALIZED,
-                        LegendsStatistic.WARRY_CAMPS_NEUTRALIZED,
-                        LegendsStatistic.ALLTIME_CAMPS_NEUTRALIZED};
-                break;
-            case "OUTPOST":
-                statistics = new LegendsStatistic[]{
-                        LegendsStatistic.DAILY_OUTPOSTS_NEUTRALIZED,
-                        LegendsStatistic.WARRY_OUTPOSTS_NEUTRALIZED,
-                        LegendsStatistic.ALLTIME_OUTPOSTS_NEUTRALIZED};
-                break;
-            case "KEEP":
-                statistics = new LegendsStatistic[]{
-                        LegendsStatistic.DAILY_KEEPS_NEUTRALIZED,
-                        LegendsStatistic.WARRY_KEEPS_NEUTRALIZED,
-                        LegendsStatistic.ALLTIME_KEEPS_NEUTRALIZED};
-                break;
-            default:
-                statistics = new LegendsStatistic[]{};
-                break;
-        }
-
-        event.getAttackerIds().forEach(attackerId ->
-                playerCommandService.increaseStatistics(attackerId, 1, statistics));
-    }
-
-    @Subscribe
-    public void onObjectiveDefendedEvent(ObjectiveDefendedEvent event) {
-        String objectiveType = event.getObjective().getType();
-        LegendsStatistic[] statistics;
-        switch (objectiveType) {
-            case "RESOURCE":
-                statistics = new LegendsStatistic[]{
-                        LegendsStatistic.DAILY_CAMPS_DEFENDED,
-                        LegendsStatistic.WARRY_CAMPS_DEFENDED,
-                        LegendsStatistic.ALLTIME_CAMPS_DEFENDED};
-                break;
-            case "OUTPOST":
-                statistics = new LegendsStatistic[]{
-                        LegendsStatistic.DAILY_OUTPOSTS_DEFENDED,
-                        LegendsStatistic.WARRY_OUTPOSTS_DEFENDED,
-                        LegendsStatistic.ALLTIME_OUTPOSTS_DEFENDED};
-                break;
-            case "KEEP":
-                statistics = new LegendsStatistic[]{
-                        LegendsStatistic.DAILY_KEEPS_DEFENDED,
-                        LegendsStatistic.WARRY_KEEPS_DEFENDED,
-                        LegendsStatistic.ALLTIME_KEEPS_DEFENDED};
-                break;
-            default:
-                statistics = new LegendsStatistic[]{};
-                break;
-        }
-
-        event.getAttackerIds().forEach(attackerId ->
-                playerCommandService.increaseStatistics(attackerId, 1, statistics));
-    }
-}
-
- */

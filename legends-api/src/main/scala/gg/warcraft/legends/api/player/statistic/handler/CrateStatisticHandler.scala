@@ -14,13 +14,12 @@ import gg.warcraft.monolith.api.player.statistic.StatisticService
 class CrateStatisticHandler(implicit
     service: StatisticService
 ) extends Event.Handler {
-  // TODO get current day and month counter for correct statistic
   private final val crateStatistics: List[String] =
-    DailyCrates.id :: MonthlyCrates.id :: AlltimeCrates.id :: Nil
+    DailyCrates :: MonthlyCrates :: AlltimeCrates :: Nil
 
   override def handle(event: Event): Unit = event match {
     case LootCrateOpenedEvent(player, _) =>
-      service.increaseStatistic(player.id, 1, crateStatistics: _*)
+      service.increaseStatistics(crateStatistics, 1, player.id)
     case _ =>
   }
 }

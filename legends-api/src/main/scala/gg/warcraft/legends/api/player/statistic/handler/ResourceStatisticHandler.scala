@@ -6,7 +6,6 @@
 
 package gg.warcraft.legends.api.player.statistic.handler
 
-import gg.warcraft.legends.api.player.statistic.LegendsStatistic
 import gg.warcraft.legends.api.player.statistic.LegendsStatistic._
 import gg.warcraft.monolith.api.core.event.Event
 import gg.warcraft.monolith.api.player.statistic.StatisticService

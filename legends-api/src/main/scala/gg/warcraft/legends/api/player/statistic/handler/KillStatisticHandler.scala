@@ -6,6 +6,8 @@
 
 package gg.warcraft.legends.api.player.statistic.handler
 
+import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.combat.api.util.entity._
 import gg.warcraft.legends.api.player.statistic.LegendsStatistic._
 import gg.warcraft.monolith.api.core.event.Event
 import gg.warcraft.monolith.api.entity.EntityFatalDamageEvent
@@ -13,15 +15,28 @@ import gg.warcraft.monolith.api.player.Player
 import gg.warcraft.monolith.api.player.statistic.StatisticService
 
 class KillStatisticHandler(implicit
-    statisticService: StatisticService
+    statisticService: StatisticService,
+    combatDataService: CombatDataService
 ) extends Event.Handler {
   private final val killStatistics: List[String] =
-    DailyKills.id :: MonthlyKills.id :: AlltimeKills.id :: Nil
+    DailyKills :: MonthlyKills :: AlltimeKills :: Nil
+
+  private final val mobStatistics: List[String] =
+    DailyMobs :: MonthlyMobs :: AlltimeMobs :: Nil
 
   override def handle(event: Event): Unit = event match {
-    case EntityFatalDamageEvent(entity: Player, _) =>
-//      val killers = getAllPeopleWhoAttackedPlayerOverLastXSeconds TODO
-//      statisticService.increaseStatistic(killers, 1, killStatistics: _*)
+    case EntityFatalDamageEvent(player: Player, _) =>
+      statisticService.increaseStatistics(
+        killStatistics,
+        1,
+        player.combatData.attackedBy.toList
+      )
+    case EntityFatalDamageEvent(entity, _) =>
+      statisticService.increaseStatistics(
+        mobStatistics,
+        1,
+        entity.combatData.attackedBy.toList
+      )
     case _ =>
   }
 }
