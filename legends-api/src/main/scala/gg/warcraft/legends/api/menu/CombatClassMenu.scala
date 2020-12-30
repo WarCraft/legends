@@ -8,16 +8,17 @@ package gg.warcraft.legends.api.menu
 
 import gg.warcraft.combat.api.combatclass.{CombatClass, CombatClassService}
 import gg.warcraft.combat.api.data.CombatDataService
-import gg.warcraft.combat.api.util.combatplayer._
+import gg.warcraft.combat.api.util.entity._
 import gg.warcraft.legends.api.combat.LegendsCombatClass._
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.profile.{ShopProfile, ShopProfileService}
-import gg.warcraft.legends.api.util.legendsplayer._
+import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.variant.AxeVariant
 import gg.warcraft.monolith.api.item.{ItemType, ItemTypeOrVariant}
+import gg.warcraft.monolith.api.menu.Button.{closeMenu, noop}
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
@@ -79,8 +80,9 @@ object CombatClassMenu {
       tooltip.toList
     ) { click =>
       if (!isLocked && cooldown.isEmpty && click.isShiftRight) {
-        combatDataService.setCombatClass(combatClass)
-      }
+        combatDataService.setCombatClass(player.id, Some(combatClass))
+        closeMenu
+      } else noop
     }
   }
 
@@ -93,7 +95,8 @@ object CombatClassMenu {
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    combatClassService.combatClasses(Guardian.id),
+    shopProfile,
+    combatClassService.combatClasses(Guardian),
     ItemType.SHIELD,
     cooldown,
     "Guardians wield a sword and a shield.",
@@ -122,7 +125,8 @@ object CombatClassMenu {
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    combatClassService.combatClasses(Berserker.id),
+    shopProfile,
+    combatClassService.combatClasses(Berserker),
     AxeVariant.STONE,
     cooldown,
     "Berserkers dual wield axes. Their skills",
@@ -153,7 +157,8 @@ object CombatClassMenu {
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    combatClassService.combatClasses(Marksman.id),
+    shopProfile,
+    combatClassService.combatClasses(Marksman),
     ItemType.CROSSBOW,
     cooldown,
     "Marksmen use a crossbow. Their skills",
@@ -182,7 +187,8 @@ object CombatClassMenu {
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    combatClassService.combatClasses(Ranger.id),
+    shopProfile,
+    combatClassService.combatClasses(Ranger),
     ItemType.BOW,
     cooldown,
     "Hunters use bow and arrow. Their skills",
@@ -209,7 +215,8 @@ object CombatClassMenu {
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    combatClassService.combatClasses(Elementalist.id),
+    shopProfile,
+    combatClassService.combatClasses(Elementalist),
     ItemType.HOE,
     cooldown,
     "Elementalists wield a staff (hoe). Their",
@@ -239,7 +246,8 @@ object CombatClassMenu {
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    combatClassService.combatClasses(Wizard.id),
+    shopProfile,
+    combatClassService.combatClasses(Wizard),
     ItemType.STICK,
     cooldown,
     "Wizards wield wand (stick) and book. Their",
@@ -273,7 +281,7 @@ object CombatClassMenu {
       currencyService: CurrencyService,
       levelService: LevelService,
       legendsDataService: LegendsPlayerDataService,
-    shopProfileService: ShopProfileService
+      shopProfileService: ShopProfileService
   ): Menu = {
     val shopProfile = shopProfileService.profile(player.id)
     val cooldown = player.combatClassCooldown

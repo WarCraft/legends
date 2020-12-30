@@ -8,7 +8,7 @@ package gg.warcraft.legends.api.player.level.handler
 
 import gg.warcraft.legends.api.player.PlayerFavorGainedEvent
 import gg.warcraft.legends.api.player.level.{LevelService, PlayerLevelUpEvent}
-import gg.warcraft.legends.api.util.legendsplayer._
+import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.core.event.{Event, EventService}
 import gg.warcraft.monolith.api.player.PlayerService
 

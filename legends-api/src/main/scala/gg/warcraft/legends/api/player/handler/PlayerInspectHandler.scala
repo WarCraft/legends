@@ -7,12 +7,12 @@
 package gg.warcraft.legends.api.player.handler
 
 import gg.warcraft.combat.api.data.CombatDataService
-import gg.warcraft.combat.api.util.combatplayer._
+import gg.warcraft.combat.api.util.entity._
 import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.player.level.LevelService
-import gg.warcraft.legends.api.util.legendsplayer._
-import gg.warcraft.monolith.api.core.event.Event
+import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.core.Message
+import gg.warcraft.monolith.api.core.event.Event
 import gg.warcraft.monolith.api.entity.EntityInteractEvent
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
 

@@ -8,7 +8,7 @@ package gg.warcraft.legends.api.shop.profile
 
 import gg.warcraft.legends.api.player.currency.LegendsCurrency._
 import gg.warcraft.legends.api.shop.{DecorationPack, ShopItem, ShopService}
-import gg.warcraft.legends.api.util.legendsplayer._
+import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.player.PlayerService
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 

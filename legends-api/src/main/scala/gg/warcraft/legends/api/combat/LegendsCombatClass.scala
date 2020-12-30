@@ -6,23 +6,13 @@
 
 package gg.warcraft.legends.api.combat
 
-sealed abstract class LegendsCombatClass(
-    val name: String,
-    val typed: LegendsCombatClass.Type
-)
-
 object LegendsCombatClass {
-  sealed trait Type
-  object Type {
-    case object Warrior extends Type
-    case object Hunter extends Type
-    case object Mage extends Type
-  }
+  type Type = String
 
-  case object Guardian extends LegendsCombatClass("Guardian", Type.Warrior)
-  case object Berserker extends LegendsCombatClass("Berserker", Type.Warrior)
-  case object Ranger extends LegendsCombatClass("Ranger", Type.Hunter)
-  case object Marksman extends LegendsCombatClass("Marksman", Type.Hunter)
-  case object Elementalist extends LegendsCombatClass("Elementalist", Type.Mage)
-  case object Wizard extends LegendsCombatClass("Wizard", Type.Mage)
+  final val Berserker: Type = "BERSERKER"
+  final val Guardian: Type = "GUARDIAN"
+  final val Marksman: Type = "MARKSMAN"
+  final val Ranger: Type = "RANGER"
+  final val Elementalist: Type = "ELEMENTALIST"
+  final val Wizard: Type = "WIZARD"
 }

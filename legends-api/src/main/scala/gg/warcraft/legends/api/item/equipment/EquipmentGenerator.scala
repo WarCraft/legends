@@ -6,14 +6,16 @@
 
 package gg.warcraft.legends.api.item.equipment
 
-import gg.warcraft.combat.api.combatclass.CombatClassService
+import gg.warcraft.combat.api.combatclass.{CombatClass, CombatClassService}
 import gg.warcraft.legends.api.combat.LegendsCombatArchetype
-import gg.warcraft.legends.api.combat.LegendsCombatClass._
 import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig.AttributeDistributionConfig
-import gg.warcraft.legends.api.item.equipment.config.{AttributeRollConfig, EquipmentConfigRepository}
+import gg.warcraft.legends.api.item.equipment.config.{
+  AttributeRollConfig, EquipmentConfigRepository
+}
+import gg.warcraft.legends.api.util.combatclass.CombatClassOps
 import gg.warcraft.monolith.api.item.{Item, ItemService}
 
 import scala.util.Random
@@ -27,38 +29,42 @@ class EquipmentGenerator(implicit
 
   private lazy val config = equipmentConfigRepository.config
 
-  def generate(archetype: LegendsCombatArchetype, team: LegendsTeam): Item = {
-    val typ = randomEquipmentType(archetype)
-    generate(archetype, team, typ)
+  def generate(
+      combatClass: CombatClass,
+      team: LegendsTeam
+  ): Item = {
+    val typ = randomEquipmentType(combatClass.archetype)
+    generate(combatClass, team, typ)
   }
 
   def generate(
-      archetype: LegendsCombatArchetype,
+      combatClass: CombatClass,
       team: LegendsTeam,
       typ: EquipmentType
   ): Item = {
     val rarityRoll = Random.nextFloat * 100
     val rarity = config.navigableDropRates.floorEntry(rarityRoll).getValue
-    generate(archetype, team, typ, rarity)
+    generate(combatClass, team, typ, rarity)
   }
 
   def generate(
-      archetype: LegendsCombatArchetype,
+      combatClass: CombatClass,
       team: LegendsTeam,
       rarity: ItemRarity
   ): Item = {
-    val typ = randomEquipmentType(archetype)
-    generate(archetype, team, typ, rarity)
+    val typ = randomEquipmentType(combatClass.archetype)
+    generate(combatClass, team, typ, rarity)
   }
 
   def generate(
-      archetype: LegendsCombatArchetype,
+      combatClass: CombatClass,
       team: LegendsTeam,
       typ: EquipmentType,
       rarity: ItemRarity
   ): Item = {
     if (team == LegendsTeam.Wayfarers) throw new IllegalArgumentException
 
+    val archetype = combatClass.archetype
     val attrDistro = randomAttributeDistribution
     val itemType = config.itemTypes(typ)(rarity)
 
@@ -88,29 +94,11 @@ class EquipmentGenerator(implicit
 
     builder.withAvailableUpgrades(Random.nextInt(4))
 
-    // TODO optionally pass in target combat class in parameters
-    val tempCombatClass = archetype match {
-      case LegendsCombatArchetype.WARRIOR =>
-        if (Random.nextBoolean()) combatClassService.combatClasses(Berserker.name)
-        else combatClassService.combatClasses(Guardian.name)
-      case LegendsCombatArchetype.HUNTER =>
-        if (Random.nextBoolean()) combatClassService.combatClasses(Ranger.name)
-        else combatClassService.combatClasses(Marksman.name)
-      case LegendsCombatArchetype.MAGE =>
-        if (Random.nextBoolean()) combatClassService.combatClasses(Elementalist.name)
-        else combatClassService.combatClasses(Wizard.name)
-    }
-    // TODO clean up this try catch
-    val customModelData = try {
-      typ match {
-        case EquipmentType.HEAD =>
-          config.helmetModelData(tempCombatClass)(rarity)(team)
-        case _ =>
-          config.customModelData(typ)(rarity)(team)
-      }
-    } catch {
-      case _ => 0
-    }
+    val customModelData =
+      try {
+        if (typ != EquipmentType.HEAD) config.customModelData(typ)(rarity)(team)
+        else config.helmetModelData(combatClass)(rarity)(team)
+      } catch { case _: NoSuchElementException => 0 }
     builder.withCustomModelData(customModelData)
 
     builder.build()

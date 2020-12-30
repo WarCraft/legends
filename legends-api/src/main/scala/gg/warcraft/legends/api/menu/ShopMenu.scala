@@ -12,7 +12,7 @@ import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.profile.{ShopProfile, ShopProfileService}
 import gg.warcraft.legends.api.shop.{DecorationPack, ShopItem, ShopService}
-import gg.warcraft.legends.api.util.legendsplayer._
+import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.core.Message
 import gg.warcraft.monolith.api.entity.attribute.AttributeService

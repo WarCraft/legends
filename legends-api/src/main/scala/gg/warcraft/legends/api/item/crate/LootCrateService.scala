@@ -6,24 +6,53 @@
 
 package gg.warcraft.legends.api.item.crate
 
+import gg.warcraft.combat.api.combatclass.CombatClassService
+import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.combat.api.util.entity._
 import gg.warcraft.legends.api.LegendsConfig
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.legends.api.item.ItemRarity._
-import gg.warcraft.legends.api.player.currency.LegendsCurrency
+import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
+import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
+import gg.warcraft.legends.api.player.currency.LegendsCurrency._
+import gg.warcraft.legends.api.shop.profile.ShopProfileService
+import gg.warcraft.legends.api.shop.{DecorationPack, ShopItem, ShopService}
+import gg.warcraft.legends.api.util.player.LegendsPlayerOps
 import gg.warcraft.monolith.api.core.Message
-import gg.warcraft.monolith.api.item.{Carrot, GoldenApple, GoldenCarrot}
-import gg.warcraft.monolith.api.player.PlayerService
+import gg.warcraft.monolith.api.core.event.EventService
+import gg.warcraft.monolith.api.item.{
+  GoldenApple, ItemService, ItemType, ItemTypeOrVariant
+}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
+import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.util.string._
 
 import java.util.UUID
 import java.util.logging.Logger
+import scala.util.Random
 
 class LootCrateService(implicit
     logger: Logger,
     playerService: PlayerService,
-    currencyService: CurrencyService
+    currencyService: CurrencyService,
+    itemService: ItemService,
+    equipmentConfigRepository: EquipmentConfigRepository,
+    combatClassService: CombatClassService,
+    combatDataService: CombatDataService,
+    shopService: ShopService,
+    shopProfileService: ShopProfileService,
+    eventService: EventService
 ) {
+  private final val itemsPerCrate = 3
+  private final val missingCombatClassOrTeam = Message.server(
+    "Please choose a Combat Class and Faction before opening any loot crates."
+  )
+  private final val noInventorySpace = Message.server(
+    s"Please make sure you have at least $itemsPerCrate free inventory slots."
+  )
+
+  private val equipmentGenerator = new EquipmentGenerator()
+
   private var _crates: Map[String, LootCrate] = Map.empty
   def crates: Map[String, LootCrate] = _crates
 
@@ -64,105 +93,115 @@ class LootCrateService(implicit
     val strippedName = name.stripChatCodes
     val prefix = if (strippedName(0).isVowel) "an" else "a"
     val message = Message.server(
-      s"You opened $prefix $strippedName Decoration Pack, but you already have some of its content unlocked."
+      s"You opened $prefix $strippedName Decoration Pack, but you already have some of its contents unlocked."
     )
     playerService.sendMessage(playerId, message)
   }
 
-  private def awardConsumable(playerId: UUID, rarity: ItemRarity): Boolean = {
-    val tooltip = List("Consumable")
-    val item = rarity match {
-      case Common => // TODO add default values to item case classes
-        Carrot(s"${Common.color}Carrot", tooltip, 1, Set.empty, true)
-      case Rare =>
-        GoldenCarrot(s"${Rare.color}Golden Carrot", tooltip, 1, Set.empty, true)
-      case Epic =>
-        GoldenApple(false, s"${Epic.color}Golden Apple", tooltip, 1, Set.empty, true)
-      case Legendary =>
-        GoldenApple(
-          true,
-          s"${Legendary.color}Enchanted Golden Apple",
-          tooltip,
-          1,
-          Set.empty,
-          true
-        )
-    }
-    playerService.giveItem(playerId, item)
-    // TODO receiveSendNotification(playerId, item.name)
-    true
+  private def notifyReimbursement(playerId: UUID, amount: Int): Unit = {
+    val message = Message.server(s"You received $amount $Fragments in their stead.")
+    playerService.sendMessage(playerId, message)
   }
 
-  private def awardGold(playerId: UUID, rarity: ItemRarity): Boolean = {
-    val amount = rarity match {
-      case Common    => 25
-      case Rare      => 100
-      case Epic      => 300
-      case Legendary => 600
-    }
-    currencyService.addCurrency(LegendsCurrency.Gold, amount, playerId)
-    true
-  }
-
-  def openCrate(playerId: UUID, crateType: String): Boolean = {
-
-    /*
-       LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        Inventory inventory = player.getInventory();
-        if (inventory.hasSpace(ITEMS_PER_CRATE)) {
-            if(itemService.takeFrom(playerId, ((StackableItem) itemInHand).withCount(1))) {
-                for (int i = 0; i < ITEMS_PER_CRATE; i += 1) {
-                    lootCrateCommandService.openCrate(playerId, crateType);
-                }
-                LootCrateOpenedEvent event = new SimpleLootCrateOpenedEvent(playerId);
-                eventService.publish(event);
-            } else {
-                System.out.println("Failed to take item from " + playerId + " inventory for loot crate " + itemInHand);
-            }
+  private def award(
+      typ: ShopItem.Type,
+      typName: String,
+      rarity: ItemRarity,
+      player: Player
+  ): Boolean =
+    shopService.itemsByRarity(typ).get(rarity) match {
+      case Some(items) =>
+        val item = items(Random.nextInt(items.size))
+        val profile = shopProfileService.profile(player.id)
+        if (profile.unlocked.contains(item.id)) {
+          val reimbursement = (item.price * 0.33).toInt
+          currencyService.addCurrency(Fragments, reimbursement, player.id)
+          notifyDuplicate(player.id, item.name, typName)
+          notifyReimbursement(player.id, reimbursement)
         } else {
-            playerCommandService.sendNotification(playerId, "Please make sure you have at least " + ITEMS_PER_CRATE +
-                    " empty slots in your inventory before opening a Loot Crate.");
+          shopProfileService.unlock(item.id, player.id)
+          notifyUnlocked(player.id, item.name, typName)
         }
-        return true;
-     */
-    false
-  }
-}
-
-/*
-public class DefaultLootCrateCommandService implements LootCrateCommandService {
-
-
-
-
-
-    private boolean awardRandomEquipment(UUID playerId, ItemRarity rarity) {
-        LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        if (player == null) {
-            pluginLogger.warning("Failed to award random equipment to player " + playerId + ", player not found.");
-            return false;
-        }
-
-        EquipmentGenerator equipmentGenerator = equipmentGeneratorFactory.createEquipmentGenerator();
-        Specialization specialization = player.getSpecialization();
-        LegendsSpecializationType specializationType = null;
-        for (LegendsSpecialization legendsSpecialization : LegendsSpecialization.values()) {
-            if (legendsSpecialization.getName().equals(specialization.getName())) {
-                specializationType = legendsSpecialization.getType();
-            }
-        }
-        if (specializationType == null) {
-            pluginLogger.warning("Failed to award random equipment to player " + playerId +
-                    ", could not determine specialization type for " + specialization.getName());
-            return false;
-        }
-
-        Item equipment = equipmentGenerator.generate(specializationType, rarity, player.getTeam());
-        playerCommandService.giveItem(playerId, equipment, false);
-        sendReceivedNotification(playerId, equipment.name());
-        return true;
+        true
+      case None =>
+        logger.severe(
+          s"Failed to award $typName to ${player.id}, none exist for $rarity rarity!"
+        )
+        false
     }
 
+  private def awardCombatClass(player: Player, rarity: ItemRarity): Boolean =
+    award(ShopItem.CombatClass, "Combat Class", rarity, player)
+
+  private def awardConsumable(playerId: UUID, rarity: ItemRarity): Boolean = {
+    val typ: ItemTypeOrVariant = rarity match {
+      case ItemRarity.Common => ItemType.CARROT
+      case ItemRarity.Rare   => ItemType.GOLDEN_CARROT
+      case _                 => ItemType.GOLDEN_APPLE
+    }
+
+    var item = itemService.create(typ)
+      .withHideAttributes(true)
+      .withTooltip("Consumable")
+    if (rarity == ItemRarity.Legendary)
+      item = item.asInstanceOf[GoldenApple].copy(enchanted = true)
+
+    playerService.giveItem(playerId, item)
+    notifyReceived(playerId, item.name)
+    true
+  }
+
+  private def awardDecoration(player: Player, rarity: ItemRarity): Boolean =
+    award(ShopItem.Decoration, "Decoration", rarity, player)
+
+  private def awardDecorationPack(player: Player, rarity: ItemRarity): Boolean =
+    shopService.itemsByRarity(ShopItem.DecorationPack).get(rarity) match {
+      case Some(items) =>
+        val item = items(Random.nextInt(items.size)).asInstanceOf[DecorationPack]
+        val profile = shopProfileService.profile(player.id)
+        lazy val duplicates = item.decorations
+          .count { it => profile.unlocked.contains(it.id) }
+        if (
+          profile.unlocked.contains(item.id) ||
+          duplicates == item.decorations.size
+        ) {
+          val reimbursement = (item.price * 0.33).toInt
+          currencyService.addCurrency(Fragments, reimbursement, player.id)
+          notifyDuplicate(player.id, item.name, "Decoration Pack")
+          notifyReimbursement(player.id, reimbursement)
+        } else {
+          shopProfileService.unlock(item.id, player.id)
+          notifyUnlocked(player.id, item.name, "Decoration Pack")
+
+          if (duplicates > 0) {
+            val reimbursement = ((item.price * 0.33).toInt *
+              (duplicates.toFloat / item.decorations.size.toFloat)).toInt
+            currencyService.addCurrency(Fragments, reimbursement, player.id)
+            notifyDuplicatePack(player.id, item.name)
+            notifyReimbursement(player.id, reimbursement)
+          }
+        }
+        true
+      case None =>
+        logger.severe(
+          s"Failed to award Decoration Pack to ${player.id}, none exist for $rarity rarity!"
+        )
+        false
+    }
+
+  private def awardEquipment(player: Player, rarity: ItemRarity): Boolean =
+    (player.combatClass, player.legendsTeam) match {
+      case (Some(combatClass), Some(team)) =>
+        val item = equipmentGenerator.generate(combatClass, team, rarity)
+        itemService.giveTo(player.id, item)
+        notifyReceived(player.id, item.name)
+        true
+      case _ =>
+        playerService.sendMessage(player.id, missingCombatClassOrTeam)
+        false
+    }
+
+  /*
     private boolean awardRandomEquipmentUpgrade(UUID playerId, ItemRarity rarity) {
         LegendsPlayer player = playerQueryService.getPlayer(playerId);
         if (player == null) {
@@ -190,148 +229,58 @@ public class DefaultLootCrateCommandService implements LootCrateCommandService {
         sendReceivedNotification(playerId, equipmentUpgrade.name());
         return true;
     }
+   */
 
-    private boolean awardRandomDecoration(UUID playerId, ItemRarity rarity) {
-        ShopItem decoration = shopQueryService.getRandomItem(ShopItemType.DECORATION, rarity);
-        if (decoration == null) {
-            pluginLogger.warning("Failed to award random decoration to player " + playerId + ", none exist for rarity " +
-                    rarity);
-            return false;
-        }
-
-        DecorationId decorationId = DecorationId.valueOf(decoration.getId());
-        ShopProfile profile = shopProfileQueryService.getProfile(playerId);
-        if (profile.hasDecoration(decorationId)) {
-            int reimbursement = (int) (decoration.getPrice() * 0.33);
-            playerCommandService.addCurrency(playerId, LegendsCurrency.FRAGMENTS, reimbursement);
-            sendReimbursementNotification(playerId, decoration.getName(), "Decoration", reimbursement);
-        } else {
-            shopProfileCommandService.unlockDecoration(decorationId, playerId, false);
-            sendUnlockedNotification(playerId, decoration.getName(), "Decoration");
-        }
-        return true;
+  private def awardGold(playerId: UUID, rarity: ItemRarity): Boolean = {
+    val amount = rarity match {
+      case Common => 25
+      case Rare   => 100
+      case Epic   => 300
+      case _      => 600
     }
+    currencyService.addCurrency(Gold, amount, playerId)
+    true
+  }
 
-    private boolean awardRandomDecorationPack(UUID playerId, ItemRarity rarity) {
-        DecorationPack decorationPack = (DecorationPack) shopQueryService.getRandomItem(ShopItemType.DECORATION_PACK, rarity);
-        if (decorationPack == null) {
-            pluginLogger.warning("Failed to award random decoration pack to player " + playerId +
-                    ", none exist for rarity " + rarity);
-            return false;
+  private def awardMiniPet(player: Player, rarity: ItemRarity): Boolean =
+    award(ShopItem.MiniPet, "Mini Pet", rarity, player)
+
+  def openCrate(player: Player, crate: LootCrate): Unit =
+    if (player.inventory.hasSpace(itemsPerCrate)) {
+      if (itemService.takeFrom(player.id, crate)) {
+        var i = 0
+        while (i < 3) {
+          val dropTypRoll = 100 * Random.nextFloat
+          var dropTypCounter = 0
+          val dropTable = crate.dropTables.find { table =>
+            if (table.chance + dropTypCounter < dropTypRoll) {
+              dropTypCounter += table.chance
+              false
+            } else true
+          }.get
+
+          val dropRarityRoll = 100 * Random.nextFloat
+          val dropRarity =
+            dropTable.distribution.floorEntry(dropRarityRoll).getValue();
+
+          val success = dropTable.typed match {
+            case LootCrate.COMBAT_CLASS    => awardCombatClass(player, dropRarity)
+            case LootCrate.CONSUMABLE      => awardConsumable(player.id, dropRarity)
+            case LootCrate.DECORATION      => awardDecoration(player, dropRarity)
+            case LootCrate.DECORATION_PACK => awardDecorationPack(player, dropRarity)
+            case LootCrate.EQUIPMENT       => awardEquipment(player, dropRarity)
+            case LootCrate.EQUIPMENT_UPGRADE =>
+              awardEquipmentUpgrade(player.id, dropRarity)
+            case LootCrate.GOLD     => awardGold(player.id, dropRarity)
+            case LootCrate.MINI_PET => awardMiniPet(player, dropRarity)
+          }
+          if (success) i += 1
         }
 
-        DecorationPackId decorationPackId = DecorationPackId.valueOf(decorationPack.getId());
-        ShopProfile profile = shopProfileQueryService.getProfile(playerId);
-
-        float decorationCount = decorationPack.getDecorations().size();
-        float duplicateCount = 0;
-        for (Decoration decoration : decorationPack.getDecorations()) {
-            DecorationId decorationId = DecorationId.valueOf(decoration.getId());
-            if (profile.hasDecoration(decorationId)) {
-                duplicateCount += 1;
-            }
-        }
-        float reimbursement = decorationPack.getPrice() * 0.33f * (duplicateCount / decorationCount);
-
-        shopProfileCommandService.unlockDecorationPack(decorationPackId, playerId, false);
-        sendUnlockedNotification(playerId, decorationPack.getName(), "Decoration Pack");
-        if (duplicateCount > 0) {
-            playerCommandService.addCurrency(playerId, LegendsCurrency.FRAGMENTS, (int) reimbursement);
-            sendPackReimbursementNotification(playerId, decorationPack.getName(), (int) duplicateCount, (int) reimbursement);
-        }
-        return true;
-    }
-
-    private boolean awardRandomMiniPet(UUID playerId, ItemRarity rarity) {
-        ShopItem miniPet = shopQueryService.getRandomItem(ShopItemType.MINI_PET, rarity);
-        if (miniPet == null) {
-            pluginLogger.warning("Failed to award random mini pet to player " + playerId + ", none exist for rarity " +
-                    rarity);
-            return false;
-        }
-
-        MiniPetId miniPetId = MiniPetId.valueOf(miniPet.getId());
-        ShopProfile profile = shopProfileQueryService.getProfile(playerId);
-        if (profile.hasMiniPet(miniPetId)) {
-            int reimbursement = (int) (miniPet.getPrice() * 0.33);
-            playerCommandService.addCurrency(playerId, LegendsCurrency.FRAGMENTS, reimbursement);
-            sendReimbursementNotification(playerId, miniPet.getName(), "Mini Pet", reimbursement);
-        } else {
-            shopProfileCommandService.unlockMiniPet(miniPetId, playerId, false);
-            sendUnlockedNotification(playerId, miniPet.getName(), "Mini Pet");
-        }
-        return true;
-    }
-
-    private boolean awardRandomSpecialization(UUID playerId, ItemRarity rarity) {
-        ShopItem specialization = shopQueryService.getRandomItem(ShopItemType.SPECIALIZATION, rarity);
-        if (specialization == null) {
-            pluginLogger.warning("Failed to award random specialization to player " + playerId +
-                    ", none exist for rarity " + rarity);
-            return false;
-        }
-
-        SpecializationId specializationId = SpecializationId.valueOf(specialization.getId());
-        ShopProfile profile = shopProfileQueryService.getProfile(playerId);
-        if (profile.hasSpecialization(specializationId)) {
-            int reimbursement = (int) (specialization.getPrice() * 0.33);
-            playerCommandService.addCurrency(playerId, LegendsCurrency.FRAGMENTS, reimbursement);
-            sendReimbursementNotification(playerId, specialization.getName(), "Specialization", reimbursement);
-        } else {
-            shopProfileCommandService.unlockSpecialization(specializationId, playerId, false);
-            sendUnlockedNotification(playerId, specialization.getName(), "Specialization");
-        }
-        return true;
-    }
-
-
-
-    @Override
-    public boolean openCrate(UUID playerId, LootCrateType type) {
-        LootCrate crate = lootCrateRepository.get(type);
-        if (crate == null) {
-            pluginLogger.warning("Failed to open crate with type " + type + " for player " + playerId +
-                    ", crate doesn't exist");
-            return false;
-        }
-
-        float dropTypeRoll = 100 * random.nextFloat();
-        LootCrateDropTable dropTable = crate.viewDropTable().floorEntry(dropTypeRoll).getValue();
-        LootCrateDropType dropType = dropTable.getType();
-
-        float dropRarityRoll = 100 * random.nextFloat();
-        ItemRarity dropRarity = dropTable.viewDistribution().floorEntry(dropRarityRoll).getValue();
-
-        boolean success = false;
-        switch (dropType) {
-            case CONSUMABLE:
-                success = awardRandomConsumable(playerId, dropRarity);
-                break;
-            case EQUIPMENT:
-                success = awardRandomEquipment(playerId, dropRarity);
-                break;
-            case EQUIPMENT_UPGRADE:
-                success = awardRandomEquipmentUpgrade(playerId, dropRarity);
-                break;
-            case DECORATION:
-                success = awardRandomDecoration(playerId, dropRarity);
-                break;
-            case DECORATION_PACK:
-                success = awardRandomDecorationPack(playerId, dropRarity);
-                break;
-            case MINI_PET:
-                success = awardRandomMiniPet(playerId, dropRarity);
-                break;
-            case SPECIALIZATION:
-                success = awardRandomSpecialization(playerId, dropRarity);
-                break;
-            case GOLD:
-                success = awardGold(playerId, dropRarity);
-                break;
-        }
-
-        return success;
-    }
+        eventService << LootCrateOpenedEvent(player, crate)
+        // TODO add opened items to event
+      } else logger.severe(
+        s"Failed to take $crate from ${player.id} after opening crate!"
+      )
+    } else playerService.sendMessage(player.id, noInventorySpace)
 }
-
- */
