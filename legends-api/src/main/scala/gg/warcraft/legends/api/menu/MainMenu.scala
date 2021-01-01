@@ -469,7 +469,8 @@ object MainMenu {
     "minecraft-mp.com",
     "minecraftservers.biz",
     "",
-    "[Click] To paste the vote links in your chat"
+    "[Click] To paste the vote links in your chat",
+    s"or execute the $YELLOW/vote ${FormatCode.RESET}command"
   ) { click =>
     playerService.sendMessage(click.player.id, voteMessage1)
     playerService.sendMessage(click.player.id, voteMessage2)
