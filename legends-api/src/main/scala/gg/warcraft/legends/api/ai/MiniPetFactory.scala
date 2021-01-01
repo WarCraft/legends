@@ -13,4 +13,5 @@ import java.util.UUID
 trait MiniPetFactory {
   def create(typ: Entity.Type, ownerId: UUID): UUID
   def remove(ownerId: UUID): Unit
+  def removeAll(): Unit
 }

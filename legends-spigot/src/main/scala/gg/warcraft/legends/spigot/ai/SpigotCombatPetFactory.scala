@@ -6,12 +6,10 @@
 
 package gg.warcraft.legends.spigot.ai
 
-import java.util.UUID
-
 import gg.warcraft.legends.api.ai.CombatPetFactory
 import gg.warcraft.legends.api.entity.LegendsTeam._
-import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.entity.team.Team
+import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.player.PlayerService
 import gg.warcraft.monolith.api.util.chaining._
 import me.libraryaddict.disguise.DisguiseAPI
@@ -19,6 +17,7 @@ import me.libraryaddict.disguise.disguisetypes.{DisguiseType, MobDisguise}
 import org.bukkit.Server
 import org.bukkit.entity.{Player, Wolf}
 
+import java.util.UUID
 import scala.jdk.CollectionConverters._
 
 class SpigotCombatPetFactory(implicit
@@ -26,8 +25,24 @@ class SpigotCombatPetFactory(implicit
     playerService: PlayerService,
     entityService: EntityService
 ) extends CombatPetFactory {
-  private final val goalsToRemove =
-    "beg" :: "sit" :: "breed" :: "random_target_non_tamed" :: "nearest_attackable_target" :: Nil
+  private final val goalsToRemove = List(
+    "sit",
+    "nearest_attackable_target",
+    // "random_lookaround",
+    // "follow_owner",
+    // "float",
+    "random_target_non_tamed",
+    "breed",
+    // "hurt_by_target",
+    // "owner_hurt_target",
+    // "melee_attack",
+    "beg"
+    // "owner_hurt_by_target",
+    // "wolf_avoid_entity",
+    // "look_at_player",
+    // "leap_at_target",
+    // "random_stroll_land"
+  )
 
   private val combatPetSkins = Map[Option[Team], MobDisguise](
     Some(Dwarves) -> new MobDisguise(DisguiseType.POLAR_BEAR),
@@ -37,12 +52,14 @@ class SpigotCombatPetFactory(implicit
 
   override def create(ownerId: UUID): UUID = {
     val owner = playerService.getPlayer(ownerId)
-    val wolfId = entityService.spawnEntity(Entity.Type.WOLF, owner.location, owner.team)
+    val wolfId =
+      entityService.spawnEntity(Entity.Type.WOLF, owner.location, owner.team)
 
     val spigotOwner = server.getEntity(ownerId).asInstanceOf[Player]
     val spigotWolf = server.getEntity(wolfId).asInstanceOf[Wolf]
     spigotWolf.setTamed(true)
     spigotWolf.setOwner(spigotOwner)
+
     val nameColor = owner.team.map { _.chatColor.toString }.getOrElse("")
     spigotWolf.setCustomName(s"$nameColor${spigotOwner.getName}'s Pet'")
 

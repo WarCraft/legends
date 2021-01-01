@@ -6,22 +6,22 @@
 
 package gg.warcraft.legends.api.combat.hunter
 
-import java.util.UUID
-
 import gg.warcraft.combat.api.combatclass.{
   CombatClass, PlayerCombatClassChangedEvent
 }
 import gg.warcraft.combat.api.data.CombatDataService
-import gg.warcraft.combat.api.util.combatplayer._
+import gg.warcraft.combat.api.util.entity._
 import gg.warcraft.legends.api.ai.CombatPetFactory
-import gg.warcraft.monolith.api.core.{GameMode, ServerShutdownEvent}
 import gg.warcraft.monolith.api.core.event.Event
+import gg.warcraft.monolith.api.core.{GameMode, ServerShutdownEvent}
 import gg.warcraft.monolith.api.entity.{
   EntityDeathEvent, EntityService, EntityTeamChangedEvent
 }
 import gg.warcraft.monolith.api.player.{
   Player, PlayerConnectEvent, PlayerDisconnectEvent, PlayerGameModeChangedEvent
 }
+
+import java.util.UUID
 
 class HunterCombatPetHandler(implicit
     combatPetFactory: CombatPetFactory,
@@ -53,9 +53,11 @@ class HunterCombatPetHandler(implicit
       petsToOwners -= pet.id
     // TODO 30 sec pet cooldown
 
-    case PlayerDisconnectEvent(player) => removePet(player.id)
+    case PlayerDisconnectEvent(player) =>
+      removePet(player.id)
 
-    case ServerShutdownEvent() => ownersToPets.keys.foreach(removePet)
+    case ServerShutdownEvent() =>
+      ownersToPets.keys.foreach(removePet)
 
     case _ =>
   }
@@ -73,7 +75,7 @@ class HunterCombatPetHandler(implicit
 
   private def removePet(playerId: UUID): Boolean = {
     var hasPet = false
-    ownersToPets.updatedWith(playerId) {
+    ownersToPets = ownersToPets.updatedWith(playerId) {
       case Some(petId) =>
         entityService.removeEntity(petId)
         petsToOwners -= petId
