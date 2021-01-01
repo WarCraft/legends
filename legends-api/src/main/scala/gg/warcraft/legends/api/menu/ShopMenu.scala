@@ -8,6 +8,10 @@ package gg.warcraft.legends.api.menu
 
 import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.legends.api.ai.MiniPetFactory
+import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
+import gg.warcraft.legends.api.item.crate.reward.LoginRewardService
+import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.profile.{ShopProfile, ShopProfileService}
@@ -15,8 +19,9 @@ import gg.warcraft.legends.api.shop.{DecorationPack, ShopItem, ShopService}
 import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.core.Message
+import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
-import gg.warcraft.monolith.api.item.ItemType
+import gg.warcraft.monolith.api.item.{ItemService, ItemType}
 import gg.warcraft.monolith.api.menu.Button.{closeMenu, noop, updateMenu}
 import gg.warcraft.monolith.api.menu._
 import gg.warcraft.monolith.api.player.currency.CurrencyService
@@ -50,8 +55,14 @@ object ShopMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
       shopService: ShopService,
-      shopProfileService: ShopProfileService
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ): Button = {
     val unlocked = item match {
       case DecorationPack(_, _, _, _, _, _, _, _, decorations) =>
@@ -105,8 +116,14 @@ object ShopMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
       shopService: ShopService,
-      shopProfileService: ShopProfileService
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ): Menu = {
     val profile = shopProfileService.profile(player.id)
     val buttons = shopService.availableItems.zipWithIndex.map { case (item, i) =>

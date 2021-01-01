@@ -8,13 +8,19 @@ package gg.warcraft.legends.api.menu
 
 import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.legends.api.ai.MiniPetFactory
 import gg.warcraft.legends.api.core.leaderboard.{Leaderboard, LeaderboardService}
+import gg.warcraft.legends.api.item.crate.reward.LoginRewardService
+import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
+import gg.warcraft.legends.api.shop.ShopService
+import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.monolith.api.block.variant.BannerVariant
 import gg.warcraft.monolith.api.core.ColorCode._
+import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
-import gg.warcraft.monolith.api.item.ItemType
+import gg.warcraft.monolith.api.item.{ItemService, ItemType}
 import gg.warcraft.monolith.api.menu.Button.{noop, updateButton, updateMenu}
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
@@ -38,7 +44,14 @@ object LeaderboardsMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      leaderboardService: LeaderboardService
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ) = Button(
     BannerVariant.YELLOW,
     "Daily Leaderboards",
@@ -54,7 +67,14 @@ object LeaderboardsMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      leaderboardService: LeaderboardService
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ) = Button(
     BannerVariant.ORANGE,
     "Monthly Leaderboards",
@@ -70,7 +90,14 @@ object LeaderboardsMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      leaderboardService: LeaderboardService
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ) = Button(
     BannerVariant.RED,
     "All-time Leaderboards",
@@ -128,7 +155,14 @@ object LeaderboardsMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      leaderboardService: LeaderboardService
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ): Menu = {
     val buttons = leaderboardService.leaderboards.values
       .filter(filter)
@@ -156,7 +190,14 @@ object LeaderboardsMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      leaderboardService: LeaderboardService
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ): Menu = Menu(
     "Leaderboards",
     MenuSize.ONE_ROW,
@@ -186,7 +227,14 @@ object DailyLeaderboardsMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      leaderboardService: LeaderboardService
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ): Menu = LeaderboardsMenu.leaderboardMenu(
     "Daily Leaderboard",
     { _.isDaily },
@@ -212,7 +260,14 @@ object MonthlyLeaderboardsMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      leaderboardService: LeaderboardService
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ): Menu = LeaderboardsMenu.leaderboardMenu(
     "Monthly Leaderboard",
     { _.isMonthly },
@@ -238,7 +293,14 @@ object AlltimeLeaderboardsMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      leaderboardService: LeaderboardService
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ): Menu = LeaderboardsMenu.leaderboardMenu(
     "All-time Leaderboard",
     { it => !it.isDaily && !it.isMonthly },

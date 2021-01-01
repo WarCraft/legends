@@ -9,10 +9,14 @@ package gg.warcraft.legends.api.menu
 import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.legends.api.ai.MiniPetFactory
+import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
+import gg.warcraft.legends.api.item.crate.reward.LoginRewardService
+import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.profile.{ShopProfile, ShopProfileService}
 import gg.warcraft.legends.api.shop.{MiniPet, ShopItem, ShopService}
+import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
 import gg.warcraft.monolith.api.menu.Button.{closeMenu, noop}
@@ -70,9 +74,13 @@ object MiniPetsMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      itemService: ItemService,
-      shopProfileService: ShopProfileService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
       shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
       miniPetFactory: MiniPetFactory
   ): Menu = {
     val pets = shopService.itemsByType(ShopItem.MiniPet)

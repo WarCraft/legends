@@ -8,20 +8,29 @@ package gg.warcraft.legends.api.menu
 
 import gg.warcraft.combat.api.combatclass.{CombatClass, CombatClassService}
 import gg.warcraft.combat.api.data.CombatDataService
-import gg.warcraft.combat.api.util.combatplayer._
+import gg.warcraft.combat.api.util.entity._
+import gg.warcraft.legends.api.ai.MiniPetFactory
 import gg.warcraft.legends.api.combat.LegendsCombatClass._
+import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
+import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.entity.LegendsTeam._
 import gg.warcraft.legends.api.entity.attribute.LegendsAttribute._
+import gg.warcraft.legends.api.item.crate.reward.LoginRewardService
+import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.currency.LegendsCurrency._
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.{Level, LevelService}
-import gg.warcraft.legends.api.util.legendsplayer._
+import gg.warcraft.legends.api.shop.ShopService
+import gg.warcraft.legends.api.shop.profile.ShopProfileService
+import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.block.variant.FlowerVariant
-import gg.warcraft.monolith.api.core.ColorCode
 import gg.warcraft.monolith.api.core.ColorCode._
+import gg.warcraft.monolith.api.core.data.ServerDataService
+import gg.warcraft.monolith.api.core.{ColorCode, FormatCode, Message}
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.entity.team.Team
-import gg.warcraft.monolith.api.item.{ItemType, ItemTypeOrVariant}
+import gg.warcraft.monolith.api.item.{ItemService, ItemType, ItemTypeOrVariant}
+import gg.warcraft.monolith.api.menu.Button.{noop, updateMenu}
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
@@ -46,7 +55,7 @@ object MainMenu {
   private def currenciesView(player: Player): List[String] = {
     val currencies = player.currencies
     val formattedCurrencies = trackedCurrencies.map { currency =>
-      s"$YELLOW${currencies.get(currency)} ${currency.name}"
+      s"$YELLOW${currencies.get(currency)} $currency"
     }
     s"${ColorCode.WHITE}Currencies:" :: formattedCurrencies
   }
@@ -54,9 +63,9 @@ object MainMenu {
   private def playerButton(player: Player): Button = Button.skull(
     player.name,
     player.name,
-    ("This is you!" :: "" :: Nil)
+    List("This is you!", "")
       ++ attributesView(player)
-      ++ ("" :: Nil)
+      ++ List("")
       ++ currenciesView(player)
     /*
      // TODO make sure that rank rewards are always stored in the item storage and then remove from rank impl
@@ -139,12 +148,13 @@ object MainMenu {
     Button(
       levelIcon(level),
       "Level",
-      (s"${WHITE}Current level:"
-        :: s"${YELLOW}Lv. ${level.value}" // TODO show percent to next (${%}%)
-        :: ""
-        :: s"${WHITE}Unlocked passives:" :: Nil)
-        ++ levelPassivesView(level)
-    ) { _ => () }
+      List(
+        s"${WHITE}Current level:",
+        s"${YELLOW}Lv. ${level.value}", // TODO show percent to next (${%}%)
+        "",
+        s"${WHITE}Unlocked passives:"
+      ) ++ levelPassivesView(level)
+    ) { _ => noop }
   }
 
   private def abilitiesView(combatClass: Option[CombatClass]): List[String] =
@@ -156,133 +166,148 @@ object MainMenu {
           :: s"[Shift Right Click] ${it.shiftRightClick.getOrElse("Basic Attack")}"
           :: Nil
       )
-
       case None => "None" :: Nil
     }
 
-  private def classButton(
-      combatClass: Option[CombatClass]
+  private def combatClassButton(
+      player: Player
   )(implicit
       menuService: MenuService,
-      playerService: PlayerService,
-      combatDataService: CombatDataService,
       attributeService: AttributeService,
       currencyService: CurrencyService,
       levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
       combatClassService: CombatClassService,
-      legendsDataService: LegendsPlayerDataService
+      legendsDataService: LegendsPlayerDataService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ): Button = {
+    val combatClass = player.combatClass
     val name = combatClass.map { _.name }.getOrElse("Wayfarer")
     val prefix = if (name(0).isVowel) "an" else "a"
     Button(
       combatClass.map { _.mainHands.head }.getOrElse(FlowerVariant.DANDELION),
-      "Class",
-      (s"You are fighting as $prefix $YELLOW$name"
-        :: ""
-        :: s"${WHITE}Abilities:" :: Nil)
-        ++ abilitiesView(combatClass)
-        ++ (""
-          :: "[Click] to change your class" :: Nil)
-    ) { click =>
-      menuService.showMenu(click.player.id, CombatClassMenu(click.player))
-    }
+      "Combat Class",
+      List(
+        s"You are fighting as $prefix $YELLOW$name",
+        "",
+        s"${WHITE}Abilities:"
+      ) ++ abilitiesView(combatClass)
+        ++ List("", "[Click] to change your combat class")
+    ) { _ => updateMenu(CombatClassMenu.apply) }
   }
 
   private def racialPassiveView(
       player: Player,
       team: Team,
-      combatClassOption: Option[CombatClass]
-  ): List[String] = {
-    val combatClass = combatClassOption.map { _.name }.getOrElse("Unarmed")
-    (team, combatClass) match {
-      // Warrior
-      case (Dwarves, Berserker.name | Guardian.name) => (
-        s"${YELLOW}Sturdiness"
-          :: "You take up to 25% less damage depending"
-          :: "on how much damage you've already taken."
-          :: Nil
-      )
-      case (Elves, Berserker.name | Guardian.name) => (
-        s"${YELLOW}Blade Dance"
-          :: "Every 3rd outgoing melee attack you'll dodge"
-          :: "the first incoming melee attack for 3 seconds."
-          :: Nil
-      )
-      case (Humans, Berserker.name | Guardian.name) => (
-        s"${YELLOW}Last Stand"
-          :: "Upon receiving a fatal blow you instead"
-          :: "become invulnerable for 3 seconds."
-          :: Nil
-      )
-      case (Orcs, Berserker.name | Guardian.name) => (
-        s"${YELLOW}Bloodlust"
-          :: "While below half health your crit chance"
-          :: "is doubled."
-          :: Nil
-      )
+      combatClass: String
+  )(implicit
+      combatDataService: CombatDataService
+  ): List[String] = (team, combatClass) match {
+    // Warrior
+    case (Dwarves, Berserker | Guardian) => (
+      s"${YELLOW}Sturdiness"
+        :: "You take up to 25% less damage depending"
+        :: "on how much damage you've already taken."
+        :: Nil
+    )
+    case (Elves, Berserker | Guardian) => (
+      s"${YELLOW}Blade Dance"
+        :: "Every 3rd outgoing melee attack you'll dodge"
+        :: "the first incoming melee attack for 3 seconds."
+        :: Nil
+    )
+    case (Humans, Berserker | Guardian) => (
+      s"${YELLOW}Last Stand"
+        :: "Upon receiving a fatal blow you instead"
+        :: "become invulnerable for 3 seconds."
+        :: Nil
+    )
+    case (Orcs, Berserker | Guardian) => (
+      s"${YELLOW}Bloodlust"
+        :: "While below half health your crit chance"
+        :: "is doubled."
+        :: Nil
+    )
 
-      // Hunter
-      case (_, Marksman.name | Ranger.name) => (
-        s"${YELLOW}Hunter Pet"
-          :: "Your pet fights by your side, attacking"
-          :: "everything you're attacking."
-          :: Nil
-      )
+    // Hunter
+    case (_, Marksman | Ranger) => (
+      s"${YELLOW}Hunter Pet"
+        :: "Your pet fights by your side, attacking"
+        :: "everything you're attacking."
+        :: Nil
+    )
 
-      // Mage
-      case (Dwarves, Elementalist.name | Wizard.name) => (
-        s"${YELLOW}Unstable Bunker"
-          :: "When falling below half health and"
-          :: "after a short delay you damage and push"
-          :: "nearby enemies back."
-          :: Nil
-      )
-      case (Elves, Elementalist.name | Wizard.name) => (
-        s"${YELLOW}Regrowth"
-          :: Nil
-      )
-      case (Humans, Elementalist.name | Wizard.name) => (
-        s"${YELLOW}Arcane Barrier"
-          :: "When falling below half health you"
-          :: "receive an arcane shield."
-          :: Nil
-      )
-      case (Orcs, Elementalist.name | Wizard.name) => (
-        s"${YELLOW}Flame Totem"
-          :: "When falling below 75% health you"
-          :: "summon a totem to attack nearby enemies."
-          :: Nil
-      )
+    // Mage
+    case (Dwarves, Elementalist | Wizard) => (
+      s"${YELLOW}Unstable Bunker"
+        :: "When falling below half health and"
+        :: "after a short delay you damage and push"
+        :: "nearby enemies back."
+        :: Nil
+    )
+    case (Elves, Elementalist | Wizard) => (
+      s"${YELLOW}Regrowth"
+        :: Nil
+    )
+    case (Humans, Elementalist | Wizard) => (
+      s"${YELLOW}Arcane Barrier"
+        :: "When falling below half health you"
+        :: "receive an arcane shield."
+        :: Nil
+    )
+    case (Orcs, Elementalist | Wizard) => (
+      s"${YELLOW}Flame Totem"
+        :: "When falling below 75% health you"
+        :: "summon a totem to attack nearby enemies."
+        :: Nil
+    )
 
-      // Default
-      case _ => s"${GRAY}None" :: Nil
-    }
+    // Default
+    case _ => s"${GRAY}None" :: Nil
   }
 
   private def raceButton(
-      player: Player,
-      team: Team,
-      combatClass: Option[CombatClass]
+      player: Player
   )(implicit
       menuService: MenuService,
-      playerService: PlayerService,
-      combatDataService: CombatDataService,
       attributeService: AttributeService,
       currencyService: CurrencyService,
       levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
       combatClassService: CombatClassService,
-      legendsPlayerDataService: LegendsPlayerDataService
-  ): Button = Button(
-    ItemType.ARMOR_STAND,
-    "Race",
-    (s"You are fighting for the $YELLOW${team.name}"
-      :: ""
-      :: s"${WHITE}Racial passive:"
-      :: s"" :: Nil)
-      ++ racialPassiveView(player, team, combatClass)
-      ++ (""
-        :: "[Click] to change your race" :: Nil)
-  ) { click => menuService.showMenu(click.player.id, FactionMenu(click.player)) }
+      legendsDataService: LegendsPlayerDataService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
+  ): Button = {
+    val team = player.team.getOrElse(LegendsTeam.Wayfarers)
+    val combatClass = player.combatClass.map { _.name }.getOrElse("Unarmed")
+    Button(
+      ItemType.ARMOR_STAND,
+      "Race",
+      List(
+        s"You are fighting for the $YELLOW${team.name}",
+        "",
+        s"${WHITE}Racial passive:",
+        s""
+      ) ++ racialPassiveView(player, team, combatClass)
+        ++ List("", "[Click] to change your race")
+    ) { _ => updateMenu(FactionMenu.apply) }
+  }
 
   private def itemStorageButton(player: Player): Button = {
     ???
@@ -348,7 +373,7 @@ object MainMenu {
      */
   }
 
-  private def helpButton(player: Player)(implicit
+  private def helpButton(implicit
       menuService: MenuService,
       attributeService: AttributeService,
       currencyService: CurrencyService,
@@ -356,206 +381,251 @@ object MainMenu {
       playerService: PlayerService,
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
-      legendsDataService: LegendsPlayerDataService
+      legendsDataService: LegendsPlayerDataService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ): Button = Button(
     ItemType.BOOK,
     "Help Menu",
-    "Read the Server Manual or contact a member"
-      :: "of staff if you have any more questions."
-      :: ""
-      :: "[Click] To open the Help Menu"
-      :: Nil
-  ) { click => menuService.showMenu(click.player.id, HelpMenu(click.player)) }
+    "Read the Server Manual or contact a member",
+    "of staff if you have any more questions.",
+    "",
+    "[Click] To open the Help Menu"
+  ) { _ => updateMenu(HelpMenu.apply) }
 
-  private def dailyLoginButton(player: Player): Button = {
-    ???
-    /*
-        UUID playerId = player.getId();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.CLOCK, "Daily Login");
-        builder.addTooltip("Every day you get a reward just for logging");
-        builder.addTooltip("in to the server! The more often you log in,");
-        builder.addTooltip("the more interesting the rewards get. And do");
-        builder.addTooltip("not worry; missing a day or two does not reset");
-        builder.addTooltip("your progress.");
-        builder.addTooltip("");
-        builder.addTooltip("[CLICK] To view your rewards");
+  private def dailyLoginButton(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
+  ): Button = Button(
+    ItemType.CLOCK,
+    "Daily Login",
+    "Every day you get a reward just for",
+    "logging in! The more often you log in, the",
+    "greater the rewards. And don't worry; missing",
+    "a day or two does not reset your progress.",
+    "",
+    "[Click] To view your reward calendar"
+  ) { _ => updateMenu(DailyLoginMenu.apply) }
 
-        builder.withAction(action -> {
-            Menu menu = dailyLoginMenuFactory.createDailyLoginMenu(playerId);
-            menuCommandService.showMenu(menu, playerId);
-        });
-        return builder.build();
-     */
+  private final val voteMessage1 =
+    Message.server("https://minecraft-server-list.com/server/423343/vote/")
+  private final val voteMessage2 =
+    Message.server("https://minecraftservers.org/vote/257786/")
+  private final val voteMessage3 =
+    Message.server("https://minecraft-server.net/vote/warcraftgg/")
+  private final val voteMessage4 =
+    Message.server("https://minecraft-mp.com/server/192075/vote/")
+  private final val voteMessage5 =
+    Message.server("https://minecraftservers.biz/servers/106701/")
+
+  private def dailyVoteButton(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
+  ): Button = Button(
+    ItemType.PAPER,
+    "Daily Votes",
+    "Get even more daily rewards by voting",
+    "for WarCraft! For every vote cast you",
+    s"get a ${YELLOW}Vote Crate${FormatCode.RESET}.",
+    "",
+    "You can vote on:",
+    "minecraft-server-list.com",
+    "minecraftservers.org",
+    "minecraft-server.net",
+    "minecraft-mp.com",
+    "minecraftservers.biz",
+    "",
+    "[Click] To paste the vote links in your chat"
+  ) { click =>
+    playerService.sendMessage(click.player.id, voteMessage1)
+    playerService.sendMessage(click.player.id, voteMessage2)
+    playerService.sendMessage(click.player.id, voteMessage3)
+    playerService.sendMessage(click.player.id, voteMessage4)
+    playerService.sendMessage(click.player.id, voteMessage5)
+    noop
   }
 
-  private def dailyVoteButton(player: Player): Button = {
-    ???
-    /*
-        UUID playerId = player.getId();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.PAPER, "Daily Votes");
-        builder.addTooltip("Votes text placeholder");
-        builder.addTooltip("");
-        builder.addTooltip(ColorCode.WHITE + "Websites:");
-        builder.addTooltip(ColorCode.YELLOW + "minecraft-server-list.com");
-        builder.addTooltip(ColorCode.YELLOW + "minecraftservers.org");
-        builder.addTooltip(ColorCode.YELLOW + "minecraft-server.net");
-        builder.addTooltip(ColorCode.YELLOW + "minecraft-mp.com");
-        builder.addTooltip(ColorCode.YELLOW + "minecraftservers.biz");
-        builder.addTooltip("");
-        builder.addTooltip("[CLICK] To paste the links into your chat");
+  private def challengesButton(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
+  ): Button = Button(
+    ItemType.TNT,
+    "Challenges",
+    "Repeatable tasks that reward you for helping",
+    "your faction increase their influence on Aldmore.",
+    "",
+    "[Click] To view your challenges"
+  ) { _ => updateMenu(ChallengesMenu.apply) }
 
-        builder.withAction(action -> {
-            playerCommandService.sendNotification(playerId, "https://minecraft-server-list.com/server/423343/vote/");
-            playerCommandService.sendNotification(playerId, "https://minecraftservers.org/vote/257786/");
-            playerCommandService.sendNotification(playerId, "https://minecraft-server.net/vote/warcraftgg/");
-            playerCommandService.sendNotification(playerId, "https://minecraft-mp.com/server/192075/vote/");
-            playerCommandService.sendNotification(playerId, "https://minecraftservers.biz/servers/106701/");
-            menuCommandService.closeMenu(playerId);
-        });
-        return builder.build();
-     */
-  }
+  private def collectiblesButton(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
+  ): Button = Button(
+    ItemType.BOOKSHELF,
+    "Collectibles",
+    "From house decorations to mini pets, there's a lot",
+    "to collect on Aldmore. Can you collect it all?",
+    "",
+    "[Click] To view your collectibles"
+  ) { _ => updateMenu(CollectiblesMenu.apply) }
 
-  private def challengesButton(player: Player): Button = {
-    ???
-    /*
-        UUID playerId = player.getId();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.TNT, "Challenges");
-        builder.addTooltip("Challenges are a simple way of adding a");
-        builder.addTooltip("little bit of extra action to your day to");
-        builder.addTooltip("day activities on the server. Can you");
-        builder.addTooltip("complete them all?");
-        builder.addTooltip("");
-        builder.addTooltip("[CLICK] To view your challenges");
+  private def leaderboardsButton(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
+  ): Button = Button(
+    ItemType.BANNER,
+    "Leaderboards",
+    "Your actions on the server do not go unnoticed.",
+    "The Titans keep track of all the legends forged",
+    "on Aldmore and reward those that are the greatest!",
+    "",
+    "[Click] To view the leaderboards"
+  ) { _ => updateMenu(LeaderboardsMenu.apply) }
 
-        builder.withAction(action -> {
-            Menu menu = challengesMenuFactory.createChallengesMenu(playerId);
-            menuCommandService.showMenu(menu, playerId);
-        });
-        return builder.build();
-     */
-  }
-
-  private def collectablesButton(player: Player): Button = {
-    ???
-    /*
-        UUID playerId = player.getId();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.BOOKSHELF, "Collectables");
-        builder.addTooltip("From housing decorations to mini pets");
-        builder.addTooltip("and more. There's a lot to collect on");
-        builder.addTooltip("the server. Gotta collect 'em all!");
-        builder.addTooltip("");
-        builder.addTooltip("[CLICK] To view your collection");
-
-        builder.withAction(action -> {
-            Menu menu = collectablesMenuFactory.createCollectablesMenu(playerId);
-            menuCommandService.showMenu(menu, playerId);
-        });
-        return builder.build();
-     */
-  }
-
-  private def leaderboardsButton(player: Player): Button = {
-    ???
-    /*
-        UUID playerId = player.getId();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.BANNER, "Leaderboards");
-        builder.addTooltip("Your actions on the server do not go unnoticed.");
-        builder.addTooltip("The Titans keep track of all the greatest warriors");
-        builder.addTooltip("and reward those who finish first, second, or third");
-        builder.addTooltip("on any of the daily, war, and all-time leaderboard!");
-        builder.addTooltip("");
-        builder.addTooltip("[CLICK] To view the leaderboards");
-
-        builder.withAction(action -> {
-            Menu menu = leaderboardsMenuFactory.createLeaderboardsMenu(playerId);
-            menuCommandService.showMenu(menu, playerId);
-        });
-        return builder.build();
-     */
-  }
-
-  private def shopButton(player: Player): Button = {
-    ???
-    /*
-        UUID playerId = player.getId();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.GOLDEN_APPLE, "WarCraft: Shop"); // TODO enchanted golden apple
-        builder.addTooltip("To go even further beyond in supporting the");
-        builder.addTooltip("server the WarCraft: Shop has ten different");
-        builder.addTooltip("items for sale every day. These items can");
-        builder.addTooltip("be bought with Fragments which are available");
-        builder.addTooltip("from the web shop at " + YELLOW + "shop.warcraft.gg");
-        builder.addTooltip("");
-        builder.addTooltip("[CLICK] To browse the shop");
-
-        builder.withAction(action -> {
-            Menu menu = shopMenuFactory.createShopMenu(playerId);
-            menuCommandService.showMenu(menu, playerId);
-        });
-        return builder.build();
-     */
-  }
-
-  /*
-   Button createRankButton(LegendsPlayer player) {
-      UUID playerId = player.getId();
-      String rank = player.getRank().getColor() + player.getRank().getFormattedName();
-      ItemType rankIcon = getRankIcon(rank);
-      int level = player.getRank().getLevel();
-      int levelUpPercentage = (int) (((float) (player.getLifetimeFavor() - player.getRank().getFavor()) /
-              (float) player.getRank().getRequiredFavor() - player.getRank().getFavor()) * 100);
-      ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(rankIcon, "Level & Rank");
-      builder.addTooltip("Rank text");
-      builder.addTooltip("");
-      builder.addTooltip(ColorCode.WHITE + "Current level:");
-      builder.addTooltip(ColorCode.YELLOW + "Lv. " + level + " (" + levelUpPercentage + "%)");
-      builder.addTooltip("");
-      builder.addTooltip(ColorCode.WHITE + "Current Rank:");
-      builder.addTooltip(rank);
-      builder.addTooltip("");
-      builder.addTooltip(ColorCode.WHITE + "Rank passives:");
-      createRankPassivesView(level).forEach(builder::addTooltip);
-      return builder.build();
-  }
-   */
+  private def shopButton(implicit
+      menuService: MenuService,
+      attributeService: AttributeService,
+      currencyService: CurrencyService,
+      levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService,
+      legendsDataService: LegendsPlayerDataService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
+  ): Button = Button(
+    ItemType.GOLDEN_APPLE,
+    "WarCraft: Shop",
+    "To go even further beyond in supporting the",
+    "server the WarCraft: Shop has 12 different",
+    "items for sale every day. These items can",
+    "be bought with Fragments which are available",
+    s"from the web shop at ${YELLOW}shop.warcraft.gg",
+    "",
+    "[Click] To view the shop"
+  ) { _ => updateMenu(ShopMenu.apply) }
 
   def apply(player: Player)(implicit
       menuService: MenuService,
-      playerService: PlayerService,
-      combatDataService: CombatDataService,
-      attributesService: AttributeService,
+      attributeService: AttributeService,
       currencyService: CurrencyService,
       levelService: LevelService,
+      playerService: PlayerService,
+      combatDataService: CombatDataService,
       combatClassService: CombatClassService,
-      legendsDataService: LegendsPlayerDataService
-  ): Menu = {
-    val team = player.team.getOrElse(Wayfarers)
-    val combatClass = player.combatClass
-    Menu(
-      "WarCraft: Legends",
-      MenuSize.ONE_ROW,
-      Map(
-        // 1st row
-        0 -> playerButton(player),
-        1 -> levelButton(player),
-        2 -> classButton(combatClass),
-        3 -> raceButton(player, team, combatClass),
-        // 4
-        // TODO 5 -> itemStorageButton(player),
-        // TODO 6 -> returnButton(player),
-        // 7
-        8 -> helpButton(player)
-        // 2nd row
-        // TODO 9 -> dailyLoginButton(player),
-        // TODO 10 -> dailyVoteButton(player),
-        // TODO 11 -> challengesButton(player),
-        // 12
-        // 13
-        // TODO 14 -> collectablesButton(player),
-        // TODO 15 -> leaderboardsButton(player),
-        // 16
-        // TODO 17 -> shopButton(player)
-      )
-    )
-  }
+      legendsDataService: LegendsPlayerDataService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
+  ): Menu = Menu(
+    "WarCraft: Legends",
+    MenuSize.ONE_ROW,
+    // 1st row
+    0 -> playerButton(player),
+    1 -> levelButton(player),
+    2 -> combatClassButton(player),
+    3 -> raceButton(player),
+    // 4
+    // TODO 5 -> itemStorageButton(player),
+    // TODO 6 -> returnButton(player),
+    // 7
+    8 -> helpButton,
+    // 2nd row
+    9 -> dailyLoginButton,
+    10 -> dailyVoteButton,
+    11 -> challengesButton,
+    // 12
+    // 13
+    14 -> collectiblesButton,
+    15 -> leaderboardsButton,
+    // 16
+    17 -> shopButton
+  )
 }

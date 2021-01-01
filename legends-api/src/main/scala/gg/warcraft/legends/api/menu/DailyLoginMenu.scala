@@ -8,17 +8,22 @@ package gg.warcraft.legends.api.menu
 
 import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.legends.api.ai.MiniPetFactory
+import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
 import gg.warcraft.legends.api.item.crate.LootCrate
 import gg.warcraft.legends.api.item.crate.reward.{
   LoginRewardService, LoginRewardsClaimed
 }
+import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
+import gg.warcraft.legends.api.shop.ShopService
+import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.monolith.api.block.variant.GlassVariant
 import gg.warcraft.monolith.api.core.ColorCode
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
-import gg.warcraft.monolith.api.item.{ItemType, ItemTypeOrVariant}
+import gg.warcraft.monolith.api.item.{ItemService, ItemType, ItemTypeOrVariant}
 import gg.warcraft.monolith.api.menu.Button.noop
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
@@ -72,7 +77,13 @@ object DailyLoginMenu {
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
       loginRewardService: LoginRewardService,
-      serverDataService: ServerDataService
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
+      shopProfileService: ShopProfileService,
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ): Menu = {
     val claimed = loginRewardService.rewardsClaimed(player.id)
     val buttons = loginRewardService.rewards.map { case (day, reward) =>

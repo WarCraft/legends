@@ -8,10 +8,15 @@ package gg.warcraft.legends.api.menu
 
 import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.combat.api.data.CombatDataService
+import gg.warcraft.legends.api.ai.MiniPetFactory
+import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
+import gg.warcraft.legends.api.item.crate.reward.LoginRewardService
+import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.legends.api.shop.{DecorationPack, ShopItem, ShopService}
+import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
 import gg.warcraft.monolith.api.menu.Button.updateMenu
@@ -44,9 +49,14 @@ object DecorationsMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      itemService: ItemService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
       shopProfileService: ShopProfileService,
-      shopService: ShopService
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ): Button = decorationPackButtons.get(pack.id) match {
     case Some(button) => button
     case None =>
@@ -68,9 +78,14 @@ object DecorationsMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      itemService: ItemService,
+      loginRewardService: LoginRewardService,
+      serverDataService: ServerDataService,
+      challengeService: ChallengeService,
+      leaderboardService: LeaderboardService,
+      shopService: ShopService,
       shopProfileService: ShopProfileService,
-      shopService: ShopService
+      itemService: ItemService,
+      miniPetFactory: MiniPetFactory
   ): Menu = {
     val packs = shopService.itemsByType(ShopItem.DecorationPack)
     val rowCount = if (packs.size <= 14) 2 else Math.ceil(packs.size / 7f).toInt
