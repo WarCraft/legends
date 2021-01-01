@@ -94,7 +94,7 @@ object PromotionsMenu {
     val menuSize = MenuSize.fromRows(rowCount)
     val buttons = promotions.zipWithIndex.map { case (promotion, i) =>
       val slot = i + (1 + (i - 1) / 7) * 2
-      slot -> promotionButton(promotion.asInstanceOf[Promotion], profile)
+      slot -> promotionButton(promotion.asInstanceOf[Promotion], profile, player)
     }
     Menu(
       "Promotions",

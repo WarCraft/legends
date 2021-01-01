@@ -8,28 +8,42 @@ package gg.warcraft.legends.api.menu
 
 import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.combat.api.data.CombatDataService
-import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
+import gg.warcraft.legends.api.ai.MiniPetFactory
+import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
+import gg.warcraft.legends.api.item.crate.reward.LoginRewardService
 import gg.warcraft.legends.api.menu.staff.StaffMenu
+import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
+import gg.warcraft.legends.api.shop.ShopService
+import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.monolith.api.core.auth.{AuthService, Principal}
 import gg.warcraft.monolith.api.core.command.Command
+import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.item.ItemService
 import gg.warcraft.monolith.api.menu.MenuService
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
 
 class MenuCommandHandler(implicit
-    menuService: MenuService,
     authService: AuthService,
-    playerService: PlayerService,
+    menuService: MenuService,
     attributeService: AttributeService,
-    levelService: LevelService,
     currencyService: CurrencyService,
+    levelService: LevelService,
+    playerService: PlayerService,
     combatDataService: CombatDataService,
     combatClassService: CombatClassService,
-    legendsPlayerDataService: LegendsPlayerDataService,
-    equipmentGenerator: EquipmentGenerator
+    legendsDataService: LegendsPlayerDataService,
+    loginRewardService: LoginRewardService,
+    serverDataService: ServerDataService,
+    challengeService: ChallengeService,
+    leaderboardService: LeaderboardService,
+    shopService: ShopService,
+    shopProfileService: ShopProfileService,
+    itemService: ItemService,
+    miniPetFactory: MiniPetFactory
 ) extends Command.Handler {
   override def handle(
       executor: Principal,

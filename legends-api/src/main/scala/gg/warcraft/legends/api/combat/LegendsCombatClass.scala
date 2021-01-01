@@ -6,6 +6,8 @@
 
 package gg.warcraft.legends.api.combat
 
+import gg.warcraft.combat.api.combatclass.{CombatClass, CombatClassService}
+
 object LegendsCombatClass {
   type Type = String
 
@@ -15,4 +17,10 @@ object LegendsCombatClass {
   final val Ranger: Type = "RANGER"
   final val Elementalist: Type = "ELEMENTALIST"
   final val Wizard: Type = "WIZARD"
+
+  @inline implicit final class LegendsCombatClassOps(val self: Type) extends AnyVal {
+    def instance(implicit
+        combatClassService: CombatClassService
+    ): CombatClass = combatClassService.combatClasses(self)
+  }
 }
