@@ -10,14 +10,22 @@ import gg.warcraft.combat.api.combatclass.{
   CombatClassService, PlayerCombatClassChangedEvent
 }
 import gg.warcraft.combat.api.data.CombatDataService
-import gg.warcraft.combat.api.util.combatplayer._
+import gg.warcraft.combat.api.util.entity._
+import gg.warcraft.legends.api.ai.MiniPetFactory
+import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
+import gg.warcraft.legends.api.item.crate.reward.LoginRewardService
 import gg.warcraft.legends.api.menu.{CombatClassMenu, FactionMenu}
+import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
+import gg.warcraft.legends.api.shop.ShopService
+import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.monolith.api.core.Duration._
+import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.core.event.Event
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.entity.{EntityService, EntityTeamChangedEvent}
+import gg.warcraft.monolith.api.item.ItemService
 import gg.warcraft.monolith.api.menu.MenuService
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
@@ -29,14 +37,22 @@ import java.util.UUID
 
 class SpigotFirstTimeRaceClassMenuHandler(implicit
     entityService: EntityService,
-    playerService: PlayerService,
-    combatDataService: CombatDataService,
     menuService: MenuService,
-    combatClassService: CombatClassService,
     attributeService: AttributeService,
     currencyService: CurrencyService,
     levelService: LevelService,
-    legendsDataService: LegendsPlayerDataService
+    playerService: PlayerService,
+    combatDataService: CombatDataService,
+    combatClassService: CombatClassService,
+    legendsDataService: LegendsPlayerDataService,
+    loginRewardService: LoginRewardService,
+    serverDataService: ServerDataService,
+    challengeService: ChallengeService,
+    leaderboardService: LeaderboardService,
+    shopService: ShopService,
+    shopProfileService: ShopProfileService,
+    itemService: ItemService,
+    miniPetFactory: MiniPetFactory
 ) extends Event.Handler
     with Listener {
   import SpigotRaceRespawnHandler.getSpawn
