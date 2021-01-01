@@ -25,8 +25,9 @@ import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.block.variant.FlowerVariant
 import gg.warcraft.monolith.api.core.ColorCode._
+import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
-import gg.warcraft.monolith.api.core.{ColorCode, FormatCode, Message}
+import gg.warcraft.monolith.api.core.{ColorCode, FormatCode}
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.entity.team.Team
 import gg.warcraft.monolith.api.item.{ItemService, ItemType, ItemTypeOrVariant}
@@ -187,7 +188,8 @@ object MainMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Button = {
     val combatClass = player.combatClass
     val name = combatClass.map { _.name }.getOrElse("Wayfarer")
@@ -292,7 +294,8 @@ object MainMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Button = {
     val team = player.team.getOrElse(LegendsTeam.Wayfarers)
     val combatClass = player.combatClass.map { _.name }.getOrElse("Unarmed")
@@ -389,7 +392,8 @@ object MainMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Button = Button(
     ItemType.BOOK,
     "Help Menu",
@@ -415,7 +419,8 @@ object MainMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Button = Button(
     ItemType.CLOCK,
     "Daily Login",
@@ -426,17 +431,6 @@ object MainMenu {
     "",
     "[Click] To view your reward calendar"
   ) { _ => updateMenu(DailyLoginMenu.apply) }
-
-  private final val voteMessage1 =
-    Message.server("https://minecraft-server-list.com/server/423343/vote/")
-  private final val voteMessage2 =
-    Message.server("https://minecraftservers.org/vote/257786/")
-  private final val voteMessage3 =
-    Message.server("https://minecraft-server.net/vote/warcraftgg/")
-  private final val voteMessage4 =
-    Message.server("https://minecraft-mp.com/server/192075/vote/")
-  private final val voteMessage5 =
-    Message.server("https://minecraftservers.biz/servers/106701/")
 
   private def dailyVoteButton(implicit
       menuService: MenuService,
@@ -454,7 +448,8 @@ object MainMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Button = Button(
     ItemType.PAPER,
     "Daily Votes",
@@ -472,11 +467,7 @@ object MainMenu {
     "[Click] To paste the vote links in your chat",
     s"or execute the $YELLOW/vote ${FormatCode.RESET}command"
   ) { click =>
-    playerService.sendMessage(click.player.id, voteMessage1)
-    playerService.sendMessage(click.player.id, voteMessage2)
-    playerService.sendMessage(click.player.id, voteMessage3)
-    playerService.sendMessage(click.player.id, voteMessage4)
-    playerService.sendMessage(click.player.id, voteMessage5)
+    commandService.executeCommand(click.player.id, "vote")
     noop
   }
 
@@ -496,7 +487,8 @@ object MainMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Button = Button(
     ItemType.TNT,
     "Challenges",
@@ -522,7 +514,8 @@ object MainMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Button = Button(
     ItemType.BOOKSHELF,
     "Collectibles",
@@ -548,7 +541,8 @@ object MainMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Button = Button(
     ItemType.BANNER,
     "Leaderboards",
@@ -575,7 +569,8 @@ object MainMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Button = Button(
     ItemType.GOLDEN_APPLE,
     "WarCraft: Shop",
@@ -604,7 +599,8 @@ object MainMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = Menu(
     "WarCraft: Legends",
     MenuSize.ONE_ROW,

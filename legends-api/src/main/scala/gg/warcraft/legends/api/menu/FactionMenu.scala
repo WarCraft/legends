@@ -18,6 +18,7 @@ import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.ShopService
 import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.monolith.api.core.ColorCode._
+import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
@@ -126,7 +127,8 @@ object FactionMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = {
     Menu(
       "Faction",

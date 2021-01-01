@@ -18,6 +18,7 @@ import gg.warcraft.legends.api.shop.ShopService
 import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.monolith.api.block.variant.BannerVariant
 import gg.warcraft.monolith.api.core.ColorCode._
+import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
@@ -51,7 +52,8 @@ object LeaderboardsMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ) = Button(
     BannerVariant.YELLOW,
     "Daily Leaderboards",
@@ -74,7 +76,8 @@ object LeaderboardsMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ) = Button(
     BannerVariant.ORANGE,
     "Monthly Leaderboards",
@@ -97,7 +100,8 @@ object LeaderboardsMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ) = Button(
     BannerVariant.RED,
     "All-time Leaderboards",
@@ -162,7 +166,8 @@ object LeaderboardsMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = {
     val buttons = leaderboardService.leaderboards.values
       .filter(filter)
@@ -197,7 +202,8 @@ object LeaderboardsMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = Menu(
     "Leaderboards",
     MenuSize.ONE_ROW,
@@ -234,7 +240,8 @@ object DailyLeaderboardsMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = LeaderboardsMenu.leaderboardMenu(
     "Daily Leaderboard",
     { _.isDaily },
@@ -267,7 +274,8 @@ object MonthlyLeaderboardsMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = LeaderboardsMenu.leaderboardMenu(
     "Monthly Leaderboard",
     { _.isMonthly },
@@ -300,7 +308,8 @@ object AlltimeLeaderboardsMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = LeaderboardsMenu.leaderboardMenu(
     "All-time Leaderboard",
     { it => !it.isDaily && !it.isMonthly },

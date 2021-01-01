@@ -18,6 +18,7 @@ import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.profile.{ShopProfile, ShopProfileService}
 import gg.warcraft.legends.api.shop.{Promotion, ShopItem, ShopService}
 import gg.warcraft.monolith.api.core.Message
+import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
@@ -84,7 +85,8 @@ object PromotionsMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = {
     val promotions = shopService.itemsByType(ShopItem.Promotion)
     val profile = shopProfileService.profile(player.id)

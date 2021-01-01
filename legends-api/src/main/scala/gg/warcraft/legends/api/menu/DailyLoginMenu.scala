@@ -21,6 +21,7 @@ import gg.warcraft.legends.api.shop.ShopService
 import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.monolith.api.block.variant.GlassVariant
 import gg.warcraft.monolith.api.core.ColorCode
+import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType, ItemTypeOrVariant}
@@ -83,7 +84,8 @@ object DailyLoginMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = {
     val claimed = loginRewardService.rewardsClaimed(player.id)
     val buttons = loginRewardService.rewards.map { case (day, reward) =>

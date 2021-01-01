@@ -16,6 +16,7 @@ import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.ShopService
 import gg.warcraft.legends.api.shop.profile.ShopProfileService
+import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.variant.SpawnEggVariant
@@ -49,7 +50,8 @@ object CollectiblesMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ) = Button(
     ItemType.PLANKS,
     "Decorations",
@@ -76,7 +78,8 @@ object CollectiblesMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ) = Button(
     SpawnEggVariant.PIG,
     "Mini Pets",
@@ -103,7 +106,8 @@ object CollectiblesMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ) = Button(
     ItemType.CAKE,
     "Promotions",
@@ -129,7 +133,8 @@ object CollectiblesMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = Menu(
     "Collectibles",
     MenuSize.ONE_ROW,

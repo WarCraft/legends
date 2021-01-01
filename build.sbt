@@ -47,13 +47,15 @@ lazy val spigot = (project in file("legends-spigot"))
     resolvers ++= Seq(
       "PaperMC" at "https://papermc.io/repo/repository/maven-public/",
       "SpigotMC" at "https://repo.md-5.net/content/groups/public/",
-      "ProtocolLib" at "https://repo.dmulloy2.net/nexus/repository/public/"
+      "ProtocolLib" at "https://repo.dmulloy2.net/nexus/repository/public/",
+      "Votifier" at "https://dl.bintray.com/ichbinjoe/public/"
     ),
     libraryDependencies ++= commonDependencies ++ Seq(
       "com.destroystokyo.paper" % "paper-api" % "1.15.2-R0.1-SNAPSHOT" % Provided,
       "gg.warcraft" %% "monolith-spigot" % "15.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "combat-spigot" % "15.0.0-SNAPSHOT" % Provided,
-      "LibsDisguises" % "LibsDisguises" % "10.0.12" % Provided intransitive ()
+      "LibsDisguises" % "LibsDisguises" % "10.0.12" % Provided intransitive (),
+      "com.vexsoftware" % "nuvotifier-universal" % "2.6.0" % Provided
     )
   )
   .dependsOn(api)

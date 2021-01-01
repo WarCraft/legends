@@ -16,6 +16,7 @@ import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.ShopService
 import gg.warcraft.legends.api.shop.profile.ShopProfileService
+import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
@@ -51,7 +52,8 @@ object ChallengesMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Button = Button(
     ItemType.GUNPOWDER,
     "Daily Challenges",
@@ -87,7 +89,8 @@ object ChallengesMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Button = Button(
     ItemType.TNT,
     "Monthly Challenges",
@@ -136,7 +139,8 @@ object ChallengesMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = Menu(
     "Challenges",
     MenuSize.ONE_ROW,
@@ -173,7 +177,8 @@ object DailyChallengesMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = {
     var challenges: Map[Int, Button] = Map.empty
     challengeService.activeDailies.foreach { challenge =>
@@ -217,7 +222,8 @@ object MonthlyChallengesMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = {
     var challenges: Map[Int, Button] = Map.empty
     challengeService.activeDailies.foreach { challenge =>

@@ -19,6 +19,7 @@ import gg.warcraft.legends.api.shop.{DecorationPack, ShopItem, ShopService}
 import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.core.Message
+import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
@@ -62,7 +63,8 @@ object ShopMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Button = {
     val unlocked = item match {
       case DecorationPack(_, _, _, _, _, _, _, _, decorations) =>
@@ -123,7 +125,8 @@ object ShopMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = {
     val profile = shopProfileService.profile(player.id)
     val buttons = shopService.availableItems.zipWithIndex.map { case (item, i) =>

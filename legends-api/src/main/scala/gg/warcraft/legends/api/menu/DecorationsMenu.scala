@@ -16,6 +16,7 @@ import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.legends.api.shop.{DecorationPack, ShopItem, ShopService}
+import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
@@ -56,7 +57,8 @@ object DecorationsMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Button = decorationPackButtons.get(pack.id) match {
     case Some(button) => button
     case None =>
@@ -85,7 +87,8 @@ object DecorationsMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = {
     val packs = shopService.itemsByType(ShopItem.DecorationPack)
     val rowCount = if (packs.size <= 14) 2 else Math.ceil(packs.size / 7f).toInt

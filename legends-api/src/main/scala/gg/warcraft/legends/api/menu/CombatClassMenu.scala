@@ -20,6 +20,7 @@ import gg.warcraft.legends.api.shop.ShopService
 import gg.warcraft.legends.api.shop.profile.{ShopProfile, ShopProfileService}
 import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.core.ColorCode._
+import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.variant.AxeVariant
@@ -294,7 +295,8 @@ object CombatClassMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = {
     val shopProfile = shopProfileService.profile(player.id)
     val cooldown = player.combatClassCooldown

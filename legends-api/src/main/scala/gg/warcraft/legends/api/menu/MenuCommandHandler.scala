@@ -18,7 +18,7 @@ import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.ShopService
 import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.monolith.api.core.auth.{AuthService, Principal}
-import gg.warcraft.monolith.api.core.command.Command
+import gg.warcraft.monolith.api.core.command.{Command, CommandService}
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.ItemService
@@ -43,7 +43,8 @@ class MenuCommandHandler(implicit
     shopService: ShopService,
     shopProfileService: ShopProfileService,
     itemService: ItemService,
-    miniPetFactory: MiniPetFactory
+    miniPetFactory: MiniPetFactory,
+    commandService: CommandService
 ) extends Command.Handler {
   override def handle(
       executor: Principal,

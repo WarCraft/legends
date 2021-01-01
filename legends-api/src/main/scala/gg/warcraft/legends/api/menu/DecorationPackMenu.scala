@@ -16,6 +16,7 @@ import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.profile.{ShopProfile, ShopProfileService}
 import gg.warcraft.legends.api.shop.{Decoration, DecorationPack, ShopService}
+import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
@@ -79,7 +80,8 @@ object DecorationPackMenu {
       shopService: ShopService,
       shopProfileService: ShopProfileService,
       itemService: ItemService,
-      miniPetFactory: MiniPetFactory
+      miniPetFactory: MiniPetFactory,
+      commandService: CommandService
   ): Menu = {
     val rowCount =
       if (pack.decorations.size <= 14) 2
