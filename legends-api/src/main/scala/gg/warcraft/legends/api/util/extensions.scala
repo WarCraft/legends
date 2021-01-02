@@ -22,7 +22,7 @@ object player {
   @inline implicit final class LegendsPlayerOps(val self: Player) extends AnyVal {
     def legendsData(implicit
         legendsDataService: LegendsPlayerDataService
-    ): LegendsPlayerData = legendsDataService.legendsData(self.id)
+    ): LegendsPlayerData = legendsDataService.data(self.id)
 
     def legendsTeam: Option[LegendsTeam] =
       self.team.map { _.asInstanceOf[LegendsTeam] }

@@ -19,6 +19,7 @@ class PlaytimeStatisticHandler(implicit
 
   private var previousOnlinePlayers: List[Player] = Nil
 
+  // TODO this is already handled by monolith, listen for those events and map to these in stead?
   override def run(): Unit = {
     val onlinePlayers = playerService.getOnlinePlayers
     val tickPlayers = onlinePlayers.intersect(previousOnlinePlayers)
