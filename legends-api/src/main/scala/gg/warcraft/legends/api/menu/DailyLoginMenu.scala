@@ -10,6 +10,7 @@ import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.legends.api.ai.MiniPetFactory
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
+import gg.warcraft.legends.api.core.spawn.SpawnService
 import gg.warcraft.legends.api.item.crate.LootCrate
 import gg.warcraft.legends.api.item.crate.reward.{
   LoginRewardService, LoginRewardsClaimed
@@ -85,7 +86,8 @@ object DailyLoginMenu {
       shopProfileService: ShopProfileService,
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
-      commandService: CommandService
+      commandService: CommandService,
+      spawnService: SpawnService
   ): Menu = {
     val claimed = loginRewardService.rewardsClaimed(player.id)
     val buttons = loginRewardService.rewards.map { case (day, reward) =>

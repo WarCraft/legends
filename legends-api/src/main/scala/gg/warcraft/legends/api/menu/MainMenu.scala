@@ -12,6 +12,7 @@ import gg.warcraft.combat.api.util.entity._
 import gg.warcraft.legends.api.ai.MiniPetFactory
 import gg.warcraft.legends.api.combat.LegendsCombatClass._
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
+import gg.warcraft.legends.api.core.spawn.SpawnService
 import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.entity.LegendsTeam._
 import gg.warcraft.legends.api.entity.attribute.LegendsAttribute._
@@ -25,13 +26,13 @@ import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.block.variant.FlowerVariant
 import gg.warcraft.monolith.api.core.ColorCode._
+import gg.warcraft.monolith.api.core.FormatCode
 import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
-import gg.warcraft.monolith.api.core.{ColorCode, FormatCode}
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.entity.team.Team
 import gg.warcraft.monolith.api.item.{ItemService, ItemType, ItemTypeOrVariant}
-import gg.warcraft.monolith.api.menu.Button.{noop, updateMenu}
+import gg.warcraft.monolith.api.menu.Button.{closeMenu, noop, updateMenu}
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
@@ -47,7 +48,7 @@ object MainMenu {
       val value = attributes.get(attribute).toInt
       if (value != 0) Some(s"$YELLOW$value ${attribute.name}") else None
     }.filter { _.isDefined }.map { _.get }
-    s"${ColorCode.WHITE}Attributes:" :: formattedAttributes
+    s"${WHITE}Attributes:" :: formattedAttributes
   }
 
   private final val trackedCurrencies =
@@ -58,7 +59,7 @@ object MainMenu {
     val formattedCurrencies = trackedCurrencies.map { currency =>
       s"$YELLOW${currencies.get(currency)} $currency"
     }
-    s"${ColorCode.WHITE}Currencies:" :: formattedCurrencies
+    s"${WHITE}Currencies:" :: formattedCurrencies
   }
 
   private def playerButton(player: Player): Button = Button.skull(
@@ -189,7 +190,8 @@ object MainMenu {
       shopProfileService: ShopProfileService,
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
-      commandService: CommandService
+      commandService: CommandService,
+      spawnService: SpawnService
   ): Button = {
     val combatClass = player.combatClass
     val name = combatClass.map { _.name }.getOrElse("Wayfarer")
@@ -295,7 +297,8 @@ object MainMenu {
       shopProfileService: ShopProfileService,
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
-      commandService: CommandService
+      commandService: CommandService,
+      spawnService: SpawnService
   ): Button = {
     val team = player.team.getOrElse(LegendsTeam.Wayfarers)
     val combatClass = player.combatClass.map { _.name }.getOrElse("Unarmed")
@@ -344,36 +347,34 @@ object MainMenu {
      */
   }
 
-  private def returnButton(player: Player): Button = {
-    ???
-    /*
-        UUID playerId = player.getId();
-        ButtonBuilder builder = buttonBuilderFactory.createSimpleButtonBuilder(ItemType.FLINT, "Monolith Shard");
-        builder.addTooltip("A pitch black splinter that is said to have");
-        builder.addTooltip("been part of The Monolith. It can take you");
-        builder.addTooltip("back to where The Monolith's power was once");
-        builder.addTooltip("at its strongest.");
-        builder.addTooltip("");
+  private def returnButton(player: Player)(implicit
+      spawnService: SpawnService
+  ): Button = {
+    val cooldown = spawnService.cooldowns.getOrElse(player.id, 0)
+    val delta = cooldown - System.currentTimeMillis
+    val cooldownText =
+      if (delta > 0) {
+        if (delta < 60_000) s"$RED${delta % 60} seconds cooldown remaining" :: Nil
+        else s"$RED${delta % 60_000} minutes cooldown remaining" :: Nil
+      } else List(
+        "[Click] To warp to your spawn",
+        s"or execute the $YELLOW/warp ${FormatCode.RESET}command"
+      )
 
-        long cooldown = spawnQueryService.getCooldown(playerId);
-        long now = System.currentTimeMillis();
-        if (cooldown >= now) {
-            String timeToGo = timeUtils.getTimeToGoUntil(cooldown);
-            builder.addTooltip(ColorCode.RED + timeToGo + " cooldown remaining");
-        } else {
-            builder.addTooltip(ColorCode.GREEN + "[CLICK] To warp to your spawn");
-        }
-
-        builder.withAction(action -> {
-            long updatedCooldown = spawnQueryService.getCooldown(playerId);
-            if (updatedCooldown < System.currentTimeMillis()) {
-                spawnCommandService.warp(playerId);
-                menuCommandService.closeMenu(playerId);
-            }
-        });
-        return builder.build();
+    Button(
+      ItemType.FLINT,
+      "Return to Spawn",
+      List(
+        "A pitch black splinter that is said to have",
+        "been part of The Monolith. It can take you",
+        "back to where The Monolith's power was once",
+        "at its strongest.",
+        ""
+      ) ++ cooldownText
+    ) { _ =>
+      if (spawnService.warpToSpawn(player.id)) closeMenu
+      else noop
     }
-     */
   }
 
   private def helpButton(implicit
@@ -393,7 +394,8 @@ object MainMenu {
       shopProfileService: ShopProfileService,
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
-      commandService: CommandService
+      commandService: CommandService,
+      spawnService: SpawnService
   ): Button = Button(
     ItemType.BOOK,
     "Help Menu",
@@ -420,7 +422,8 @@ object MainMenu {
       shopProfileService: ShopProfileService,
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
-      commandService: CommandService
+      commandService: CommandService,
+      spawnService: SpawnService
   ): Button = Button(
     ItemType.CLOCK,
     "Daily Login",
@@ -449,7 +452,8 @@ object MainMenu {
       shopProfileService: ShopProfileService,
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
-      commandService: CommandService
+      commandService: CommandService,
+      spawnService: SpawnService
   ): Button = Button(
     ItemType.PAPER,
     "Daily Votes",
@@ -488,7 +492,8 @@ object MainMenu {
       shopProfileService: ShopProfileService,
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
-      commandService: CommandService
+      commandService: CommandService,
+      spawnService: SpawnService
   ): Button = Button(
     ItemType.TNT,
     "Challenges",
@@ -515,7 +520,8 @@ object MainMenu {
       shopProfileService: ShopProfileService,
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
-      commandService: CommandService
+      commandService: CommandService,
+      spawnService: SpawnService
   ): Button = Button(
     ItemType.BOOKSHELF,
     "Collectibles",
@@ -542,7 +548,8 @@ object MainMenu {
       shopProfileService: ShopProfileService,
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
-      commandService: CommandService
+      commandService: CommandService,
+      spawnService: SpawnService
   ): Button = Button(
     ItemType.BANNER,
     "Leaderboards",
@@ -570,7 +577,8 @@ object MainMenu {
       shopProfileService: ShopProfileService,
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
-      commandService: CommandService
+      commandService: CommandService,
+      spawnService: SpawnService
   ): Button = Button(
     ItemType.GOLDEN_APPLE,
     "WarCraft: Shop",
@@ -600,7 +608,8 @@ object MainMenu {
       shopProfileService: ShopProfileService,
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
-      commandService: CommandService
+      commandService: CommandService,
+      spawnService: SpawnService
   ): Menu = Menu(
     "WarCraft: Legends",
     MenuSize.ONE_ROW,
@@ -611,7 +620,7 @@ object MainMenu {
     3 -> raceButton(player),
     // 4
     // TODO 5 -> itemStorageButton(player),
-    // TODO 6 -> returnButton(player),
+    6 -> returnButton(player),
     // 7
     8 -> helpButton,
     // 2nd row

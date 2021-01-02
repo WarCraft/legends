@@ -10,6 +10,7 @@ import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.legends.api.ai.MiniPetFactory
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
+import gg.warcraft.legends.api.core.spawn.SpawnService
 import gg.warcraft.legends.api.item.crate.reward.LoginRewardService
 import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
@@ -64,7 +65,8 @@ object ShopMenu {
       shopProfileService: ShopProfileService,
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
-      commandService: CommandService
+      commandService: CommandService,
+      spawnService: SpawnService
   ): Button = {
     val unlocked = item match {
       case DecorationPack(_, _, _, _, _, _, _, _, decorations) =>
@@ -126,7 +128,8 @@ object ShopMenu {
       shopProfileService: ShopProfileService,
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
-      commandService: CommandService
+      commandService: CommandService,
+      spawnService: SpawnService
   ): Menu = {
     val profile = shopProfileService.profile(player.id)
     val buttons = shopService.availableItems.zipWithIndex.map { case (item, i) =>
