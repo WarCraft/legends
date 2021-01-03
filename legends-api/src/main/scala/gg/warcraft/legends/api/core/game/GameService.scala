@@ -27,8 +27,8 @@ class GameService(implicit
     teamService: TeamService,
     objectiveService: ObjectiveService
 ) {
-  private final val active_war = "active_war"
-  private final val active_skirmish = "active_skirmish"
+  private final val active_war_data = "active_war"
+  private final val active_skirmish_data = "active_skirmish"
 
   private final val tallyTimer = 900.seconds
   private final val skirmishTimer = 1800.seconds
@@ -44,10 +44,10 @@ class GameService(implicit
 
   def readConfig(config: LegendsConfig): Unit = {
     _config = config
-    serverDataRepository.load(active_war).foreach { id =>
+    serverDataRepository.load(active_war_data).foreach { id =>
       _activeWar = gameRepository.load(id.toLong)
     }
-    serverDataRepository.load(active_skirmish).foreach { id =>
+    serverDataRepository.load(active_skirmish_data).foreach { id =>
       _activeSkirmish = gameRepository.load(id.toLong)
     }
   }
@@ -67,46 +67,7 @@ class GameService(implicit
           case Some(game @ Game(_, _, None, timer, _, _, _)) =>
             if (timer.seconds > 1) {
               _activeWar = game.copy(timer = game.timer - 1.seconds)
-            } else {
-              runTally()
-
-              val lastScoreDate = // TODO this should probably be triggered from daily tick event
-                if (game.monthlyScore.isEmpty) game.startTime else game
-              /*
-                     runTally();
-
-                     War updatedWar = (War) gameRepository.getActiveGame();
-                     SortedMap<String, Map<LegendsTeam, Integer>> dailyPoints = updatedWar.getDailyPoints();
-                     String lastScoreDate = dailyPoints.isEmpty()
-                             ? updatedWar.getStartTime()
-                             : updatedWar.getDailyPoints().lastKey();
-                     int lastScoreDay = LocalDateTime.parse(lastScoreDate).getDayOfMonth();
-                     int currentDay = LocalDateTime.now().getDayOfMonth();
-                     if (lastScoreDay != currentDay) {
-                         runScore();
-
-                         if (currentDay == 1) {
-                             endWar();
-                             startWar();
-                         } else {
-                             War mostUpToDateWar = (War) gameRepository.getActiveGame();
-                             Duration newTimer = timeUtils.createDurationInSeconds(TALLY_TIMER_IN_SECONDS);
-                             War newMostUpToDateWar = mostUpToDateWar.getCopyer()
-                                     .withTimer(newTimer)
-                                     .copy();
-                             gameRepository.save(newMostUpToDateWar);
-                         }
-                     } else {
-                         War mostUpToDateWar = (War) gameRepository.getActiveGame();
-                         Duration newTimer = timeUtils.createDurationInSeconds(TALLY_TIMER_IN_SECONDS);
-                         War newMostUpToDateWar = mostUpToDateWar.getCopyer()
-                                 .withTimer(newTimer)
-                                 .copy();
-                         gameRepository.save(newMostUpToDateWar);
-                     }
-                     break;
-               */
-            }
+            } else runTally()
           case None =>
         }
     }
@@ -120,7 +81,7 @@ class GameService(implicit
       gameRepository.save(war).onComplete {
         case Success(id) =>
           _activeWar = war.copy(id = id)
-          serverDataRepository.save(active_war, id.toString)
+          serverDataRepository.save(active_war_data, id.toString)
           taskService.evalNextTick(eventService << WarStartedEvent(_activeWar.get))
         case Failure(ex) => throw ex
       }
@@ -144,7 +105,7 @@ class GameService(implicit
           }
         }
 
-      val updatedWar = war.copy(dailyPoints = updatedDailyPoints)
+      val updatedWar = war.copy(timer = tallyTimer, dailyPoints = updatedDailyPoints)
       _activeWar = updatedWar
       gameRepository.save(updatedWar)
 
@@ -198,7 +159,7 @@ class GameService(implicit
       gameRepository.save(skirmish).onComplete {
         case Success(id) =>
           _activeSkirmish = skirmish.copy(id = id)
-          serverDataRepository.save(active_skirmish, id.toString)
+          serverDataRepository.save(active_skirmish_data, id.toString)
 
           initGame(_activeSkirmish.get)
 
@@ -238,7 +199,7 @@ class GameService(implicit
         val updatedSkirmish = skirmish.copy(endTime = endTime)
         _activeSkirmish = None
         gameRepository.save(updatedSkirmish)
-        serverDataRepository.delete(active_skirmish)
+        serverDataRepository.delete(active_skirmish_data)
 
         val winners = winningTeams.head._1
         eventService << SkirmishFinishedEvent(updatedSkirmish, winners)
