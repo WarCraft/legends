@@ -6,25 +6,25 @@
 
 package gg.warcraft.legends.api
 
-import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.item.crate.LootCrate
 import gg.warcraft.legends.api.player.challenge.Challenge
 import gg.warcraft.legends.api.player.level.Level
 import gg.warcraft.legends.api.player.statistic.LegendsStatistic.LegendsStatistic
-import gg.warcraft.monolith.api.world.Location
+import gg.warcraft.monolith.api.entity.team.Team
 
 case class LegendsConfig(
-    spawnLocations: Map[LegendsTeam, Location],
+    challenges: List[Challenge],
+    dailyRewards: List[RewardConfig],
+    leaderboards: LeaderboardsConfig,
     levels: List[Level],
-    objectivePoints: Map[String, Int],
-    objectiveCrates: Map[String, Int],
+    lootCrates: List[LootCrate],
+    // Siege
+    objectiveCaptureRewards: Map[String, RewardConfig],
+    objectiveDefaultOccupiers: Map[String, Team],
+    objectiveTallyPoints: Map[String, Int],
     playerKillFavor: Int,
     mobKillFavor: Int,
     eliteMobKillFavor: Int,
-    leaderboards: LeaderboardsConfig,
-    lootCrates: List[LootCrate],
-    challenges: List[Challenge],
-    dailyRewards: List[RewardConfig],
     skirmishTimes: List[Int]
 )
 

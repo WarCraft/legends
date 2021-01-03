@@ -7,21 +7,16 @@
 package gg.warcraft.legends.api.core.game
 
 import gg.warcraft.monolith.api.core.Duration
-import gg.warcraft.monolith.api.core.Duration.DurationOps
 import gg.warcraft.monolith.api.entity.team.Team
 
 import java.time.LocalDateTime
 
 case class Game(
-    id: Int,
+    id: Long,
     startTime: LocalDateTime,
     endTime: Option[LocalDateTime] = None,
-    timer: Duration = Game.defaultTimer,
-    objectives: Map[String, Team],
-    dailyPoints: Map[Team, Int],
-    monthlyScore: Map[Team, Int]
+    timer: Duration,
+    objectives: Map[String, Team] = Map.empty,
+    dailyPoints: Map[Team, Int] = Map.empty,
+    monthlyScore: Map[Team, Int] = Map.empty
 )
-
-object Game{
-  final val defaultTimer = 900.seconds
-}

@@ -6,10 +6,10 @@
 
 package gg.warcraft.legends.api.core.game.handler
 
-import java.time.LocalTime
-
 import gg.warcraft.legends.api.LegendsConfig
-import gg.warcraft.legends.api.core.game.{GameService, Skirmish}
+import gg.warcraft.legends.api.core.game.GameService
+
+import java.time.LocalTime
 
 class DailySkirmishHandler(gameService: GameService) extends Runnable {
   private var skirmishTimes: List[LocalTime] = Nil
@@ -20,9 +20,9 @@ class DailySkirmishHandler(gameService: GameService) extends Runnable {
   override def run(): Unit = {
     val now = LocalTime.now.withSecond(0).withNano(0)
     if (skirmishTimes.contains(now)) {
-      gameService.activeGame match {
-        case _: Skirmish =>
-        case _           => gameService.startSkirmish()
+      gameService.activeSkirmish match {
+        case Some(_) =>
+        case None    => gameService.startSkirmish()
       }
     }
   }

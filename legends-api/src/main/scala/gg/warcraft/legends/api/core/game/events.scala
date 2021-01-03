@@ -11,25 +11,25 @@ import gg.warcraft.monolith.api.entity.team.Team
 
 // SKIRMISH
 case class SkirmishStartedEvent(
-    skirmish: Skirmish
+    skirmish: Game
 ) extends Event
 
 case class SkirmishFinishedEvent(
-    skirmish: Skirmish,
+    skirmish: Game,
     winner: Team
 ) extends Event
 
 // WAR
 case class WarStartedEvent(
-    war: War
+    war: Game
 ) extends Event
 
 case class WarTallyEvent(
-    war: War,
-    points: Map[Team, Int]
+    updated: Game,
+    outdated: Game
 ) extends Event
 
 case class WarFinishedEvent(
-    war: War,
+    war: Game,
     winner: Team
 ) extends Event
