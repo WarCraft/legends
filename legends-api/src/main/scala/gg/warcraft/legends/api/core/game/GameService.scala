@@ -13,7 +13,7 @@ import gg.warcraft.monolith.api.core.event.EventService
 import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.entity.team.{Team, TeamService}
 import gg.warcraft.monolith.api.util.option._
-import gg.warcraft.siege.api.objective.ObjectiveService
+import gg.warcraft.siege.api.objective.{Objective, ObjectiveService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
@@ -42,6 +42,11 @@ class GameService(implicit
   private var _activeSkirmish: Option[Game] = _
   def activeSkirmish: Option[Game] = _activeSkirmish
 
+  private def activeGame_=(game: Game): Unit =
+    if (_activeSkirmish.nonEmpty) _activeSkirmish = game
+    else _activeWar = game
+  def activeGame: Option[Game] = _activeSkirmish.orElse(_activeWar)
+
   def readConfig(config: LegendsConfig): Unit = {
     _config = config
     serverDataRepository.load(active_war_data).foreach { id =>
@@ -57,19 +62,55 @@ class GameService(implicit
       objectiveService.setOccupiers(id, team)
     }
 
-  def tickActiveGame(): Unit =
-    _activeSkirmish match {
-      case Some(game @ Game(_, _, None, timer, _, _, _)) =>
-        if (timer.seconds > 1) {
-          _activeSkirmish = game.copy(timer = game.timer - 1.seconds)
-        } else endSkirmish()
-      case None => _activeWar match {
-          case Some(game @ Game(_, _, None, timer, _, _, _)) =>
-            if (timer.seconds > 1) {
-              _activeWar = game.copy(timer = game.timer - 1.seconds)
-            } else runTally()
-          case None =>
+  private[game] def captureObjective(objective: Objective, team: Team): Unit =
+    activeGame match {
+      case Some(game) =>
+        val updatedObjectives = game.objectives + (objective.id -> team)
+        var updatedGame = activeGame.get.copy(objectives = updatedObjectives)
+
+        if (_activeSkirmish.nonEmpty) {
+          val objectivePoints = _config.objectiveTallyPoints(objective.id)
+          val updatedPoints = updatedGame.dailyPoints + objectivePoints
+          updatedGame = updatedGame.copy(dailyPoints = updatedPoints)
         }
+
+        activeGame = updatedGame
+        gameRepository.save(updatedGame)
+      case None =>
+    }
+
+  private[game] def neutralizeObjective(objective: Objective): Unit =
+    activeGame match {
+      case Some(game) =>
+        val updatedObjectives = game.objectives - objective.id
+        val updatedGame = activeGame.get.copy(objectives = updatedObjectives)
+        activeGame = updatedGame
+        gameRepository.save(updatedGame)
+      case None =>
+    }
+
+  private[game] def awardKillingBlow(team: Team): Unit =
+    activeGame match {
+      case Some(game) =>
+        val updatedPoints = game.dailyPoints.updatedWith(team) {
+          case Some(points) => points + 1
+          case None         => 1
+        }
+        val updatedGame = game.copy(dailyPoints = updatedPoints)
+        activeGame = updatedGame
+        gameRepository.save(updatedGame)
+      case None =>
+    }
+
+  def tickActiveGame(): Unit =
+    activeGame match {
+      case Some(game) =>
+        if (game.timer.seconds > 0) {
+          activeGame = game.copy(timer = game.timer - 1.seconds)
+        } else if (_activeSkirmish.nonEmpty) {
+          endSkirmish()
+        } else runTally()
+      case None =>
     }
 
   def startWar(): Unit = _activeWar match {
