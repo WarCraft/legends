@@ -1,17 +1,18 @@
-package gg.warcraft.legends.app.core.handler;
+/*
+ * All rights reserved
+ *
+ * Copyright (c) 2021 WarCraft <https://github.com/WarCraft>
+ */
 
-import com.google.common.eventbus.Subscribe;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import gg.warcraft.monolith.api.entity.EntityType;
-import gg.warcraft.monolith.api.entity.event.EntityDamageEvent;
-import gg.warcraft.monolith.api.entity.player.event.PlayerDisconnectEvent;
-import gg.warcraft.monolith.api.entity.service.EntityCommandService;
-import gg.warcraft.monolith.api.util.TimeUtils;
+package gg.warcraft.legends.api.core.handler
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import gg.warcraft.monolith.api.core.event.Event
+
+class CombatLoggingHandler extends Event.Handler {
+  // TODO do we need this?
+}
+
+/*
 
 @Singleton
 public class CombatLoggingHandler {
@@ -43,3 +44,4 @@ public class CombatLoggingHandler {
         }
     }
 }
+ */
