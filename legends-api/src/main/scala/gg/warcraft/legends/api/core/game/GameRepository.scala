@@ -27,7 +27,7 @@ trait GameRepository {
 }
 
 private case class _Game(
-    id: Int,
+    id: Long,
     startTime: LocalDateTime,
     endTime: Option[LocalDateTime],
     timer: Int,
