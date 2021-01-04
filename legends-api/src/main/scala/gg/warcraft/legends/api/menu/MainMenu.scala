@@ -10,7 +10,9 @@ import gg.warcraft.combat.api.combatclass.{CombatClass, CombatClassService}
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.entity._
 import gg.warcraft.legends.api.ai.MiniPetFactory
-import gg.warcraft.legends.api.combat.LegendsCombatClass._
+import gg.warcraft.legends.api.combat.LegendsCombatClass.{
+  LegendsCombatClassOps => _, _
+}
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
 import gg.warcraft.legends.api.core.spawn.SpawnService
 import gg.warcraft.legends.api.entity.LegendsTeam
@@ -279,7 +281,7 @@ object MainMenu {
     case _ => s"${GRAY}None" :: Nil
   }
 
-  private def raceButton(
+  private def factionButton(
       player: Player
   )(implicit
       menuService: MenuService,
@@ -306,7 +308,7 @@ object MainMenu {
     val combatClass = player.combatClass.map { _.name }.getOrElse("Unarmed")
     Button(
       ItemType.ARMOR_STAND,
-      "Race",
+      "Faction",
       List(
         s"You are fighting for the $YELLOW${team.name}",
         "",
@@ -627,7 +629,7 @@ object MainMenu {
     0 -> playerButton(player),
     1 -> levelButton(player),
     2 -> combatClassButton(player),
-    3 -> raceButton(player),
+    3 -> factionButton(player),
     // 4
     // TODO 5 -> itemStorageButton(player),
     6 -> returnButton(player),
