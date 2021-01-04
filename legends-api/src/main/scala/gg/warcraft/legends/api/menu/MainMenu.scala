@@ -191,7 +191,8 @@ object MainMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Button = {
     val combatClass = player.combatClass
     val name = combatClass.map { _.name }.getOrElse("Wayfarer")
@@ -396,7 +397,8 @@ object MainMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Button = Button(
     ItemType.BOOK,
     "Help Menu",
@@ -424,7 +426,8 @@ object MainMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Button = Button(
     ItemType.CLOCK,
     "Daily Login",
@@ -454,7 +457,8 @@ object MainMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Button = Button(
     ItemType.PAPER,
     "Daily Votes",
@@ -494,7 +498,8 @@ object MainMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Button = Button(
     ItemType.TNT,
     "Challenges",
@@ -522,7 +527,8 @@ object MainMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Button = Button(
     ItemType.BOOKSHELF,
     "Collectibles",
@@ -550,7 +556,8 @@ object MainMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Button = Button(
     ItemType.BANNER,
     "Leaderboards",
@@ -579,7 +586,8 @@ object MainMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Button = Button(
     ItemType.GOLDEN_APPLE,
     "WarCraft: Shop",

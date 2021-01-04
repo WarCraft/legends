@@ -24,6 +24,7 @@ import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.item.variant.AxeVariant
 import gg.warcraft.monolith.api.item.{ItemService, ItemType, ItemTypeOrVariant}
 import gg.warcraft.monolith.api.menu.Button.{closeMenu, noop}
@@ -298,7 +299,8 @@ object CombatClassMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Menu = {
     val shopProfile = shopProfileService.profile(player.id)
     val cooldown = player.combatClassCooldown

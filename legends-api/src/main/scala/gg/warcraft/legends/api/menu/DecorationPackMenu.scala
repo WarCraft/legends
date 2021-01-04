@@ -20,6 +20,7 @@ import gg.warcraft.legends.api.shop.{Decoration, DecorationPack, ShopService}
 import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
 import gg.warcraft.monolith.api.menu.Button.noop
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
@@ -83,7 +84,8 @@ object DecorationPackMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Menu = {
     val rowCount =
       if (pack.decorations.size <= 14) 2

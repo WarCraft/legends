@@ -22,6 +22,7 @@ import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
 import gg.warcraft.monolith.api.menu.Button.{noop, updateButton, updateMenu}
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
@@ -55,7 +56,8 @@ object LeaderboardsMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ) = Button(
     BannerVariant.YELLOW,
     "Daily Leaderboards",
@@ -80,7 +82,8 @@ object LeaderboardsMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ) = Button(
     BannerVariant.ORANGE,
     "Monthly Leaderboards",
@@ -105,7 +108,8 @@ object LeaderboardsMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ) = Button(
     BannerVariant.RED,
     "All-time Leaderboards",
@@ -172,7 +176,8 @@ object LeaderboardsMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Menu = {
     val buttons = leaderboardService.leaderboards.values
       .filter(filter)
@@ -209,7 +214,8 @@ object LeaderboardsMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Menu = Menu(
     "Leaderboards",
     MenuSize.ONE_ROW,
@@ -248,7 +254,8 @@ object DailyLeaderboardsMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Menu = LeaderboardsMenu.leaderboardMenu(
     "Daily Leaderboard",
     { _.isDaily },
@@ -283,7 +290,8 @@ object MonthlyLeaderboardsMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Menu = LeaderboardsMenu.leaderboardMenu(
     "Monthly Leaderboard",
     { _.isMonthly },
@@ -318,7 +326,8 @@ object AlltimeLeaderboardsMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Menu = LeaderboardsMenu.leaderboardMenu(
     "All-time Leaderboard",
     { it => !it.isDaily && !it.isMonthly },

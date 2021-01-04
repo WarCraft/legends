@@ -20,6 +20,7 @@ import gg.warcraft.legends.api.shop.{MiniPet, ShopItem, ShopService}
 import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
 import gg.warcraft.monolith.api.menu.Button.{closeMenu, noop}
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
@@ -85,7 +86,8 @@ object MiniPetsMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Menu = {
     val pets = shopService.itemsByType(ShopItem.MiniPet)
     val profile = shopProfileService.profile(player.id)

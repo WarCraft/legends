@@ -22,6 +22,7 @@ import gg.warcraft.monolith.api.core.auth.AuthService
 import gg.warcraft.monolith.api.core.command.{Command, CommandService}
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.item.ItemService
 import gg.warcraft.monolith.api.menu.MenuService
 import gg.warcraft.monolith.api.player.PlayerService
@@ -47,7 +48,8 @@ class MenuConfig(implicit
     miniPetFactory: MiniPetFactory,
     commandService: CommandService,
     spawnService: SpawnService,
-    equipmentConfigRepository: EquipmentConfigRepository
+    equipmentConfigRepository: EquipmentConfigRepository,
+    teamService: TeamService
 ) {
   def writeConfig(): Unit = {
     val handler = new MenuCommandHandler
