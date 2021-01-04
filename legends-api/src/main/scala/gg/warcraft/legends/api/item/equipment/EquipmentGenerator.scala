@@ -16,6 +16,7 @@ import gg.warcraft.legends.api.item.equipment.config.{
   AttributeRollConfig, EquipmentConfigRepository
 }
 import gg.warcraft.legends.api.util.combatclass.CombatClassOps
+import gg.warcraft.monolith.api.entity.team.Team
 import gg.warcraft.monolith.api.item.{Item, ItemService}
 
 import scala.util.Random
@@ -31,7 +32,7 @@ class EquipmentGenerator(implicit
 
   def generate(
       combatClass: CombatClass,
-      team: LegendsTeam
+      team: Team
   ): Item = {
     val typ = randomEquipmentType(combatClass.archetype)
     generate(combatClass, team, typ)
@@ -39,7 +40,7 @@ class EquipmentGenerator(implicit
 
   def generate(
       combatClass: CombatClass,
-      team: LegendsTeam,
+      team: Team,
       typ: EquipmentType
   ): Item = {
     val rarityRoll = Random.nextFloat * 100
@@ -49,7 +50,7 @@ class EquipmentGenerator(implicit
 
   def generate(
       combatClass: CombatClass,
-      team: LegendsTeam,
+      team: Team,
       rarity: ItemRarity
   ): Item = {
     val typ = randomEquipmentType(combatClass.archetype)
@@ -58,11 +59,11 @@ class EquipmentGenerator(implicit
 
   def generate(
       combatClass: CombatClass,
-      team: LegendsTeam,
+      team: Team,
       typ: EquipmentType,
       rarity: ItemRarity
   ): Item = {
-    if (team == LegendsTeam.Wayfarers) throw new IllegalArgumentException
+    if (team.id == LegendsTeam.Wayfarers) throw new IllegalArgumentException
 
     val archetype = combatClass.archetype
     val attrDistro = randomAttributeDistribution

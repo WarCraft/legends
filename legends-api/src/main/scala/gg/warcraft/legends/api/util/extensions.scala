@@ -10,7 +10,6 @@ import gg.warcraft.combat.api.combatclass.CombatClass
 import gg.warcraft.legends.api.combat.LegendsCombatArchetype
 import gg.warcraft.legends.api.combat.LegendsCombatArchetype._
 import gg.warcraft.legends.api.combat.LegendsCombatClass._
-import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.player.currency.LegendsCurrency._
 import gg.warcraft.legends.api.player.data.{
   LegendsPlayerData, LegendsPlayerDataService
@@ -23,9 +22,6 @@ object player {
     def legendsData(implicit
         legendsDataService: LegendsPlayerDataService
     ): LegendsPlayerData = legendsDataService.data(self.id)
-
-    def legendsTeam: Option[LegendsTeam] =
-      self.team.map { _.asInstanceOf[LegendsTeam] }
 
     def combatClassCooldown(implicit
         legendsDataService: LegendsPlayerDataService

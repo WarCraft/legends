@@ -14,10 +14,11 @@ import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.legends.api.item.ItemRarity._
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
+import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeGenerator
 import gg.warcraft.legends.api.player.currency.LegendsCurrency._
 import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.legends.api.shop.{DecorationPack, ShopItem, ShopService}
-import gg.warcraft.legends.api.util.player.LegendsPlayerOps
+import gg.warcraft.legends.api.util.combatclass.CombatClassOps
 import gg.warcraft.monolith.api.core.Message
 import gg.warcraft.monolith.api.core.event.EventService
 import gg.warcraft.monolith.api.item.{
@@ -52,6 +53,7 @@ class LootCrateService(implicit
   )
 
   private val equipmentGenerator = new EquipmentGenerator()
+  private val equipUpgradeGenerator = new EquipmentUpgradeGenerator()
 
   private var _crates: Map[String, LootCrate] = Map.empty
   def crates: Map[String, LootCrate] = _crates
@@ -60,7 +62,8 @@ class LootCrateService(implicit
     config.lootCrates.foreach { crate =>
       val totalDropChance = crate.dropTables.map { _.chance }.sum
       if (totalDropChance == 100f) {
-        val dropChances = crate.dropTables.map { _.distribution.values.sum }.sum
+        val dropChances =
+          crate.dropTables.map { _.distribution.map { _._2 }.sum }.sum
         if (dropChances == 100f * crate.dropTables.size) {
           _crates += (crate.id -> crate)
         } else logger.severe(s"One of ${crate.id}'s tables does not sum to 100%!'")
@@ -69,8 +72,11 @@ class LootCrateService(implicit
 
   private def notifyReceived(playerId: UUID, name: String): Unit = {
     val strippedName = name.stripChatCodes
-    val prefix = if (strippedName(0).isVowel) "an" else "a"
-    val message = Message.server(s"You received $prefix $strippedName!")
+    val prefix =
+      if (strippedName(0).isDigit) ""
+      else if (strippedName(0).isVowel) "an "
+      else "a "
+    val message = Message.server(s"You received $prefix$strippedName!")
     playerService.sendMessage(playerId, message)
   }
 
@@ -190,7 +196,7 @@ class LootCrateService(implicit
     }
 
   private def awardEquipment(player: Player, rarity: ItemRarity): Boolean =
-    (player.combatClass, player.legendsTeam) match {
+    (player.combatClass, player.team) match {
       case (Some(combatClass), Some(team)) =>
         val item = equipmentGenerator.generate(combatClass, team, rarity)
         itemService.giveTo(player.id, item)
@@ -201,35 +207,17 @@ class LootCrateService(implicit
         false
     }
 
-  /*
-    private boolean awardRandomEquipmentUpgrade(UUID playerId, ItemRarity rarity) {
-        LegendsPlayer player = playerQueryService.getPlayer(playerId);
-        if (player == null) {
-            pluginLogger.warning("Failed to award random equipment upgrade to player " + playerId + ", player not found.");
-            return false;
-        }
-
-        EquipmentUpgradeGenerator equipmentUpgradeGenerator =
-                equipmentUpgradeGeneratorFactory.createEquipmentUpgradeGenerator();
-        Specialization specialization = player.getSpecialization();
-        LegendsSpecializationType specializationType = null;
-        for (LegendsSpecialization legendsSpecialization : LegendsSpecialization.values()) {
-            if (legendsSpecialization.getName().equals(specialization.getName())) {
-                specializationType = legendsSpecialization.getType();
-            }
-        }
-        if (specializationType == null) {
-            pluginLogger.warning("Failed to award random equipment upgrade to player " + playerId +
-                    ", could not determine specialization type for " + specialization.getName());
-            return false;
-        }
-
-        Item equipmentUpgrade = equipmentUpgradeGenerator.generate(specializationType, rarity);
-        playerCommandService.giveItem(playerId, equipmentUpgrade, false);
-        sendReceivedNotification(playerId, equipmentUpgrade.name());
-        return true;
+  private def awardEquipUpgrade(player: Player, rarity: ItemRarity): Boolean =
+    player.combatClass match {
+      case Some(combatClass) =>
+        val upgrade = equipUpgradeGenerator.generate(combatClass.archetype, rarity)
+        itemService.giveTo(player.id, upgrade)
+        notifyReceived(player.id, upgrade.name)
+        true
+      case None =>
+        playerService.sendMessage(player.id, missingCombatClassOrTeam)
+        false
     }
-   */
 
   private def awardGold(playerId: UUID, rarity: ItemRarity): Boolean = {
     val amount = rarity match {
@@ -239,6 +227,7 @@ class LootCrateService(implicit
       case _      => 600
     }
     currencyService.addCurrency(Gold, amount, playerId)
+    notifyReceived(playerId, s"$amount Gold")
     true
   }
 
@@ -250,29 +239,21 @@ class LootCrateService(implicit
       if (itemService.takeFrom(player.id, crate)) {
         var i = 0
         while (i < 3) {
-          val dropTypRoll = 100 * Random.nextFloat
-          var dropTypCounter = 0
-          val dropTable = crate.dropTables.find { table =>
-            if (table.chance + dropTypCounter < dropTypRoll) {
-              dropTypCounter += table.chance
-              false
-            } else true
-          }.get
+          val dropTableRoll = 100 * Random.nextFloat
+          val dropTable = crate.dropTablesMap.minAfter(dropTableRoll).get._2
 
-          val dropRarityRoll = 100 * Random.nextFloat
-          val dropRarity =
-            dropTable.distribution.floorEntry(dropRarityRoll).getValue();
+          val rarityRoll = 100 * Random.nextFloat
+          val rarity = dropTable.distributionMap.minAfter(rarityRoll).get._2
 
-          val success = dropTable.typed match {
-            case LootCrate.COMBAT_CLASS    => awardCombatClass(player, dropRarity)
-            case LootCrate.CONSUMABLE      => awardConsumable(player.id, dropRarity)
-            case LootCrate.DECORATION      => awardDecoration(player, dropRarity)
-            case LootCrate.DECORATION_PACK => awardDecorationPack(player, dropRarity)
-            case LootCrate.EQUIPMENT       => awardEquipment(player, dropRarity)
-            case LootCrate.EQUIPMENT_UPGRADE =>
-              awardEquipmentUpgrade(player.id, dropRarity)
-            case LootCrate.GOLD     => awardGold(player.id, dropRarity)
-            case LootCrate.MINI_PET => awardMiniPet(player, dropRarity)
+          val success = dropTable.typ match {
+            case LootCrate.CombatClass      => awardCombatClass(player, rarity)
+            case LootCrate.Consumable       => awardConsumable(player.id, rarity)
+            case LootCrate.Decoration       => awardDecoration(player, rarity)
+            case LootCrate.DecorationPack   => awardDecorationPack(player, rarity)
+            case LootCrate.Equipment        => awardEquipment(player, rarity)
+            case LootCrate.EquipmentUpgrade => awardEquipUpgrade(player, rarity)
+            case LootCrate.Gold             => awardGold(player.id, rarity)
+            case LootCrate.MiniPet          => awardMiniPet(player, rarity)
           }
           if (success) i += 1
         }

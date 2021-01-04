@@ -11,6 +11,7 @@ import gg.warcraft.monolith.api.block.variant.ChestVariant
 import gg.warcraft.monolith.api.item.Chest
 
 import scala.collection.SortedMap
+import scala.collection.immutable.TreeMap
 
 class LootCrate(
     val id: String,
@@ -25,26 +26,48 @@ class LootCrate(
       1,
       Set.empty,
       true
-    )
+    ) {
+  val dropTablesMap: SortedMap[Float, LootCrate.DropTable] = {
+    var chance = 0f
+    var map = TreeMap.empty[Float, LootCrate.DropTable]
+    dropTables.foreach { it =>
+      map += ((chance + it.chance) -> it)
+      chance += it.chance
+    }
+    map
+  }
+
+}
 
 object LootCrate {
-  sealed trait DropType
+  type DropType = String
   // gameplay categories
-  case object CONSUMABLE extends DropType
-  case object EQUIPMENT extends DropType
-  case object EQUIPMENT_UPGRADE extends DropType
-  case object GOLD extends DropType
+  final val Consumable: DropType = "CONSUMABLE"
+  final val Equipment: DropType = "EQUIPMENT"
+  final val EquipmentUpgrade: DropType = "EQUIPMENT_UPGRADE"
+  final val Gold: DropType = "GOLD"
   // shop categories
-  case object DECORATION extends DropType
-  case object DECORATION_PACK extends DropType
-  case object MINI_PET extends DropType
-  case object COMBAT_CLASS extends DropType
+  final val Decoration: DropType = "DECORATION"
+  final val DecorationPack: DropType = "DECORATION_PACK"
+  final val MiniPet: DropType = "MINI_PET"
+  final val CombatClass: DropType = "COMBAT_CLASS"
 
   case class DropTable(
-      typed: DropType,
+      typ: DropType,
       chance: Float,
-      distribution: SortedMap[ItemRarity, Float]
-  )
+      distribution: List[(ItemRarity, Float)]
+  ) {
+    val distributionMap: SortedMap[Float, ItemRarity] = {
+      var chance = 0f
+      var map = TreeMap.empty[Float, ItemRarity]
+      distribution.foreach { it =>
+        map += ((chance + it._2) -> it._1)
+        chance += it._2
+      }
+      map
+    }
+
+  }
 
   private[crate] final val tooltip: List[String] = List(
     "Loot Crate",
