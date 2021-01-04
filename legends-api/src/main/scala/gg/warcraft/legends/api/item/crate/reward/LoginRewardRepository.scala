@@ -39,7 +39,7 @@ private trait PlayerDataContext[I <: SqlIdiom, N <: NamingStrategy] {
   }
 }
 
-private[monolith] class PostgresLoginRewardRepository(
+private[legends] class PostgresLoginRewardRepository(
     config: Config
 ) extends LoginRewardRepository {
   private val databaseContext = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
@@ -55,7 +55,7 @@ private[monolith] class PostgresLoginRewardRepository(
     Future { run { upsertData(query[LoginRewardsClaimed], lift(data)) } }
 }
 
-private[monolith] class SqliteLoginRewardRepository(
+private[legends] class SqliteLoginRewardRepository(
     config: Config
 ) extends LoginRewardRepository {
   private val context = new SqliteJdbcContext[SnakeCase](SnakeCase, config)

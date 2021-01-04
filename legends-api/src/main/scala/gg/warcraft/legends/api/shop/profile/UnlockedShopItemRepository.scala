@@ -35,7 +35,7 @@ private trait UnlockedShopItemContext[I <: SqlIdiom, N <: NamingStrategy] {
     quote { q.insert(item) }
 }
 
-private[monolith] class PostgresUnlockedShopItemRepository(
+private[legends] class PostgresUnlockedShopItemRepository(
     config: Config
 ) extends UnlockedShopItemRepository {
   private val database = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
@@ -53,7 +53,7 @@ private[monolith] class PostgresUnlockedShopItemRepository(
   }
 }
 
-private[monolith] class SqliteUnlockedShopItemRepository(
+private[legends] class SqliteUnlockedShopItemRepository(
     config: Config
 ) extends UnlockedShopItemRepository {
   private val database = new SqliteJdbcContext[SnakeCase](SnakeCase, config)

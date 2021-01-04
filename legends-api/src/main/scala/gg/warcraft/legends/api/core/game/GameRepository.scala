@@ -90,7 +90,7 @@ private trait GameContext[I <: SqlIdiom, N <: NamingStrategy] {
   }
 }
 
-private[combat] class PostgresCombatDataRepository(
+private[legends] class PostgresCombatDataRepository(
     config: Config
 ) extends GameRepository {
   private val database = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
@@ -108,7 +108,7 @@ private[combat] class PostgresCombatDataRepository(
     Future { run { upsertGame(game) } }
 }
 
-private[combat] class SqliteCombatDataRepository(
+private[legends] class SqliteCombatDataRepository(
     config: Config
 ) extends GameRepository {
   private val database = new SqliteJdbcContext[SnakeCase](SnakeCase, config)

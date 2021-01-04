@@ -41,7 +41,7 @@ private trait AvailableShopItemContext[I <: SqlIdiom, N <: NamingStrategy] {
     quote { q.delete }
 }
 
-private[monolith] class PostgresAvailableShopItemRepository(
+private[legends] class PostgresAvailableShopItemRepository(
     config: Config
 ) extends AvailableShopItemRepository {
   private val database = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
@@ -64,7 +64,7 @@ private[monolith] class PostgresAvailableShopItemRepository(
   }
 }
 
-private[monolith] class SqliteAvailableShopItemRepository(
+private[legends] class SqliteAvailableShopItemRepository(
     config: Config
 ) extends AvailableShopItemRepository {
   private val database = new SqliteJdbcContext[SnakeCase](SnakeCase, config)

@@ -27,7 +27,7 @@ private trait StatisticArchiveContext[I <: SqlIdiom, N <: NamingStrategy] {
   }
 }
 
-private[monolith] class PostgresStatisticArchiveRepository(
+private[legends] class PostgresStatisticArchiveRepository(
     config: Config
 ) extends StatisticArchiveRepository {
   private val context = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
@@ -43,7 +43,7 @@ private[monolith] class PostgresStatisticArchiveRepository(
   }
 }
 
-private[monolith] class SqliteStatisticArchiveRepository(
+private[legends] class SqliteStatisticArchiveRepository(
     config: Config
 ) extends StatisticArchiveRepository {
   private val context = new SqliteJdbcContext[SnakeCase](SnakeCase, config)

@@ -77,7 +77,7 @@ private trait ChallengeContext[I <: SqlIdiom, N <: NamingStrategy] {
     quote { q.filter { _.isMonthly }.delete }
 }
 
-private[monolith] class PostgresStatisticRepository(
+private[legends] class PostgresStatisticRepository(
     config: Config
 ) extends ChallengeRepository {
   private val databaseContext = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
@@ -128,7 +128,7 @@ private[monolith] class PostgresStatisticRepository(
   }
 }
 
-private[monolith] class SqliteStatisticRepository(
+private[legends] class SqliteStatisticRepository(
     config: Config
 ) extends ChallengeRepository {
   private val context = new SqliteJdbcContext[SnakeCase](SnakeCase, config)
