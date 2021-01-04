@@ -7,14 +7,12 @@
 package gg.warcraft.legends.api.util
 
 import gg.warcraft.legends.api.combat.LegendsCombatArchetype
-import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.legends.api.item.equipment.{AttributeDistribution, EquipmentType}
 import gg.warcraft.legends.api.player.challenge.{Challenge, ChallengeService}
 import gg.warcraft.legends.api.shop.{ShopItem, ShopService}
 import gg.warcraft.monolith.api.core.Codecs.Circe._
-import gg.warcraft.monolith.api.entity.team.Team
 import io.circe.{Decoder, Encoder, KeyDecoder}
 import io.getquill.MappedEncoding
 
@@ -55,13 +53,6 @@ object circe {
     KeyDecoder.instance(it => Some(ItemRarity.parseName(it)))
   implicit val itemRarityEncoder: Encoder[ItemRarity] =
     Encoder.encodeString.contramap { _.name }
-
-  implicit val teamDecoder: Decoder[LegendsTeam] =
-    Decoder.decodeString.emapTry { it => Try { LegendsTeam.parseName(it) } }
-  implicit val teamKeyDecoder: KeyDecoder[LegendsTeam] =
-    KeyDecoder.instance(it => Some(LegendsTeam.parseName(it)))
-  implicit val teamEncoder: Encoder[LegendsTeam] =
-    Encoder.encodeString.contramap { _.asInstanceOf[Team].name }
 }
 
 object quill {

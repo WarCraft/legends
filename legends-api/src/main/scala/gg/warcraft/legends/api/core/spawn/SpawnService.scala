@@ -57,7 +57,7 @@ class SpawnService(implicit
   def teleportToSpawn(playerId: UUID): Unit =
     playerService.getPlayerOption(playerId) match {
       case Some(player) => player.team match {
-          case Some(team) => entityService.teleportEntity(playerId, team.spawn.get)
+          case Some(team) => entityService.teleportEntity(playerId, team.spawn)
           case None       =>
         }
       case _ =>

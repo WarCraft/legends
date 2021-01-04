@@ -30,7 +30,7 @@ import gg.warcraft.monolith.api.core.FormatCode
 import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
-import gg.warcraft.monolith.api.entity.team.Team
+import gg.warcraft.monolith.api.entity.team.{Team, TeamService}
 import gg.warcraft.monolith.api.item.{ItemService, ItemType, ItemTypeOrVariant}
 import gg.warcraft.monolith.api.menu.Button.{closeMenu, noop, updateMenu}
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
@@ -68,7 +68,7 @@ object MainMenu {
     List("This is you!", "")
       ++ attributesView(player)
       ++ List("")
-      ++ currenciesView(player)
+      ++ currenciesView(player): _*
     /*
      // TODO make sure that rank rewards are always stored in the item storage and then remove from rank impl
       if (player.getRankUpRewardsClaimed() < player.getRank().getLevel()) {
@@ -86,7 +86,7 @@ object MainMenu {
       });
       return builder.build();
      */
-  ) { _ => () }
+  ) { _ => noop }
 
   private def levelPassivesView(level: Level): List[String] = {
     "None" :: Nil // TODO
@@ -214,7 +214,7 @@ object MainMenu {
       combatClass: String
   )(implicit
       combatDataService: CombatDataService
-  ): List[String] = (team, combatClass) match {
+  ): List[String] = (team.id, combatClass) match {
     // Warrior
     case (Dwarves, Berserker | Guardian) => (
       s"${YELLOW}Sturdiness"
@@ -298,9 +298,10 @@ object MainMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Button = {
-    val team = player.team.getOrElse(LegendsTeam.Wayfarers)
+    val team = player.team.getOrElse(LegendsTeam.Wayfarers.instance)
     val combatClass = player.combatClass.map { _.name }.getOrElse("Unarmed")
     Button(
       ItemType.ARMOR_STAND,
@@ -350,7 +351,7 @@ object MainMenu {
   private def returnButton(player: Player)(implicit
       spawnService: SpawnService
   ): Button = {
-    val cooldown = spawnService.cooldowns.getOrElse(player.id, 0)
+    val cooldown = spawnService.cooldowns.getOrElse(player.id, 0L)
     val delta = cooldown - System.currentTimeMillis
     val cooldownText =
       if (delta > 0) {
@@ -609,7 +610,8 @@ object MainMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Menu = Menu(
     "WarCraft: Legends",
     MenuSize.ONE_ROW,

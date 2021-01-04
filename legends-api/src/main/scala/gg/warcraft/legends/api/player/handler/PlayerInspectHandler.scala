@@ -8,7 +8,7 @@ package gg.warcraft.legends.api.player.handler
 
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.entity._
-import gg.warcraft.legends.api.entity.LegendsTeam
+import gg.warcraft.legends.api.entity.LegendsTeam.TeamOps
 import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.core.Message
@@ -27,7 +27,7 @@ class PlayerInspectHandler(implicit
         val name = inspectedPlayer.name
         val level = inspectedPlayer.level
         val team = inspectedPlayer.team
-          .map { _.asInstanceOf[LegendsTeam].kind }
+          .map { _.kind }
           .getOrElse("Wayfarer")
         val combatClass = inspectedPlayer.combatClass
           .map { _.name }

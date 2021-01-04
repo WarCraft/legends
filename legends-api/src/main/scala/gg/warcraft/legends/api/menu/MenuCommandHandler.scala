@@ -12,6 +12,7 @@ import gg.warcraft.legends.api.ai.MiniPetFactory
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
 import gg.warcraft.legends.api.core.spawn.SpawnService
 import gg.warcraft.legends.api.item.crate.reward.LoginRewardService
+import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
 import gg.warcraft.legends.api.menu.staff.StaffMenu
 import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
@@ -22,6 +23,7 @@ import gg.warcraft.monolith.api.core.auth.{AuthService, Principal}
 import gg.warcraft.monolith.api.core.command.{Command, CommandService}
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.item.ItemService
 import gg.warcraft.monolith.api.menu.MenuService
 import gg.warcraft.monolith.api.player.currency.CurrencyService
@@ -46,7 +48,9 @@ class MenuCommandHandler(implicit
     itemService: ItemService,
     miniPetFactory: MiniPetFactory,
     commandService: CommandService,
-    spawnService: SpawnService
+    spawnService: SpawnService,
+    equipmentConfigRepository: EquipmentConfigRepository,
+    teamService: TeamService
 ) extends Command.Handler {
   override def handle(
       executor: Principal,
@@ -54,13 +58,13 @@ class MenuCommandHandler(implicit
       args: String*
   ): Command.Result = executor match {
     case player: Player =>
-      val menu = command.name match {
-        case "Menu"        => Some(MainMenu(player))
-        case "Race"        => Some(FactionMenu(player))
-        case "Class"       => Some(CombatClassMenu(player))
-        case "Decorations" => Some(DecorationsMenu(player))
-        case "Minipets"    => Some(MiniPetsMenu(player))
-        case "Staff" =>
+      val menu = command.name.toLowerCase match {
+        case "menu"        => Some(MainMenu(player))
+        case "race"        => Some(FactionMenu(player))
+        case "class"       => Some(CombatClassMenu(player))
+        case "decorations" => Some(DecorationsMenu(player))
+        case "minipets"    => Some(MiniPetsMenu(player))
+        case "staff" =>
           if (authService.isStaff(player)) Some(StaffMenu(player))
           else None
       }

@@ -145,15 +145,15 @@ class DropHandler(implicit
 
   override def reduce[T <: PreEvent](event: T): T = event match {
     case event @ ItemPrePickupEvent(_, itemId, entityId, _, _, _) =>
-      val isReserved = reservedUntil.getOrElse(itemId, 0) > System.currentTimeMillis
+      val isReserved = reservedUntil.getOrElse(itemId, 0L) > System.currentTimeMillis
       if (isReserved) {
         if (reservedFor(itemId) != entityId) {
           event.copy(cancelled = true).asInstanceOf[T]
-        } else event
+        } else event.asInstanceOf[T]
       } else {
         reservedFor -= itemId
         reservedUntil -= itemId
-        event
+        event.asInstanceOf[T]
       }
     case _ => event
   }

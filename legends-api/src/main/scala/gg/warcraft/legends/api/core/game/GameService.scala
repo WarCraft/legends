@@ -70,7 +70,10 @@ class GameService(implicit
 
         if (_activeSkirmish.nonEmpty) {
           val objectivePoints = _config.objectiveTallyPoints(objective.id)
-          val updatedPoints = updatedGame.dailyPoints + objectivePoints
+          val updatedPoints = updatedGame.dailyPoints.updatedWith(team) {
+            case Some(points) => points + objectivePoints
+            case None         => objectivePoints
+          }
           updatedGame = updatedGame.copy(dailyPoints = updatedPoints)
         }
 

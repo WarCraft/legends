@@ -17,7 +17,7 @@ class TutorialPvpHandler extends Event.Handler {
       val isPlayer = target.typed == Entity.Type.PLAYER
       val isTutorial = target.location.world.typ == World.TheEnd
       if (isPlayer && isTutorial) event.copy(cancelled = true).asInstanceOf[T]
-      else event
+      else event.asInstanceOf[T]
     case _ => event
   }
 }

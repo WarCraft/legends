@@ -9,6 +9,7 @@ package gg.warcraft.legends.api.menu.staff
 import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
+import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.item.ItemService
 import gg.warcraft.monolith.api.item.variant.ChestplateVariant
 import gg.warcraft.monolith.api.menu.Button.updateMenu
@@ -21,7 +22,8 @@ object StaffMenu {
       playerService: PlayerService,
       itemService: ItemService,
       equipmentConfigRepository: EquipmentConfigRepository,
-      combatClassService: CombatClassService
+      combatClassService: CombatClassService,
+      teamService: TeamService
   ): Button = Button(
     ChestplateVariant.DIAMOND,
     "Equipment Generator",
@@ -33,7 +35,8 @@ object StaffMenu {
       playerService: PlayerService,
       itemService: ItemService,
       equipmentConfigRepository: EquipmentConfigRepository,
-      combatClassService: CombatClassService
+      combatClassService: CombatClassService,
+      teamService: TeamService
   ): Menu = {
     val generator = new EquipmentGenerator()
     Menu(

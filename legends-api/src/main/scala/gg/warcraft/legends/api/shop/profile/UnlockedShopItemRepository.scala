@@ -25,14 +25,14 @@ private trait UnlockedShopItemContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
   def queryItems(playerId: UUID)(implicit
-      q: EntityQuery[UnlockedShopItem]
+      q: Quoted[EntityQuery[UnlockedShopItem]]
   ) =
-    quote { q.filter { _.playerId == playerId }.map { _.id } }
+    quote { q.filter { _.playerId == lift(playerId) }.map { _.id } }
 
   def insertItem(item: UnlockedShopItem)(implicit
-      q: EntityQuery[UnlockedShopItem]
+      q: Quoted[EntityQuery[UnlockedShopItem]]
   ) =
-    quote { q.insert(item) }
+    quote { q.insert(lift(item)) }
 }
 
 private[legends] class PostgresUnlockedShopItemRepository(
@@ -42,14 +42,15 @@ private[legends] class PostgresUnlockedShopItemRepository(
     with UnlockedShopItemContext[PostgresDialect, SnakeCase]
   import database._
 
-  private implicit val q: EntityQuery[UnlockedShopItem] = query[UnlockedShopItem]
+  private implicit val q: Quoted[EntityQuery[UnlockedShopItem]] =
+    quote { query[UnlockedShopItem] }
 
   override def loadItems(playerId: UUID): Set[String] =
-    run { queryItems(lift(playerId)) }.toSet
+    run { queryItems(playerId) }.toSet
 
   override def saveItem(id: String, playerId: UUID): Future[Unit] = Future {
     val item = UnlockedShopItem(id, playerId)
-    run { insertItem(lift(item)) }
+    run { insertItem(item) }
   }
 }
 
@@ -60,13 +61,14 @@ private[legends] class SqliteUnlockedShopItemRepository(
     with UnlockedShopItemContext[SqliteDialect, SnakeCase]
   import database._
 
-  private implicit val q: EntityQuery[UnlockedShopItem] = query[UnlockedShopItem]
+  private implicit val q: Quoted[EntityQuery[UnlockedShopItem]] =
+    quote { query[UnlockedShopItem] }
 
   override def loadItems(playerId: UUID): Set[String] =
-    run { queryItems(lift(playerId)) }.toSet
+    run { queryItems(playerId) }.toSet
 
   override def saveItem(id: String, playerId: UUID): Future[Unit] = Future {
     val item = UnlockedShopItem(id, playerId)
-    run { insertItem(lift(item)) }
+    run { insertItem(item) }
   }
 }

@@ -29,8 +29,6 @@ class CaptureAndKillRewardHandler(config: LegendsConfig)(implicit
   private val killFavor = config.playerKillFavor
   private val killMessage = Message.server(s"You gained $killFavor Favor.")
 
-  private val warCrate = lootCrateService.crates("WAR_CRATE")
-
   override def handle(event: Event): Unit = event match {
     case EntityFatalDamageEvent(entity: Player, _) =>
       val attackers = entity.combatData.attackedBy.toList
@@ -51,14 +49,17 @@ class CaptureAndKillRewardHandler(config: LegendsConfig)(implicit
         attackerIds.foreach { playerService.sendMessage(_, message) }
       }
 
-      val crates = config.objectiveCaptureRewards(objective.id)
-      if (crates > 0) {
-        val crate = warCrate.withCount(crates)
-        val message = Message.server(s"You gained $crates War Crates.")
-        attackerIds.foreach { attackerId =>
-          itemService.giveTo(attackerId, crate)
-          playerService.sendMessage(attackerId, message)
-        }
+      config.objectiveCaptureRewards.get(objective.id) match {
+        case Some(crates) =>
+          val crate = lootCrateService.crates(crates.crate).withCount(crates.count)
+          val message =
+            if (crates.count == 1) Message.server(s"You received 1 ${crate.name}.")
+            else Message.server(s"You received ${crate.count} ${crate.name}s.")
+          attackerIds.foreach { attackerId =>
+            itemService.giveTo(attackerId, crate)
+            playerService.sendMessage(attackerId, message)
+          }
+        case None =>
       }
 
     case _ =>

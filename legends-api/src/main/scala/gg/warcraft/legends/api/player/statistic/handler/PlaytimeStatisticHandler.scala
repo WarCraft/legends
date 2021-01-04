@@ -26,7 +26,7 @@ class PlaytimeStatisticHandler(implicit
     statisticService.increaseStatistics(
       playtimeStatistics,
       10,
-      tickPlayers.map { _.id }
+      tickPlayers.map { _.id }: _*
     )
     previousOnlinePlayers = onlinePlayers
   }

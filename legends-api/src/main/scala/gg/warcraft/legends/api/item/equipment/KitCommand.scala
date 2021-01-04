@@ -7,7 +7,8 @@
 package gg.warcraft.legends.api.item.equipment
 
 import gg.warcraft.combat.api.data.CombatDataService
-import gg.warcraft.combat.api.util.combatplayer._
+import gg.warcraft.combat.api.util.entity.EntityOps
+import gg.warcraft.legends.api.combat.LegendsCombatClass._
 import gg.warcraft.legends.api.entity.attribute.LegendsAttribute._
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.monolith.api.core.auth.Principal
@@ -30,14 +31,15 @@ object KitCommand {
     ): Command.Result = executor match {
       case player: Player =>
         val data = player.combatClass match {
-          case combatClass if combatClass.nonEmpty => combatClass.get.name match {
-              case "Berserker"    => Some((ItemType.AXE, "Basic Axe", Strength))
-              case "Guardian"     => Some((ItemType.SWORD, "Basic Sword", Strength))
-              case "Marksman"     => Some((ItemType.BOW, "Basic Bow", Dexterity))
-              case "Ranger"       => Some((ItemType.BOW, "Basic Bow", Dexterity))
-              case "Elementalist" => Some((ItemType.HOE, "Basic Staff", Intellect))
-              case "Wizard"       => Some((ItemType.STICK, "Basic Wand", Intellect))
-              case _              => None
+          case Some(combatClass) =>
+            combatClass.id match {
+              case Berserker    => Some((ItemType.AXE, "Basic Axe", Strength))
+              case Guardian     => Some((ItemType.SWORD, "Basic Sword", Strength))
+              case Marksman     => Some((ItemType.BOW, "Basic Bow", Dexterity))
+              case Ranger       => Some((ItemType.BOW, "Basic Bow", Dexterity))
+              case Elementalist => Some((ItemType.HOE, "Basic Staff", Intellect))
+              case Wizard       => Some((ItemType.STICK, "Basic Wand", Intellect))
+              case _            => None
             }
           case _ => None
         }

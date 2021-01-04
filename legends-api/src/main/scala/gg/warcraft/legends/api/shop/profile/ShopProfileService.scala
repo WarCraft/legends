@@ -33,7 +33,7 @@ class ShopProfileService(implicit
     lazy val outdated = profile(playerId)
     if (!requiresPayment || takePayment(id, outdated)) {
       val updated = outdated.copy(unlocked = outdated.unlocked + id)
-      profiles += updated
+      profiles += (playerId -> updated)
       unlockedShopItemRepository.saveItem(id, playerId)
       true
     } else false

@@ -8,9 +8,10 @@ package gg.warcraft.legends.api.combat.passive
 
 import gg.warcraft.combat.api.ability.AbilityPreCastEvent
 import gg.warcraft.combat.api.data.CombatDataService
-import gg.warcraft.combat.api.util.combatplayer._
-import gg.warcraft.legends.api.combat.LegendsCombatClass._
-import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
+import gg.warcraft.combat.api.util.entity.EntityOps
+import gg.warcraft.legends.api.combat.LegendsCombatArchetype._
+import gg.warcraft.legends.api.entity.attribute.LegendsAttribute._
+import gg.warcraft.legends.api.util.combatclass.CombatClassOps
 import gg.warcraft.monolith.api.combat.{CombatSource, CombatValue}
 import gg.warcraft.monolith.api.core.Duration
 import gg.warcraft.monolith.api.core.event.PreEvent
@@ -27,10 +28,6 @@ object AttributesPassive {
   ) extends Status.Effect {
     require(source.entityId.isDefined)
 
-    private final val strengthClasses = List(Guardian.name, Berserker.name)
-    private final val dexterityClasses = List(Ranger.name, Marksman.name)
-    private final val intellectClasses = List(Elementalist.name, Wizard.name)
-
     override val name: String = "Attributes"
     override val group: String = "legends.passive"
     override val duration: Option[Duration] = None
@@ -39,14 +36,11 @@ object AttributesPassive {
       case event @ AbilityPreCastEvent(_, caster, damageModifiers, _, _) =>
         playerService.getPlayerOption(caster.id) match {
           case Some(player) =>
-            val modifierValue = player.combatClass match {
-              case Some(it) if strengthClasses.contains(it.name) =>
-                0.1f * player.attributes.get(LegendsAttribute.Strength)
-              case Some(it) if dexterityClasses.contains(it.name) =>
-                0.1f * player.attributes.get(LegendsAttribute.Dexterity)
-              case Some(it) if intellectClasses.contains(it.name) =>
-                0.1f * player.attributes.get(LegendsAttribute.Intellect)
-              case _ => 0
+            val modifierValue = player.combatClass.map { _.archetype } match {
+              case Some(WARRIOR) => 0.1f * player.attributes.get(Strength)
+              case Some(HUNTER)  => 0.1f * player.attributes.get(Dexterity)
+              case Some(MAGE)    => 0.1f * player.attributes.get(Intellect)
+              case _             => 0
             }
             if (modifierValue != 0) {
               val damageModifier = CombatValue.Modifier.flat(source, modifierValue)

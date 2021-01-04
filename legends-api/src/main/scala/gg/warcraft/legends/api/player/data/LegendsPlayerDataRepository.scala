@@ -25,13 +25,13 @@ private trait PlayerDataContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
   def loadData(id: UUID)(implicit
-      query: EntityQuery[LegendsPlayerData]
+      query: Quoted[EntityQuery[LegendsPlayerData]]
   ) = quote {
     query.filter { _.id == lift(id) }
   }
 
   def upsertData(data: LegendsPlayerData)(implicit
-      query: EntityQuery[LegendsPlayerData]
+      query: Quoted[EntityQuery[LegendsPlayerData]]
   ) = quote {
     query.insert(lift(data)).onConflictUpdate(_.id)(
       (t, e) => t.tutorialStep -> e.tutorialStep,
@@ -49,8 +49,8 @@ private[legends] class PostgresPlayerDataRepository(
     with PlayerDataContext[PostgresDialect, SnakeCase]
   import database._
 
-  private implicit val query: EntityQuery[LegendsPlayerData] =
-    query[LegendsPlayerData]
+  private implicit val q: Quoted[EntityQuery[LegendsPlayerData]] =
+    quote { query[LegendsPlayerData] }
 
   override def load(id: UUID): Option[LegendsPlayerData] =
     run { loadData(id) }.headOption
@@ -66,8 +66,8 @@ private[legends] class SqlitePlayerDataRepository(
     with PlayerDataContext[SqliteDialect, SnakeCase]
   import database._
 
-  private implicit val query: EntityQuery[LegendsPlayerData] =
-    query[LegendsPlayerData]
+  private implicit val q: Quoted[EntityQuery[LegendsPlayerData]] =
+    quote { query[LegendsPlayerData] }
 
   override def load(id: UUID): Option[LegendsPlayerData] =
     run { loadData(id) }.headOption

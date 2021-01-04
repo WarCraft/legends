@@ -22,6 +22,7 @@ import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
 import gg.warcraft.monolith.api.menu.Button.noop
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
@@ -30,8 +31,10 @@ import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.util.option._
 
 object FactionMenu {
-  private def infoButton(player: Player): Button = {
-    val teamName = player.team.map { _.name }.getOrElse(Wayfarers.name)
+  private def infoButton(player: Player)(implicit
+      teamService: TeamService
+  ): Button = {
+    val teamName = player.team.map { _.name }.getOrElse(Wayfarers.instance.name)
     Button.noop(
       ItemType.BOOK,
       "Choosing a faction",
@@ -73,41 +76,51 @@ object FactionMenu {
   }
 
   private def humanButton(player: Player)(implicit
-      playerService: PlayerService
+      playerService: PlayerService,
+      teamService: TeamService
   ): Button = Button.skull(
     "fishb6nes",
-    Humans.name,
+    Humans.instance.name,
     "[Shift Right Click] To fight for the Humans"
   ) { click =>
-    if (click.isShiftRight) playerService.setTeam(player.id, Humans); noop
+    if (click.isShiftRight) playerService.setTeam(player.id, Humans.instance)
+    noop
   }
 
   private def orcButton(player: Player)(implicit
-      playerService: PlayerService
+      playerService: PlayerService,
+      teamService: TeamService
   ): Button = Button.skull(
     "fishb6nes",
-    Orcs.name,
+    Orcs.instance.name,
     "[Shift Right Click] To fight for the Orcs"
-  ) { click => if (click.isShiftRight) playerService.setTeam(player.id, Orcs); noop }
+  ) { click =>
+    if (click.isShiftRight) playerService.setTeam(player.id, Orcs.instance)
+    noop
+  }
 
   private def dwarfButton(player: Player)(implicit
-      playerService: PlayerService
+      playerService: PlayerService,
+      teamService: TeamService
   ): Button = Button.skull(
     "fishb6nes",
-    Dwarves.name,
+    Dwarves.instance.name,
     "[Shift Right Click] To fight for the Dwarves"
   ) { click =>
-    if (click.isShiftRight) playerService.setTeam(player.id, Dwarves); noop
+    if (click.isShiftRight) playerService.setTeam(player.id, Dwarves.instance)
+    noop
   }
 
   private def elfButton(player: Player)(implicit
-      playerService: PlayerService
+      playerService: PlayerService,
+      teamService: TeamService
   ): Button = Button.skull(
     "fishb6nes",
-    Elves.name,
+    Elves.instance.name,
     "[Shift Right Click] To fight for the Elves"
   ) { click =>
-    if (click.isShiftRight) playerService.setTeam(player.id, Elves); noop
+    if (click.isShiftRight) playerService.setTeam(player.id, Elves.instance)
+    noop
   }
 
   def apply(
@@ -130,7 +143,8 @@ object FactionMenu {
       itemService: ItemService,
       miniPetFactory: MiniPetFactory,
       commandService: CommandService,
-      spawnService: SpawnService
+      spawnService: SpawnService,
+      teamService: TeamService
   ): Menu = {
     Menu(
       "Faction",

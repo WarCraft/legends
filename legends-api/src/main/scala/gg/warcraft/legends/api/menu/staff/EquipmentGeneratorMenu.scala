@@ -11,6 +11,7 @@ import gg.warcraft.legends.api.combat.LegendsCombatClass._
 import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
+import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.item.{ItemService, ItemType, ItemTypeOrVariant}
 import gg.warcraft.monolith.api.menu.Button.noop
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
@@ -23,7 +24,8 @@ object EquipmentGeneratorMenu {
   )(implicit
       menuService: MenuService,
       playerService: PlayerService,
-      generator: EquipmentGenerator
+      generator: EquipmentGenerator,
+      teamService: TeamService
   ): Button = Button(
     icon,
     combatClass.name,
@@ -43,7 +45,8 @@ object EquipmentGeneratorMenu {
       playerService: PlayerService,
       itemService: ItemService,
       equipmentConfigRepository: EquipmentConfigRepository,
-      combatClassService: CombatClassService
+      combatClassService: CombatClassService,
+      teamService: TeamService
   ): Menu = {
     implicit val generator: EquipmentGenerator = new EquipmentGenerator()
     Menu(

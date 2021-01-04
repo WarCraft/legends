@@ -9,18 +9,19 @@ package gg.warcraft.legends.api.combat.passive
 import gg.warcraft.combat.api.ability.AbilityService
 import gg.warcraft.combat.api.combatclass.PlayerCombatClassChangedEvent
 import gg.warcraft.combat.api.data.CombatDataService
-import gg.warcraft.combat.api.util.combatplayer._
-import gg.warcraft.legends.api.combat.LegendsCombatClass._
+import gg.warcraft.combat.api.util.entity.EntityOps
+import gg.warcraft.legends.api.combat.LegendsCombatArchetype._
 import gg.warcraft.legends.api.combat.mage.racial.{ArcaneBarrier, UnstableBunker}
+import gg.warcraft.legends.api.combat.warrior.racial
 import gg.warcraft.legends.api.combat.warrior.racial.{
   BladeDance, Bloodlust, Sturdiness
 }
-import gg.warcraft.legends.api.combat.warrior.racial
 import gg.warcraft.legends.api.entity.LegendsTeam._
+import gg.warcraft.legends.api.util.combatclass.CombatClassOps
 import gg.warcraft.monolith.api.combat.CombatSource
 import gg.warcraft.monolith.api.core.event.Event
-import gg.warcraft.monolith.api.entity.{EntityService, EntityTeamChangedEvent}
 import gg.warcraft.monolith.api.entity.status.StatusService
+import gg.warcraft.monolith.api.entity.{EntityService, EntityTeamChangedEvent}
 import gg.warcraft.monolith.api.player.{Player, PlayerConnectEvent, PlayerService}
 import gg.warcraft.monolith.api.util.chaining._
 
@@ -35,9 +36,6 @@ class PassiveAssignmentHandler(implicit
 ) extends Event.Handler {
   private final val genericGroup = "legends.passive"
   private final val racialGroup = "legends.racial"
-  private final val warriorClasses = List(Guardian.name, Berserker.name)
-  private final val rangerClasses = List(Ranger.name, Marksman.name)
-  private final val mageClasses = List(Elementalist.name, Wizard.name)
 
   private def cleanStatus(player: Player, groups: String*): Unit =
     groups.foreach { group =>
@@ -49,38 +47,38 @@ class PassiveAssignmentHandler(implicit
   private def assignRacialPassive(player: Player): Unit = {
     lazy val combatSource = CombatSource(player.name, Some(player.id))
     val racialPassive = player.team match {
-      case Some(team) if team.name == Dwarves.name =>
-        player.combatClass match {
-          case Some(combatClass) if warriorClasses.contains(combatClass.name) =>
+      case Some(team) if team.id == Dwarves =>
+        player.combatClass.map { _.archetype } match {
+          case Some(WARRIOR) =>
             new Sturdiness.StatusEffect(combatSource) |> Some.apply
-          case Some(combatClass) if mageClasses.contains(combatClass.name) =>
+          case Some(MAGE) =>
             new UnstableBunker.StatusEffect(combatSource) |> Some.apply
           case _ => None
         }
 
-      case Some(team) if team.name == Elves.name =>
-        player.combatClass match {
-          case Some(combatClass) if warriorClasses.contains(combatClass.name) =>
+      case Some(team) if team.id == Elves =>
+        player.combatClass.map { _.archetype } match {
+          case Some(WARRIOR) =>
             new BladeDance.StatusEffect(combatSource) |> Some.apply
-          case Some(combatClass) if mageClasses.contains(combatClass.name) =>
+          case Some(MAGE) =>
             None // TODO new Regrowth.StatusEffect(combatSource) |> Some.apply
           case _ => None
         }
 
-      case Some(team) if team.name == Humans.name =>
-        player.combatClass match {
-          case Some(combatClass) if warriorClasses.contains(combatClass.name) =>
+      case Some(team) if team.id == Humans =>
+        player.combatClass.map { _.archetype } match {
+          case Some(WARRIOR) =>
             new racial.LastStand.PassiveStatusEffect(combatSource) |> Some.apply
-          case Some(combatClass) if mageClasses.contains(combatClass.name) =>
+          case Some(MAGE) =>
             new ArcaneBarrier.StatusEffect(combatSource) |> Some.apply
           case _ => None
         }
 
-      case Some(team) if team.name == Orcs.name =>
-        player.combatClass match {
-          case Some(combatClass) if warriorClasses.contains(combatClass.name) =>
+      case Some(team) if team.id == Orcs =>
+        player.combatClass.map { _.archetype } match {
+          case Some(WARRIOR) =>
             new Bloodlust.StatusEffect(combatSource) |> Some.apply
-          case Some(combatClass) if mageClasses.contains(combatClass.name) =>
+          case Some(MAGE) =>
             None // TODO new FlameTotem.StatusEffect(combatSource) |> Some.apply
           case _ => None
         }

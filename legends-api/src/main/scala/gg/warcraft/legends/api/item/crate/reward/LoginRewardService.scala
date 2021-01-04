@@ -31,8 +31,8 @@ class LoginRewardService(implicit
 
   def readConfig(config: LegendsConfig): Unit =
     config.dailyRewards.foreach { it =>
-      val crate = lootCrateService.crates(it.crateId)
-      val reward = crate.copy(count = it.count)
+      val crate = lootCrateService.crates(it.crate)
+      val reward = crate.copy(count = it.count).asInstanceOf[LootCrate]
       val day = _rewards.size + 1
       _rewards += (day -> reward)
     }

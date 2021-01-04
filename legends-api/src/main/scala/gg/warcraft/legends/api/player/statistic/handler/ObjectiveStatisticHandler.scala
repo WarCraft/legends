@@ -29,7 +29,11 @@ class ObjectiveStatisticHandler(implicit
         case _                                  => None
       }
       statistics.foreach { statistics =>
-        statisticService.increaseStatistics(statistics, 1, attackers.map { _.id })
+        statisticService.increaseStatistics(
+          statistics,
+          1,
+          attackers.toList.map { _.id }: _*
+        )
       }
     case _ =>
   }
