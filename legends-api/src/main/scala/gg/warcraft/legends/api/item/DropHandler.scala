@@ -9,31 +9,34 @@ package gg.warcraft.legends.api.item
 import gg.warcraft.combat.api.combatclass.CombatClassService
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.entity._
-import gg.warcraft.legends.api.combat.LegendsCombatArchetype
+import gg.warcraft.legends.api.combat.LegendsCombatClass
 import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
-import gg.warcraft.legends.api.player.statistic.LegendsStatistic
 import gg.warcraft.monolith.api.core.Duration.DurationOps
 import gg.warcraft.monolith.api.core.auth.Principal
 import gg.warcraft.monolith.api.core.command.Command
 import gg.warcraft.monolith.api.core.event.{Event, PreEvent}
 import gg.warcraft.monolith.api.entity.EntityService
+import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.item.{ItemPrePickupEvent, ItemService}
 import gg.warcraft.monolith.api.player.statistic.StatisticService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
 import gg.warcraft.monolith.api.world.Location
 
 import java.util.UUID
+import java.util.logging.Logger
 
 class DropHandler(implicit
+    logger: Logger,
     itemService: ItemService,
     equipmentConfigRepository: EquipmentConfigRepository,
     combatClassService: CombatClassService,
     playerService: PlayerService,
     combatDataService: CombatDataService,
     statisticService: StatisticService,
-    entityService: EntityService
+    entityService: EntityService,
+    teamService: TeamService
 ) extends Command.Handler
     with Event.Handler {
   private final val RESERVE_DURATION = 60.seconds
@@ -65,21 +68,20 @@ class DropHandler(implicit
             val combatClass = player.combatClass match {
               case Some(it) => it
               case None =>
-                throw new IllegalStateException(s"$attackerId has no combat class")
-            }
-            val archetype = combatClass.name match {
-              case "Berserker"    => LegendsCombatArchetype.WARRIOR
-              case "Guardian"     => LegendsCombatArchetype.WARRIOR
-              case "Marksman"     => LegendsCombatArchetype.HUNTER
-              case "Ranger"       => LegendsCombatArchetype.HUNTER
-              case "Elementalist" => LegendsCombatArchetype.MAGE
-              case "Wizard"       => LegendsCombatArchetype.MAGE
+                logger.warning(
+                  s"${player.name} has no combat class, dropping random item!"
+                )
+                LegendsCombatClass.random
             }
 
-            val drop = generator.generate(
-              archetype,
-              player.team.get.asInstanceOf[LegendsTeam]
-            )
+            val team = player.team match {
+              case Some(it) => it
+              case None =>
+                logger.warning(s"${player.name} has no team, dropping random item!")
+                LegendsTeam.random
+            }
+
+            val drop = generator.generate(combatClass, team)
             if (player.location.world.name != world)
               throw new IllegalStateException(s"$attackerId has left $world")
             val location = new Location(player.location.world, x, y, z)
@@ -89,7 +91,7 @@ class DropHandler(implicit
             reservedFor += (droppedId -> attackerId)
             reservedUntil += (droppedId -> (System.currentTimeMillis + RESERVE_DURATION.millis))
 
-            /*
+          /*
             UUID secondDroppedItemId = null;
             if (mobType.equals("Rider") || mobType.equals("Elemental")) {
                 if (random.nextDouble() >= 0.5) {
@@ -115,15 +117,7 @@ class DropHandler(implicit
                 reservedUntil.put(secondDroppedItemId, System.currentTimeMillis() + RESERVE_DURATION);
             }
 
-             */
-
-            statisticService.increaseStatistic(
-              attackerId,
-              1,
-              LegendsStatistic.DailyMobs,
-              LegendsStatistic.MonthlyMobs,
-              LegendsStatistic.AlltimeMobs
-            )
+           */
           }
         }
         Command.success
