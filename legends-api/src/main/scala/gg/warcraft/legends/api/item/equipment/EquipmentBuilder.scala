@@ -22,7 +22,7 @@ class EquipmentBuilder(
 
   private var attributes: Map[LegendsAttribute, Int] = Map.empty
   private var availableUpgrades = 0
-  private var upgrades = 0
+  private var upgradeCount = 0
   private var customModelData = 0
   private var flavorText: List[String] = Nil
 
@@ -41,8 +41,8 @@ class EquipmentBuilder(
     this
   }
 
-  def withUpgrades(count: Int): EquipmentBuilder = {
-    upgrades = count
+  def withUpgradeCount(count: Int): EquipmentBuilder = {
+    upgradeCount = count
     this
   }
 
@@ -62,7 +62,7 @@ class EquipmentBuilder(
   }
 
   def build(): Item = {
-    val upgradedName = if (upgrades > 0) s"$name (+$upgrades)" else name
+    val upgradedName = if (upgradeCount > 0) s"$name (+$upgradeCount)" else name
     var item = itemService.create(typ).withName(s"${rarity.color}$upgradedName")
 
     // set type at top of tooltip
@@ -70,9 +70,8 @@ class EquipmentBuilder(
 
     // add stats
     item = if (attributes.nonEmpty) item.addTooltip("") else item
-    attributes.foreach {
-      case (attribute, count) =>
-        item = if (count != 0) item.addTooltip(s"$reset+$count $attribute") else item
+    attributes.foreach { case (attribute, count) =>
+      item = if (count != 0) item.addTooltip(s"$reset+$count $attribute") else item
     }
 
     // add upgrades
