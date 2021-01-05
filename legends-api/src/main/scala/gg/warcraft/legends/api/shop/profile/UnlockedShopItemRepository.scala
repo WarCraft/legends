@@ -24,15 +24,15 @@ trait UnlockedShopItemRepository {
 private trait UnlockedShopItemContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
-  def queryItems(playerId: UUID)(implicit
-      q: Quoted[EntityQuery[UnlockedShopItem]]
-  ) =
-    quote { q.filter { _.playerId == lift(playerId) }.map { _.id } }
+  def queryItems = quote {
+    (q: EntityQuery[UnlockedShopItem], playerId: UUID) =>
+      q.filter { _.playerId == lift(playerId) }.map { _.id }
+  }
 
-  def insertItem(item: UnlockedShopItem)(implicit
-      q: Quoted[EntityQuery[UnlockedShopItem]]
-  ) =
-    quote { q.insert(lift(item)) }
+  def insertItem = quote {
+    (q: EntityQuery[UnlockedShopItem], item: UnlockedShopItem) =>
+      q.insert(lift(item))
+  }
 }
 
 private[legends] class PostgresUnlockedShopItemRepository(
@@ -42,15 +42,12 @@ private[legends] class PostgresUnlockedShopItemRepository(
     with UnlockedShopItemContext[PostgresDialect, SnakeCase]
   import database._
 
-  private implicit val q: Quoted[EntityQuery[UnlockedShopItem]] =
-    quote { query[UnlockedShopItem] }
-
   override def loadItems(playerId: UUID): Set[String] =
-    run { queryItems(playerId) }.toSet
+    run { queryItems(query[UnlockedShopItem], playerId) }.toSet
 
   override def saveItem(id: String, playerId: UUID): Future[Unit] = Future {
     val item = UnlockedShopItem(id, playerId)
-    run { insertItem(item) }
+    run { insertItem(query[UnlockedShopItem], item) }
   }
 }
 
@@ -61,14 +58,11 @@ private[legends] class SqliteUnlockedShopItemRepository(
     with UnlockedShopItemContext[SqliteDialect, SnakeCase]
   import database._
 
-  private implicit val q: Quoted[EntityQuery[UnlockedShopItem]] =
-    quote { query[UnlockedShopItem] }
-
   override def loadItems(playerId: UUID): Set[String] =
-    run { queryItems(playerId) }.toSet
+    run { queryItems(query[UnlockedShopItem], playerId) }.toSet
 
   override def saveItem(id: String, playerId: UUID): Future[Unit] = Future {
     val item = UnlockedShopItem(id, playerId)
-    run { insertItem(item) }
+    run { insertItem(query[UnlockedShopItem], item) }
   }
 }

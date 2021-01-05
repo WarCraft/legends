@@ -24,7 +24,7 @@ class Leaderboard(
 ) {
   private final val maxEntries = 100
 
-  private var _rankings: Array[(OfflinePlayer, Long)] = Array(maxEntries)
+  private var _rankings: Array[(OfflinePlayer, Long)] = Array.ofDim(maxEntries)
   private var _rankingsCache: List[(OfflinePlayer, Long)] = _
   def rankings: List[(OfflinePlayer, Long)] = {
     if (_rankingsCache == null) _rankingsCache = _rankings.toList
@@ -48,7 +48,7 @@ class Leaderboard(
   }
 
   private[leaderboard] def clear(): Unit = {
-    _rankings = Array(maxEntries)
+    _rankings = Array.ofDim(maxEntries)
     _rankingsCache = null
     _players = Map.empty
   }

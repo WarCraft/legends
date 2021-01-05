@@ -26,20 +26,16 @@ trait AvailableShopItemRepository {
 private trait AvailableShopItemContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
-  def queryAvailable(implicit
-      q: Quoted[EntityQuery[AvailableShopItem]]
-  ) =
-    quote { q.map { _.item } }
+  def queryAvailable =
+    quote { (q: EntityQuery[AvailableShopItem]) => q.map { _.item } }
 
-  def insertAvailable(item: AvailableShopItem)(implicit
-      q: Quoted[EntityQuery[AvailableShopItem]]
-  ) =
-    quote { q.insert(item) }
+  def insertAvailable =
+    quote { (q: EntityQuery[AvailableShopItem], items: List[AvailableShopItem]) =>
+      liftQuery(items).foreach { it => q.insert(it) }
+    }
 
-  def _deleteAvailable(implicit
-      q: Quoted[EntityQuery[AvailableShopItem]]
-  ) =
-    quote { q.delete }
+  def _deleteAvailable =
+    quote { (q: EntityQuery[AvailableShopItem]) => q.delete }
 }
 
 private[legends] class PostgresAvailableShopItemRepository(
@@ -53,19 +49,16 @@ private[legends] class PostgresAvailableShopItemRepository(
 
   private implicit val decoder: MappedEncoding[String, ShopItem] = shopItemDecoder
 
-  private implicit val q: Quoted[EntityQuery[AvailableShopItem]] =
-    quote { query[AvailableShopItem] }
-
   override def loadAvailable(): List[ShopItem] =
-    run { queryAvailable }
+    run { queryAvailable(query[AvailableShopItem]) }
 
   override def saveAvailable(items: List[ShopItem]): Future[Unit] = Future {
     val availableItems = items.map(AvailableShopItem)
-    run { liftQuery(availableItems).foreach { insertAvailable(_) } }
+    run { insertAvailable(query[AvailableShopItem], availableItems) }
   }
 
   override def deleteAvailable(): Future[Unit] = Future {
-    run { _deleteAvailable }
+    run { _deleteAvailable(query[AvailableShopItem]) }
   }
 }
 
@@ -80,18 +73,16 @@ private[legends] class SqliteAvailableShopItemRepository(
 
   private implicit val decoder: MappedEncoding[String, ShopItem] = shopItemDecoder
 
-  private implicit val q: Quoted[EntityQuery[AvailableShopItem]] =
-    quote { query[AvailableShopItem] }
-
   override def loadAvailable(): List[ShopItem] =
-    run { queryAvailable }
+    run { queryAvailable(query[AvailableShopItem]) }
 
   override def saveAvailable(items: List[ShopItem]): Future[Unit] = Future {
     val availableItems = items.map(AvailableShopItem)
-    run { liftQuery(availableItems).foreach { insertAvailable(_) } }
+    run { insertAvailable(query[AvailableShopItem], availableItems) }
   }
 
   override def deleteAvailable(): Future[Unit] = Future {
-    run { _deleteAvailable }
+    run { _deleteAvailable(query[AvailableShopItem]) }
   }
+
 }

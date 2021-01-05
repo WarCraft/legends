@@ -77,7 +77,7 @@ class ChallengeService(implicit
   }
 
   def completeChallenge(player: Player, challenge: Challenge): Unit = {
-    repository.saveCompleted(player.id, challenge :: Nil)
+    repository.saveCompleted(player.id, challenge)
     _completedChallenges = _completedChallenges.updatedWith(player.id) {
       case Some(challenges) => challenges + (challenge.id -> challenge)
       case None             => Map.empty + (challenge.id -> challenge)

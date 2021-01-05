@@ -7,6 +7,7 @@
 package gg.warcraft.legends.api.player.challenge
 
 import com.typesafe.config.Config
+import gg.warcraft.legends.api.util.quill._
 import io.getquill._
 import io.getquill.context.jdbc.JdbcContext
 import io.getquill.context.sql.idiom.SqlIdiom
@@ -26,7 +27,7 @@ trait ChallengeRepository {
 
   def loadCompleted(playerId: UUID): Map[String, Challenge]
 
-  def saveCompleted(playerId: UUID, challenges: List[Challenge]): Future[Unit]
+  def saveCompleted(playerId: UUID, challenge: Challenge): Future[Unit]
 
   def deleteCompletedDailies(): Future[Unit]
 
@@ -36,145 +37,138 @@ trait ChallengeRepository {
 private trait ChallengeContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
-  def queryActive(implicit
-      q: EntityQuery[ActiveChallenge]
-  ): Quoted[EntityQuery[Challenge]] =
-    quote { q.map { _.challenge } }
+  def queryActive = quote {
+    (q: EntityQuery[ActiveChallenge]) => q.map { _.challenge }
+  }
 
-  def insertActive(challenge: ActiveChallenge)(implicit
-      q: EntityQuery[ActiveChallenge]
-  ): Quoted[Insert[ActiveChallenge]] =
-    quote { q.insert(challenge) }
+  def insertActive = quote {
+    (q: EntityQuery[ActiveChallenge], challenges: List[ActiveChallenge]) =>
+      liftQuery(challenges).foreach { it => q.insert(it) }
+  }
 
-  def _deleteActiveDailies(implicit
-      q: EntityQuery[ActiveChallenge]
-  ): Quoted[Delete[ActiveChallenge]] =
-    quote { q.filter { _.isDaily }.delete }
+  def _deleteActiveDailies = quote {
+    (q: EntityQuery[ActiveChallenge]) => q.filter { _.isDaily }.delete
+  }
 
-  def _deleteActiveMonthlies(implicit
-      q: EntityQuery[ActiveChallenge]
-  ): Quoted[Delete[ActiveChallenge]] =
-    quote { q.filter { _.isMonthly }.delete }
+  def _deleteActiveMonthlies = quote {
+    (q: EntityQuery[ActiveChallenge]) => q.filter { _.isMonthly }.delete
+  }
 
-  def queryCompleted(playerId: UUID)(implicit
-      q: EntityQuery[CompletedChallenge]
-  ): Quoted[EntityQuery[CompletedChallenge]] =
-    quote { q.filter { _.playerId == playerId } }
+  def queryCompleted = quote {
+    (q: EntityQuery[CompletedChallenge], playerId: UUID) =>
+      q.filter { _.playerId == lift(playerId) }
+  }
 
-  def insertCompleted(challenge: CompletedChallenge)(implicit
-      q: EntityQuery[CompletedChallenge]
-  ): Quoted[Insert[CompletedChallenge]] =
-    quote { q.insert(challenge) }
+  def insertCompleted = quote {
+    (q: EntityQuery[CompletedChallenge], challenge: CompletedChallenge) =>
+      q.insert(lift(challenge))
+  }
 
-  def _deleteCompletedDailies(implicit
-      q: EntityQuery[CompletedChallenge]
-  ): Quoted[Delete[CompletedChallenge]] =
-    quote { q.filter { _.isDaily }.delete }
+  def _deleteCompletedDailies = quote {
+    (q: EntityQuery[CompletedChallenge]) => q.filter { _.isDaily }.delete
+  }
 
-  def _deleteCompletedMonthlies(implicit
-      q: EntityQuery[CompletedChallenge]
-  ): Quoted[Delete[CompletedChallenge]] =
-    quote { q.filter { _.isMonthly }.delete }
+  def _deleteCompletedMonthlies = quote {
+    (q: EntityQuery[CompletedChallenge]) => q.filter { _.isMonthly }.delete
+  }
 }
 
 private[legends] class PostgresStatisticRepository(
     config: Config
+)(implicit
+    challengeService: ChallengeService
 ) extends ChallengeRepository {
-  private val databaseContext = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
+  private val database = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
     with ChallengeContext[PostgresDialect, SnakeCase]
-  import databaseContext._
+  import database._
 
-  private implicit val q1: EntityQuery[ActiveChallenge] =
-    query[ActiveChallenge]
-  private implicit val q2: EntityQuery[CompletedChallenge] =
-    query[CompletedChallenge]
+  private implicit val decoder: MappedEncoding[String, Challenge] = challengeDecoder
 
   override def loadActive(): List[Challenge] =
-    run { queryActive }
+    run { queryActive(query[ActiveChallenge]) }
 
   override def saveActive(challenges: List[Challenge]): Future[Unit] = Future {
     val activeChallenges = challenges.map(ActiveChallenge)
-    run { liftQuery(activeChallenges).foreach(insertActive) }
+    run { insertActive(query[ActiveChallenge], activeChallenges) }
   }
 
   override def deleteActiveDailies(): Future[Unit] = Future {
-    run { _deleteActiveDailies }
+    run { _deleteActiveDailies(query[ActiveChallenge]) }
   }
 
   override def deleteActiveMonthlies(): Future[Unit] = Future {
-    run { _deleteActiveMonthlies }
+    run { _deleteActiveMonthlies(query[ActiveChallenge]) }
   }
 
   override def loadCompleted(playerId: UUID): Map[String, Challenge] =
-    run { queryCompleted(lift(playerId)) }
+    run { queryCompleted(query[CompletedChallenge], playerId) }
       .iterator
       .map { it => it.challenge.id -> it.challenge }
       .toMap
 
   override def saveCompleted(
       playerId: UUID,
-      challenges: List[Challenge]
+      challenge: Challenge
   ): Future[Unit] = Future {
-    val completedChallenges = challenges.map { CompletedChallenge(playerId, _) }
-    run { liftQuery(completedChallenges).foreach(insertCompleted) }
+    val completedChallenge = CompletedChallenge(playerId, challenge)
+    run { insertCompleted(query[CompletedChallenge], completedChallenge) }
   }
 
   override def deleteCompletedDailies(): Future[Unit] = Future {
-    run { _deleteCompletedDailies }
+    run { _deleteCompletedDailies(query[CompletedChallenge]) }
   }
 
   override def deleteCompletedMonthlies(): Future[Unit] = Future {
-    run { _deleteCompletedMonthlies }
+    run { _deleteCompletedMonthlies(query[CompletedChallenge]) }
   }
 }
 
 private[legends] class SqliteStatisticRepository(
     config: Config
+)(implicit
+    challengeService: ChallengeService
 ) extends ChallengeRepository {
-  private val context = new SqliteJdbcContext[SnakeCase](SnakeCase, config)
+  private val database = new SqliteJdbcContext[SnakeCase](SnakeCase, config)
     with ChallengeContext[SqliteDialect, SnakeCase]
-  import context._
+  import database._
 
-  private implicit val q1: EntityQuery[ActiveChallenge] =
-    query[ActiveChallenge]
-  private implicit val q2: EntityQuery[CompletedChallenge] =
-    query[CompletedChallenge]
+  private implicit val decoder: MappedEncoding[String, Challenge] = challengeDecoder
 
   override def loadActive(): List[Challenge] =
-    run { queryActive }
+    run { queryActive(query[ActiveChallenge]) }
 
   override def saveActive(challenges: List[Challenge]): Future[Unit] = Future {
     val activeChallenges = challenges.map(ActiveChallenge)
-    run { liftQuery(activeChallenges).foreach(insertActive) }
+    run { insertActive(query[ActiveChallenge], activeChallenges) }
   }
 
   override def deleteActiveDailies(): Future[Unit] = Future {
-    run { _deleteActiveDailies }
+    run { _deleteActiveDailies(query[ActiveChallenge]) }
   }
 
   override def deleteActiveMonthlies(): Future[Unit] = Future {
-    run { _deleteActiveMonthlies }
+    run { _deleteActiveMonthlies(query[ActiveChallenge]) }
   }
 
   override def loadCompleted(playerId: UUID): Map[String, Challenge] =
-    run { queryCompleted(lift(playerId)) }
+    run { queryCompleted(query[CompletedChallenge], playerId) }
       .iterator
       .map { it => it.challenge.id -> it.challenge }
       .toMap
 
   override def saveCompleted(
       playerId: UUID,
-      challenges: List[Challenge]
+      challenge: Challenge
   ): Future[Unit] = Future {
-    val completedChallenges = challenges.map { CompletedChallenge(playerId, _) }
-    run { liftQuery(completedChallenges).foreach(insertCompleted) }
+    val completedChallenge = CompletedChallenge(playerId, challenge)
+    run { insertCompleted(query[CompletedChallenge], completedChallenge) }
   }
 
   override def deleteCompletedDailies(): Future[Unit] = Future {
-    run { _deleteCompletedDailies }
+    run { _deleteCompletedDailies(query[CompletedChallenge]) }
   }
 
   override def deleteCompletedMonthlies(): Future[Unit] = Future {
-    run { _deleteCompletedMonthlies }
+    run { _deleteCompletedMonthlies(query[CompletedChallenge]) }
   }
 }

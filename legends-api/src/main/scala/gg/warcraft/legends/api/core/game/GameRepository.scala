@@ -72,21 +72,19 @@ private object _Game {
 private trait GameContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
-  def queryGame(id: Long)(implicit
-      schema: Quoted[EntityQuery[_Game]]
-  ) =
-    quote { schema.filter { _.id == lift(id) } }
+  def queryGame = quote {
+    (q: EntityQuery[_Game], id: Long) => q.filter { _.id == lift(id) }
+  }
 
-  def upsertGame(game: Game)(implicit
-      schema: Quoted[EntityQuery[_Game]]
-  ) = quote {
-    schema.insert(lift(_Game(game))).onConflictUpdate(_.id)(
-      (t, e) => t.endTime -> e.endTime,
-      (t, e) => t.timer -> e.timer,
-      (t, e) => t.objectives -> e.objectives,
-      (t, e) => t.dailyPoints -> e.dailyPoints,
-      (t, e) => t.monthlyScore -> e.monthlyScore
-    ).returningGenerated(_.id)
+  def upsertGame = quote {
+    (q: EntityQuery[_Game], game: Game) =>
+      q.insert(lift(_Game(game))).onConflictUpdate(_.id)(
+        (t, e) => t.endTime -> e.endTime,
+        (t, e) => t.timer -> e.timer,
+        (t, e) => t.objectives -> e.objectives,
+        (t, e) => t.dailyPoints -> e.dailyPoints,
+        (t, e) => t.monthlyScore -> e.monthlyScore
+      ).returningGenerated(_.id)
   }
 }
 
@@ -97,15 +95,15 @@ private[legends] class PostgresCombatDataRepository(
     with GameContext[PostgresDialect, SnakeCase]
   import database._
 
-  private implicit val schema = quote { querySchema[_Game]("game") }
-
   override def load(id: Long)(implicit
       teamService: TeamService
   ): Option[Game] =
-    run { queryGame(id) }.headOption.map { _.toGame }
+    run { queryGame(querySchema[_Game]("game"), id) }.headOption
+      .map { _.toGame }
 
-  override def save(game: Game): Future[Long] =
-    Future { run { upsertGame(game) } }
+  override def save(game: Game): Future[Long] = Future {
+    run { upsertGame(querySchema[_Game]("game"), game) }
+  }
 }
 
 private[legends] class SqliteCombatDataRepository(
@@ -115,13 +113,13 @@ private[legends] class SqliteCombatDataRepository(
     with GameContext[SqliteDialect, SnakeCase]
   import database._
 
-  private implicit val schema = quote { querySchema[_Game]("game") }
-
   override def load(id: Long)(implicit
       teamService: TeamService
   ): Option[Game] =
-    run { queryGame(id) }.headOption.map { _.toGame }
+    run { queryGame(querySchema[_Game]("game"), id) }.headOption
+      .map { _.toGame }
 
-  override def save(game: Game): Future[Long] =
-    Future { run { upsertGame(game) } }
+  override def save(game: Game): Future[Long] = Future {
+    run { upsertGame(querySchema[_Game]("game"), game) }
+  }
 }
