@@ -15,14 +15,13 @@ import gg.warcraft.monolith.api.util.option._
 
 import java.util.UUID
 import java.util.logging.Logger
-import scala.concurrent.ExecutionContext
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Random, Success}
 
 class ChallengeService(implicit
     repository: ChallengeRepository,
     currencyService: CurrencyService,
     playerService: PlayerService,
-    context: ExecutionContext,
     logger: Logger
 ) {
   private var _challenges: Map[String, Challenge] = Map.empty
