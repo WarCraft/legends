@@ -11,7 +11,9 @@ import gg.warcraft.legends.api.core.game.GameService
 
 import java.time.LocalTime
 
-class DailySkirmishHandler(gameService: GameService) extends Runnable {
+class DailySkirmishHandler(implicit
+    gameService: GameService
+) extends Runnable {
   private var skirmishTimes: List[LocalTime] = Nil
 
   def readConfig(config: LegendsConfig): Unit =

@@ -11,7 +11,7 @@ import gg.warcraft.monolith.api.core.event.Event
 import gg.warcraft.monolith.api.core.{DailyTickEvent, Message}
 import gg.warcraft.monolith.api.player.PlayerService
 
-class ShopItemRotateHandler(
+class ShopItemRotateHandler(implicit
     shopService: ShopService,
     playerService: PlayerService
 ) extends Event.Handler {

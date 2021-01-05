@@ -10,7 +10,7 @@ import gg.warcraft.legends.api.core.game.GameService
 import gg.warcraft.monolith.api.core.DailyTickEvent
 import gg.warcraft.monolith.api.core.event.Event
 
-class GameTickHandler(
+class GameTickHandler(implicit
     gameService: GameService
 ) extends Event.Handler
     with Runnable {

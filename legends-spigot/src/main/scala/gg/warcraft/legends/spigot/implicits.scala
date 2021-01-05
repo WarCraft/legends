@@ -43,6 +43,7 @@ import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.event.EventService
 import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.spigot.implicits._
+import gg.warcraft.siege.spigot.implicits._
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 

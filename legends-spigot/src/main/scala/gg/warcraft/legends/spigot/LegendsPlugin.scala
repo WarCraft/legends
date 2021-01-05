@@ -9,52 +9,38 @@ package gg.warcraft.legends.spigot
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.LegendsConfig
 import gg.warcraft.legends.api.combat.CombatConfig
-import gg.warcraft.legends.api.combat.hunter.{
-  ArrowDistributionHandler, ArrowFriendlyFireHandler, ArrowPickUpHandler,
-  HunterCombatPetHandler
-}
+import gg.warcraft.legends.api.combat.hunter.marksman.{FocusCancelHandler, SneakCancelHandler}
+import gg.warcraft.legends.api.combat.hunter.{ArrowDistributionHandler, ArrowFriendlyFireHandler, ArrowPickUpHandler, HunterCombatPetHandler}
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
-import gg.warcraft.legends.api.core.game.{
-  GameRepository, PostgresGameRepository, SqliteGameRepository
-}
-import gg.warcraft.legends.api.core.handler.{
-  BlockBreakPlaceHandler, PrintVoteLinksCommand
-}
+import gg.warcraft.legends.api.combat.passive.PassiveAssignmentHandler
+import gg.warcraft.legends.api.core.game.handler.{DailySkirmishHandler, GameRewardHandler, GameTickHandler}
+import gg.warcraft.legends.api.core.game.{GameRepository, PostgresGameRepository, SqliteGameRepository}
+import gg.warcraft.legends.api.core.handler._
+import gg.warcraft.legends.api.core.leaderboard.handler.{LeaderboardRewardHandler, LeaderboardUpdateHandler}
 import gg.warcraft.legends.api.core.spawn.ReturnToSpawnCommand
 import gg.warcraft.legends.api.entity.attribute.EquipmentAttributeHandler
-import gg.warcraft.legends.api.item.crate.reward.{
-  LoginRewardRepository, PostgresLoginRewardRepository, SqliteLoginRewardRepository
-}
+import gg.warcraft.legends.api.item.crate.LootCrateUseHandler
+import gg.warcraft.legends.api.item.crate.reward.{LoginRewardHandler, LoginRewardRepository, PostgresLoginRewardRepository, SqliteLoginRewardRepository}
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
+import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeUseHandler
 import gg.warcraft.legends.api.menu.MenuConfig
-import gg.warcraft.legends.api.player.challenge.{
-  ChallengeRepository, PostgresChallengeRepository, SqliteChallengeRepository
-}
-import gg.warcraft.legends.api.player.currency.{
-  AddCurrencyAdminCommand, CurrencyAdminCommand, RemoveCurrencyAdminCommand,
-  RevokeCurrencyAdminCommand
-}
-import gg.warcraft.legends.api.player.data.{
-  LegendsPlayerDataRepository, PostgresLegendsPlayerDataRepository,
-  SqliteLegendsPlayerDataRepository
-}
-import gg.warcraft.legends.api.player.statistic.{
-  PostgresStatisticArchiveRepository, SqliteStatisticArchiveRepository,
-  StatisticArchiveRepository
-}
+import gg.warcraft.legends.api.player.challenge.handler.{ChallengeCompletionHandler, ChallengeRotateHandler}
+import gg.warcraft.legends.api.player.challenge.{ChallengeRepository, PostgresChallengeRepository, SqliteChallengeRepository}
+import gg.warcraft.legends.api.player.currency._
+import gg.warcraft.legends.api.player.data.{LegendsPlayerDataCacheHandler, LegendsPlayerDataRepository, PostgresLegendsPlayerDataRepository, SqliteLegendsPlayerDataRepository}
+import gg.warcraft.legends.api.player.handler.PlayerInspectHandler
+import gg.warcraft.legends.api.player.level.handler.{PlayerLevelUpHandler, PlayerLeveledUpHandler}
+import gg.warcraft.legends.api.player.statistic.handler._
+import gg.warcraft.legends.api.player.statistic.{PostgresStatisticArchiveRepository, SqliteStatisticArchiveRepository, StatisticArchiveRepository}
 import gg.warcraft.legends.api.shop._
-import gg.warcraft.legends.api.shop.profile.{
-  PostgresUnlockedShopItemRepository, SqliteUnlockedShopItemRepository,
-  UnlockedShopItemRepository
-}
+import gg.warcraft.legends.api.shop.handler.{MiniPetSpawnHandler, ShopItemRotateHandler}
+import gg.warcraft.legends.api.shop.profile.{PostgresUnlockedShopItemRepository, ShopProfileCacheHandler, SqliteUnlockedShopItemRepository, UnlockedShopItemRepository}
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
-import gg.warcraft.legends.spigot.core.{
-  SpigotFirstTimeRaceClassMenuHandler, SpigotFurnaceCoalHandler,
-  SpigotRaceRespawnHandler
-}
+import gg.warcraft.legends.spigot.core._
 import gg.warcraft.monolith.api.core.Codecs.Circe._
 import gg.warcraft.monolith.api.core.DatabaseConfig
+import gg.warcraft.monolith.api.core.Duration.DurationOps
 import gg.warcraft.monolith.api.item.ItemTypeOrVariant
 import gg.warcraft.monolith.spigot.SpigotMonolithPlugin
 import gg.warcraft.monolith.spigot.implicits._
@@ -65,6 +51,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
 class LegendsPlugin extends SpigotMonolithPlugin {
+  import gg.warcraft.siege.spigot.implicits._
   import implicits._
 
   override def onLoad(): Unit = {
@@ -110,9 +97,9 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     new CombatConfig().writeConfig()
     new MenuConfig().writeConfig()
 
-    enableHandlers()
+    enableHandlers(config)
     enableCommands()
-    enableTasks()
+    enableTasks(config)
   }
 
   private def configureRepositories(config: DatabaseConfig): (
@@ -181,30 +168,90 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     )
   }
 
-  private def enableHandlers(): Unit = {
+  private def enableHandlers(config: LegendsConfig): Unit = {
     val firstTimeRaceClassMenuHandler = new SpigotFirstTimeRaceClassMenuHandler
 
+    // Core
+    eventService.subscribe(firstTimeRaceClassMenuHandler)
     eventService.subscribe(new BlockBreakPlaceHandler)
-    eventService.subscribe(new EquipmentAttributeHandler)
+    eventService.subscribe(new LaunchRewardsDistributionHandler)
+    eventService.subscribe(new SpigotRaceRespawnHandler)
+    eventService.subscribe(new TutorialPvpHandler)
+
+    // Combat
+    eventService.subscribe(new CombatLoggingHandler)
+    eventService.subscribe(new PassiveAssignmentHandler)
     eventService.subscribe(new PersonalScoreboardHandler)
+    // Hunter
     eventService.subscribe(new ArrowDistributionHandler)
     eventService.subscribe(new ArrowFriendlyFireHandler)
     eventService.subscribe(new ArrowPickUpHandler)
     eventService.subscribe(new HunterCombatPetHandler)
+    eventService.subscribe(new FocusCancelHandler)
+    eventService.subscribe(new SneakCancelHandler)
+    // Mage
     eventService.subscribe(new MassBamboozle.Handler)
-    eventService.subscribe(new SpigotRaceRespawnHandler)
-    eventService.subscribe(firstTimeRaceClassMenuHandler)
 
+    // Challenge
+    eventService.subscribe(new ChallengeCompletionHandler)
+    eventService.subscribe(new ChallengeRotateHandler)
+
+    // Game
+    eventService.subscribe(new CaptureAndKillRewardHandler(config))
+    eventService.subscribe(new GameTickHandler)
+    eventService.subscribe(new GameRewardHandler(config))
+    eventService.subscribe(new LeaderboardUpdateHandler)
+    eventService.subscribe(new LeaderboardRewardHandler(config))
+
+    // Item
+    eventService.subscribe(new EquipmentAttributeHandler)
+    eventService.subscribe(new EquipmentUpgradeUseHandler)
+
+    // Player
+    eventService.subscribe(new PlayerInspectHandler)
+    eventService.subscribe(new PlayerLevelUpHandler)
+    eventService.subscribe(new PlayerLeveledUpHandler)
+    eventService.subscribe(new LegendsCurrencyEventMapper)
+    eventService.subscribe(new LegendsPlayerDataCacheHandler)
+
+    // Shop
+    eventService.subscribe(new ShopItemRotateHandler)
+    eventService.subscribe(new ShopProfileCacheHandler)
+    eventService.subscribe(new LoginRewardHandler)
+    eventService.subscribe(new LootCrateUseHandler)
+    eventService.subscribe(new MiniPetSpawnHandler)
+
+    // Statistic
+    eventService.subscribe(new CrateStatisticHandler)
+    eventService.subscribe(new CurrencyStatisticHandler)
+    eventService.subscribe(new DamageStatisticHandler)
+    eventService.subscribe(new KillStatisticHandler)
+    eventService.subscribe(new ObjectiveStatisticHandler)
+    eventService.subscribe(new ResourceStatisticHandler)
+
+    // Spigot
+    subscribe(firstTimeRaceClassMenuHandler)
     subscribe(new OnePointEightPvPInitHandler)
     subscribe(new HunterOnlyBowHandler)
-    // TODO subscribe(new SpigotKeepInventoryHandler)
+    subscribe(new SpigotArmorStandProtectionHandler)
+    subscribe(new SpigotCraftPreventionHandler)
+    subscribe(new SpigotDroppedItemHandler)
     subscribe(new SpigotFurnaceCoalHandler)
-    subscribe(firstTimeRaceClassMenuHandler)
+    subscribe(new SpigotVotifierEventHandler)
+    // TODO subscribe(new SpigotKeepInventoryHandler)
     subscribe(new TempArmorStandHandler)
   }
 
-  private def enableTasks(): Unit = {}
+  private def enableTasks(config: LegendsConfig): Unit = {
+    val scoreboardHandler = new SpigotScoreboardHandler(config)
+    taskService.runTask(1.seconds, () => scoreboardHandler.run())
 
+    val skirmishHandler = new DailySkirmishHandler
+    taskService.runTask(1.seconds, () => skirmishHandler.run())
+
+    val playtimeStatisticHandler = new PlaytimeStatisticHandler
+    taskService.runTask(10.seconds, () => playtimeStatisticHandler.run())
+  }
 }
 
 /* TODO remove

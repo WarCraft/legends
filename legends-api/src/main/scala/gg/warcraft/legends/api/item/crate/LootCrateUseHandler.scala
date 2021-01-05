@@ -12,7 +12,9 @@ import gg.warcraft.monolith.api.entity.EntityPreInteractEvent
 import gg.warcraft.monolith.api.item.Item
 import gg.warcraft.monolith.api.player.Player
 
-class LootCrateUseHandler(lootCrateService: LootCrateService) extends Event.Handler {
+class LootCrateUseHandler(implicit
+    lootCrateService: LootCrateService
+) extends Event.Handler {
   private def onInteract(player: Player, item: Option[Item]): Boolean = item match {
     case Some(item) =>
       val crate = lootCrateService.crates
