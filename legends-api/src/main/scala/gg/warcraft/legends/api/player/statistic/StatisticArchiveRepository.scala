@@ -30,9 +30,9 @@ private trait StatisticArchiveContext[I <: SqlIdiom, N <: NamingStrategy] {
 private[legends] class PostgresStatisticArchiveRepository(
     config: Config
 ) extends StatisticArchiveRepository {
-  private val context = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
+  private val database = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
     with StatisticArchiveContext[PostgresDialect, SnakeCase]
-  import context._
+  import database._
 
   override def save(statistics: List[StatisticArchive]): Future[Unit] = Future {
     run {
@@ -46,9 +46,9 @@ private[legends] class PostgresStatisticArchiveRepository(
 private[legends] class SqliteStatisticArchiveRepository(
     config: Config
 ) extends StatisticArchiveRepository {
-  private val context = new SqliteJdbcContext[SnakeCase](SnakeCase, config)
+  private val database = new SqliteJdbcContext[SnakeCase](SnakeCase, config)
     with StatisticArchiveContext[SqliteDialect, SnakeCase]
-  import context._
+  import database._
 
   override def save(statistics: List[StatisticArchive]): Future[Unit] = Future {
     run {

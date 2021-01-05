@@ -26,12 +26,12 @@ private trait PlayerDataContext[I <: SqlIdiom, N <: NamingStrategy] {
 
   def loadData = quote {
     (q: Query[LoginRewardsClaimed], playerId: UUID) =>
-      q.filter { _.playerId == lift(playerId) }
+      q.filter { _.playerId == playerId }
   }
 
   def upsertData = quote {
     (q: EntityQuery[LoginRewardsClaimed], data: LoginRewardsClaimed) =>
-      q.insert(lift(data)).onConflictUpdate(_.playerId)(
+      q.insert(data).onConflictUpdate(_.playerId)(
         (t, e) => t.counter -> e.counter,
         (t, e) => t.date -> e.date
       )
@@ -46,10 +46,10 @@ private[legends] class PostgresLoginRewardRepository(
   import database._
 
   override def load(playerId: UUID): Option[LoginRewardsClaimed] =
-    run { loadData(query[LoginRewardsClaimed], playerId) }.headOption
+    run { loadData(query[LoginRewardsClaimed], lift(playerId)) }.headOption
 
   override def save(data: LoginRewardsClaimed): Future[Unit] = Future {
-    run { upsertData(query[LoginRewardsClaimed], data) }
+    run { upsertData(query[LoginRewardsClaimed], lift(data)) }
   }
 }
 
@@ -61,9 +61,9 @@ private[legends] class SqliteLoginRewardRepository(
   import database._
 
   override def load(playerId: UUID): Option[LoginRewardsClaimed] =
-    run { loadData(query[LoginRewardsClaimed], playerId) }.headOption
+    run { loadData(query[LoginRewardsClaimed], lift(playerId)) }.headOption
 
   override def save(data: LoginRewardsClaimed): Future[Unit] = Future {
-    run { upsertData(query[LoginRewardsClaimed], data) }
+    run { upsertData(query[LoginRewardsClaimed], lift(data)) }
   }
 }

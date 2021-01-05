@@ -26,12 +26,11 @@ private trait UnlockedShopItemContext[I <: SqlIdiom, N <: NamingStrategy] {
 
   def queryItems = quote {
     (q: EntityQuery[UnlockedShopItem], playerId: UUID) =>
-      q.filter { _.playerId == lift(playerId) }.map { _.id }
+      q.filter { _.playerId == playerId }.map { _.id }
   }
 
   def insertItem = quote {
-    (q: EntityQuery[UnlockedShopItem], item: UnlockedShopItem) =>
-      q.insert(lift(item))
+    (q: EntityQuery[UnlockedShopItem], item: UnlockedShopItem) => q.insert(item)
   }
 }
 
@@ -43,11 +42,11 @@ private[legends] class PostgresUnlockedShopItemRepository(
   import database._
 
   override def loadItems(playerId: UUID): Set[String] =
-    run { queryItems(query[UnlockedShopItem], playerId) }.toSet
+    run { queryItems(query[UnlockedShopItem], lift(playerId)) }.toSet
 
   override def saveItem(id: String, playerId: UUID): Future[Unit] = Future {
     val item = UnlockedShopItem(id, playerId)
-    run { insertItem(query[UnlockedShopItem], item) }
+    run { insertItem(query[UnlockedShopItem], lift(item)) }
   }
 }
 
@@ -59,10 +58,10 @@ private[legends] class SqliteUnlockedShopItemRepository(
   import database._
 
   override def loadItems(playerId: UUID): Set[String] =
-    run { queryItems(query[UnlockedShopItem], playerId) }.toSet
+    run { queryItems(query[UnlockedShopItem], lift(playerId)) }.toSet
 
   override def saveItem(id: String, playerId: UUID): Future[Unit] = Future {
     val item = UnlockedShopItem(id, playerId)
-    run { insertItem(query[UnlockedShopItem], item) }
+    run { insertItem(query[UnlockedShopItem], lift(item)) }
   }
 }

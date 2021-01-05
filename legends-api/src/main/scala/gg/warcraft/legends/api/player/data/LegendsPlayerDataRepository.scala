@@ -25,12 +25,12 @@ private trait PlayerDataContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
   def loadData = quote {
-    (q: EntityQuery[LegendsPlayerData], id: UUID) => q.filter { _.id == lift(id) }
+    (q: EntityQuery[LegendsPlayerData], id: UUID) => q.filter { _.id == id }
   }
 
   def upsertData = quote {
     (q: EntityQuery[LegendsPlayerData], data: LegendsPlayerData) =>
-      q.insert(lift(data)).onConflictUpdate(_.id)(
+      q.insert(data).onConflictUpdate(_.id)(
         (t, e) => t.tutorialStep -> e.tutorialStep,
         (t, e) => t.combatClassCooldown -> e.combatClassCooldown,
         (t, e) => t.launchRewardsClaimed -> e.launchRewardsClaimed,
@@ -47,10 +47,10 @@ private[legends] class PostgresPlayerDataRepository(
   import database._
 
   override def load(id: UUID): Option[LegendsPlayerData] =
-    run { loadData(query[LegendsPlayerData], id) }.headOption
+    run { loadData(query[LegendsPlayerData], lift(id)) }.headOption
 
   override def save(data: LegendsPlayerData): Future[Unit] = Future {
-    run { upsertData(query[LegendsPlayerData], data) }
+    run { upsertData(query[LegendsPlayerData], lift(data)) }
   }
 }
 
@@ -62,9 +62,9 @@ private[legends] class SqlitePlayerDataRepository(
   import database._
 
   override def load(id: UUID): Option[LegendsPlayerData] =
-    run { loadData(query[LegendsPlayerData], id) }.headOption
+    run { loadData(query[LegendsPlayerData], lift(id)) }.headOption
 
   override def save(data: LegendsPlayerData): Future[Unit] = Future {
-    run { upsertData(query[LegendsPlayerData], data) }
+    run { upsertData(query[LegendsPlayerData], lift(data)) }
   }
 }

@@ -42,34 +42,38 @@ private trait ChallengeContext[I <: SqlIdiom, N <: NamingStrategy] {
   }
 
   def insertActive = quote {
-    (q: EntityQuery[ActiveChallenge], challenges: List[ActiveChallenge]) =>
-      liftQuery(challenges).foreach { it => q.insert(it) }
+    (q: EntityQuery[ActiveChallenge], challenge: ActiveChallenge) =>
+      q.insert(challenge)
   }
 
   def _deleteActiveDailies = quote {
-    (q: EntityQuery[ActiveChallenge]) => q.filter { _.isDaily }.delete
+    (q: EntityQuery[ActiveChallenge]) =>
+      q.filter { _.challenge.id.like("DAILY%") }.delete
   }
 
   def _deleteActiveMonthlies = quote {
-    (q: EntityQuery[ActiveChallenge]) => q.filter { _.isMonthly }.delete
+    (q: EntityQuery[ActiveChallenge]) =>
+      q.filter { _.challenge.id.like("MONTHLY%") }.delete
   }
 
   def queryCompleted = quote {
     (q: EntityQuery[CompletedChallenge], playerId: UUID) =>
-      q.filter { _.playerId == lift(playerId) }
+      q.filter { _.playerId == playerId }
   }
 
   def insertCompleted = quote {
     (q: EntityQuery[CompletedChallenge], challenge: CompletedChallenge) =>
-      q.insert(lift(challenge))
+      q.insert(challenge)
   }
 
   def _deleteCompletedDailies = quote {
-    (q: EntityQuery[CompletedChallenge]) => q.filter { _.isDaily }.delete
+    (q: EntityQuery[CompletedChallenge]) =>
+      q.filter { _.challenge.id.like("DAILY%") }.delete
   }
 
   def _deleteCompletedMonthlies = quote {
-    (q: EntityQuery[CompletedChallenge]) => q.filter { _.isMonthly }.delete
+    (q: EntityQuery[CompletedChallenge]) =>
+      q.filter { _.challenge.id.like("MONTHLY%") }.delete
   }
 }
 
@@ -89,7 +93,11 @@ private[legends] class PostgresStatisticRepository(
 
   override def saveActive(challenges: List[Challenge]): Future[Unit] = Future {
     val activeChallenges = challenges.map(ActiveChallenge)
-    run { insertActive(query[ActiveChallenge], activeChallenges) }
+    run {
+      liftQuery(activeChallenges).foreach {
+        insertActive(query[ActiveChallenge], _)
+      }
+    }
   }
 
   override def deleteActiveDailies(): Future[Unit] = Future {
@@ -101,7 +109,7 @@ private[legends] class PostgresStatisticRepository(
   }
 
   override def loadCompleted(playerId: UUID): Map[String, Challenge] =
-    run { queryCompleted(query[CompletedChallenge], playerId) }
+    run { queryCompleted(query[CompletedChallenge], lift(playerId)) }
       .iterator
       .map { it => it.challenge.id -> it.challenge }
       .toMap
@@ -111,7 +119,7 @@ private[legends] class PostgresStatisticRepository(
       challenge: Challenge
   ): Future[Unit] = Future {
     val completedChallenge = CompletedChallenge(playerId, challenge)
-    run { insertCompleted(query[CompletedChallenge], completedChallenge) }
+    run { insertCompleted(query[CompletedChallenge], lift(completedChallenge)) }
   }
 
   override def deleteCompletedDailies(): Future[Unit] = Future {
@@ -139,7 +147,11 @@ private[legends] class SqliteStatisticRepository(
 
   override def saveActive(challenges: List[Challenge]): Future[Unit] = Future {
     val activeChallenges = challenges.map(ActiveChallenge)
-    run { insertActive(query[ActiveChallenge], activeChallenges) }
+    run {
+      liftQuery(activeChallenges).foreach {
+        insertActive(query[ActiveChallenge], _)
+      }
+    }
   }
 
   override def deleteActiveDailies(): Future[Unit] = Future {
@@ -151,7 +163,7 @@ private[legends] class SqliteStatisticRepository(
   }
 
   override def loadCompleted(playerId: UUID): Map[String, Challenge] =
-    run { queryCompleted(query[CompletedChallenge], playerId) }
+    run { queryCompleted(query[CompletedChallenge], lift(playerId)) }
       .iterator
       .map { it => it.challenge.id -> it.challenge }
       .toMap
@@ -161,7 +173,7 @@ private[legends] class SqliteStatisticRepository(
       challenge: Challenge
   ): Future[Unit] = Future {
     val completedChallenge = CompletedChallenge(playerId, challenge)
-    run { insertCompleted(query[CompletedChallenge], completedChallenge) }
+    run { insertCompleted(query[CompletedChallenge], lift(completedChallenge)) }
   }
 
   override def deleteCompletedDailies(): Future[Unit] = Future {

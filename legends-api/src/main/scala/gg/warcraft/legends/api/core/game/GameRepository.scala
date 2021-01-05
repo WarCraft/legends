@@ -73,12 +73,12 @@ private trait GameContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
   def queryGame = quote {
-    (q: EntityQuery[_Game], id: Long) => q.filter { _.id == lift(id) }
+    (q: EntityQuery[_Game], id: Long) => q.filter { _.id == id }
   }
 
   def upsertGame = quote {
-    (q: EntityQuery[_Game], game: Game) =>
-      q.insert(lift(_Game(game))).onConflictUpdate(_.id)(
+    (q: EntityQuery[_Game], game: _Game) =>
+      q.insert(game).onConflictUpdate(_.id)(
         (t, e) => t.endTime -> e.endTime,
         (t, e) => t.timer -> e.timer,
         (t, e) => t.objectives -> e.objectives,
@@ -98,11 +98,13 @@ private[legends] class PostgresCombatDataRepository(
   override def load(id: Long)(implicit
       teamService: TeamService
   ): Option[Game] =
-    run { queryGame(querySchema[_Game]("game"), id) }.headOption
+    run { queryGame(querySchema[_Game]("game"), lift(id)) }
+      .headOption
       .map { _.toGame }
 
   override def save(game: Game): Future[Long] = Future {
-    run { upsertGame(querySchema[_Game]("game"), game) }
+    val _game = _Game(game)
+    run { upsertGame(querySchema[_Game]("game"), lift(_game)) }
   }
 }
 
@@ -116,10 +118,12 @@ private[legends] class SqliteCombatDataRepository(
   override def load(id: Long)(implicit
       teamService: TeamService
   ): Option[Game] =
-    run { queryGame(querySchema[_Game]("game"), id) }.headOption
+    run { queryGame(querySchema[_Game]("game"), lift(id)) }
+      .headOption
       .map { _.toGame }
 
   override def save(game: Game): Future[Long] = Future {
-    run { upsertGame(querySchema[_Game]("game"), game) }
+    val _game = _Game(game)
+    run { upsertGame(querySchema[_Game]("game"), lift(_game)) }
   }
 }

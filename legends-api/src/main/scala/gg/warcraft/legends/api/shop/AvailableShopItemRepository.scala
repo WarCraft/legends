@@ -30,8 +30,8 @@ private trait AvailableShopItemContext[I <: SqlIdiom, N <: NamingStrategy] {
     quote { (q: EntityQuery[AvailableShopItem]) => q.map { _.item } }
 
   def insertAvailable =
-    quote { (q: EntityQuery[AvailableShopItem], items: List[AvailableShopItem]) =>
-      liftQuery(items).foreach { it => q.insert(it) }
+    quote { (q: EntityQuery[AvailableShopItem], item: AvailableShopItem) =>
+      q.insert(item)
     }
 
   def _deleteAvailable =
@@ -54,7 +54,11 @@ private[legends] class PostgresAvailableShopItemRepository(
 
   override def saveAvailable(items: List[ShopItem]): Future[Unit] = Future {
     val availableItems = items.map(AvailableShopItem)
-    run { insertAvailable(query[AvailableShopItem], availableItems) }
+    run {
+      liftQuery(availableItems).foreach {
+        insertAvailable(query[AvailableShopItem], _)
+      }
+    }
   }
 
   override def deleteAvailable(): Future[Unit] = Future {
@@ -78,11 +82,14 @@ private[legends] class SqliteAvailableShopItemRepository(
 
   override def saveAvailable(items: List[ShopItem]): Future[Unit] = Future {
     val availableItems = items.map(AvailableShopItem)
-    run { insertAvailable(query[AvailableShopItem], availableItems) }
+    run {
+      liftQuery(availableItems).foreach {
+        insertAvailable(query[AvailableShopItem], _)
+      }
+    }
   }
 
   override def deleteAvailable(): Future[Unit] = Future {
     run { _deleteAvailable(query[AvailableShopItem]) }
   }
-
 }
