@@ -10,9 +10,13 @@ import gg.warcraft.legends.api.item.crate.LootCrate
 import gg.warcraft.legends.api.player.challenge.Challenge
 import gg.warcraft.legends.api.player.level.Level
 import gg.warcraft.legends.api.player.statistic.LegendsStatistic.LegendsStatistic
+import gg.warcraft.monolith.api.core.DatabaseConfig
 import gg.warcraft.monolith.api.entity.team.Team
 
 case class LegendsConfig(
+    // Core
+    database: DatabaseConfig,
+    // Legends
     challenges: List[Challenge],
     dailyRewards: List[RewardConfig],
     leaderboards: LeaderboardsConfig,

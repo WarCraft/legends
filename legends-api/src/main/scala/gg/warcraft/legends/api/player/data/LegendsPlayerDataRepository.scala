@@ -39,7 +39,7 @@ private trait PlayerDataContext[I <: SqlIdiom, N <: NamingStrategy] {
   }
 }
 
-private[legends] class PostgresPlayerDataRepository(
+private[legends] class PostgresLegendsPlayerDataRepository(
     config: Config
 ) extends LegendsPlayerDataRepository {
   private val database = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
@@ -54,7 +54,7 @@ private[legends] class PostgresPlayerDataRepository(
   }
 }
 
-private[legends] class SqlitePlayerDataRepository(
+private[legends] class SqliteLegendsPlayerDataRepository(
     config: Config
 ) extends LegendsPlayerDataRepository {
   private val database = new SqliteJdbcContext[SnakeCase](SnakeCase, config)

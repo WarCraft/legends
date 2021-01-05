@@ -6,83 +6,179 @@
 
 package gg.warcraft.legends.spigot
 
-import java.io.File
-
 import gg.warcraft.combat.spigot.implicits._
+import gg.warcraft.legends.api.LegendsConfig
 import gg.warcraft.legends.api.combat.CombatConfig
 import gg.warcraft.legends.api.combat.hunter.{
   ArrowDistributionHandler, ArrowFriendlyFireHandler, ArrowPickUpHandler,
   HunterCombatPetHandler
 }
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
-import gg.warcraft.legends.api.core.types.DatabaseContext
+import gg.warcraft.legends.api.core.game.{
+  GameRepository, PostgresGameRepository, SqliteGameRepository
+}
+import gg.warcraft.legends.api.core.handler.{
+  BlockBreakPlaceHandler, PrintVoteLinksCommand
+}
+import gg.warcraft.legends.api.core.spawn.ReturnToSpawnCommand
+import gg.warcraft.legends.api.entity.attribute.EquipmentAttributeHandler
+import gg.warcraft.legends.api.item.crate.reward.{
+  LoginRewardRepository, PostgresLoginRewardRepository, SqliteLoginRewardRepository
+}
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
 import gg.warcraft.legends.api.menu.MenuConfig
-import gg.warcraft.legends.api.player.level.Level
-import gg.warcraft.legends.api.LegendsConfig
-import gg.warcraft.legends.api.core.handler.BlockBreakPlaceHandler
-import gg.warcraft.legends.api.entity.attribute.EquipmentAttributeHandler
-import gg.warcraft.legends.api.util.circe._
-import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
+import gg.warcraft.legends.api.player.challenge.{
+  ChallengeRepository, PostgresChallengeRepository, SqliteChallengeRepository
+}
+import gg.warcraft.legends.api.player.currency.{
+  AddCurrencyAdminCommand, CurrencyAdminCommand, RemoveCurrencyAdminCommand,
+  RevokeCurrencyAdminCommand
+}
+import gg.warcraft.legends.api.player.data.{
+  LegendsPlayerDataRepository, PostgresLegendsPlayerDataRepository,
+  SqliteLegendsPlayerDataRepository
+}
+import gg.warcraft.legends.api.player.statistic.{
+  PostgresStatisticArchiveRepository, SqliteStatisticArchiveRepository,
+  StatisticArchiveRepository
+}
+import gg.warcraft.legends.api.shop._
+import gg.warcraft.legends.api.shop.profile.{
+  PostgresUnlockedShopItemRepository, SqliteUnlockedShopItemRepository,
+  UnlockedShopItemRepository
+}
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
+import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
 import gg.warcraft.legends.spigot.core.{
   SpigotFirstTimeRaceClassMenuHandler, SpigotFurnaceCoalHandler,
-  SpigotKeepInventoryHandler, SpigotRaceRespawnHandler
+  SpigotRaceRespawnHandler
 }
 import gg.warcraft.monolith.api.core.Codecs.Circe._
-import gg.warcraft.monolith.api.core.ColorCode
+import gg.warcraft.monolith.api.core.DatabaseConfig
 import gg.warcraft.monolith.api.item.ItemTypeOrVariant
 import gg.warcraft.monolith.spigot.SpigotMonolithPlugin
 import gg.warcraft.monolith.spigot.implicits._
 import io.circe.Decoder
 import io.circe.generic.auto._
-import io.getquill.{SnakeCase, SqliteDialect}
 import org.bukkit.configuration.file.YamlConfiguration
+
+import java.io.File
 
 class LegendsPlugin extends SpigotMonolithPlugin {
   import implicits._
 
   override def onLoad(): Unit = {
     super.onLoad()
-
-    implicit val databaseContext: DatabaseContext =
-      initDatabase(SqliteDialect, SnakeCase, getDataFolder)
-    upgradeDatabase(getDataFolder, getClassLoader)
-
     implicits.init()
   }
 
   override def onEnable(): Unit = {
-    //  TODO val config = parseConfig[LegendsConfig](getConfig.saveToString())
-    val config = LegendsConfig(
-      Map.empty,
-      Level(1, ColorCode.WHITE, 0, Nil) :: Nil,
-      Map.empty,
-      Map.empty,
-      0,
-      0,
-      0,
-      Nil,
-      Nil,
-      Nil
-    )
-
+    // TODO parse config implicits
+    val config = parseConfig[LegendsConfig](getConfig.saveToString())
     implicit val itemTypeVariantDecoder: Decoder[ItemTypeOrVariant] = itemDataDecoder
 
-    val equipmentConfigFile =
+    // TODO parse equipment config implicits
+    val equipConfigPath =
       new File(s"${getDataFolder.getAbsolutePath}${File.separator}equipment.yml")
-    val equipmentConfig: EquipmentConfig = parseConfig[EquipmentConfig](
-      YamlConfiguration.loadConfiguration(equipmentConfigFile).saveToString
-    )
+    val equipConfigFile = YamlConfiguration.loadConfiguration(equipConfigPath)
+    val equipConfig = parseConfig[EquipmentConfig](equipConfigFile.saveToString())
 
+    // TODO parse shop config implicits
+    val shopConfigPath =
+      new File(s"${getDataFolder.getAbsolutePath}${File.separator}shop.yml")
+    val shopConfigFile = YamlConfiguration.loadConfiguration(shopConfigPath)
+    val shopConfig = parseConfig[ShopConfig](shopConfigFile.saveToString())
+
+    upgradeDatabase(config.database, getDataFolder, getClassLoader)
+    val repositories = configureRepositories(config.database)
+    implicits.configure(config, repositories)
+
+    // Shop
+    shopService.readConfig(shopConfig)
+
+    // Equipment
+    equipmentConfigRepository.readConfig(equipConfig)
+
+    // Legends
+    gameService.readConfig(config)
+    leaderboardService.readConfig(config)
+    lootCrateService.readConfig(config)
     levelService.readConfig(config)
-    equipmentConfigRepository.readConfig(equipmentConfig)
+    loginRewardService.readConfig(config)
+    challengeService.readConfig(config)
 
     new CombatConfig().writeConfig()
     new MenuConfig().writeConfig()
 
     enableHandlers()
+    enableCommands()
     enableTasks()
+  }
+
+  private def configureRepositories(config: DatabaseConfig): (
+      GameRepository,
+      ChallengeRepository,
+      LoginRewardRepository,
+      LegendsPlayerDataRepository,
+      StatisticArchiveRepository,
+      AvailableShopItemRepository,
+      UnlockedShopItemRepository
+  ) =
+    if (config.embedded) {
+      val sqliteConfig = parseDatabaseConfig(config, getDataFolder)
+      (
+        new SqliteGameRepository(sqliteConfig),
+        new SqliteChallengeRepository(sqliteConfig),
+        new SqliteLoginRewardRepository(sqliteConfig),
+        new SqliteLegendsPlayerDataRepository(sqliteConfig),
+        new SqliteStatisticArchiveRepository(sqliteConfig),
+        new SqliteAvailableShopItemRepository(sqliteConfig),
+        new SqliteUnlockedShopItemRepository(sqliteConfig)
+      )
+    } else {
+      val postgresConfig = parseDatabaseConfig(config, getDataFolder)
+      (
+        new PostgresGameRepository(postgresConfig),
+        new PostgresChallengeRepository(postgresConfig),
+        new PostgresLoginRewardRepository(postgresConfig),
+        new PostgresLegendsPlayerDataRepository(postgresConfig),
+        new PostgresStatisticArchiveRepository(postgresConfig),
+        new PostgresAvailableShopItemRepository(postgresConfig),
+        new PostgresUnlockedShopItemRepository(postgresConfig)
+      )
+    }
+
+  private def enableCommands(): Unit = {
+    // Currency
+    val currencyCommandHandler = new CurrencyAdminCommand.Handler
+    commandService.registerCommand(
+      new AddCurrencyAdminCommand,
+      currencyCommandHandler
+    )
+    commandService.registerCommand(
+      new RemoveCurrencyAdminCommand,
+      currencyCommandHandler
+    )
+    commandService.registerCommand(
+      new RevokeCurrencyAdminCommand,
+      currencyCommandHandler
+    )
+
+    // Player
+    commandService.registerCommand(
+      new PrintVoteLinksCommand,
+      new PrintVoteLinksCommand.Handler
+    )
+    commandService.registerCommand(
+      new ReturnToSpawnCommand,
+      new ReturnToSpawnCommand.Handler
+    )
+
+    // Shop
+    commandService.registerCommand(
+      new CycleShopItemsCommand,
+      new CycleShopItemsCommand.Handler
+    )
   }
 
   private def enableHandlers(): Unit = {
@@ -109,344 +205,9 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
   private def enableTasks(): Unit = {}
 
-  // TODO init commands
 }
 
-/*
-public class LegendsPlugin extends JavaPlugin {
-    private Injector injector;
-    private EventService eventService;
-    private TaskService taskService;
-    private TimeUtils timeUtils;
-
-    void loadServerConfiguration() {
-        MonolithPluginUtils pluginUtils = injector.getInstance(MonolithPluginUtils.class);
-        LegendsMapperModule legendsMapperModule = new LegendsMapperModule();
-
-        ServerConfiguration serverConfiguration = pluginUtils.loadConfiguration("REMOTE", "legends/server.yml", "",
-                ServerConfiguration.class, legendsMapperModule);
-
-        SpawnRepository spawnRepository = injector.getInstance(SpawnRepository.class);
-        serverConfiguration.getSpawnLocations().forEach((team, location) ->
-                spawnRepository.save(team, location.toLocation()));
-
-        RankCommandService rankCommandService = injector.getInstance(RankCommandService.class);
-        rankCommandService.initializeRanks(LegendsTeam.HUMAN, serverConfiguration.getRankFavorTable(),
-                serverConfiguration.getRankPrefixes(), serverConfiguration.getHumanRankSuffixes());
-        rankCommandService.initializeRanks(LegendsTeam.ORC, serverConfiguration.getRankFavorTable(),
-                serverConfiguration.getRankPrefixes(), serverConfiguration.getOrcRankSuffixes());
-
-        RankRepository rankRepository = injector.getInstance(RankRepository.class);
-        rankRepository.save(serverConfiguration.getRankUpRewards());
-
-        GameCommandService gameCommandService = injector.getInstance(GameCommandService.class);
-        gameCommandService.readConfiguration(serverConfiguration);
-
-        LootCrateCommandService lootCrateCommandService = injector.getInstance(LootCrateCommandService.class);
-        lootCrateCommandService.readConfiguration(serverConfiguration);
-
-        ServerRepository serverRepository = injector.getInstance(ServerRepository.class);
-        serverRepository.read(serverConfiguration);
-    }
-
-    void loadNpcsConfiguration() {
-        MonolithPluginUtils pluginUtils = injector.getInstance(MonolithPluginUtils.class);
-        LegendsMapperModule legendsMapperModule = new LegendsMapperModule();
-
-        NpcsConfiguration npcsConfiguration = pluginUtils.loadConfiguration("REMOTE", "legends/npcs.yml", "",
-                NpcsConfiguration.class, legendsMapperModule);
-        NpcCommandService npcCommandService = injector.getInstance(NpcCommandService.class);
-        npcsConfiguration.getNpcs().forEach(npcCommandService::readConfiguration);
-    }
-
-    void loadShopConfiguration() {
-        MonolithPluginUtils pluginUtils = injector.getInstance(MonolithPluginUtils.class);
-        LegendsMapperModule legendsMapperModule = new LegendsMapperModule();
-
-        ShopConfiguration shopConfiguration = pluginUtils.loadConfiguration("REMOTE", "legends/shop.yml", "",
-                ShopConfiguration.class, legendsMapperModule);
-        ShopCommandService shopCommandService = injector.getInstance(ShopCommandService.class);
-        shopCommandService.readConfiguration(shopConfiguration);
-    }
-
-    void loadEquipmentConfiguration() {
-        MonolithPluginUtils pluginUtils = injector.getInstance(MonolithPluginUtils.class);
-        LegendsMapperModule legendsMapperModule = new LegendsMapperModule();
-
-        EquipmentConfiguration equipmentConfiguration = pluginUtils.loadConfiguration("REMOTE", "legends/equipment.yml",
-                "", EquipmentConfiguration.class, legendsMapperModule);
-        EquipmentConfigurationRepository equipmentConfigurationRepository =
-                injector.getInstance(EquipmentConfigurationRepository.class);
-        equipmentConfigurationRepository.save(equipmentConfiguration);
-    }
-
-    void initializeLegendsTeams() {
-        TeamCommandService teamCommandService = injector.getInstance(TeamCommandService.class);
-        Arrays.stream(LegendsTeam.values()).forEach(teamCommandService::registerTeam);
-    }
-
-    void initializeLegendsHandlers(boolean isProduction) {
-        CommandCommandService commandCommandService = injector.getInstance(CommandCommandService.class);
-
-        UniversalBlockBreakPlaceHandler universalBlockBreakPlaceHandler =
-                injector.getInstance(UniversalBlockBreakPlaceHandler.class);
-        eventService.subscribe(universalBlockBreakPlaceHandler);
-
-        PlayerSpawnHandler playerSpawnHandler = injector.getInstance(PlayerSpawnHandler.class);
-        eventService.subscribe(playerSpawnHandler);
-
-        PlayerCurrencyEventHandler playerCurrencyEventHandler = injector.getInstance(PlayerCurrencyEventHandler.class);
-        eventService.subscribe(playerCurrencyEventHandler);
-
-        VoteHandler voteHandler = injector.getInstance(VoteHandler.class);
-        getServer().getPluginManager().registerEvents(voteHandler, this);
-
-        UniversalDroppedItemHandler universalDroppedItemHandler = injector.getInstance(UniversalDroppedItemHandler.class);
-        getServer().getPluginManager().registerEvents(universalDroppedItemHandler, this);
-
-        // AI
-        NpcInteractHandler npcInteractHandler = injector.getInstance(NpcInteractHandler.class);
-        eventService.subscribe(npcInteractHandler);
-
-        NpcPersistenceHandler npcPersistenceHandler = injector.getInstance(NpcPersistenceHandler.class);
-        eventService.subscribe(npcPersistenceHandler);
-
-        TargetDummyDamageHandler targetDummyDamageHandler = injector.getInstance(TargetDummyDamageHandler.class);
-        eventService.subscribe(targetDummyDamageHandler);
-
-        // Combat
-        EquipmentAttributesHandler equipmentAttributesHandler = injector.getInstance(EquipmentAttributesHandler.class);
-        eventService.subscribe(equipmentAttributesHandler);
-
-        PassiveAssignmentHandler passiveAssignmentHandler = injector.getInstance(PassiveAssignmentHandler.class);
-        eventService.subscribe(passiveAssignmentHandler);
-
-        ArrowDistributionHandler arrowDistributionHandler = injector.getInstance(ArrowDistributionHandler.class);
-        eventService.subscribe(arrowDistributionHandler);
-
-        ArrowPickupHandler arrowPickupHandler = injector.getInstance(ArrowPickupHandler.class);
-        eventService.subscribe(arrowPickupHandler);
-
-        FocusHandler focusHandler = injector.getInstance(FocusHandler.class);
-        eventService.subscribe(focusHandler);
-
-        WhoDamagedWhoHandler whoDamagedWhoHandler = injector.getInstance(WhoDamagedWhoHandler.class);
-        eventService.subscribe(whoDamagedWhoHandler);
-
-        FlameTotemDamageLimitationHandler flameTotemDamageLimitationHandler =
-                injector.getInstance(FlameTotemDamageLimitationHandler.class);
-        eventService.subscribe(flameTotemDamageLimitationHandler);
-
-        CaptureAndKillRewardHandler captureAndKillRewardHandler = injector.getInstance(CaptureAndKillRewardHandler.class);
-        eventService.subscribe(captureAndKillRewardHandler);
-
-        ArrowFriendlyFireHandler arrowFriendlyFireHandler = injector.getInstance(ArrowFriendlyFireHandler.class);
-        eventService.subscribe(arrowFriendlyFireHandler);
-
-        TutorialPvpHandler tutorialPvpHandler = injector.getInstance(TutorialPvpHandler.class);
-        eventService.subscribe(tutorialPvpHandler);
-
-        // Shop
-        ShopProfileInitializationHandler shopProfileInitializationHandler =
-                injector.getInstance(ShopProfileInitializationHandler.class);
-        eventService.subscribe(shopProfileInitializationHandler);
-
-        LootCrateUseHandler lootCrateUseHandler = injector.getInstance(LootCrateUseHandler.class);
-        eventService.subscribe(lootCrateUseHandler);
-
-        EquipmentUpgradeUseHandler equipmentUpgradeUseHandler = injector.getInstance(EquipmentUpgradeUseHandler.class);
-        eventService.subscribe(equipmentUpgradeUseHandler);
-
-        ShopCycleHandler shopCycleHandler = injector.getInstance(ShopCycleHandler.class);
-        eventService.subscribe(shopCycleHandler);
-
-        // Player ranks
-        PlayerRankChangeHandler playerRankChangeHandler = injector.getInstance(PlayerRankChangeHandler.class);
-        eventService.subscribe(playerRankChangeHandler);
-
-        PlayerRankChangedHandler playerRankChangedHandler = injector.getInstance(PlayerRankChangedHandler.class);
-        eventService.subscribe(playerRankChangedHandler);
-
-        PrestigeAttributesHandler prestigeAttributesHandler = injector.getInstance(PrestigeAttributesHandler.class);
-        eventService.subscribe(prestigeAttributesHandler);
-
-        RankUpRewardHandler rankUpRewardHandler = injector.getInstance(RankUpRewardHandler.class);
-        eventService.subscribe(rankUpRewardHandler);
-        commandCommandService.createCommand("claimrankuprewards", Collections.emptyList(), rankUpRewardHandler);
-
-        // Statistics
-        DamageHealingDoneTakenStatisticHandler damageHealingDoneTakenStatisticHandler =
-                injector.getInstance(DamageHealingDoneTakenStatisticHandler.class);
-        eventService.subscribe(damageHealingDoneTakenStatisticHandler);
-
-        KillDeathStatisticHandler killDeathStatisticHandler =
-                injector.getInstance(KillDeathStatisticHandler.class);
-        eventService.subscribe(killDeathStatisticHandler);
-
-        ObjectiveStatisticHandler objectiveStatisticHandler =
-                injector.getInstance(ObjectiveStatisticHandler.class);
-        eventService.subscribe(objectiveStatisticHandler);
-
-        ResourcesGatheredStatisticHandler resourcesGatheredStatisticHandler =
-                injector.getInstance(ResourcesGatheredStatisticHandler.class);
-        eventService.subscribe(resourcesGatheredStatisticHandler);
-
-        LootCrateStatisticHandler lootCrateStatisticHandler =
-                injector.getInstance(LootCrateStatisticHandler.class);
-        eventService.subscribe(lootCrateStatisticHandler);
-
-        TimePlayedStatisticHandler timePlayedStatisticHandler = injector.getInstance(TimePlayedStatisticHandler.class);
-        eventService.subscribe(timePlayedStatisticHandler);
-
-        CurrencyStatisticHandler currencyStatisticHandler = injector.getInstance(CurrencyStatisticHandler.class);
-        eventService.subscribe(currencyStatisticHandler);
-
-        // Player inspect
-        PlayerInspectHandler playerInspectHandler = injector.getInstance(PlayerInspectHandler.class);
-        eventService.subscribe(playerInspectHandler);
-
-        // Game / Objectives
-        ObjectiveAnnouncementHandler objectiveAnnouncementHandler =
-                injector.getInstance(ObjectiveAnnouncementHandler.class);
-        eventService.subscribe(objectiveAnnouncementHandler);
-
-        GameObjectivesAndPointsHandler gameObjectivesAndPointsHandler =
-                injector.getInstance(GameObjectivesAndPointsHandler.class);
-        eventService.subscribe(gameObjectivesAndPointsHandler);
-
-        GameTimerHandler gameTimerHandler = injector.getInstance(GameTimerHandler.class);
-        taskService.runTask(gameTimerHandler, timeUtils.createDurationInTicks(5), timeUtils.createDurationInSeconds(1));
-
-        SpigotScoreboardHandler spigotScoreboardHandler = injector.getInstance(SpigotScoreboardHandler.class);
-        taskService.runTask(spigotScoreboardHandler, timeUtils.createDurationInTicks(9), timeUtils.createDurationInSeconds(1));
-
-        DailySkirmishHandler dailySkirmishHandler = injector.getInstance(DailySkirmishHandler.class);
-        taskService.runTask(dailySkirmishHandler, timeUtils.createDurationInSeconds(60), timeUtils.createDurationInSeconds(60));
-
-        SkirmishRewardHandler skirmishRewardHandler = injector.getInstance(SkirmishRewardHandler.class);
-        eventService.subscribe(skirmishRewardHandler);
-
-        // Metrics
-        if (isProduction) {
-            PlayerCountMetricHandler playerCountMetricHandler = injector.getInstance(PlayerCountMetricHandler.class);
-            eventService.subscribe(playerCountMetricHandler);
-            taskService.runTask(playerCountMetricHandler, timeUtils.oneTick(), timeUtils.createDurationInSeconds(300));
-
-            TotalPointsMetricHandler totalPointsMetricHandler = injector.getInstance(TotalPointsMetricHandler.class);
-            eventService.subscribe(totalPointsMetricHandler);
-        }
-
-        // Combat logging
-        CombatLoggingHandler combatLoggingHandler = injector.getInstance(CombatLoggingHandler.class);
-        eventService.subscribe(combatLoggingHandler);
-
-        // Challenges
-        ChallengeResetHandler challengeResetHandler = injector.getInstance(ChallengeResetHandler.class);
-        eventService.subscribe(challengeResetHandler);
-
-        ChallengeCycleHandler challengeCycleHandler = injector.getInstance(ChallengeCycleHandler.class);
-        eventService.subscribe(challengeCycleHandler);
-
-        ChallengeCompletionHandler challengeCompletionHandler = injector.getInstance(ChallengeCompletionHandler.class);
-        eventService.subscribe(challengeCompletionHandler);
-
-        // Leaderboards
-        LeaderboardUpdateHandler leaderboardUpdateHandler = injector.getInstance(LeaderboardUpdateHandler.class);
-        eventService.subscribe(leaderboardUpdateHandler);
-
-        LeaderboardRewardHandler leaderboardRewardHandler = injector.getInstance(LeaderboardRewardHandler.class);
-        eventService.subscribe(leaderboardRewardHandler);
-
-        // Gathering
-        // TODO re-enable
-        // CapturedGatheringRestrictionHandler capturedGatheringRestrictionHandler = injector.getInstance(CapturedGatheringRestrictionHandler.class);
-        // eventService.subscribe(capturedGatheringRestrictionHandler);
-    }
-
-    void initializeLegendsCommands() {
-        CommandCommandService commandCommandService = injector.getInstance(CommandCommandService.class);
-
-        MenuCommandHandler menuCommandHandler = injector.getInstance(MenuCommandHandler.class);
-        commandCommandService.createCommand("me", Lists.newArrayList("menu", "monolith", "help"), menuCommandHandler);
-        commandCommandService.createCommand("team", Lists.newArrayList("race"), menuCommandHandler);
-        commandCommandService.createCommand("class", Lists.newArrayList("kit", "kits"), menuCommandHandler);
-        commandCommandService.createCommand("dec", Lists.newArrayList("decoration", "decorations"), menuCommandHandler);
-        commandCommandService.createCommand("pet", Lists.newArrayList("pets", "minipet", "minipets", "mp"), menuCommandHandler);
-
-        GoldCommandHandler goldCommandHandler = injector.getInstance(GoldCommandHandler.class);
-        commandCommandService.createCommand("gold", Lists.newArrayList("money", "bal", "balance"), goldCommandHandler);
-
-        FishCommandHandler fishCommandHandler = injector.getInstance(FishCommandHandler.class);
-        commandCommandService.createCommand("fish", Collections.emptyList(), fishCommandHandler);
-
-        MobDropHandler mobDropHandler = injector.getInstance(MobDropHandler.class);
-        commandCommandService.createCommand("dropitems", Collections.emptyList(), mobDropHandler);
-        eventService.subscribe(mobDropHandler);
-
-        SpawnCommandHandler spawnCommandHandler = injector.getInstance(SpawnCommandHandler.class);
-        commandCommandService.createCommand("spawn", Lists.newArrayList("return"), spawnCommandHandler);
-
-        KitCommandHandler kitCommandHandler = injector.getInstance(KitCommandHandler.class);
-        commandCommandService.createCommand("kit", Collections.emptyList(), kitCommandHandler);
-
-        ShopCommandHandler shopCommandHandler = injector.getInstance(ShopCommandHandler.class);
-        commandCommandService.createCommand("shop", Collections.emptyList(), shopCommandHandler);
-
-        TrebCommandHandler trebCommandHandler = injector.getInstance(TrebCommandHandler.class);
-        commandCommandService.createCommand("treb", Lists.newArrayList("trebuchet"), trebCommandHandler);
-
-        LaunchRewardsCommandHandler launchRewardsCommandHandler = injector.getInstance(LaunchRewardsCommandHandler.class);
-        commandCommandService.createCommand("ilovewarcraft", Collections.emptyList(), launchRewardsCommandHandler);
-
-        VoteCommandHandler voteCommandHandler = injector.getInstance(VoteCommandHandler.class);
-        commandCommandService.createCommand("vote", Collections.emptyList(), voteCommandHandler);
-
-        FreezeCommandHandler freezeCommandHandler = injector.getInstance(FreezeCommandHandler.class);
-        commandCommandService.createCommand("freeze", Lists.newArrayList("unfreeze"), freezeCommandHandler);
-    }
-
-    // TODO remove all this code and any classes from the spigotOLD package
-    void initializeOLDHACK() {
-        LegendsPlayerQueryService playerQueryService = injector.getInstance(LegendsPlayerQueryService.class);
-        EntityCommandService entityCommandService = injector.getInstance(EntityCommandService.class);
-        EntityQueryService entityQueryService = injector.getInstance(EntityQueryService.class);
-        CombatPetFactory combatPetFactory = injector.getInstance(CombatPetFactory.class);
-        TaskService taskService = injector.getInstance(TaskService.class);
-        TimeUtils timeUtils = injector.getInstance(TimeUtils.class);
-        EventService eventService = injector.getInstance(EventService.class);
-        CombatFactory combatFactory = injector.getInstance(CombatFactory.class);
-
-        eventService.subscribe(new CraftPreventionHandler());
-
-        HunterPetListener hunterPetListener = new HunterPetListener(getServer(), playerQueryService, entityQueryService,
-                entityCommandService, combatPetFactory, taskService, timeUtils, combatFactory);
-        eventService.subscribe(hunterPetListener);
-        getServer().getPluginManager().registerEvents(hunterPetListener, this);
-
-        SpigotMiniPetFactory spigotMiniPetFactory = injector.getInstance(SpigotMiniPetFactory.class);
-        eventService.subscribe(spigotMiniPetFactory);
-
-        PersonalScoreboardHandler personalScoreboardHandler = new PersonalScoreboardHandler(eventService, getServer(),
-                this, playerQueryService, taskService, timeUtils);
-        eventService.subscribe(personalScoreboardHandler);
-
-        RangerOnlyBowHandler rangerOnlyBowHandler = new RangerOnlyBowHandler(playerQueryService);
-        getServer().getPluginManager().registerEvents(rangerOnlyBowHandler, this);
-
-        SpydeyBot spyBot = injector.getInstance(SpydeyBot.class);
-        eventService.subscribe(spyBot);
-
-        OnePointEightPvPInitializationHandler onePointEightPvPInitializationHandler = new OnePointEightPvPInitializationHandler();
-        getServer().getPluginManager().registerEvents(onePointEightPvPInitializationHandler, this);
-
-        // TODO mass bamboozle is actually implemented quite cleanly, needs to be in the spigot package until
-        // TODO LibsDisguises support has been added to Monolith though
-        MassBamboozleHandler massBamboozleHandler = injector.getInstance(MassBamboozleHandler.class);
-        eventService.subscribe(massBamboozleHandler);
-
-        AbilityCommandService abilityCommandService = injector.getInstance(AbilityCommandService.class);
-        abilityCommandService.registerRangedAbility("Mass Bamboozle", MassBamboozle.class, MassBamboozleFactory.class);
-    }
+/* TODO remove
 
     void initializeTutorial() {
         // Commands
@@ -485,48 +246,4 @@ public class LegendsPlugin extends JavaPlugin {
         SiegeWeapon persistentTutorialTrebuchet = new PersistentSiegeWeaponDecorator(tutorialTrebuchet);
         siegeWeaponRepository.save(persistentTutorialTrebuchet);
     }
-
-    private void initializeGame() {
-        GameCommandService gameCommandService = injector.getInstance(GameCommandService.class);
-        GameQueryService gameQueryService = injector.getInstance(GameQueryService.class);
-        Game activeGame = gameQueryService.getActiveGame();
-        if (activeGame == null) {
-            Game currentWar = gameQueryService.getCurrentWar();
-            if (currentWar == null) {
-                gameCommandService.startWar();
-            } else {
-                throw new IllegalStateException("There is a current war, but no active game. This shouldn't happen.");
-            }
-        }
-        gameCommandService.initializeActiveGame();
-    }
-
-    @Override
-    public void onLoad() {
-        saveDefaultConfig();
-        Monolith.registerModule(new SpigotLegendsModule(this));
-    }
-
-    @Override
-    public void onEnable() {
-        this.injector = Monolith.getInstance().getInjector();
-        this.eventService = injector.getInstance(EventService.class);
-        this.taskService = injector.getInstance(TaskService.class);
-        this.timeUtils = injector.getInstance(TimeUtils.class);
-
-        boolean isProduction = getConfig().getBoolean("isProduction");
-
-        loadServerConfiguration();
-        loadNpcsConfiguration();
-        loadShopConfiguration();
-        loadEquipmentConfiguration();
-        initializeLegendsTeams();
-        initializeLegendsHandlers(isProduction);
-        initializeLegendsCommands();
-        initializeOLDHACK();
-        initializeTutorial();
-        initializeGame();
-        injector.getInstance(LegendsCombatConfiguration.class);
-    }
-}
  */

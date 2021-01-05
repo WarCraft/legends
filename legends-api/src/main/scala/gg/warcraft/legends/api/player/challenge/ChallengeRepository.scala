@@ -77,7 +77,7 @@ private trait ChallengeContext[I <: SqlIdiom, N <: NamingStrategy] {
   }
 }
 
-private[legends] class PostgresStatisticRepository(
+private[legends] class PostgresChallengeRepository(
     config: Config
 )(implicit
     challengeService: ChallengeService
@@ -131,7 +131,7 @@ private[legends] class PostgresStatisticRepository(
   }
 }
 
-private[legends] class SqliteStatisticRepository(
+private[legends] class SqliteChallengeRepository(
     config: Config
 )(implicit
     challengeService: ChallengeService
