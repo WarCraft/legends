@@ -9,32 +9,63 @@ package gg.warcraft.legends.spigot
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.LegendsConfig
 import gg.warcraft.legends.api.combat.CombatConfig
-import gg.warcraft.legends.api.combat.hunter.marksman.{FocusCancelHandler, SneakCancelHandler}
-import gg.warcraft.legends.api.combat.hunter.{ArrowDistributionHandler, ArrowFriendlyFireHandler, ArrowPickUpHandler, HunterCombatPetHandler}
+import gg.warcraft.legends.api.combat.hunter.marksman.{
+  FocusCancelHandler, SneakCancelHandler
+}
+import gg.warcraft.legends.api.combat.hunter.{
+  ArrowDistributionHandler, ArrowFriendlyFireHandler, ArrowPickUpHandler,
+  HunterCombatPetHandler
+}
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.combat.passive.PassiveAssignmentHandler
-import gg.warcraft.legends.api.core.game.handler.{DailySkirmishHandler, GameRewardHandler, GameTickHandler}
-import gg.warcraft.legends.api.core.game.{GameRepository, PostgresGameRepository, SqliteGameRepository}
+import gg.warcraft.legends.api.core.game.handler.{
+  DailySkirmishHandler, GameRewardHandler, GameTickHandler
+}
+import gg.warcraft.legends.api.core.game.{
+  GameRepository, PostgresGameRepository, SqliteGameRepository
+}
 import gg.warcraft.legends.api.core.handler._
-import gg.warcraft.legends.api.core.leaderboard.handler.{LeaderboardRewardHandler, LeaderboardUpdateHandler}
+import gg.warcraft.legends.api.core.leaderboard.handler.{
+  LeaderboardRewardHandler, LeaderboardUpdateHandler
+}
 import gg.warcraft.legends.api.core.spawn.ReturnToSpawnCommand
 import gg.warcraft.legends.api.entity.attribute.EquipmentAttributeHandler
 import gg.warcraft.legends.api.item.crate.LootCrateUseHandler
-import gg.warcraft.legends.api.item.crate.reward.{LoginRewardHandler, LoginRewardRepository, PostgresLoginRewardRepository, SqliteLoginRewardRepository}
+import gg.warcraft.legends.api.item.crate.reward.{
+  LoginRewardHandler, LoginRewardRepository, PostgresLoginRewardRepository,
+  SqliteLoginRewardRepository
+}
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeUseHandler
 import gg.warcraft.legends.api.menu.MenuConfig
-import gg.warcraft.legends.api.player.challenge.handler.{ChallengeCompletionHandler, ChallengeRotateHandler}
-import gg.warcraft.legends.api.player.challenge.{ChallengeRepository, PostgresChallengeRepository, SqliteChallengeRepository}
+import gg.warcraft.legends.api.player.challenge.handler.{
+  ChallengeCompletionHandler, ChallengeRotateHandler
+}
+import gg.warcraft.legends.api.player.challenge.{
+  ChallengeRepository, PostgresChallengeRepository, SqliteChallengeRepository
+}
 import gg.warcraft.legends.api.player.currency._
-import gg.warcraft.legends.api.player.data.{LegendsPlayerDataCacheHandler, LegendsPlayerDataRepository, PostgresLegendsPlayerDataRepository, SqliteLegendsPlayerDataRepository}
+import gg.warcraft.legends.api.player.data.{
+  LegendsPlayerDataCacheHandler, LegendsPlayerDataRepository,
+  PostgresLegendsPlayerDataRepository, SqliteLegendsPlayerDataRepository
+}
 import gg.warcraft.legends.api.player.handler.PlayerInspectHandler
-import gg.warcraft.legends.api.player.level.handler.{PlayerLevelUpHandler, PlayerLeveledUpHandler}
+import gg.warcraft.legends.api.player.level.handler.{
+  PlayerLevelUpHandler, PlayerLeveledUpHandler
+}
 import gg.warcraft.legends.api.player.statistic.handler._
-import gg.warcraft.legends.api.player.statistic.{PostgresStatisticArchiveRepository, SqliteStatisticArchiveRepository, StatisticArchiveRepository}
+import gg.warcraft.legends.api.player.statistic.{
+  PostgresStatisticArchiveRepository, SqliteStatisticArchiveRepository,
+  StatisticArchiveRepository
+}
 import gg.warcraft.legends.api.shop._
-import gg.warcraft.legends.api.shop.handler.{MiniPetSpawnHandler, ShopItemRotateHandler}
-import gg.warcraft.legends.api.shop.profile.{PostgresUnlockedShopItemRepository, ShopProfileCacheHandler, SqliteUnlockedShopItemRepository, UnlockedShopItemRepository}
+import gg.warcraft.legends.api.shop.handler.{
+  MiniPetSpawnHandler, ShopItemRotateHandler
+}
+import gg.warcraft.legends.api.shop.profile.{
+  PostgresUnlockedShopItemRepository, ShopProfileCacheHandler,
+  SqliteUnlockedShopItemRepository, UnlockedShopItemRepository
+}
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
 import gg.warcraft.legends.spigot.core._
@@ -193,7 +224,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     eventService.subscribe(new MassBamboozle.Handler)
 
     // Challenge
-    eventService.subscribe(new ChallengeCompletionHandler)
+    eventService.subscribe(new ChallengeCompletionHandler(config))
     eventService.subscribe(new ChallengeRotateHandler)
 
     // Game
