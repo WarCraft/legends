@@ -8,7 +8,7 @@ package gg.warcraft.legends.spigot.ai
 
 import gg.warcraft.legends.api.ai.CombatPetFactory
 import gg.warcraft.legends.api.entity.LegendsTeam._
-import gg.warcraft.monolith.api.entity.team.Team
+import gg.warcraft.monolith.api.entity.team.{Team, TeamService}
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.player.PlayerService
 import gg.warcraft.monolith.api.util.chaining._
@@ -23,7 +23,8 @@ import scala.jdk.CollectionConverters._
 class SpigotCombatPetFactory(implicit
     server: Server,
     playerService: PlayerService,
-    entityService: EntityService
+    entityService: EntityService,
+    teamService: TeamService
 ) extends CombatPetFactory {
   private final val goalsToRemove = List(
     "sit",
@@ -45,9 +46,9 @@ class SpigotCombatPetFactory(implicit
   )
 
   private val combatPetSkins = Map[Option[Team], MobDisguise](
-    Some(Dwarves) -> new MobDisguise(DisguiseType.POLAR_BEAR),
-    Some(Elves) -> new MobDisguise(DisguiseType.OCELOT),
-    Some(Orcs) -> new MobDisguise(DisguiseType.PIG)
+    Some(Dwarves.instance) -> new MobDisguise(DisguiseType.POLAR_BEAR),
+    Some(Elves.instance) -> new MobDisguise(DisguiseType.OCELOT),
+    Some(Orcs.instance) -> new MobDisguise(DisguiseType.PIG)
   )
 
   override def create(ownerId: UUID): UUID = {

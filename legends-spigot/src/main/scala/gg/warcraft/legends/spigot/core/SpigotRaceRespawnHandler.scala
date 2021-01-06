@@ -35,7 +35,7 @@ object SpigotRaceRespawnHandler {
   private final val humanTranslation = Vector3f(-69, 67, 208)
   private final val orcTranslation = Vector3f(139, 57, 48)
 
-  def getSpawn(team: Team): Vector3f = team match {
+  def getSpawn(team: Team): Vector3f = team.id match {
     case Dwarves => dwarfTranslation
     case Elves   => elfTranslation
     case Humans  => humanTranslation

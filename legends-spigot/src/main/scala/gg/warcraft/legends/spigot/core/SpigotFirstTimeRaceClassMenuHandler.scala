@@ -13,6 +13,7 @@ import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.entity._
 import gg.warcraft.legends.api.ai.MiniPetFactory
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
+import gg.warcraft.legends.api.core.spawn.SpawnService
 import gg.warcraft.legends.api.item.crate.reward.LoginRewardService
 import gg.warcraft.legends.api.menu.{CombatClassMenu, FactionMenu}
 import gg.warcraft.legends.api.player.challenge.ChallengeService
@@ -21,9 +22,11 @@ import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.ShopService
 import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.monolith.api.core.Duration._
+import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.core.event.Event
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
+import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.entity.{EntityService, EntityTeamChangedEvent}
 import gg.warcraft.monolith.api.item.ItemService
 import gg.warcraft.monolith.api.menu.MenuService
@@ -52,7 +55,10 @@ class SpigotFirstTimeRaceClassMenuHandler(implicit
     shopService: ShopService,
     shopProfileService: ShopProfileService,
     itemService: ItemService,
-    miniPetFactory: MiniPetFactory
+    miniPetFactory: MiniPetFactory,
+    commandService: CommandService,
+    spawnService: SpawnService,
+    teamService: TeamService
 ) extends Event.Handler
     with Listener {
   import SpigotRaceRespawnHandler.getSpawn
