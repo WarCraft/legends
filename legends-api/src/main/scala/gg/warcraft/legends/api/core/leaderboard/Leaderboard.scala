@@ -7,7 +7,7 @@
 package gg.warcraft.legends.api.core.leaderboard
 
 import gg.warcraft.legends.api.player.statistic.LegendsStatistic.LegendsStatistic
-import gg.warcraft.monolith.api.player.statistic.StatisticRepository
+import gg.warcraft.monolith.api.player.statistic.StatisticService
 import gg.warcraft.monolith.api.player.{OfflinePlayer, Player, PlayerService}
 
 import java.util.UUID
@@ -19,7 +19,7 @@ class Leaderboard(
     val name: String,
     val description: String
 )(implicit
-    statisticRepository: StatisticRepository,
+    statisticService: StatisticService,
     playerService: PlayerService
 ) {
   private final val maxEntries = 100
@@ -37,7 +37,7 @@ class Leaderboard(
   val isDaily: Boolean = statistic.startsWith("DAILY_")
   val isMonthly: Boolean = statistic.startsWith("MONTHLY_")
 
-  statisticRepository.queryTop(maxEntries, statistic).onComplete {
+  statisticService.queryTop(maxEntries, statistic).onComplete {
     case Success(rankings) =>
       rankings.zipWithIndex.foreach { it =>
         val player = playerService.getOfflinePlayer(it._1.playerId)

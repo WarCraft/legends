@@ -8,7 +8,7 @@ package gg.warcraft.legends.api.core.game
 
 import gg.warcraft.legends.api.LegendsConfig
 import gg.warcraft.monolith.api.core.Duration._
-import gg.warcraft.monolith.api.core.data.{ServerDataRepository, ServerDataService}
+import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.core.event.EventService
 import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.entity.team.{Team, TeamService}
@@ -21,7 +21,6 @@ import scala.util.{Failure, Success}
 class GameService(implicit
     eventService: EventService,
     serverDataService: ServerDataService,
-    serverDataRepository: ServerDataRepository,
     gameRepository: GameRepository,
     taskService: TaskService,
     teamService: TeamService,
@@ -49,10 +48,10 @@ class GameService(implicit
 
   def readConfig(config: LegendsConfig): Unit = {
     _config = config
-    serverDataRepository.load(active_war_data).foreach { id =>
+    serverDataService.load(active_war_data).foreach { id =>
       _activeWar = gameRepository.load(id.toLong)
     }
-    serverDataRepository.load(active_skirmish_data).foreach { id =>
+    serverDataService.load(active_skirmish_data).foreach { id =>
       _activeSkirmish = gameRepository.load(id.toLong)
     }
   }
@@ -125,7 +124,7 @@ class GameService(implicit
       gameRepository.save(war).onComplete {
         case Success(id) =>
           _activeWar = war.copy(id = id)
-          serverDataRepository.save(active_war_data, id.toString)
+          serverDataService.save(active_war_data, id.toString)
           taskService.evalNextTick(eventService << WarStartedEvent(_activeWar.get))
         case Failure(ex) => throw ex
       }
@@ -203,7 +202,7 @@ class GameService(implicit
       gameRepository.save(skirmish).onComplete {
         case Success(id) =>
           _activeSkirmish = skirmish.copy(id = id)
-          serverDataRepository.save(active_skirmish_data, id.toString)
+          serverDataService.save(active_skirmish_data, id.toString)
 
           initGame(_activeSkirmish.get)
 
@@ -243,7 +242,7 @@ class GameService(implicit
         val updatedSkirmish = skirmish.copy(endTime = endTime)
         _activeSkirmish = None
         gameRepository.save(updatedSkirmish)
-        serverDataRepository.delete(active_skirmish_data)
+        serverDataService.delete(active_skirmish_data)
 
         val winners = winningTeams.head._1
         eventService << SkirmishFinishedEvent(updatedSkirmish, winners)

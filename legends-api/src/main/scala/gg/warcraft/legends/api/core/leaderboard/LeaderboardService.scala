@@ -9,10 +9,10 @@ package gg.warcraft.legends.api.core.leaderboard
 import gg.warcraft.legends.api.LegendsConfig
 import gg.warcraft.legends.api.player.statistic.LegendsStatistic.LegendsStatistic
 import gg.warcraft.monolith.api.player.PlayerService
-import gg.warcraft.monolith.api.player.statistic.StatisticRepository
+import gg.warcraft.monolith.api.player.statistic.StatisticService
 
 class LeaderboardService(implicit
-    statisticRepository: StatisticRepository,
+    statisticService: StatisticService,
     playerService: PlayerService
 ) {
   private var _leaderboards: Map[LegendsStatistic, Leaderboard] = Map.empty
