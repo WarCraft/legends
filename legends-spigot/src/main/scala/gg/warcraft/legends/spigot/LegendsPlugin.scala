@@ -78,6 +78,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
 class LegendsPlugin extends SpigotMonolithPlugin {
+  import gg.warcraft.chat.spigot.implicits._
   import gg.warcraft.siege.spigot.implicits._
   import implicits._
 
