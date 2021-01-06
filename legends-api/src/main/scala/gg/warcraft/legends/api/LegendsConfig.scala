@@ -21,7 +21,7 @@ case class LegendsConfig(
     dailyRewards: List[RewardConfig],
     leaderboards: LeaderboardsConfig,
     levels: List[Level],
-    lootCrates: List[LootCrate],
+    lootCrates: List[LootCrate.Config],
     // Siege
     objectiveCaptureRewards: Map[String, RewardConfig],
     objectiveDefaultOccupiers: Map[String, Team],

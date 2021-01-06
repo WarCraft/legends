@@ -76,4 +76,20 @@ object LootCrate {
     "at unlocking collectibles or receiving",
     "random combat items."
   )
+
+  case class Config(
+      id: String,
+      name: String,
+      rarity: ItemRarity,
+      chestVariant: ChestVariant,
+      dropTables: List[LootCrate.DropTable]
+  ) {
+    def parse(): LootCrate = new LootCrate(
+      id,
+      name,
+      rarity,
+      chestVariant,
+      dropTables
+    )
+  }
 }

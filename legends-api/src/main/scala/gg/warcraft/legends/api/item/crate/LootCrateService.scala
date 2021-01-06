@@ -59,16 +59,18 @@ class LootCrateService(implicit
   def crates: Map[String, LootCrate] = _crates
 
   def readConfig(config: LegendsConfig): Unit =
-    config.lootCrates.foreach { crate =>
-      val totalDropChance = crate.dropTables.map { _.chance }.sum
-      if (totalDropChance == 100f) {
-        val dropChances =
-          crate.dropTables.map { _.distribution.map { _._2 }.sum }.sum
-        if (dropChances == 100f * crate.dropTables.size) {
-          _crates += (crate.id -> crate)
-        } else logger.severe(s"One of ${crate.id}'s tables does not sum to 100%!'")
-      } else logger.severe(s"${crate.id}'s drop tables do not sum to 100%!'")
-    }
+    config.lootCrates
+      .map { _.parse() }
+      .foreach { crate =>
+        val totalDropChance = crate.dropTables.map { _.chance }.sum
+        if (totalDropChance == 100f) {
+          val dropChances =
+            crate.dropTables.map { _.distribution.values.sum }.sum
+          if (dropChances == 100f * crate.dropTables.size) {
+            _crates += (crate.id -> crate)
+          } else logger.severe(s"One of ${crate.id}'s tables does not sum to 100%!'")
+        } else logger.severe(s"${crate.id}'s drop tables do not sum to 100%!'")
+      }
 
   private def notifyReceived(playerId: UUID, name: String): Unit = {
     val strippedName = name.stripChatCodes
