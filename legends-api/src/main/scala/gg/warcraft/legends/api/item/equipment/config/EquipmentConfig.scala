@@ -35,8 +35,7 @@ case class EquipmentConfig(
       Map[LegendsCombatArchetype,
         Map[Team,
           Map[AttributeDistribution,
-            Map[EquipmentType, EquipmentTooltipsConfig]]
-    ]]
+            Map[EquipmentType, EquipmentTooltipsConfig]]]]
 ) {
   lazy val navigableDropRates: util.NavigableMap[Float, ItemRarity] =
     new util.TreeMap[Float, ItemRarity].tap { map =>

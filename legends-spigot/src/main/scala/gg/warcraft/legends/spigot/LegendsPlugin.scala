@@ -6,9 +6,9 @@
 
 package gg.warcraft.legends.spigot
 
+import gg.warcraft.combat.api.combatclass.{CombatClass => CombatCombatClass}
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.LegendsConfig
-import gg.warcraft.legends.api.combat.CombatConfig
 import gg.warcraft.legends.api.combat.hunter.marksman.{
   FocusCancelHandler, SneakCancelHandler
 }
@@ -18,6 +18,7 @@ import gg.warcraft.legends.api.combat.hunter.{
 }
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.combat.passive.PassiveAssignmentHandler
+import gg.warcraft.legends.api.combat.{CombatConfig, LegendsCombatArchetype}
 import gg.warcraft.legends.api.core.game.handler.{
   DailySkirmishHandler, GameRewardHandler, GameTickHandler
 }
@@ -39,6 +40,7 @@ import gg.warcraft.legends.api.item.crate.reward.{
 }
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeUseHandler
+import gg.warcraft.legends.api.item.equipment.{AttributeDistribution, EquipmentType}
 import gg.warcraft.legends.api.menu.MenuConfig
 import gg.warcraft.legends.api.player.challenge.handler.{
   ChallengeCompletionHandler, ChallengeRotateHandler
@@ -103,6 +105,22 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     val config = parseConfig[LegendsConfig](getConfig.saveToString())
 
     // Config: equipment
+    implicit val archetypKeyDec: KeyDecoder[LegendsCombatArchetype] =
+      enumKeyDecoder(LegendsCombatArchetype.valueOf)
+    implicit val combatClassKeyDecoder: KeyDecoder[CombatCombatClass] =
+      anyKeyDecoder(combatClassService.combatClasses)
+    implicit val teamKeyDec: KeyDecoder[Team] = teamKeyDecoder
+    implicit val equipTypDec: Decoder[EquipmentType] =
+      enumDecoder(EquipmentType.valueOf)
+    implicit val equipTypKeyDec: KeyDecoder[EquipmentType] =
+      enumKeyDecoder(EquipmentType.valueOf)
+    implicit val attrDistroKeyDec: KeyDecoder[AttributeDistribution] =
+      enumKeyDecoder(AttributeDistribution.valueOf)
+    implicit val attributeDecoder: Decoder[LegendsAttribute] =
+      anyDecoder(LegendsAttribute.valueOf)
+    implicit val attributeKeyDecoder: KeyDecoder[LegendsAttribute] =
+      anyKeyDecoder(LegendsAttribute.valueOf)
+
     val equipConfigPath =
       new File(s"${getDataFolder.getAbsolutePath}${File.separator}equipment.yml")
     val equipConfigFile = YamlConfiguration.loadConfiguration(equipConfigPath)
@@ -111,10 +129,6 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     // Config: shop
     implicit val equipSlotDecoder: Decoder[Equipment.Slot] =
       anyDecoder(Equipment.withName)
-    implicit val attributeDecoder: Decoder[LegendsAttribute] =
-      anyDecoder(LegendsAttribute.valueOf)
-    implicit val attributeKeyDecoder: KeyDecoder[LegendsAttribute] =
-      anyKeyDecoder(LegendsAttribute.valueOf)
     implicit val entityTypDecoder: Decoder[Entity.Type] =
       anyDecoder(Entity.Type.withName)
 
