@@ -21,7 +21,7 @@ object LegendsAttribute {
   case object Vitality extends LegendsAttribute("Vitality")
   case object Crit extends LegendsAttribute("Crit")
 
-  def parseName(name: String): LegendsAttribute = name match {
+  def valueOf(attribute: String): LegendsAttribute = attribute match {
     case "STRENGTH"  => Strength
     case "DEXTERITY" => Dexterity
     case "INTELLECT" => Intellect

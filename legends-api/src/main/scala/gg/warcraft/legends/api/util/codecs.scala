@@ -27,9 +27,9 @@ object circe {
     enumEncoder[LegendsCombatArchetype]
 
   implicit val attributeDecoder: Decoder[LegendsAttribute] =
-    Decoder.decodeString.emapTry { it => Try { LegendsAttribute.parseName(it) } }
+    Decoder.decodeString.emapTry { it => Try { LegendsAttribute.valueOf(it) } }
   implicit val attributeKeyDecoder: KeyDecoder[LegendsAttribute] =
-    KeyDecoder.instance(it => Some(LegendsAttribute.parseName(it)))
+    KeyDecoder.instance(it => Some(LegendsAttribute.valueOf(it)))
   implicit val attributeEncoder: Encoder[LegendsAttribute] =
     Encoder.encodeString.contramap { _.name }
 
@@ -48,9 +48,9 @@ object circe {
     enumEncoder[EquipmentType]
 
   implicit val itemRarityDecoder: Decoder[ItemRarity] =
-    Decoder.decodeString.emapTry { it => Try { ItemRarity.parseName(it) } }
+    Decoder.decodeString.emapTry { it => Try { ItemRarity.valueOf(it) } }
   implicit val itemRarityKeyDecoder: KeyDecoder[ItemRarity] =
-    KeyDecoder.instance(it => Some(ItemRarity.parseName(it)))
+    KeyDecoder.instance(it => Some(ItemRarity.valueOf(it)))
   implicit val itemRarityEncoder: Encoder[ItemRarity] =
     Encoder.encodeString.contramap { _.name }
 }

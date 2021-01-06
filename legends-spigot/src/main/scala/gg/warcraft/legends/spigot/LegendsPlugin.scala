@@ -29,7 +29,9 @@ import gg.warcraft.legends.api.core.leaderboard.handler.{
   LeaderboardRewardHandler, LeaderboardUpdateHandler
 }
 import gg.warcraft.legends.api.core.spawn.ReturnToSpawnCommand
-import gg.warcraft.legends.api.entity.attribute.EquipmentAttributeHandler
+import gg.warcraft.legends.api.entity.attribute.{
+  EquipmentAttributeHandler, LegendsAttribute
+}
 import gg.warcraft.legends.api.item.crate.LootCrateUseHandler
 import gg.warcraft.legends.api.item.crate.reward.{
   LoginRewardHandler, LoginRewardRepository, PostgresLoginRewardRepository,
@@ -62,17 +64,21 @@ import gg.warcraft.legends.api.shop.profile.{
   PostgresUnlockedShopItemRepository, ShopProfileCacheHandler,
   SqliteUnlockedShopItemRepository, UnlockedShopItemRepository
 }
+import gg.warcraft.legends.api.util.circe._
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
 import gg.warcraft.legends.spigot.core._
+import gg.warcraft.monolith.api.block.variant.ChestVariant
 import gg.warcraft.monolith.api.core.Codecs.Circe._
-import gg.warcraft.monolith.api.core.DatabaseConfig
 import gg.warcraft.monolith.api.core.Duration.DurationOps
+import gg.warcraft.monolith.api.core.{ColorCode, DatabaseConfig}
+import gg.warcraft.monolith.api.entity.team.Team
+import gg.warcraft.monolith.api.entity.{Entity, Equipment}
 import gg.warcraft.monolith.api.item.ItemTypeOrVariant
 import gg.warcraft.monolith.spigot.SpigotMonolithPlugin
 import gg.warcraft.monolith.spigot.implicits._
-import io.circe.Decoder
 import io.circe.generic.auto._
+import io.circe.{Decoder, KeyDecoder}
 import org.bukkit.configuration.file.YamlConfiguration
 
 import java.io.File
@@ -88,17 +94,30 @@ class LegendsPlugin extends SpigotMonolithPlugin {
   }
 
   override def onEnable(): Unit = {
-    // TODO parse config implicits
-    val config = parseConfig[LegendsConfig](getConfig.saveToString())
-    implicit val itemTypeVariantDecoder: Decoder[ItemTypeOrVariant] = itemDataDecoder
+    // Config
+    implicit val chestDec: Decoder[ChestVariant] = enumDecoder(ChestVariant.valueOf)
+    implicit val colorCodeDec: Decoder[ColorCode] = enumDecoder(ColorCode.valueOf)
+    implicit val itemDataDec: Decoder[ItemTypeOrVariant] = itemDataDecoder
+    implicit val teamDec: Decoder[Team] = teamDecoder
 
-    // TODO parse equipment config implicits
+    val config = parseConfig[LegendsConfig](getConfig.saveToString())
+
+    // Config: equipment
     val equipConfigPath =
       new File(s"${getDataFolder.getAbsolutePath}${File.separator}equipment.yml")
     val equipConfigFile = YamlConfiguration.loadConfiguration(equipConfigPath)
     val equipConfig = parseConfig[EquipmentConfig](equipConfigFile.saveToString())
 
-    // TODO parse shop config implicits
+    // Config: shop
+    implicit val equipSlotDecoder: Decoder[Equipment.Slot] =
+      anyDecoder(Equipment.withName)
+    implicit val attributeDecoder: Decoder[LegendsAttribute] =
+      anyDecoder(LegendsAttribute.valueOf)
+    implicit val attributeKeyDecoder: KeyDecoder[LegendsAttribute] =
+      anyKeyDecoder(LegendsAttribute.valueOf)
+    implicit val entityTypDecoder: Decoder[Entity.Type] =
+      anyDecoder(Entity.Type.withName)
+
     val shopConfigPath =
       new File(s"${getDataFolder.getAbsolutePath}${File.separator}shop.yml")
     val shopConfigFile = YamlConfiguration.loadConfiguration(shopConfigPath)

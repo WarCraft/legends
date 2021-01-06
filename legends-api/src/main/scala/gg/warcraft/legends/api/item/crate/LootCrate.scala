@@ -7,6 +7,7 @@
 package gg.warcraft.legends.api.item.crate
 
 import gg.warcraft.legends.api.item.ItemRarity
+import gg.warcraft.legends.api.item.ItemRarity._
 import gg.warcraft.monolith.api.block.variant.ChestVariant
 import gg.warcraft.monolith.api.item.Chest
 
@@ -28,15 +29,14 @@ class LootCrate(
       true
     ) {
   val dropTablesMap: SortedMap[Float, LootCrate.DropTable] = {
-    var chance = 0f
+    var totalChance = 0f
     var map = TreeMap.empty[Float, LootCrate.DropTable]
     dropTables.foreach { it =>
-      map += ((chance + it.chance) -> it)
-      chance += it.chance
+      map += ((totalChance + it.chance) -> it)
+      totalChance += it.chance
     }
     map
   }
-
 }
 
 object LootCrate {
@@ -55,18 +55,18 @@ object LootCrate {
   case class DropTable(
       typ: DropType,
       chance: Float,
-      distribution: List[(ItemRarity, Float)]
+      distribution: Map[ItemRarity, Float]
   ) {
     val distributionMap: SortedMap[Float, ItemRarity] = {
-      var chance = 0f
+      var totalChance = 0f
       var map = TreeMap.empty[Float, ItemRarity]
-      distribution.foreach { it =>
-        map += ((chance + it._2) -> it._1)
-        chance += it._2
+      (Common :: Rare :: Epic :: Legendary :: Nil).foreach { rarity =>
+        val chance = distribution(rarity)
+        map += ((totalChance + chance) -> rarity)
+        totalChance += chance
       }
       map
     }
-
   }
 
   private[crate] final val tooltip: List[String] = List(
