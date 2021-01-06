@@ -1,251 +1,27 @@
-#world: world # TODO set this back to Ouros on live
-#spawn:
-#  x: 0
-#  y: 0
-#  z: 0
-#
-#shutdown-message: "The server is going down for maintenance, please check http://warcraft.gg for updates."
-#tips:
-#  - "Any feedback? Please let us know at discord.warcraft.gg!"
-#  - "'/monolith' and '/menu' open your personal Monolith Menu!"
-#  - "The splinter in the back of your '/menu' returns you to spawn!"
-#  - "'/return' and '/spawn' return you to spawn!"
-#
-#  - "You will earn rewards every '/vote' you cast for WarCraft!"
-#- "You can claim your rewards from voting in the '/donator' menu!"
+challenges: []
 
-#  - "Low on food? Follow the signs to a farm!"
-#  - "Need gear? Follow the signs to a mob camp!"
-#  - "Get a group together and capture an enemy objective!"
-#  - "To read the server guides visit http://community.warcraft.gg/c/legends/guides"
 
-#- "'/me' and '/pc' open your Player Menu!"
-#- "Shift right-clicking someone will bring up their Player Menu!"
-#- "'/inspect <MC or RP name>' will bring up anyone's Player Menu at any time!"
-#- "'/help' and '/?' open the Help Menu!"
-#- "'/manual' and '/man' open the Server Manual!"  <----
-#- "'/command' and '/cmd' open the Command List!"  <----
-#- "'/staff' opens the Online Staff List!"         <----
+dailyRewards: []
 
-#- "You can emote while talking by enclosing the emote in *asterisks*!"
-#- "You can emote by starting your message with an *asterisk!"
-#- "You can talk while emoting by enclosing your speech in \"quotations\"!"
-#- "You can silently emote by starting your message with two **asterisks!"
-#- "You can let The Titans decide your fate using '/roll'!"
-#- "You can roll higher than 20 using '/roll <range>'!"
-#- "You can talk in the Help Channel via '/help <text>'!"
-#- "You can make the Help Channel your home channel via '/h'!"
 
-#- "You can adjust your walking speed via '/speed <1-10>'!"
-#- "You can lie down on the floor via '/lie'!"
-#- "You can sit with two people on the same horse!"
+leaderboards:
+  leaderboards: []
+  dailyPrizes: []
+  monthlyPrizes: []
 
-skirmishTimes:
-  - 2 # UTC = 21 NYT
-  - 20 # UTC = 15 NYT
-  - 23 # UTC = 18 NYT
 
-challenges:
-  # dailies
-  - id: DAILY_KILLS
-    statisticId: DAILY_KILLS
-    name: Daily Kills
-    description:
-    requirement: 5
-    reward: 75
-  - id: DAILY_DAMAGE
-    statisticId: DAILY_DAMAGE
-    name: Daily Damage Done
-    description:
-    requirement: 250
-    reward: 75
-  - id: DAILY_FORTS
-    name: Daily Forts Captured
-    description:
-    requirement: 1
-    reward: 75
-  - id: DAILY_STRONGHOLDS
-    statisticId: DAILY_STRONGHOLDS
-    name: Daily Strongholds Captured
-    description:
-    requirement: 1
-    reward: 150
-  - id: DAILY_GOLD
-    statisticId: DAILY_GOLD
-    name: Daily Gold Gained
-    description:
-    requirement: 150
-    reward: 75
-  - id: DAILY_FAVOR
-    statisticId: DAILY_FAVOR
-    name: Daily Favor Gained
-    description:
-    requirement: 300
-    reward: 75
-  - id: DAILY_PLAYTIME
-    statisticId: DAILY_PLAYTIME
-    name: Daily Time Played
-    description:
-    requirement: 15
-    reward: 75
-  - id: DAILY_MOBS
-    statisticId: DAILY_MOBS
-    name: Daily Mobs Killed
-    description:
-    requirement: 10
-    reward: 75
-  - id: DAILY_RESOURCES
-    statisticId: DAILY_RESOURCES
-    name: Daily Resources Gathered
-    description:
-    requirement: 15
-    reward: 75
-  - id: DAILY_CRATES
-    statisticId: DAILY_CRATES
-    name: Daily Crates Opened
-    description:
-    requirement: 3
-    reward: 75
+levels: []
 
-  # monthlies
-  - id: MONTHLY_KILLS
-    statisticId: MONTHLY_KILLS
-    name: Monthly Kills
-    description:
-    requirement: 50
-    reward: 500
-  - id: MONTHLY_DAMAGE
-    statisticId: MONTHLY_DAMAGE
-    name: Monthly Damage Done
-    description:
-    requirement: 2500
-    reward: 500
-  - id: MONTHLY_FORTS
-    statisticId: MONTHLY_FORTS
-    name: Monthly Forts Captured
-    description:
-    requirement: 10
-    reward: 500
-  - id: MONTHLY_STRONGHOLDS
-    statisticId: MONTHLY_STRONGHOLDS
-    name: Monthly Strongholds Captured
-    description:
-    requirement: 10
-    reward: 750
-  - id: MONTHLY_GOLD
-    statisticId: MONTHLY_GOLD
-    name: Monthly Gold Gained
-    description:
-    requirement: 1500
-    reward: 500
-  - id: MONTHLY_FAVOR
-    statisticId: MONTHLY_FAVOR
-    name: Monthly Favor Gained
-    description:
-    requirement: 3000
-    reward: 500
-  - id: MONTHLY_PLAYTIME
-    statisticId: MONTHLY_PLATIME
-    name: Monthly Time Played
-    description:
-    requirement: 150
-    reward: 500
-  - id: MONTHLY_MOBS
-    statisticId: MONTHLY_MOBS
-    name: Monthly Mobs Killed
-    description:
-    requirement: 100
-    reward: 500
-  - id: MONTHLY_RESOURCES
-    statisticId: MONTHLY_RESOURCES
-    name: Monthly Resources Gathered
-    description:
-    requirement: 150
-    reward: 500
-  - id: MONTHLY_CRATES
-    statisticId: MONTHLY_CRATES
-    name: Monthly Crates Opened
-    description:
-    requirement: 30
-    reward: 500
 
-dailyRewards:
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "LEGEND_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "LEGEND_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 2 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 2 }
-  - { crate: "WAR_CRATE", count: 1 }
-  - { crate: "WAR_CRATE", count: 2 }
-  - { crate: "LEGEND_CRATE", count: 2 }
-  - { crate: "WAR_CRATE", count: 2 }
-  - { crate: "WAR_CRATE", count: 2 }
-  - { crate: "WAR_CRATE", count: 2 }
-  - { crate: "WAR_CRATE", count: 2 }
-  - { crate: "WAR_CRATE", count: 2 }
-  - { crate: "WAR_CRATE", count: 2 }
-  - { crate: "TITAN_CRATE", count: 1 }
+lootCrates: []
 
-levels:
-  - { value: 1, color: WHITE, requiredFavor: 0, rewards: [] }
-  - { value: 2, color: WHITE, requiredFavor: 1000, rewards: [] }
-  - { value: 3, color: WHITE, requiredFavor: 2000, rewards: [] }
-  - { value: 4, color: WHITE, requiredFavor: 3000, rewards: [] }
-  - { value: 5, color: WHITE, requiredFavor: 4000, rewards: [] }
-  - { value: 6, color: WHITE, requiredFavor: 5000, rewards: [] }
-  - { value: 7, color: WHITE, requiredFavor: 6000, rewards: [] }
-  - { value: 8, color: WHITE, requiredFavor: 7000, rewards: [] }
-  - { value: 9, color: WHITE, requiredFavor: 8000, rewards: [] }
-  - { value: 10, color: WHITE, requiredFavor: 9000, rewards: [] }
-  - { value: 11, color: WHITE, requiredFavor: 11000, rewards: [] }
-  - { value: 12, color: WHITE, requiredFavor: 13000, rewards: [] }
-  - { value: 13, color: WHITE, requiredFavor: 15000, rewards: [] }
-  - { value: 14, color: WHITE, requiredFavor: 17000, rewards: [] }
-  - { value: 15, color: WHITE, requiredFavor: 19000, rewards: [] }
-  - { value: 16, color: WHITE, requiredFavor: 21000, rewards: [] }
-  - { value: 17, color: WHITE, requiredFavor: 23000, rewards: [] }
-  - { value: 18, color: WHITE, requiredFavor: 25000, rewards: [] }
-  - { value: 19, color: WHITE, requiredFavor: 27000, rewards: [] }
-  - { value: 20, color: WHITE, requiredFavor: 29000, rewards: [] }
-  - { value: 21, color: WHITE, requiredFavor: 33000, rewards: [] }
-  - { value: 22, color: WHITE, requiredFavor: 37000, rewards: [] }
-  - { value: 23, color: WHITE, requiredFavor: 41000, rewards: [] }
-  - { value: 24, color: WHITE, requiredFavor: 45000, rewards: [] }
-  - { value: 25, color: WHITE, requiredFavor: 49000, rewards: [] }
-  - { value: 26, color: WHITE, requiredFavor: 53000, rewards: [] }
-  - { value: 27, color: WHITE, requiredFavor: 57000, rewards: [] }
-  - { value: 28, color: WHITE, requiredFavor: 61000, rewards: [] }
-  - { value: 29, color: WHITE, requiredFavor: 65000, rewards: [] }
-  - { value: 30, color: WHITE, requiredFavor: 69000, rewards: [] }
-  - { value: 31, color: WHITE, requiredFavor: 77000, rewards: [] }
-  - { value: 32, color: WHITE, requiredFavor: 85000, rewards: [] }
-  - { value: 33, color: WHITE, requiredFavor: 93000, rewards: [] }
-  - { value: 34, color: WHITE, requiredFavor: 101000, rewards: [] }
-  - { value: 35, color: WHITE, requiredFavor: 109000, rewards: [] }
-  - { value: 36, color: WHITE, requiredFavor: 117000, rewards: [] }
-  - { value: 37, color: WHITE, requiredFavor: 125000, rewards: [] }
-  - { value: 38, color: WHITE, requiredFavor: 133000, rewards: [] }
-  - { value: 39, color: WHITE, requiredFavor: 141000, rewards: [] }
-  - { value: 41, color: WHITE, requiredFavor: 149000, rewards: [] }
-  - { value: 42, color: WHITE, requiredFavor: 165000, rewards: [] }
-  - { value: 43, color: WHITE, requiredFavor: 181000, rewards: [] }
-  - { value: 44, color: WHITE, requiredFavor: 197000, rewards: [] }
-  - { value: 45, color: WHITE, requiredFavor: 213000, rewards: [] }
-  - { value: 46, color: WHITE, requiredFavor: 229000, rewards: [] }
-  - { value: 47, color: WHITE, requiredFavor: 245000, rewards: [] }
-  - { value: 48, color: WHITE, requiredFavor: 261000, rewards: [] }
-  - { value: 49, color: WHITE, requiredFavor: 277000, rewards: [] }
-  - { value: 50, color: WHITE, requiredFavor: 293000, rewards: [] }
+
+objectiveCaptureRewards: {}
+objectiveDefaultOccupiers: {}
+objectiveTallyPoints: {}
+
+playerKillFavor: 0
+mobKillFavor: 0
+eliteMobKillFavor: 0
+
+skirmishTimes: []
