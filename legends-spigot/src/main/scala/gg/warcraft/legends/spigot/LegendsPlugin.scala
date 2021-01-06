@@ -54,10 +54,6 @@ import gg.warcraft.legends.api.player.level.handler.{
   PlayerLevelUpHandler, PlayerLeveledUpHandler
 }
 import gg.warcraft.legends.api.player.statistic.handler._
-import gg.warcraft.legends.api.player.statistic.{
-  PostgresStatisticArchiveRepository, SqliteStatisticArchiveRepository,
-  StatisticArchiveRepository
-}
 import gg.warcraft.legends.api.shop._
 import gg.warcraft.legends.api.shop.handler.{
   MiniPetSpawnHandler, ShopItemRotateHandler
@@ -138,7 +134,6 @@ class LegendsPlugin extends SpigotMonolithPlugin {
       ChallengeRepository,
       LoginRewardRepository,
       LegendsPlayerDataRepository,
-      StatisticArchiveRepository,
       AvailableShopItemRepository,
       UnlockedShopItemRepository
   ) =
@@ -149,7 +144,6 @@ class LegendsPlugin extends SpigotMonolithPlugin {
         new SqliteChallengeRepository(sqliteConfig),
         new SqliteLoginRewardRepository(sqliteConfig),
         new SqliteLegendsPlayerDataRepository(sqliteConfig),
-        new SqliteStatisticArchiveRepository(sqliteConfig),
         new SqliteAvailableShopItemRepository(sqliteConfig),
         new SqliteUnlockedShopItemRepository(sqliteConfig)
       )
@@ -160,7 +154,6 @@ class LegendsPlugin extends SpigotMonolithPlugin {
         new PostgresChallengeRepository(postgresConfig),
         new PostgresLoginRewardRepository(postgresConfig),
         new PostgresLegendsPlayerDataRepository(postgresConfig),
-        new PostgresStatisticArchiveRepository(postgresConfig),
         new PostgresAvailableShopItemRepository(postgresConfig),
         new PostgresUnlockedShopItemRepository(postgresConfig)
       )
