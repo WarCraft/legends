@@ -101,25 +101,13 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     implicit val colorCodeDec: Decoder[ColorCode] = enumDecoder(ColorCode.valueOf)
     implicit val itemDataDec: Decoder[ItemTypeOrVariant] = itemDataDecoder
     implicit val teamDec: Decoder[Team] = teamDecoder
+    implicit val teamKeyDec: KeyDecoder[Team] = teamKeyDecoder
 
     val config = parseConfig[LegendsConfig](getConfig.saveToString())
 
     // Config: equipment
-    implicit val archetypKeyDec: KeyDecoder[LegendsCombatArchetype] =
-      enumKeyDecoder(LegendsCombatArchetype.valueOf)
     implicit val combatClassKeyDecoder: KeyDecoder[CombatCombatClass] =
       anyKeyDecoder(combatClassService.combatClasses)
-    implicit val teamKeyDec: KeyDecoder[Team] = teamKeyDecoder
-    implicit val equipTypDec: Decoder[EquipmentType] =
-      enumDecoder(EquipmentType.valueOf)
-    implicit val equipTypKeyDec: KeyDecoder[EquipmentType] =
-      enumKeyDecoder(EquipmentType.valueOf)
-    implicit val attrDistroKeyDec: KeyDecoder[AttributeDistribution] =
-      enumKeyDecoder(AttributeDistribution.valueOf)
-    implicit val attributeDecoder: Decoder[LegendsAttribute] =
-      anyDecoder(LegendsAttribute.valueOf)
-    implicit val attributeKeyDecoder: KeyDecoder[LegendsAttribute] =
-      anyKeyDecoder(LegendsAttribute.valueOf)
 
     val equipConfigPath =
       new File(s"${getDataFolder.getAbsolutePath}${File.separator}equipment.yml")
