@@ -83,6 +83,8 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
   override def onLoad(): Unit = {
     super.onLoad()
+    saveResource("equipment.yml", false)
+    saveResource("shop.yml", false)
     implicits.init()
   }
 
