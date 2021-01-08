@@ -8,11 +8,13 @@ package gg.warcraft.legends.api.shop
 
 import gg.warcraft.legends.api.item.ItemRarity
 
+import java.util.logging.Logger
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Random
 
 class ShopService(implicit
-    availableShopItemRepository: AvailableShopItemRepository
+    availableShopItemRepository: AvailableShopItemRepository,
+    logger: Logger
 ) {
   private final val premiumTypes: List[ShopItem.Type] =
     ShopItem.CombatClass :: ShopItem.DecorationPack :: ShopItem.MiniPet :: Nil
@@ -50,6 +52,11 @@ class ShopService(implicit
   }
 
   private[shop] def rotateAvailable(): Unit = {
+    if (itemsByRarity.isEmpty) {
+      logger.warning("No shop items are configured, skipping shop rotation!")
+      return
+    }
+
     val filler = (1 to 6).map { _ =>
       val list = itemsByRarity(randomFillerType)(randomFillerRarity)
       list(Random.nextInt(list.size))
