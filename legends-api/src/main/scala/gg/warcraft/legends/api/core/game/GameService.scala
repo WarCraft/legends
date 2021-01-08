@@ -36,9 +36,9 @@ class GameService(implicit
 
   private var _config: LegendsConfig = _
 
-  private var _activeWar: Option[Game] = _
+  private var _activeWar: Option[Game] = None
   def activeWar: Option[Game] = _activeWar
-  private var _activeSkirmish: Option[Game] = _
+  private var _activeSkirmish: Option[Game] = None
   def activeSkirmish: Option[Game] = _activeSkirmish
 
   private def activeGame_=(game: Game): Unit =
