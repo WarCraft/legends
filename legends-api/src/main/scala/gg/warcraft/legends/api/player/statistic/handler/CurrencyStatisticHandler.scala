@@ -29,5 +29,6 @@ class CurrencyStatisticHandler(implicit
         case Favor => increaseStatistics(favorStatistics, amount, player.id)
         case _     =>
       }
+    case _ =>
   }
 }
