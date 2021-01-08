@@ -54,6 +54,11 @@ class ChallengeService(implicit
   }
 
   def rotateDailies(): Unit = {
+    if (dailies.isEmpty) {
+      logger.warning("No daily challenges are configured, skipping daily rotation!")
+      return
+    }
+
     _activeDailies = Nil
     repository.deleteActiveDailies().onComplete {
       case Success(_) =>
@@ -65,6 +70,13 @@ class ChallengeService(implicit
   }
 
   def rotateMonthlies(): Unit = {
+    if (monthlies.isEmpty) {
+      logger.warning(
+        "No monthly challenges are configured, skipping monthly rotation!"
+      )
+      return
+    }
+
     _activeMonthlies = Nil
     repository.deleteActiveMonthlies().onComplete {
       case Success(_) =>

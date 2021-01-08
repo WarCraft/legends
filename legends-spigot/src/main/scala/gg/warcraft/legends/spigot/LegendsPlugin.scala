@@ -90,7 +90,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
   override def onEnable(): Unit = {
     import gg.warcraft.combat.api.util.codecs.combat._
-    import gg.warcraft.legends.api.util.codecs.legends._
+    import gg.warcraft.legends.api.util.codecs.legends.{challengeDecoder => _, _}
     import gg.warcraft.monolith.api.util.codecs.circe._
     import gg.warcraft.monolith.api.util.codecs.monolith._
     implicit val chestDecoder: String => ChestVariant = ChestVariant.valueOf
