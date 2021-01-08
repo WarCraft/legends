@@ -6,9 +6,9 @@
 
 package gg.warcraft.legends.spigot
 
-import gg.warcraft.combat.api.combatclass.{CombatClass => CombatCombatClass}
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.LegendsConfig
+import gg.warcraft.legends.api.combat.CombatConfig
 import gg.warcraft.legends.api.combat.hunter.marksman.{
   FocusCancelHandler, SneakCancelHandler
 }
@@ -18,7 +18,6 @@ import gg.warcraft.legends.api.combat.hunter.{
 }
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.combat.passive.PassiveAssignmentHandler
-import gg.warcraft.legends.api.combat.{CombatConfig, LegendsCombatArchetype}
 import gg.warcraft.legends.api.core.game.handler.{
   DailySkirmishHandler, GameRewardHandler, GameTickHandler
 }
@@ -30,9 +29,7 @@ import gg.warcraft.legends.api.core.leaderboard.handler.{
   LeaderboardRewardHandler, LeaderboardUpdateHandler
 }
 import gg.warcraft.legends.api.core.spawn.ReturnToSpawnCommand
-import gg.warcraft.legends.api.entity.attribute.{
-  EquipmentAttributeHandler, LegendsAttribute
-}
+import gg.warcraft.legends.api.entity.attribute.EquipmentAttributeHandler
 import gg.warcraft.legends.api.item.crate.LootCrateUseHandler
 import gg.warcraft.legends.api.item.crate.reward.{
   LoginRewardHandler, LoginRewardRepository, PostgresLoginRewardRepository,
@@ -40,7 +37,6 @@ import gg.warcraft.legends.api.item.crate.reward.{
 }
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeUseHandler
-import gg.warcraft.legends.api.item.equipment.{AttributeDistribution, EquipmentType}
 import gg.warcraft.legends.api.menu.MenuConfig
 import gg.warcraft.legends.api.player.challenge.handler.{
   ChallengeCompletionHandler, ChallengeRotateHandler
@@ -66,21 +62,16 @@ import gg.warcraft.legends.api.shop.profile.{
   PostgresUnlockedShopItemRepository, ShopProfileCacheHandler,
   SqliteUnlockedShopItemRepository, UnlockedShopItemRepository
 }
-import gg.warcraft.legends.api.util.circe._
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
 import gg.warcraft.legends.spigot.core._
 import gg.warcraft.monolith.api.block.variant.ChestVariant
-import gg.warcraft.monolith.api.core.Codecs.Circe._
+import gg.warcraft.monolith.api.core.DatabaseConfig
 import gg.warcraft.monolith.api.core.Duration.DurationOps
-import gg.warcraft.monolith.api.core.{ColorCode, DatabaseConfig}
-import gg.warcraft.monolith.api.entity.team.Team
 import gg.warcraft.monolith.api.entity.{Entity, Equipment}
-import gg.warcraft.monolith.api.item.ItemTypeOrVariant
 import gg.warcraft.monolith.spigot.SpigotMonolithPlugin
 import gg.warcraft.monolith.spigot.implicits._
 import io.circe.generic.auto._
-import io.circe.{Decoder, KeyDecoder}
 import org.bukkit.configuration.file.YamlConfiguration
 
 import java.io.File
@@ -96,29 +87,23 @@ class LegendsPlugin extends SpigotMonolithPlugin {
   }
 
   override def onEnable(): Unit = {
+    import gg.warcraft.combat.api.util.codecs.combat._
+    import gg.warcraft.legends.api.util.codecs.legends._
+    import gg.warcraft.monolith.api.util.codecs.circe._
+    import gg.warcraft.monolith.api.util.codecs.monolith._
+    implicit val chestDecoder: String => ChestVariant = ChestVariant.valueOf
     // Config
-    implicit val chestDec: Decoder[ChestVariant] = enumDecoder(ChestVariant.valueOf)
-    implicit val colorCodeDec: Decoder[ColorCode] = enumDecoder(ColorCode.valueOf)
-    implicit val itemDataDec: Decoder[ItemTypeOrVariant] = itemDataDecoder
-    implicit val teamDec: Decoder[Team] = teamDecoder
-    implicit val teamKeyDec: KeyDecoder[Team] = teamKeyDecoder
-
     val config = parseConfig[LegendsConfig](getConfig.saveToString())
 
     // Config: equipment
-    implicit val combatClassKeyDecoder: KeyDecoder[CombatCombatClass] =
-      anyKeyDecoder(combatClassService.combatClasses)
-
     val equipConfigPath =
       new File(s"${getDataFolder.getAbsolutePath}${File.separator}equipment.yml")
     val equipConfigFile = YamlConfiguration.loadConfiguration(equipConfigPath)
     val equipConfig = parseConfig[EquipmentConfig](equipConfigFile.saveToString())
 
     // Config: shop
-    implicit val equipSlotDecoder: Decoder[Equipment.Slot] =
-      anyDecoder(Equipment.withName)
-    implicit val entityTypDecoder: Decoder[Entity.Type] =
-      anyDecoder(Entity.Type.withName)
+    implicit val entityTypeDecoder: String => Entity.Type = Entity.Type.withName
+    implicit val equipSlotDecoder: String => Equipment.Slot = Equipment.withName
 
     val shopConfigPath =
       new File(s"${getDataFolder.getAbsolutePath}${File.separator}shop.yml")
