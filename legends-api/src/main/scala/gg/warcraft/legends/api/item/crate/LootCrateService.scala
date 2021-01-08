@@ -72,6 +72,9 @@ class LootCrateService(implicit
         } else logger.severe(s"${crate.id}'s drop tables do not sum to 100%!'")
       }
 
+  def parseRewards(config: LegendsConfig.RewardConfig): List[LootCrate] =
+    config.map { case (crateId, count) => _crates(crateId).withCount(count) }.toList
+
   private def notifyReceived(playerId: UUID, name: String): Unit = {
     val strippedName = name.stripChatCodes
     val prefix =

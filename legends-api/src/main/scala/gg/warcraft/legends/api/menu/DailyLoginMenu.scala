@@ -46,16 +46,19 @@ object DailyLoginMenu {
       player: Player,
       claimed: LoginRewardsClaimed,
       day: Int,
-      reward: LootCrate
+      rewards: List[LootCrate]
   )(implicit
       loginRewardService: LoginRewardService,
       serverDataService: ServerDataService
   ): Button = {
-    val plural = if (reward.count > 1) "s" else ""
+    val rewardLines = rewards.map { it =>
+      val plural = if (it.count > 1) "s" else ""
+      s"${it.count} ${it.name}$plural"
+    }
     val icon: ItemTypeOrVariant =
       if (claimed.counter >= day) {
         if (day % 7 == 0) GlassVariant.BLACK else GlassVariant.BROWN
-      } else reward.chestVariant
+      } else rewards.head.chestVariant
     val canClaim = serverDataService.today.isAfter(claimed.date) &&
       day == (claimed.counter - 1)
     val claimText =
@@ -64,10 +67,8 @@ object DailyLoginMenu {
     Button(
       icon,
       s"Day $day",
-      s"${reward.count} ${reward.name}$plural",
-      "",
-      claimText
-    ) { _ => if (canClaim) loginRewardService.claimReward(player.id); noop }
+      rewardLines ++ List("", claimText)
+    ) { _ => if (canClaim) loginRewardService.claimReward(player); noop }
   }
 
   def apply(player: Player)(implicit
@@ -92,9 +93,9 @@ object DailyLoginMenu {
       teamService: TeamService
   ): Menu = {
     val claimed = loginRewardService.rewardsClaimed(player.id)
-    val buttons = loginRewardService.rewards.map { case (day, reward) =>
+    val buttons = loginRewardService.rewards.map { case (day, rewards) =>
       val slot = day + (1 + (day - 1) / 7) * 2
-      slot -> rewardButton(player, claimed, day, reward)
+      slot -> rewardButton(player, claimed, day, rewards)
     }
     Menu(
       "Login Rewards",

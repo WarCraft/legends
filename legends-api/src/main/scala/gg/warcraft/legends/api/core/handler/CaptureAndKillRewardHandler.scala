@@ -29,6 +29,11 @@ class CaptureAndKillRewardHandler(config: LegendsConfig)(implicit
   private val killFavor = config.playerKillFavor
   private val killMessage = Message.server(s"You gained $killFavor Favor.")
 
+  private val rewards =
+    config.objectiveCaptureRewards.map { case (objective, rewards) =>
+      objective -> lootCrateService.parseRewards(rewards)
+    }
+
   override def handle(event: Event): Unit = event match {
     case EntityFatalDamageEvent(entity: Player, _) =>
       val attackers = entity.combatData.attackedBy.toList
@@ -49,15 +54,15 @@ class CaptureAndKillRewardHandler(config: LegendsConfig)(implicit
         attackerIds.foreach { playerService.sendMessage(_, message) }
       }
 
-      config.objectiveCaptureRewards.get(objective.id) match {
-        case Some(crates) =>
-          val crate = lootCrateService.crates(crates.crate).withCount(crates.count)
-          val message =
-            if (crates.count == 1) Message.server(s"You received 1 ${crate.name}.")
-            else Message.server(s"You received ${crate.count} ${crate.name}s.")
-          attackerIds.foreach { attackerId =>
-            itemService.giveTo(attackerId, crate)
-            playerService.sendMessage(attackerId, message)
+      rewards.get(objective.id) match {
+        case Some(crates) => crates.foreach { crate =>
+            val message =
+              if (crate.count == 1) Message.server(s"You received 1 ${crate.name}.")
+              else Message.server(s"You received ${crate.count} ${crate.name}s.")
+            attackerIds.foreach { attackerId =>
+              itemService.giveTo(attackerId, crate)
+              playerService.sendMessage(attackerId, message)
+            }
           }
         case None =>
       }

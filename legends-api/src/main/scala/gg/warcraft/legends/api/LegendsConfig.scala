@@ -18,12 +18,12 @@ case class LegendsConfig(
     database: DatabaseConfig,
     // Legends
     challenges: List[Challenge],
-    dailyRewards: List[Map[LootCrate.Id, Int]],
+    dailyRewards: List[LegendsConfig.RewardConfig],
     leaderboards: LeaderboardsConfig,
     levels: List[Level],
     lootCrates: List[LootCrate.Config],
     // Siege
-    objectiveCaptureRewards: Map[String, Map[LootCrate.Id, Int]],
+    objectiveCaptureRewards: Map[String, LegendsConfig.RewardConfig],
     objectiveDefaultOccupiers: Map[String, Team],
     objectiveTallyPoints: Map[String, Int],
     playerKillFavor: Int,
@@ -43,3 +43,7 @@ case class LeaderboardConfig(
     name: String,
     description: String
 )
+
+object LegendsConfig {
+  type RewardConfig = Map[LootCrate.Id, Int]
+}

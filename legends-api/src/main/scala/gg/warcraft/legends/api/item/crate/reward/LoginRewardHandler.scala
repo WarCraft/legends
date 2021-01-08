@@ -7,7 +7,9 @@
 package gg.warcraft.legends.api.item.crate.reward
 
 import gg.warcraft.monolith.api.core.event.{Event, PreEvent}
-import gg.warcraft.monolith.api.player.{PlayerDisconnectEvent, PlayerPreConnectEvent}
+import gg.warcraft.monolith.api.player.{
+  PlayerConnectEvent, PlayerDisconnectEvent, PlayerPreConnectEvent
+}
 
 class LoginRewardHandler(implicit
     service: LoginRewardService
@@ -19,6 +21,7 @@ class LoginRewardHandler(implicit
   }
 
   override def handle(event: Event): Unit = event match {
+    case PlayerConnectEvent(player)    => service.claimReward(player)
     case PlayerDisconnectEvent(player) => service.invalidateRewardsClaimed(player.id)
     case _                             =>
   }
