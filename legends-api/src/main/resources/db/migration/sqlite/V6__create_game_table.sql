@@ -1,6 +1,6 @@
 CREATE TABLE player_data
 (
-    id            BIGINT PRIMARY KEY AUTOINCREMENT,
+    id            INTEGER     NOT NULL PRIMARY KEY AUTOINCREMENT,
     start_time    VARCHAR(32) NOT NULL,
     end_time      VARCHAR(32),
     timer         SMALLINT    NOT NULL,
