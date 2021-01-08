@@ -1,10 +1,9 @@
 lazy val commonSettings = Seq(
   organization := "gg.warcraft",
   version := "15.0.0-SNAPSHOT",
-  scalaVersion := "2.13.2",
+  scalaVersion := "2.13.4",
   scalacOptions ++= Seq(
-    "-language:implicitConversions",
-    "-target:jvm-1.8"
+    "-language:implicitConversions"
   ),
   resolvers ++= Seq(
     Resolver.mavenLocal
@@ -22,20 +21,18 @@ lazy val assemblySettings = Seq(
   }
 )
 
-lazy val commonDependencies = Seq(
-  "org.scalatest" %% "scalatest" % "3.0.8" % Test
-)
-
 lazy val api = (project in file("legends-api"))
   .settings(
     name := "legends-api",
     commonSettings,
-    libraryDependencies ++= commonDependencies ++ Seq(
+    libraryDependencies ++= Seq(
       "gg.warcraft" %% "monolith-api" % "15.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "chat-api" % "15.0.0-SNAPSHOT" % Provided,
       // "gg.warcraft" %% "gathering-api" % "15.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "combat-api" % "15.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "siege-api" % "15.0.0-SNAPSHOT" % Provided
+    ) ++ Seq(
+      "org.scalatest" %% "scalatest" % "3.2.+" % Test
     )
   )
 
@@ -50,14 +47,14 @@ lazy val spigot = (project in file("legends-spigot"))
       "ProtocolLib" at "https://repo.dmulloy2.net/nexus/repository/public/",
       "Votifier" at "https://dl.bintray.com/ichbinjoe/public/"
     ),
-    libraryDependencies ++= commonDependencies ++ Seq(
+    libraryDependencies ++= Seq(
       "com.destroystokyo.paper" % "paper-api" % "1.15.2-R0.1-SNAPSHOT" % Provided,
       "gg.warcraft" %% "monolith-spigot" % "15.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "chat-spigot" % "15.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "combat-spigot" % "15.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "siege-spigot" % "15.0.0-SNAPSHOT" % Provided,
-      "LibsDisguises" % "LibsDisguises" % "10.0.12" % Provided intransitive (),
-      "com.vexsoftware" % "nuvotifier-universal" % "2.6.0" % Provided
+      "LibsDisguises" % "LibsDisguises" % "10.0.+" % Provided intransitive (),
+      "com.vexsoftware" % "nuvotifier-universal" % "2.6.+" % Provided
     )
   )
   .dependsOn(api)
