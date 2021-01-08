@@ -270,9 +270,16 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     subscribe(new SpigotCraftPreventionHandler)
     subscribe(new SpigotDroppedItemHandler)
     subscribe(new SpigotFurnaceCoalHandler)
-    subscribe(new SpigotVotifierEventHandler)
     // TODO subscribe(new SpigotKeepInventoryHandler)
     subscribe(new TempArmorStandHandler)
+
+    if (_server.getPluginManager.isPluginEnabled("Votifier")) {
+      subscribe(new SpigotVotifierEventHandler)
+    } else {
+      _logger.warning(
+        "Could not register votifier event handler, dependency is missing!"
+      )
+    }
   }
 
   private def enableTasks(config: LegendsConfig): Unit = {
