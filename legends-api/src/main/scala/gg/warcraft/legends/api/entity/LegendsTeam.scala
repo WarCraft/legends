@@ -42,5 +42,8 @@ object LegendsTeam {
     def instance(implicit
         teamService: TeamService
     ): Team = teamService.teams(self)
+    def instanceOption(implicit
+        teamService: TeamService
+    ): Option[Team] = teamService.teams.get(self)
   }
 }

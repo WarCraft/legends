@@ -23,7 +23,7 @@ class SpigotVotifierEventHandler(implicit
 ) extends Listener {
   private final val successMessage = Message.server("You received a vote crate.")
 
-  private val voteCrate = lootCrateService.crates("VOTE_CRATE")
+  private lazy val voteCrate = lootCrateService.crates("VOTE_CRATE")
 
   @EventHandler
   def on(event: VotifierEvent): Unit = {

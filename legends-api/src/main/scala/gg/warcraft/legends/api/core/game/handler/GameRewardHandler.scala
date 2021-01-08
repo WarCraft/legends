@@ -23,8 +23,8 @@ class GameRewardHandler(config: LegendsConfig)(implicit
     lootCrateService: LootCrateService,
     gameService: GameService
 ) extends Event.Handler {
-  private val winnerCrate = lootCrateService.crates("WAR_CRATE").withCount(5)
-  private val loserCrate = lootCrateService.crates("WAR_CRATE").withCount(2)
+  private lazy val winnerCrate = lootCrateService.crates("WAR_CRATE").withCount(5)
+  private lazy val loserCrate = lootCrateService.crates("WAR_CRATE").withCount(2)
 
   override def handle(event: Event): Unit = event match {
     case ObjectiveCaptureEvent(objective, attackers, attackerIds)

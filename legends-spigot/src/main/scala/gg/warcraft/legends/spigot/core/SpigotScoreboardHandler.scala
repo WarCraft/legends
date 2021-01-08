@@ -30,16 +30,20 @@ class SpigotScoreboardHandler(config: LegendsConfig)(implicit
     "\\nJoin your team on the WarCraft: Discord at discord.warcraft.gg!"
   private final val textJson = "{\"text\": \"%s\"}"
 
-  private val dwarves = LegendsTeam.Dwarves.instance
-  private val elves = LegendsTeam.Elves.instance
-  private val humans = LegendsTeam.Humans.instance
-  private val orcs = LegendsTeam.Orcs.instance
+  private val dwarves = LegendsTeam.Dwarves.instanceOption
+  private val elves = LegendsTeam.Elves.instanceOption
+  private val humans = LegendsTeam.Humans.instanceOption
+  private val orcs = LegendsTeam.Orcs.instanceOption
 
-  private val factionsHeader =
-    s"${dwarves.chatColor}${dwarves.name} $RESET| " +
-      s"${elves.chatColor}${elves.name} $RESET| " +
-      s"${humans.chatColor}${humans.name} $RESET| " +
-      s"${orcs.chatColor}${orcs.name}"
+  private val factionsHeader = (dwarves, elves, humans, orcs) match {
+    case (Some(dwarves), Some(elves), Some(humans), Some(orcs)) =>
+      s"${dwarves.chatColor}${dwarves.name} $RESET| " +
+        s"${elves.chatColor}${elves.name} $RESET| " +
+        s"${humans.chatColor}${humans.name} $RESET| " +
+        s"${orcs.chatColor}${orcs.name}"
+
+    case _ => "Factions not configured"
+  }
 
   private val warHeader =
     s"""
@@ -90,16 +94,20 @@ class SpigotScoreboardHandler(config: LegendsConfig)(implicit
     else s"$hours hours"
   }
 
-  private def formatNumbers(map: Map[Team, Int]): String = {
-    val dwarvesNumbers = map.getOrElse(dwarves, 0)
-    val elvesNumbers = map.getOrElse(elves, 0)
-    val humansNumbers = map.getOrElse(humans, 0)
-    val orcsNumbers = map.getOrElse(orcs, 0)
-    s"${dwarves.chatColor}$dwarvesNumbers $RESET| " +
-      s"${elves.chatColor}$elvesNumbers $RESET| " +
-      s"${humans.chatColor}$humansNumbers $RESET| " +
-      s"${orcs.chatColor}$orcsNumbers"
-  }
+  private def formatNumbers(map: Map[Team, Int]): String =
+    (dwarves, elves, humans, orcs) match {
+      case (Some(dwarves), Some(elves), Some(humans), Some(orcs)) =>
+        val dwarvesNumbers = map.getOrElse(dwarves, 0)
+        val elvesNumbers = map.getOrElse(elves, 0)
+        val humansNumbers = map.getOrElse(humans, 0)
+        val orcsNumbers = map.getOrElse(orcs, 0)
+        s"${dwarves.chatColor}$dwarvesNumbers $RESET| " +
+          s"${elves.chatColor}$elvesNumbers $RESET| " +
+          s"${humans.chatColor}$humansNumbers $RESET| " +
+          s"${orcs.chatColor}$orcsNumbers"
+
+      case _ => "Factions not configured"
+    }
 
   private def formatScore(game: Game): String =
     formatNumbers(game.monthlyScore)
@@ -108,14 +116,19 @@ class SpigotScoreboardHandler(config: LegendsConfig)(implicit
     formatNumbers(game.dailyPoints)
 
   private def formatObjectives(game: Game): String = {
-    val dwarvesFort = objectiveService.objectives("DWARF_FORT")
-    val elvesFort = objectiveService.objectives("ELF_FORT")
-    val humansFort = objectiveService.objectives("HUMAN_FORT")
-    val orcsFort = objectiveService.objectives("ORC_FORT")
-    s"${dwarvesFort.occupiers.map { _.chatColor }.getOrElse(WHITE)}F $RESET| " +
-      s"${elvesFort.occupiers.map { _.chatColor }.getOrElse(WHITE)}F $RESET| " +
-      s"${humansFort.occupiers.map { _.chatColor }.getOrElse(WHITE)}F $RESET| " +
-      s"${orcsFort.occupiers.map { _.chatColor }.getOrElse(WHITE)}F"
+    val dwarvesFort = objectiveService.objectives.get("DWARF_FORT")
+    val elvesFort = objectiveService.objectives.get("ELF_FORT")
+    val humansFort = objectiveService.objectives.get("HUMAN_FORT")
+    val orcsFort = objectiveService.objectives.get("ORC_FORT")
+    (dwarvesFort, elvesFort, humansFort, orcsFort) match {
+      case (Some(dwarvesFort), Some(elvesFort), Some(humansFort), Some(orcsFort)) =>
+        s"${dwarvesFort.occupiers.map { _.chatColor }.getOrElse(WHITE)}F $RESET| " +
+          s"${elvesFort.occupiers.map { _.chatColor }.getOrElse(WHITE)}F $RESET| " +
+          s"${humansFort.occupiers.map { _.chatColor }.getOrElse(WHITE)}F $RESET| " +
+          s"${orcsFort.occupiers.map { _.chatColor }.getOrElse(WHITE)}F"
+
+      case _ => "Objectives not configured"
+    }
   }
 
   override def run(): Unit = {
