@@ -20,7 +20,6 @@ import scala.util.{Failure, Random, Success}
 
 class ChallengeService(implicit
     repository: ChallengeRepository,
-    challengeService: ChallengeService,
     currencyService: CurrencyService,
     playerService: PlayerService,
     logger: Logger
@@ -47,7 +46,7 @@ class ChallengeService(implicit
       }
     }
 
-    val activeChallenges = repository.loadActive()
+    val activeChallenges = repository.loadActive()(this)
     _activeDailies = activeChallenges.filter { _.isDaily }
     if (_activeDailies.size != 3) rotateDailies()
     _activeMonthlies = activeChallenges.filter { _.isMonthly }

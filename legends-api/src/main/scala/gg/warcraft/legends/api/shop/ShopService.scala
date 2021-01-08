@@ -12,8 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Random
 
 class ShopService(implicit
-    availableShopItemRepository: AvailableShopItemRepository,
-    shopService: ShopService
+    availableShopItemRepository: AvailableShopItemRepository
 ) {
   private final val premiumTypes: List[ShopItem.Type] =
     ShopItem.CombatClass :: ShopItem.DecorationPack :: ShopItem.MiniPet :: Nil
@@ -46,7 +45,7 @@ class ShopService(implicit
     _itemsByRarity = itemsByType
       .map { case (typ, items) => typ -> items.groupBy { _.rarity } }
 
-    _availableItems = availableShopItemRepository.loadAvailable()
+    _availableItems = availableShopItemRepository.loadAvailable()(this)
     if (availableItems == Nil) rotateAvailable()
   }
 
