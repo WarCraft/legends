@@ -7,7 +7,8 @@
 package gg.warcraft.legends.api.shop
 
 import com.typesafe.config.Config
-import gg.warcraft.legends.api.util.quill._
+import gg.warcraft.legends.api.util.codecs.legends._
+import gg.warcraft.monolith.api.util.codecs.quill._
 import io.getquill._
 import io.getquill.context.jdbc.JdbcContext
 import io.getquill.context.sql.idiom.SqlIdiom
@@ -16,7 +17,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait AvailableShopItemRepository {
-  def loadAvailable(): List[ShopItem]
+  def loadAvailable()(implicit
+      shopService: ShopService
+  ): List[ShopItem]
 
   def saveAvailable(items: List[ShopItem]): Future[Unit]
 
@@ -40,16 +43,14 @@ private trait AvailableShopItemContext[I <: SqlIdiom, N <: NamingStrategy] {
 
 private[legends] class PostgresAvailableShopItemRepository(
     config: Config
-)(implicit
-    shopService: ShopService
 ) extends AvailableShopItemRepository {
   private val database = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
     with AvailableShopItemContext[PostgresDialect, SnakeCase]
   import database._
 
-  private implicit val decoder: MappedEncoding[String, ShopItem] = shopItemDecoder
-
-  override def loadAvailable(): List[ShopItem] =
+  override def loadAvailable()(implicit
+      shopService: ShopService
+  ): List[ShopItem] =
     run { queryAvailable(query[AvailableShopItem]) }
 
   override def saveAvailable(items: List[ShopItem]): Future[Unit] = Future {
@@ -68,16 +69,14 @@ private[legends] class PostgresAvailableShopItemRepository(
 
 private[legends] class SqliteAvailableShopItemRepository(
     config: Config
-)(implicit
-    shopService: ShopService
 ) extends AvailableShopItemRepository {
   private val database = new SqliteJdbcContext[SnakeCase](SnakeCase, config)
     with AvailableShopItemContext[SqliteDialect, SnakeCase]
   import database._
 
-  private implicit val decoder: MappedEncoding[String, ShopItem] = shopItemDecoder
-
-  override def loadAvailable(): List[ShopItem] =
+  override def loadAvailable()(implicit
+      shopService: ShopService
+  ): List[ShopItem] =
     run { queryAvailable(query[AvailableShopItem]) }
 
   override def saveAvailable(items: List[ShopItem]): Future[Unit] = Future {

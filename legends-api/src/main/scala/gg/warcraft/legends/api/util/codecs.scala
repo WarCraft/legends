@@ -12,61 +12,46 @@ import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.legends.api.item.equipment.{AttributeDistribution, EquipmentType}
 import gg.warcraft.legends.api.player.challenge.{Challenge, ChallengeService}
 import gg.warcraft.legends.api.shop.{ShopItem, ShopService}
-import gg.warcraft.monolith.api.core.Codecs.Circe._
-import io.circe.{Decoder, Encoder, KeyDecoder}
-import io.getquill.MappedEncoding
 
-import scala.util.Try
+object codecs {
+  object legends {
+    implicit val archetypeDecoder: String => LegendsCombatArchetype =
+      LegendsCombatArchetype.valueOf
+    implicit val archetypeEncoder: LegendsCombatArchetype => String =
+      _.name
 
-object circe {
-  implicit val archetypeDecoder: Decoder[LegendsCombatArchetype] =
-    enumDecoder(LegendsCombatArchetype.valueOf)
-  implicit val archetypeKeyDecoder: KeyDecoder[LegendsCombatArchetype] =
-    KeyDecoder.instance(it => Some(LegendsCombatArchetype.valueOf(it)))
-  implicit val archetypeEncoder: Encoder[LegendsCombatArchetype] =
-    enumEncoder[LegendsCombatArchetype]
+    implicit val attributeDecoder: String => LegendsAttribute =
+      LegendsAttribute.valueOf
+    implicit val attributeEncoder: LegendsAttribute => String =
+      _.name
 
-  implicit val attributeDecoder: Decoder[LegendsAttribute] =
-    Decoder.decodeString.emapTry { it => Try { LegendsAttribute.valueOf(it) } }
-  implicit val attributeKeyDecoder: KeyDecoder[LegendsAttribute] =
-    KeyDecoder.instance(it => Some(LegendsAttribute.valueOf(it)))
-  implicit val attributeEncoder: Encoder[LegendsAttribute] =
-    Encoder.encodeString.contramap { _.name }
+    implicit val attributeDistroDecoder: String => AttributeDistribution =
+      AttributeDistribution.valueOf
+    implicit val attributeDistroEncoder: AttributeDistribution => String =
+      _.name
 
-  implicit val attributeDistroDecoder: Decoder[AttributeDistribution] =
-    enumDecoder(AttributeDistribution.valueOf)
-  implicit val attributeDistroKeyDecoder: KeyDecoder[AttributeDistribution] =
-    KeyDecoder.instance(it => Some(AttributeDistribution.valueOf(it)))
-  implicit val attributeDistroEncoder: Encoder[AttributeDistribution] =
-    enumEncoder[AttributeDistribution]
+    implicit def challengeDecoder(implicit
+        service: ChallengeService
+    ): String => Challenge =
+      service.challengesById
+    implicit val challengeEncoder: Challenge => String =
+      _.id
 
-  implicit val equipmentTypeDecoder: Decoder[EquipmentType] =
-    enumDecoder(EquipmentType.valueOf)
-  implicit val equipmentTypeKeyDecoder: KeyDecoder[EquipmentType] =
-    KeyDecoder.instance(it => Some(EquipmentType.valueOf(it)))
-  implicit val equipmentTypeEncoder: Encoder[EquipmentType] =
-    enumEncoder[EquipmentType]
+    implicit val equipmentTypeDecoder: String => EquipmentType =
+      EquipmentType.valueOf
+    implicit val equipmentTypeEncoder: EquipmentType => String =
+      _.name
 
-  implicit val itemRarityDecoder: Decoder[ItemRarity] =
-    Decoder.decodeString.emapTry { it => Try { ItemRarity.valueOf(it) } }
-  implicit val itemRarityKeyDecoder: KeyDecoder[ItemRarity] =
-    KeyDecoder.instance(it => Some(ItemRarity.valueOf(it)))
-  implicit val itemRarityEncoder: Encoder[ItemRarity] =
-    Encoder.encodeString.contramap { _.name }
-}
+    implicit val itemRarityDecoder: String => ItemRarity =
+      ItemRarity.valueOf
+    implicit val itemRarityEncoder: ItemRarity => String =
+      _.name
 
-object quill {
-  def challengeDecoder(implicit
-      service: ChallengeService
-  ): MappedEncoding[String, Challenge] =
-    MappedEncoding(service.challengesById)
-  implicit lazy val challengeEncoder: MappedEncoding[Challenge, String] =
-    MappedEncoding { _.id }
-
-  def shopItemDecoder(implicit
-      service: ShopService
-  ): MappedEncoding[String, ShopItem] =
-    MappedEncoding(service.itemsById)
-  implicit lazy val shopItemEncoder: MappedEncoding[ShopItem, String] =
-    MappedEncoding { _.id }
+    implicit def shopItemDecoder(implicit
+        service: ShopService
+    ): String => ShopItem =
+      service.itemsById
+    implicit val shopItemEncoder: ShopItem => String =
+      _.id
+  }
 }

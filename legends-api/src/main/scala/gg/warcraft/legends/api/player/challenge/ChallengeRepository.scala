@@ -7,7 +7,8 @@
 package gg.warcraft.legends.api.player.challenge
 
 import com.typesafe.config.Config
-import gg.warcraft.legends.api.util.quill._
+import gg.warcraft.legends.api.util.codecs.legends._
+import gg.warcraft.monolith.api.util.codecs.quill._
 import io.getquill._
 import io.getquill.context.jdbc.JdbcContext
 import io.getquill.context.sql.idiom.SqlIdiom
@@ -17,7 +18,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait ChallengeRepository {
-  def loadActive(): List[Challenge]
+  def loadActive()(implicit
+      service: ChallengeService
+  ): List[Challenge]
 
   def saveActive(challenges: List[Challenge]): Future[Unit]
 
@@ -25,7 +28,9 @@ trait ChallengeRepository {
 
   def deleteActiveMonthlies(): Future[Unit]
 
-  def loadCompleted(playerId: UUID): Map[String, Challenge]
+  def loadCompleted(playerId: UUID)(implicit
+      service: ChallengeService
+  ): Map[String, Challenge]
 
   def saveCompleted(playerId: UUID, challenge: Challenge): Future[Unit]
 
@@ -79,16 +84,14 @@ private trait ChallengeContext[I <: SqlIdiom, N <: NamingStrategy] {
 
 private[legends] class PostgresChallengeRepository(
     config: Config
-)(implicit
-    challengeService: ChallengeService
 ) extends ChallengeRepository {
   private val database = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
     with ChallengeContext[PostgresDialect, SnakeCase]
   import database._
 
-  private implicit val decoder: MappedEncoding[String, Challenge] = challengeDecoder
-
-  override def loadActive(): List[Challenge] =
+  override def loadActive()(implicit
+      service: ChallengeService
+  ): List[Challenge] =
     run { queryActive(query[ActiveChallenge]) }
 
   override def saveActive(challenges: List[Challenge]): Future[Unit] = Future {
@@ -108,7 +111,9 @@ private[legends] class PostgresChallengeRepository(
     run { _deleteActiveMonthlies(query[ActiveChallenge]) }
   }
 
-  override def loadCompleted(playerId: UUID): Map[String, Challenge] =
+  override def loadCompleted(playerId: UUID)(implicit
+      service: ChallengeService
+  ): Map[String, Challenge] =
     run { queryCompleted(query[CompletedChallenge], lift(playerId)) }
       .iterator
       .map { it => it.challenge.id -> it.challenge }
@@ -133,16 +138,14 @@ private[legends] class PostgresChallengeRepository(
 
 private[legends] class SqliteChallengeRepository(
     config: Config
-)(implicit
-    challengeService: ChallengeService
 ) extends ChallengeRepository {
   private val database = new SqliteJdbcContext[SnakeCase](SnakeCase, config)
     with ChallengeContext[SqliteDialect, SnakeCase]
   import database._
 
-  private implicit val decoder: MappedEncoding[String, Challenge] = challengeDecoder
-
-  override def loadActive(): List[Challenge] =
+  override def loadActive()(implicit
+      service: ChallengeService
+  ): List[Challenge] =
     run { queryActive(query[ActiveChallenge]) }
 
   override def saveActive(challenges: List[Challenge]): Future[Unit] = Future {
@@ -162,7 +165,9 @@ private[legends] class SqliteChallengeRepository(
     run { _deleteActiveMonthlies(query[ActiveChallenge]) }
   }
 
-  override def loadCompleted(playerId: UUID): Map[String, Challenge] =
+  override def loadCompleted(playerId: UUID)(implicit
+      service: ChallengeService
+  ): Map[String, Challenge] =
     run { queryCompleted(query[CompletedChallenge], lift(playerId)) }
       .iterator
       .map { it => it.challenge.id -> it.challenge }

@@ -40,6 +40,7 @@ class LootCrate(
 }
 
 object LootCrate {
+  type Id = String
   type DropType = String
   // gameplay categories
   final val Consumable: DropType = "CONSUMABLE"

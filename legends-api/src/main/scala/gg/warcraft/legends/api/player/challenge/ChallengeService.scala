@@ -20,6 +20,7 @@ import scala.util.{Failure, Random, Success}
 
 class ChallengeService(implicit
     repository: ChallengeRepository,
+    challengeService: ChallengeService,
     currencyService: CurrencyService,
     playerService: PlayerService,
     logger: Logger

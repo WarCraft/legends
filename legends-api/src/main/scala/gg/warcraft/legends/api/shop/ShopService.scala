@@ -12,7 +12,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Random
 
 class ShopService(implicit
-    availableShopItemRepository: AvailableShopItemRepository
+    availableShopItemRepository: AvailableShopItemRepository,
+    shopService: ShopService
 ) {
   private final val premiumTypes: List[ShopItem.Type] =
     ShopItem.CombatClass :: ShopItem.DecorationPack :: ShopItem.MiniPet :: Nil

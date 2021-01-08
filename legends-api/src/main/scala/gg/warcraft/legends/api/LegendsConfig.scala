@@ -18,12 +18,12 @@ case class LegendsConfig(
     database: DatabaseConfig,
     // Legends
     challenges: List[Challenge],
-    dailyRewards: List[RewardConfig],
+    dailyRewards: List[Map[LootCrate.Id, Int]],
     leaderboards: LeaderboardsConfig,
     levels: List[Level],
     lootCrates: List[LootCrate.Config],
     // Siege
-    objectiveCaptureRewards: Map[String, RewardConfig],
+    objectiveCaptureRewards: Map[String, Map[LootCrate.Id, Int]],
     objectiveDefaultOccupiers: Map[String, Team],
     objectiveTallyPoints: Map[String, Int],
     playerKillFavor: Int,
@@ -32,15 +32,10 @@ case class LegendsConfig(
     skirmishTimes: List[Int]
 )
 
-case class RewardConfig(
-    crate: String,
-    count: Int
-)
-
 case class LeaderboardsConfig(
     leaderboards: List[LeaderboardConfig],
-    dailyPrizes: List[RewardConfig],
-    monthlyPrizes: List[RewardConfig]
+    dailyPrizes: List[Map[LootCrate.Id, Int]],
+    monthlyPrizes: List[Map[LootCrate.Id, Int]]
 )
 
 case class LeaderboardConfig(
