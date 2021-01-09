@@ -62,9 +62,12 @@ object LootCrate {
       var totalChance = 0f
       var map = TreeMap.empty[Float, ItemRarity]
       (Common :: Rare :: Epic :: Legendary :: Nil).foreach { rarity =>
-        val chance = distribution(rarity)
-        map += ((totalChance + chance) -> rarity)
-        totalChance += chance
+        distribution.get(rarity) match {
+          case Some(chance) =>
+            map += ((totalChance + chance) -> rarity)
+            totalChance += chance
+          case None =>
+        }
       }
       map
     }
