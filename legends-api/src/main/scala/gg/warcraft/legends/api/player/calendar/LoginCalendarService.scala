@@ -71,7 +71,9 @@ class LoginCalendarService(implicit
   private[calendar] def loadRewardsClaimed(playerId: UUID): Unit =
     repository.load(playerId).tap {
       case Some(data) => _rewardsClaimed += (playerId -> data)
-      case None       => _rewardsClaimed += (playerId -> LoginCalendar(playerId))
+      case None =>
+        val yesterday = serverDataService.serverTime.toLocalDate.minusDays(1)
+        _rewardsClaimed += (playerId -> LoginCalendar(playerId, 0, yesterday))
     }
 
   private[calendar] def invalidateRewardsClaimed(playerId: UUID): Unit =
