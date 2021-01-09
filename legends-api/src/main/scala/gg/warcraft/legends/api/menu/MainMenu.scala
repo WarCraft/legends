@@ -624,7 +624,7 @@ object MainMenu {
       teamService: TeamService
   ): Menu = Menu(
     "WarCraft: Legends",
-    MenuSize.ONE_ROW,
+    MenuSize.TWO_ROWS,
     // 1st row
     0 -> playerButton(player),
     1 -> levelButton(player),
