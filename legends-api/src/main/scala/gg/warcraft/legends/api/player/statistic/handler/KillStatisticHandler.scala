@@ -32,11 +32,15 @@ class KillStatisticHandler(implicit
         player.combatData.attackedBy.toList: _*
       )
     case EntityFatalDamageEvent(entity, _) =>
-      statisticService.increaseStatistics(
-        mobStatistics,
-        1,
-        entity.combatData.attackedBy.toList: _*
-      )
+      entity.combatDataOption match {
+        case Some(combatData) =>
+          statisticService.increaseStatistics(
+            mobStatistics,
+            1,
+            combatData.attackedBy.toList: _*
+          )
+        case None =>
+      }
     case _ =>
   }
 }
