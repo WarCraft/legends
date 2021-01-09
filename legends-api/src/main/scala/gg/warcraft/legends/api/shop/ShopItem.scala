@@ -104,7 +104,7 @@ case class Promotion(
     name: String,
     description: List[String],
     itemType: ItemTypeOrVariant,
-    slot: Equipment.Slot,
+    equipmentSlot: Equipment.Slot,
     attributes: Map[LegendsAttribute, Int]
 ) extends ShopItem {
   val icon: Option[ItemTypeOrVariant] = Some(itemType)

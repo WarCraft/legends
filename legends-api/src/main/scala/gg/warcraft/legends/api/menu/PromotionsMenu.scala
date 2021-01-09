@@ -56,7 +56,7 @@ object PromotionsMenu {
       promotion.description ++ List("", unlockedText): _*
     ) { _ =>
       if (unlocked) {
-        if (player.equipment.get(promotion.slot).nonEmpty) {
+        if (player.equipment.get(promotion.equipmentSlot).nonEmpty) {
           val item = new EquipmentBuilder(
             promotion.itemType,
             promotion.rarity,
@@ -64,7 +64,7 @@ object PromotionsMenu {
           ).withAttributes(promotion.attributes)
             .withFlavorText(promotion.description)
             .build()
-          playerService.setEquipment(player.id, promotion.slot, item)
+          playerService.setEquipment(player.id, promotion.equipmentSlot, item)
           closeMenu
         } else closeMenu(noHelmetMessage)
       } else noop
