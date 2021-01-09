@@ -69,7 +69,7 @@ object DecorationsMenu {
       val button = Button(
         pack.icon.get,
         pack.name,
-        pack.tooltip ++
+        pack.description ++
           List("", s"$GREEN[Click] To view your", s"${pack.name} decorations")
       ) { _ => updateMenu(DecorationPackMenu(pack)) }
       button.tap { it => decorationPackButtons += (pack.id -> it) }

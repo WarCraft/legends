@@ -30,6 +30,11 @@ class ShopService(implicit
   def itemsByRarity: Map[ShopItem.Type, Map[ItemRarity, List[ShopItem]]] =
     _itemsByRarity
 
+  private var _priceByTypeAndRarity: Map[ShopItem.Type, Map[ItemRarity, Int]] =
+    Map.empty
+  def priceByTypeAndRarity: Map[ShopItem.Type, Map[ItemRarity, Int]] =
+    _priceByTypeAndRarity
+
   private var _availableItems: List[ShopItem] = Nil
   def availableItems: List[ShopItem] = Nil
 
@@ -46,6 +51,8 @@ class ShopService(implicit
 
     _itemsByRarity = itemsByType
       .map { case (typ, items) => typ -> items.groupBy { _.rarity } }
+
+    _priceByTypeAndRarity = config.prices
 
     _availableItems = availableShopItemRepository.loadAvailable()(this)
     if (availableItems == Nil) rotateAvailable()

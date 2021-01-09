@@ -17,11 +17,18 @@ trait ShopItem {
   val id: String
   val typ: ShopItem.Type
   val rarity: ItemRarity
-  val price: Int
   val icon: Option[ItemTypeOrVariant]
   val skull: Option[String]
   val name: String
-  val tooltip: List[String]
+  val description: List[String]
+
+  require(
+    icon.nonEmpty || skull.nonEmpty,
+    "ShopItem must have at least an icon or a skull configured."
+  )
+
+  def price(implicit shopService: ShopService): Int =
+    shopService.priceByTypeAndRarity(typ)(rarity)
 }
 
 object ShopItem {
@@ -45,25 +52,24 @@ case class CombatClass(
     id: String,
     typ: ShopItem.Type,
     rarity: ItemRarity,
-    price: Int,
     icon: Option[ItemTypeOrVariant],
-    skull: Option[String],
     name: String,
-    tooltip: List[String]
-) extends ShopItem
+    description: List[String]
+) extends ShopItem {
+  val skull: Option[String] = None
+}
 
 case class Decoration(
     id: String,
     typ: ShopItem.Type,
     rarity: ItemRarity,
-    price: Int,
-    skull: Option[String],
     name: String,
-    tooltip: List[String],
+    description: List[String],
     itemType: ItemTypeOrVariant,
     pack: String
 ) extends ShopItem {
   val icon: Option[ItemTypeOrVariant] = Some(itemType)
+  val skull: Option[String] = None
 
   private var _stack: Item = _
   def stack(implicit itemService: ItemService): Item =
@@ -75,37 +81,37 @@ case class DecorationPack(
     id: String,
     typ: ShopItem.Type,
     rarity: ItemRarity,
-    price: Int,
     icon: Option[ItemTypeOrVariant],
-    skull: Option[String],
     name: String,
-    tooltip: List[String],
+    description: List[String],
     decorations: List[Decoration]
-) extends ShopItem
+) extends ShopItem {
+  val skull: Option[String] = None
+}
 
 case class MiniPet(
     id: String,
     typ: ShopItem.Type,
     rarity: ItemRarity,
-    price: Int,
-    icon: Option[ItemTypeOrVariant],
     skull: Option[String],
     name: String,
-    tooltip: List[String],
+    description: List[String],
     entityType: Entity.Type,
     rainbow: Boolean
-) extends ShopItem
+) extends ShopItem {
+  val icon: Option[ItemTypeOrVariant] = None
+}
 
 case class Promotion(
     id: String,
     typ: ShopItem.Type,
     rarity: ItemRarity,
-    price: Int,
-    icon: Option[ItemTypeOrVariant],
-    skull: Option[String],
     name: String,
-    tooltip: List[String],
+    description: List[String],
     itemType: ItemTypeOrVariant,
     slot: Equipment.Slot,
     attributes: Map[LegendsAttribute, Int]
-) extends ShopItem
+) extends ShopItem {
+  val icon: Option[ItemTypeOrVariant] = Some(itemType)
+  val skull: Option[String] = None
+}

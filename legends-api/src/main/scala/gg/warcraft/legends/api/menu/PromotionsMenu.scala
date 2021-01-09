@@ -53,7 +53,7 @@ object PromotionsMenu {
     Button(
       promotion.icon.get,
       promotion.name,
-      promotion.tooltip ++ List("", unlockedText): _*
+      promotion.description ++ List("", unlockedText): _*
     ) { _ =>
       if (unlocked) {
         if (player.equipment.get(promotion.slot).nonEmpty) {
@@ -62,7 +62,7 @@ object PromotionsMenu {
             promotion.rarity,
             promotion.name
           ).withAttributes(promotion.attributes)
-            .withFlavorText(promotion.tooltip)
+            .withFlavorText(promotion.description)
             .build()
           playerService.setEquipment(player.id, promotion.slot, item)
           closeMenu

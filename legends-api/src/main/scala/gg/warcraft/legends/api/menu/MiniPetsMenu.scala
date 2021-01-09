@@ -48,7 +48,7 @@ object MiniPetsMenu {
     Button.skull(
       pet.skull.get,
       pet.name,
-      pet.tooltip ++ List("", unlockedText): _*
+      pet.description ++ List("", unlockedText): _*
     ) { _ =>
       if (unlocked) {
         miniPetFactory.create(pet.entityType, profile.playerId)

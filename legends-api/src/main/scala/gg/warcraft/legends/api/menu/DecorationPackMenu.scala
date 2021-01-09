@@ -39,7 +39,7 @@ object DecorationPackMenu {
         val button = Button.noop(
           ItemType.BOOK,
           pack.name,
-          pack.tooltip: _*
+          pack.description: _*
         )
         button.tap { it => infoButtons += (pack.id -> it) }
     }
@@ -59,7 +59,7 @@ object DecorationPackMenu {
     Button(
       decoration.icon.get,
       decoration.name,
-      decoration.tooltip ++ List("", unlockedText)
+      decoration.description ++ List("", unlockedText)
     ) { _ =>
       if (unlocked) itemService.giveTo(profile.playerId, decoration.stack)
       noop
