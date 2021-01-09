@@ -62,7 +62,10 @@ class LegendsPlayerDataService(implicit
   private[data] def loadData(id: UUID): Option[LegendsPlayerData] =
     repository.load(id).tap {
       case Some(data) => _data += (data.id -> data)
-      case None       =>
+      case None =>
+        val data = LegendsPlayerData(id)
+        setData(data)
+        data
     }
 
   private[data] def invalidateData(id: UUID): Unit =
