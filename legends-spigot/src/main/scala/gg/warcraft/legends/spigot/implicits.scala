@@ -17,8 +17,8 @@ import gg.warcraft.legends.api.core.game.{GameRepository, GameService}
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
 import gg.warcraft.legends.api.core.spawn.SpawnService
 import gg.warcraft.legends.api.item.crate.LootCrateService
-import gg.warcraft.legends.api.item.crate.reward.{
-  LoginRewardRepository, LoginRewardService
+import gg.warcraft.legends.api.player.calendar.{
+  LoginRewardRepository, LoginCalendarService
 }
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
@@ -158,8 +158,8 @@ object implicits {
     new EquipmentUpgradeGenerator
   implicit lazy val lootCrateService: LootCrateService =
     new LootCrateService
-  implicit lazy val loginRewardService: LoginRewardService =
-    new LoginRewardService
+  implicit lazy val loginRewardService: LoginCalendarService =
+    new LoginCalendarService
 
   // Player
   implicit lazy val legendsPlayerDataService: LegendsPlayerDataService =

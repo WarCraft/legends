@@ -11,9 +11,9 @@ import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.legends.api.ai.MiniPetFactory
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
 import gg.warcraft.legends.api.core.spawn.SpawnService
-import gg.warcraft.legends.api.item.crate.reward.LoginRewardService
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
 import gg.warcraft.legends.api.menu.staff.StaffMenu
+import gg.warcraft.legends.api.player.calendar.LoginCalendarService
 import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
@@ -39,7 +39,7 @@ class MenuCommandHandler(implicit
     combatDataService: CombatDataService,
     combatClassService: CombatClassService,
     legendsDataService: LegendsPlayerDataService,
-    loginRewardService: LoginRewardService,
+    loginRewardService: LoginCalendarService,
     serverDataService: ServerDataService,
     challengeService: ChallengeService,
     leaderboardService: LeaderboardService,

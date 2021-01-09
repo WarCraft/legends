@@ -18,7 +18,7 @@ import gg.warcraft.legends.api.core.spawn.SpawnService
 import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.entity.LegendsTeam._
 import gg.warcraft.legends.api.entity.attribute.LegendsAttribute._
-import gg.warcraft.legends.api.item.crate.reward.LoginRewardService
+import gg.warcraft.legends.api.player.calendar.LoginCalendarService
 import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.currency.LegendsCurrency._
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
@@ -184,7 +184,7 @@ object MainMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      loginRewardService: LoginRewardService,
+      loginRewardService: LoginCalendarService,
       serverDataService: ServerDataService,
       challengeService: ChallengeService,
       leaderboardService: LeaderboardService,
@@ -292,7 +292,7 @@ object MainMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      loginRewardService: LoginRewardService,
+      loginRewardService: LoginCalendarService,
       serverDataService: ServerDataService,
       challengeService: ChallengeService,
       leaderboardService: LeaderboardService,
@@ -390,7 +390,7 @@ object MainMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      loginRewardService: LoginRewardService,
+      loginRewardService: LoginCalendarService,
       serverDataService: ServerDataService,
       challengeService: ChallengeService,
       leaderboardService: LeaderboardService,
@@ -419,7 +419,7 @@ object MainMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      loginRewardService: LoginRewardService,
+      loginRewardService: LoginCalendarService,
       serverDataService: ServerDataService,
       challengeService: ChallengeService,
       leaderboardService: LeaderboardService,
@@ -450,7 +450,7 @@ object MainMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      loginRewardService: LoginRewardService,
+      loginRewardService: LoginCalendarService,
       serverDataService: ServerDataService,
       challengeService: ChallengeService,
       leaderboardService: LeaderboardService,
@@ -491,7 +491,7 @@ object MainMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      loginRewardService: LoginRewardService,
+      loginRewardService: LoginCalendarService,
       serverDataService: ServerDataService,
       challengeService: ChallengeService,
       leaderboardService: LeaderboardService,
@@ -520,7 +520,7 @@ object MainMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      loginRewardService: LoginRewardService,
+      loginRewardService: LoginCalendarService,
       serverDataService: ServerDataService,
       challengeService: ChallengeService,
       leaderboardService: LeaderboardService,
@@ -549,7 +549,7 @@ object MainMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      loginRewardService: LoginRewardService,
+      loginRewardService: LoginCalendarService,
       serverDataService: ServerDataService,
       challengeService: ChallengeService,
       leaderboardService: LeaderboardService,
@@ -579,7 +579,7 @@ object MainMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      loginRewardService: LoginRewardService,
+      loginRewardService: LoginCalendarService,
       serverDataService: ServerDataService,
       challengeService: ChallengeService,
       leaderboardService: LeaderboardService,
@@ -611,7 +611,7 @@ object MainMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      loginRewardService: LoginRewardService,
+      loginRewardService: LoginCalendarService,
       serverDataService: ServerDataService,
       challengeService: ChallengeService,
       leaderboardService: LeaderboardService,

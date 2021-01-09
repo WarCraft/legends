@@ -4,13 +4,13 @@
  * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
  */
 
-package gg.warcraft.legends.api.item.crate.reward
+package gg.warcraft.legends.api.player.calendar
 
 import java.time.LocalDate
 import java.util.UUID
 
-case class LoginRewardsClaimed(
+case class LoginCalendar(
     playerId: UUID,
-    counter: Int = 0,
-    date: LocalDate = LocalDate.ofEpochDay(0)
+    day: Int,
+    claimed: LocalDate
 )

@@ -14,7 +14,7 @@ import gg.warcraft.combat.api.util.entity._
 import gg.warcraft.legends.api.ai.MiniPetFactory
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
 import gg.warcraft.legends.api.core.spawn.SpawnService
-import gg.warcraft.legends.api.item.crate.reward.LoginRewardService
+import gg.warcraft.legends.api.player.calendar.LoginCalendarService
 import gg.warcraft.legends.api.menu.{CombatClassMenu, FactionMenu}
 import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
@@ -39,26 +39,26 @@ import org.bukkit.event.{EventHandler, Listener}
 import java.util.UUID
 
 class SpigotFirstTimeRaceClassMenuHandler(implicit
-    entityService: EntityService,
-    menuService: MenuService,
-    attributeService: AttributeService,
-    currencyService: CurrencyService,
-    levelService: LevelService,
-    playerService: PlayerService,
-    combatDataService: CombatDataService,
-    combatClassService: CombatClassService,
-    legendsDataService: LegendsPlayerDataService,
-    loginRewardService: LoginRewardService,
-    serverDataService: ServerDataService,
-    challengeService: ChallengeService,
-    leaderboardService: LeaderboardService,
-    shopService: ShopService,
-    shopProfileService: ShopProfileService,
-    itemService: ItemService,
-    miniPetFactory: MiniPetFactory,
-    commandService: CommandService,
-    spawnService: SpawnService,
-    teamService: TeamService
+                                          entityService: EntityService,
+                                          menuService: MenuService,
+                                          attributeService: AttributeService,
+                                          currencyService: CurrencyService,
+                                          levelService: LevelService,
+                                          playerService: PlayerService,
+                                          combatDataService: CombatDataService,
+                                          combatClassService: CombatClassService,
+                                          legendsDataService: LegendsPlayerDataService,
+                                          loginRewardService: LoginCalendarService,
+                                          serverDataService: ServerDataService,
+                                          challengeService: ChallengeService,
+                                          leaderboardService: LeaderboardService,
+                                          shopService: ShopService,
+                                          shopProfileService: ShopProfileService,
+                                          itemService: ItemService,
+                                          miniPetFactory: MiniPetFactory,
+                                          commandService: CommandService,
+                                          spawnService: SpawnService,
+                                          teamService: TeamService
 ) extends Event.Handler
     with Listener {
   import SpigotRaceRespawnHandler.getSpawn

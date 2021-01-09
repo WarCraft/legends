@@ -4,15 +4,15 @@
  * Copyright (c) 2020 WarCraft <https://github.com/WarCraft>
  */
 
-package gg.warcraft.legends.api.item.crate.reward
+package gg.warcraft.legends.api.player.calendar
 
 import gg.warcraft.monolith.api.core.event.{Event, PreEvent}
 import gg.warcraft.monolith.api.player.{
   PlayerConnectEvent, PlayerDisconnectEvent, PlayerPreConnectEvent
 }
 
-class LoginRewardHandler(implicit
-    service: LoginRewardService
+class LoginCalendarHandler(implicit
+    service: LoginCalendarService
 ) extends Event.Handler {
   override def handle(event: PreEvent): Unit = event match {
     case PlayerPreConnectEvent(playerId, _, _, _) =>

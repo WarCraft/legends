@@ -12,9 +12,7 @@ import gg.warcraft.legends.api.ai.MiniPetFactory
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
 import gg.warcraft.legends.api.core.spawn.SpawnService
 import gg.warcraft.legends.api.item.crate.LootCrate
-import gg.warcraft.legends.api.item.crate.reward.{
-  LoginRewardService, LoginRewardsClaimed
-}
+import gg.warcraft.legends.api.player.calendar.{LoginCalendar, LoginCalendarService}
 import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
@@ -44,11 +42,11 @@ object DailyLoginMenu {
 
   private def rewardButton(
       player: Player,
-      claimed: LoginRewardsClaimed,
+      claimed: LoginCalendar,
       day: Int,
       rewards: List[LootCrate]
   )(implicit
-      loginRewardService: LoginRewardService,
+      loginRewardService: LoginCalendarService,
       serverDataService: ServerDataService
   ): Button = {
     val rewardLines = rewards.map { it =>
@@ -56,11 +54,11 @@ object DailyLoginMenu {
       s"${it.count} ${it.name}$plural"
     }
     val icon: ItemTypeOrVariant =
-      if (claimed.counter >= day) {
+      if (claimed.day >= day) {
         if (day % 7 == 0) GlassVariant.BLACK else GlassVariant.BROWN
       } else rewards.head.chestVariant
-    val canClaim = serverDataService.today.isAfter(claimed.date) &&
-      day == (claimed.counter - 1)
+    val canClaim = serverDataService.today.isAfter(claimed.claimed) &&
+      day == (claimed.day - 1)
     val claimText =
       if (canClaim) s"${ColorCode.GREEN}[Click] To claim today's reward!"
       else s"${ColorCode.GOLD}Come back tomorrow for another reward."
@@ -80,7 +78,7 @@ object DailyLoginMenu {
       combatDataService: CombatDataService,
       combatClassService: CombatClassService,
       legendsDataService: LegendsPlayerDataService,
-      loginRewardService: LoginRewardService,
+      loginRewardService: LoginCalendarService,
       serverDataService: ServerDataService,
       challengeService: ChallengeService,
       leaderboardService: LeaderboardService,

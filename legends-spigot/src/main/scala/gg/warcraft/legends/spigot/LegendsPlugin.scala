@@ -31,8 +31,8 @@ import gg.warcraft.legends.api.core.leaderboard.handler.{
 import gg.warcraft.legends.api.core.spawn.ReturnToSpawnCommand
 import gg.warcraft.legends.api.entity.attribute.EquipmentAttributeHandler
 import gg.warcraft.legends.api.item.crate.LootCrateUseHandler
-import gg.warcraft.legends.api.item.crate.reward.{
-  LoginRewardHandler, LoginRewardRepository, PostgresLoginRewardRepository,
+import gg.warcraft.legends.api.player.calendar.{
+  LoginCalendarHandler, LoginRewardRepository, PostgresLoginRewardRepository,
   SqliteLoginRewardRepository
 }
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
@@ -252,7 +252,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     // Shop
     eventService.subscribe(new ShopItemRotateHandler)
     eventService.subscribe(new ShopProfileCacheHandler)
-    eventService.subscribe(new LoginRewardHandler)
+    eventService.subscribe(new LoginCalendarHandler)
     eventService.subscribe(new LootCrateUseHandler)
     eventService.subscribe(new MiniPetSpawnHandler)
 
