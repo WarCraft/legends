@@ -40,9 +40,9 @@ class ShopProfileService(implicit
   }
 
   def calculateDiscount(item: ShopItem, profile: ShopProfile): Int = item match {
-    case DecorationPack(_, _, _, price, _, _, _, _, decorations) =>
+    case it @ DecorationPack(_, _, _, _, _, _, decorations) =>
       val duplicates = decorations.count { it => profile.unlocked.contains(it.id) }
-      (duplicates.toFloat / decorations.size.toFloat * price * 0.66f).toInt
+      (duplicates.toFloat / decorations.size.toFloat * it.price * 0.66f).toInt
     case _ => 0
   }
 

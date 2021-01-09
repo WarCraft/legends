@@ -71,7 +71,7 @@ object ShopMenu {
       teamService: TeamService
   ): Button = {
     val unlocked = item match {
-      case DecorationPack(_, _, _, _, _, _, _, _, decorations) =>
+      case DecorationPack(_, _, _, _, _, _, decorations) =>
         profile.unlocked.contains(item.id) ||
           decorations.forall { it => profile.unlocked.contains(it.id) }
       case _ =>
