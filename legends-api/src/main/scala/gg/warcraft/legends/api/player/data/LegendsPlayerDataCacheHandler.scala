@@ -19,7 +19,12 @@ class LegendsPlayerDataCacheHandler(implicit
 
   override def reduce[T <: PreEvent](event: T): T = event match {
     case PlayerPreConnectEvent(playerId, _, false, _) =>
-      service.loadData(playerId)
+      service.loadData(playerId) match {
+        case Some(_) =>
+        case None =>
+          val data = LegendsPlayerData(playerId)
+          service.setData(data)
+      }
       event
     case _ => event
   }

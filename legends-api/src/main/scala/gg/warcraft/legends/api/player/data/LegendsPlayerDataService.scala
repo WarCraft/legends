@@ -54,7 +54,7 @@ class LegendsPlayerDataService(implicit
     setData(updated)
   }
 
-  private def setData(data: LegendsPlayerData): Unit = {
+  private[data] def setData(data: LegendsPlayerData): Unit = {
     _data += (data.id -> data)
     repository.save(data)
   }
@@ -62,10 +62,7 @@ class LegendsPlayerDataService(implicit
   private[data] def loadData(id: UUID): Option[LegendsPlayerData] =
     repository.load(id).tap {
       case Some(data) => _data += (data.id -> data)
-      case None =>
-        val data = LegendsPlayerData(id)
-        setData(data)
-        data
+      case None       =>
     }
 
   private[data] def invalidateData(id: UUID): Unit =
