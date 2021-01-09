@@ -73,7 +73,11 @@ class LootCrateService(implicit
       }
 
   def parseRewards(config: LegendsConfig.RewardConfig): List[LootCrate] =
-    config.map { case (crateId, count) => _crates(crateId).withCount(count) }.toList
+    config.map { case (crateId, count) =>
+      val crate = _crates(crateId)
+      import crate.{count => _, _}
+      new LootCrate(id, name, rarity, chestVariant, dropTables, count)
+    }.toList
 
   private def notifyReceived(playerId: UUID, name: String): Unit = {
     val strippedName = name.stripChatCodes

@@ -19,12 +19,13 @@ class LootCrate(
     name: String,
     val rarity: ItemRarity,
     val chestVariant: ChestVariant,
-    val dropTables: List[LootCrate.DropTable]
+    val dropTables: List[LootCrate.DropTable],
+    count: Int = 1
 ) extends Chest(
       chestVariant,
       s"${rarity.color}$name",
       LootCrate.tooltip,
-      1,
+      count,
       Set.empty,
       true
     ) {
