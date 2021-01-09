@@ -92,8 +92,9 @@ object DecorationPackMenu {
       else Math.ceil(pack.decorations.size / 7f).toInt
     val menuSize = MenuSize.fromRows(rowCount)
     val shopProfile = shopProfileService.profile(player.id)
-    val buttons = pack.decorations.zipWithIndex.map { case (decoration, i) =>
+    val buttons = pack.decorations.zipWithIndex.map { case (decorationId, i) =>
       val slot = i + (1 + (i - 1) / 7) * 2
+      val decoration = shopService.itemsById(decorationId).asInstanceOf[Decoration]
       slot -> decorationButton(decoration, shopProfile)
     }
     Menu(

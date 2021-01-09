@@ -22,11 +22,6 @@ trait ShopItem {
   val name: String
   val description: List[String]
 
-  require(
-    icon.nonEmpty || skull.nonEmpty,
-    "ShopItem must have at least an icon or a skull configured."
-  )
-
   def price(implicit shopService: ShopService): Int =
     shopService.priceByTypeAndRarity(typ)(rarity)
 }
@@ -84,7 +79,7 @@ case class DecorationPack(
     icon: Option[ItemTypeOrVariant],
     name: String,
     description: List[String],
-    decorations: List[Decoration]
+    decorations: List[String]
 ) extends ShopItem {
   val skull: Option[String] = None
 }

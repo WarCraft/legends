@@ -174,8 +174,7 @@ class LootCrateService(implicit
       case Some(items) =>
         val item = items(Random.nextInt(items.size)).asInstanceOf[DecorationPack]
         val profile = shopProfileService.profile(player.id)
-        lazy val duplicates = item.decorations
-          .count { it => profile.unlocked.contains(it.id) }
+        lazy val duplicates = item.decorations.count(profile.unlocked.contains)
         if (
           profile.unlocked.contains(item.id) ||
           duplicates == item.decorations.size
