@@ -45,6 +45,11 @@ class ShopService(implicit
       combatClasses ++ decorations ++ decorationPacks ++ miniPets ++ promotions
     ).map { it => it.id -> it }.toMap
 
+    require(decorations.forall { decoration =>
+      val pack = _itemsById(decoration.pack)
+      pack.asInstanceOf[DecorationPack].decorations.contains(decoration.id)
+    })
+
     _itemsByType = itemsById.values
       .groupBy { _.typ }
       .map { case (typ, items) => typ -> items.toList }
