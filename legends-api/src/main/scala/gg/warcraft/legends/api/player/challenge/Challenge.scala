@@ -21,16 +21,10 @@ case class Challenge(
 }
 
 case class ActiveChallenge(
-    challenge: Challenge
-) {
-  lazy val isDaily: Boolean = challenge.isDaily
-  lazy val isMonthly: Boolean = challenge.isMonthly
-}
+    id: String
+)
 
 case class CompletedChallenge(
-    playerId: UUID,
-    challenge: Challenge
-) {
-  lazy val isDaily: Boolean = challenge.isDaily
-  lazy val isMonthly: Boolean = challenge.isMonthly
-}
+    id: String,
+    playerId: UUID
+)

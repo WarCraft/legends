@@ -12,8 +12,10 @@ import io.getquill.context.jdbc.JdbcContext
 import io.getquill.context.sql.idiom.SqlIdiom
 
 import java.util.UUID
+import java.util.logging.Logger
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 trait UnlockedShopItemRepository {
   def loadItems(playerId: UUID): Set[String]
@@ -36,6 +38,8 @@ private trait UnlockedShopItemContext[I <: SqlIdiom, N <: NamingStrategy] {
 
 private[legends] class PostgresUnlockedShopItemRepository(
     config: Config
+)(implicit
+    logger: Logger
 ) extends UnlockedShopItemRepository {
   private val database = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
     with UnlockedShopItemContext[PostgresDialect, SnakeCase]
@@ -48,6 +52,12 @@ private[legends] class PostgresUnlockedShopItemRepository(
     val item = UnlockedShopItem(id, playerId)
     run { insertItem(query[UnlockedShopItem], lift(item)) }
   }
+//    .andThen { TODO explore database error reporting
+//    case Failure(exception) =>
+//      logger.severe(exception.getMessage)
+//      logger.severe(s"Failed to persist UnlockedShopItemRepository::saveItem($id, $playerId)")
+//    case Success(value)     =>
+//  }.asInstanceOf[Future[Unit]]
 }
 
 private[legends] class SqliteUnlockedShopItemRepository(

@@ -43,7 +43,7 @@ private trait ChallengeContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
   def queryActive = quote {
-    (q: EntityQuery[ActiveChallenge]) => q.map { _.challenge }
+    (q: EntityQuery[ActiveChallenge]) => q
   }
 
   def insertActive = quote {
@@ -53,12 +53,12 @@ private trait ChallengeContext[I <: SqlIdiom, N <: NamingStrategy] {
 
   def _deleteActiveDailies = quote {
     (q: EntityQuery[ActiveChallenge]) =>
-      q.filter { _.challenge.id.like("DAILY%") }.delete
+      q.filter { _.id.like("DAILY%") }.delete
   }
 
   def _deleteActiveMonthlies = quote {
     (q: EntityQuery[ActiveChallenge]) =>
-      q.filter { _.challenge.id.like("MONTHLY%") }.delete
+      q.filter { _.id.like("MONTHLY%") }.delete
   }
 
   def queryCompleted = quote {
@@ -73,12 +73,12 @@ private trait ChallengeContext[I <: SqlIdiom, N <: NamingStrategy] {
 
   def _deleteCompletedDailies = quote {
     (q: EntityQuery[CompletedChallenge]) =>
-      q.filter { _.challenge.id.like("DAILY%") }.delete
+      q.filter { _.id.like("DAILY%") }.delete
   }
 
   def _deleteCompletedMonthlies = quote {
     (q: EntityQuery[CompletedChallenge]) =>
-      q.filter { _.challenge.id.like("MONTHLY%") }.delete
+      q.filter { _.id.like("MONTHLY%") }.delete
   }
 }
 
@@ -93,9 +93,10 @@ private[legends] class PostgresChallengeRepository(
       service: ChallengeService
   ): List[Challenge] =
     run { queryActive(query[ActiveChallenge]) }
+      .map { it => service.challengesById(it.id) }
 
   override def saveActive(challenges: List[Challenge]): Future[Unit] = Future {
-    val activeChallenges = challenges.map(ActiveChallenge)
+    val activeChallenges = challenges.map { it => ActiveChallenge(it.id) }
     run {
       liftQuery(activeChallenges).foreach {
         insertActive(query[ActiveChallenge], _)
@@ -116,14 +117,14 @@ private[legends] class PostgresChallengeRepository(
   ): Map[String, Challenge] =
     run { queryCompleted(query[CompletedChallenge], lift(playerId)) }
       .iterator
-      .map { it => it.challenge.id -> it.challenge }
+      .map { it => it.id -> service.challengesById(it.id) }
       .toMap
 
   override def saveCompleted(
       playerId: UUID,
       challenge: Challenge
   ): Future[Unit] = Future {
-    val completedChallenge = CompletedChallenge(playerId, challenge)
+    val completedChallenge = CompletedChallenge(challenge.id, playerId)
     run { insertCompleted(query[CompletedChallenge], lift(completedChallenge)) }
   }
 
@@ -147,9 +148,10 @@ private[legends] class SqliteChallengeRepository(
       service: ChallengeService
   ): List[Challenge] =
     run { queryActive(query[ActiveChallenge]) }
+      .map { it => service.challengesById(it.id) }
 
   override def saveActive(challenges: List[Challenge]): Future[Unit] = Future {
-    val activeChallenges = challenges.map(ActiveChallenge)
+    val activeChallenges = challenges.map { it => ActiveChallenge(it.id) }
     run {
       liftQuery(activeChallenges).foreach {
         insertActive(query[ActiveChallenge], _)
@@ -170,14 +172,14 @@ private[legends] class SqliteChallengeRepository(
   ): Map[String, Challenge] =
     run { queryCompleted(query[CompletedChallenge], lift(playerId)) }
       .iterator
-      .map { it => it.challenge.id -> it.challenge }
+      .map { it => it.id -> service.challengesById(it.id) }
       .toMap
 
   override def saveCompleted(
       playerId: UUID,
       challenge: Challenge
   ): Future[Unit] = Future {
-    val completedChallenge = CompletedChallenge(playerId, challenge)
+    val completedChallenge = CompletedChallenge(challenge.id, playerId)
     run { insertCompleted(query[CompletedChallenge], lift(completedChallenge)) }
   }
 
