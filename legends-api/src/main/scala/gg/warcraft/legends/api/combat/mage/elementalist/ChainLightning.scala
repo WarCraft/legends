@@ -12,11 +12,15 @@ import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.monolith.api.block.Block
+import gg.warcraft.monolith.api.combat.{CombatSource, CombatValue}
 import gg.warcraft.monolith.api.core.Duration._
 import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.effect._
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
+import gg.warcraft.monolith.api.util.option._
 import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
+
+import java.util.UUID
 
 class ChainLightning(
     override val caster: Entity,
@@ -32,12 +36,30 @@ class ChainLightning(
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.ENTITY_BEE_DEATH
 
+  private lazy val jumpModifierSource =
+    CombatSource("Chain Lightning Falloff", caster.id)
+  private lazy val firstJumpModifier =
+    CombatValue.Modifier.percent(jumpModifierSource, -0.5f)
+  private lazy val secondJumpModifier =
+    CombatValue.Modifier.percent(jumpModifierSource, -0.75f)
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
+
+  private var hasHit: Set[UUID] = Set.empty
 
   chain(target)
 
   private def chain(entity: Entity, count: Int = 1): Unit = {
-    entityService.damageEntity(entity.id, snapshot.damage)
+    hasHit += entity.id
+
+    val damage = count match {
+      case 1 => snapshot.damage
+      case 2 => snapshot.damage
+          .copy(modifiers = snapshot.damage.modifiers ++ firstJumpModifier)
+      case 3 => snapshot.damage
+          .copy(modifiers = snapshot.damage.modifiers ++ secondJumpModifier)
+    }
+    entityService.damageEntity(entity.id, damage)
+
     new ChainLightning.ParticleEffect(caster.eyeLocation, target.eyeLocation)
     worldService.playSound(caster.location, castSound, soundCategory)
 
@@ -47,6 +69,7 @@ class ChainLightning(
         () => {
           hitbox.collideEntities(entity.eyeLocation, entity.eyeLocation)
             .filter { _.isGrounded }
+            .find { !hasHit.contains(_) }
             .foreach { chain(_, count + 1) }
         }
       )
