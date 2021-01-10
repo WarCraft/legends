@@ -66,6 +66,8 @@ class LeaderboardRewardHandler(config: LegendsConfig)(implicit
           s"You received $prizeString for placing $messageTail"
         )
         playerService.sendMessage(winner.id, prizeMessage)
+
+      case _ =>
     }
 
     leaderboard.clear()
