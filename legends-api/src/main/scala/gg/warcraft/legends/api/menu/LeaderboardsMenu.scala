@@ -183,7 +183,7 @@ object LeaderboardsMenu {
       .filter(filter)
       .zipWithIndex
       .map { case (leaderboard, index) =>
-        val slot = index + (1 + (index - 1) / 7) * 2
+        val slot = index + (1 + index / 7) * 2
         slot -> LeaderboardsMenu.leaderboardButton(leaderboard, player, 0)
       }
     Menu(

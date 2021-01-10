@@ -100,7 +100,7 @@ object DecorationsMenu {
     val rowCount = if (packs.size <= 14) 2 else Math.ceil(packs.size / 7f).toInt
     val menuSize = MenuSize.fromRows(rowCount)
     val buttons = packs.zipWithIndex.map { case (pack, i) =>
-      val slot = i + (1 + (i - 1) / 7) * 2
+      val slot = i + (1 + i / 7) * 2
       slot -> decorationPackButton(pack.asInstanceOf[DecorationPack])
     }
     Menu(

@@ -94,7 +94,7 @@ object MiniPetsMenu {
     val rowCount = if (pets.size <= 14) 2 else Math.ceil(pets.size / 7f).toInt
     val menuSize = MenuSize.fromRows(rowCount)
     val buttons = pets.zipWithIndex.map { case (pet, i) =>
-      val slot = i + (1 + (i - 1) / 7) * 2
+      val slot = i + (1 + i / 7) * 2
       slot -> miniPetButton(pet.asInstanceOf[MiniPet], profile)
     }
     Menu(

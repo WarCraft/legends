@@ -93,7 +93,7 @@ object DecorationPackMenu {
     val menuSize = MenuSize.fromRows(rowCount)
     val shopProfile = shopProfileService.profile(player.id)
     val buttons = pack.decorations.zipWithIndex.map { case (decorationId, i) =>
-      val slot = i + (1 + (i - 1) / 7) * 2
+      val slot = i + (1 + i / 7) * 2
       val decoration = shopService.itemsById(decorationId).asInstanceOf[Decoration]
       slot -> decorationButton(decoration, shopProfile)
     }

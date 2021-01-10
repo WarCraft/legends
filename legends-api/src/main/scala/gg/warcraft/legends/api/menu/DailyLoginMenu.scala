@@ -92,7 +92,7 @@ object DailyLoginMenu {
   ): Menu = {
     val claimed = loginRewardService.rewardsClaimed(player.id)
     val buttons = loginRewardService.rewards.map { case (day, rewards) =>
-      val slot = day + (1 + (day - 1) / 7) * 2
+      val slot = day + (1 + day / 7) * 2
       slot -> rewardButton(player, claimed, day, rewards)
     }
     Menu(
