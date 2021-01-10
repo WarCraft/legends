@@ -84,7 +84,7 @@ class SpigotScoreboardHandler(config: LegendsConfig)(implicit
     val minutes = timer.seconds / 60
     val seconds = timer.seconds % 60
     val paused = if (gameService.paused) " (Paused)" else ""
-    f"$minutes%2s:$seconds%2s$paused"
+    f"$minutes%02d:$seconds%02d$paused"
   }
 
   private def formatSkirmishCountdown(): String = {
