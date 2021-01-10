@@ -18,6 +18,10 @@ import gg.warcraft.legends.api.combat.hunter.{
 }
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.combat.passive.PassiveAssignmentHandler
+import gg.warcraft.legends.api.core.data.{
+  LegendsServerDataRepository, PostgresLegendsServerDataRepository,
+  SqliteLegendsServerDataRepository
+}
 import gg.warcraft.legends.api.core.game.handler.{
   DailySkirmishHandler, GameRewardHandler, GameTickHandler
 }
@@ -31,13 +35,13 @@ import gg.warcraft.legends.api.core.leaderboard.handler.{
 import gg.warcraft.legends.api.core.spawn.ReturnToSpawnCommand
 import gg.warcraft.legends.api.entity.attribute.EquipmentAttributeHandler
 import gg.warcraft.legends.api.item.crate.LootCrateUseHandler
+import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
+import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeUseHandler
+import gg.warcraft.legends.api.menu.MenuConfig
 import gg.warcraft.legends.api.player.calendar.{
   LoginCalendarHandler, LoginRewardRepository, PostgresLoginRewardRepository,
   SqliteLoginRewardRepository
 }
-import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
-import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeUseHandler
-import gg.warcraft.legends.api.menu.MenuConfig
 import gg.warcraft.legends.api.player.challenge.handler.{
   ChallengeCompletionHandler, ChallengeRotateHandler
 }
@@ -146,7 +150,8 @@ class LegendsPlugin extends SpigotMonolithPlugin {
       LoginRewardRepository,
       LegendsPlayerDataRepository,
       AvailableShopItemRepository,
-      UnlockedShopItemRepository
+      UnlockedShopItemRepository,
+      LegendsServerDataRepository
   ) =
     if (config.embedded) {
       val sqliteConfig = parseDatabaseConfig(config, getDataFolder)
@@ -156,7 +161,8 @@ class LegendsPlugin extends SpigotMonolithPlugin {
         new SqliteLoginRewardRepository(sqliteConfig),
         new SqliteLegendsPlayerDataRepository(sqliteConfig),
         new SqliteAvailableShopItemRepository(sqliteConfig),
-        new SqliteUnlockedShopItemRepository(sqliteConfig)
+        new SqliteUnlockedShopItemRepository(sqliteConfig),
+        new SqliteLegendsServerDataRepository(sqliteConfig)
       )
     } else {
       val postgresConfig = parseDatabaseConfig(config, getDataFolder)
@@ -166,7 +172,8 @@ class LegendsPlugin extends SpigotMonolithPlugin {
         new PostgresLoginRewardRepository(postgresConfig),
         new PostgresLegendsPlayerDataRepository(postgresConfig),
         new PostgresAvailableShopItemRepository(postgresConfig),
-        new PostgresUnlockedShopItemRepository(postgresConfig)
+        new PostgresUnlockedShopItemRepository(postgresConfig),
+        new PostgresLegendsServerDataRepository(postgresConfig)
       )
     }
 
