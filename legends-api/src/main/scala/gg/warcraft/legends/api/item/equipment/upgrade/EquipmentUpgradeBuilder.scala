@@ -31,21 +31,21 @@ class EquipmentUpgradeBuilder(rarity: ItemRarity, name: String)(implicit
   }
 
   def build(): Item = {
-    var item = itemService.create(ItemType.PAPER).withName(s"${rarity.color}name")
+    var item = itemService.create(ItemType.PAPER).withName(s"${rarity.color}$name")
 
     // set type at top of tooltip
     var tooltip: List[String] = "Equipment Upgrade" :: Nil
 
     // add attributes
-    tooltip ::= ""
+    tooltip += ""
     attributes.foreach { case (attribute, amount) =>
-      tooltip ::= s"+$amount $attribute"
+      tooltip += s"+$amount $attribute"
     }
 
-    tooltip ::= ""
-    tooltip ::= "[Right Click] While holding a piece of equipment"
-    tooltip ::= "in your main hand and this equipment upgrade in"
-    tooltip ::= "your offhand to apply this upgrade to the item."
+    tooltip += ""
+    tooltip += "[Right Click] While holding a piece of equipment"
+    tooltip += "in your main hand and this equipment upgrade in"
+    tooltip += "your offhand to apply this upgrade to the item."
 
     item.withTooltip(tooltip: _*)
   }
