@@ -7,6 +7,7 @@
 package gg.warcraft.legends.api.player.calendar
 
 import com.typesafe.config.Config
+import gg.warcraft.monolith.api.util.codecs.quill._
 import io.getquill._
 import io.getquill.context.jdbc.JdbcContext
 import io.getquill.context.sql.idiom.SqlIdiom

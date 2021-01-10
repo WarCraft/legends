@@ -57,7 +57,7 @@ object DailyLoginMenu {
       if (claimed.day >= day) {
         if (day % 7 == 0) GlassVariant.BLACK else GlassVariant.BROWN
       } else rewards.head.chestVariant
-    val canClaim = serverDataService.today.isAfter(claimed.claimed) &&
+    val canClaim = serverDataService.serverDate.isAfter(claimed.claimed) &&
       day == (claimed.day - 1)
     val claimText =
       if (canClaim) s"${ColorCode.GREEN}[Click] To claim today's reward!"

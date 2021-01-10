@@ -6,11 +6,12 @@
 
 package gg.warcraft.legends.api.player.calendar
 
-import java.time.LocalDate
+import gg.warcraft.monolith.api.util.types.MonolithDate
+
 import java.util.UUID
 
 case class LoginCalendar(
     playerId: UUID,
     day: Int,
-    claimed: LocalDate
+    claimed: MonolithDate
 )

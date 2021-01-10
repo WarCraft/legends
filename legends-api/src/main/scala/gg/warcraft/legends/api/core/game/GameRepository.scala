@@ -10,11 +10,12 @@ import com.typesafe.config.Config
 import gg.warcraft.legends.api.entity.LegendsTeam._
 import gg.warcraft.monolith.api.core.Duration.DurationOps
 import gg.warcraft.monolith.api.entity.team.TeamService
+import gg.warcraft.monolith.api.util.codecs.quill._
+import gg.warcraft.monolith.api.util.types._
 import io.getquill._
 import io.getquill.context.jdbc.JdbcContext
 import io.getquill.context.sql.idiom.SqlIdiom
 
-import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -28,8 +29,8 @@ trait GameRepository {
 
 private case class _Game(
     id: Long,
-    startTime: LocalDateTime,
-    endTime: Option[LocalDateTime],
+    startTime: MonolithDateTime,
+    endTime: Option[MonolithDateTime],
     timer: Int,
     objectives: String,
     dailyPoints: String,

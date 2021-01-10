@@ -35,10 +35,12 @@ class LoginCalendarService(implicit
     }.toMap
 
   def claimReward(player: Player): Unit = {
-    val outdated = _rewardsClaimed(player.id)
-    val today = serverDataService.today
-    if (today.isAfter(outdated.claimed)) {
-      val updated = outdated.copy(day = outdated.day + 1, claimed = today)
+    val outdated = _rewardsClaimed.get(player.id)
+    val today = serverDataService.serverDate
+    if (outdated.isEmpty || today.isAfter(outdated.get.claimed)) {
+      val updated = outdated
+        .map { it => it.copy(day = it.day + 1, claimed = today) }
+        .getOrElse(LoginCalendar(player.id, 1, today))
       val rewards = _rewards(updated.day)
       if (player.inventory.hasSpaceFor(rewards: _*)) {
         rewards.foreach { itemService.giveTo(player.id, _) }
@@ -71,9 +73,7 @@ class LoginCalendarService(implicit
   private[calendar] def loadRewardsClaimed(playerId: UUID): Unit =
     repository.load(playerId).tap {
       case Some(data) => _rewardsClaimed += (playerId -> data)
-      case None =>
-        val yesterday = serverDataService.serverTime.toLocalDate.minusDays(1)
-        _rewardsClaimed += (playerId -> LoginCalendar(playerId, 0, yesterday))
+      case None       =>
     }
 
   private[calendar] def invalidateRewardsClaimed(playerId: UUID): Unit =
