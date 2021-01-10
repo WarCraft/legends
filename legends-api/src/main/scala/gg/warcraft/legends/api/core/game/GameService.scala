@@ -199,8 +199,10 @@ class GameService(implicit
       _activeWar = None
       gameRepository.save(updatedWar)
 
-      val winners = war.dailyPoints.maxBy { _._2 }._1
-      eventService << WarFinishedEvent(updatedWar, winners)
+      if (war.monthlyScore.nonEmpty) {
+        val winners = war.monthlyScore.maxBy { _._2 }._1
+        eventService << WarFinishedEvent(updatedWar, winners)
+      }
     case None => throw new IllegalStateException(
         s"Failed to end war with no active war!"
       )
