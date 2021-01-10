@@ -139,9 +139,11 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     new CombatConfig().writeConfig()
     new MenuConfig().writeConfig()
 
-    enableHandlers(config)
+    val firstTimeRaceClassMenuHandler = new SpigotFirstTimeRaceClassMenuHandler()
+
+    enableHandlers(config, firstTimeRaceClassMenuHandler)
     enableCommands()
-    enableTasks(config)
+    enableTasks(config, firstTimeRaceClassMenuHandler)
   }
 
   private def configureRepositories(config: DatabaseConfig): (
@@ -210,9 +212,10 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     )
   }
 
-  private def enableHandlers(config: LegendsConfig): Unit = {
-    val firstTimeRaceClassMenuHandler = new SpigotFirstTimeRaceClassMenuHandler
-
+  private def enableHandlers(
+      config: LegendsConfig,
+      firstTimeRaceClassMenuHandler: SpigotFirstTimeRaceClassMenuHandler
+  ): Unit = {
     // Core
     eventService.subscribe(firstTimeRaceClassMenuHandler)
     eventService.subscribe(new BlockBreakPlaceHandler)
@@ -272,7 +275,6 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     eventService.subscribe(new ResourceStatisticHandler)
 
     // Spigot
-    subscribe(firstTimeRaceClassMenuHandler)
     subscribe(new OnePointEightPvPInitHandler)
     subscribe(new HunterOnlyBowHandler)
     subscribe(new SpigotArmorStandProtectionHandler)
@@ -291,7 +293,12 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     }
   }
 
-  private def enableTasks(config: LegendsConfig): Unit = {
+  private def enableTasks(
+      config: LegendsConfig,
+      firstTimeRaceClassMenuHandler: SpigotFirstTimeRaceClassMenuHandler
+  ): Unit = {
+    taskService.runTask(6.seconds, () => firstTimeRaceClassMenuHandler.run())
+
     val scoreboardHandler = new SpigotScoreboardHandler(config)
     taskService.runTask(1.seconds, () => scoreboardHandler.run())
 

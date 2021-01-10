@@ -14,8 +14,8 @@ import gg.warcraft.combat.api.util.entity._
 import gg.warcraft.legends.api.ai.MiniPetFactory
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
 import gg.warcraft.legends.api.core.spawn.SpawnService
-import gg.warcraft.legends.api.player.calendar.LoginCalendarService
 import gg.warcraft.legends.api.menu.{CombatClassMenu, FactionMenu}
+import gg.warcraft.legends.api.player.calendar.LoginCalendarService
 import gg.warcraft.legends.api.player.challenge.ChallengeService
 import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
@@ -32,35 +32,34 @@ import gg.warcraft.monolith.api.item.ItemService
 import gg.warcraft.monolith.api.menu.MenuService
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
-import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.{EventHandler, Listener}
 
 import java.util.UUID
 
 class SpigotFirstTimeRaceClassMenuHandler(implicit
-                                          entityService: EntityService,
-                                          menuService: MenuService,
-                                          attributeService: AttributeService,
-                                          currencyService: CurrencyService,
-                                          levelService: LevelService,
-                                          playerService: PlayerService,
-                                          combatDataService: CombatDataService,
-                                          combatClassService: CombatClassService,
-                                          legendsDataService: LegendsPlayerDataService,
-                                          loginRewardService: LoginCalendarService,
-                                          serverDataService: ServerDataService,
-                                          challengeService: ChallengeService,
-                                          leaderboardService: LeaderboardService,
-                                          shopService: ShopService,
-                                          shopProfileService: ShopProfileService,
-                                          itemService: ItemService,
-                                          miniPetFactory: MiniPetFactory,
-                                          commandService: CommandService,
-                                          spawnService: SpawnService,
-                                          teamService: TeamService
+    entityService: EntityService,
+    menuService: MenuService,
+    attributeService: AttributeService,
+    currencyService: CurrencyService,
+    levelService: LevelService,
+    playerService: PlayerService,
+    combatDataService: CombatDataService,
+    combatClassService: CombatClassService,
+    legendsDataService: LegendsPlayerDataService,
+    loginRewardService: LoginCalendarService,
+    serverDataService: ServerDataService,
+    challengeService: ChallengeService,
+    leaderboardService: LeaderboardService,
+    shopService: ShopService,
+    shopProfileService: ShopProfileService,
+    itemService: ItemService,
+    miniPetFactory: MiniPetFactory,
+    commandService: CommandService,
+    spawnService: SpawnService,
+    teamService: TeamService
 ) extends Event.Handler
-    with Listener {
+    with Runnable {
   import SpigotRaceRespawnHandler.getSpawn
 
   private var inTutorial: Set[UUID] = Set.empty
@@ -89,10 +88,14 @@ class SpigotFirstTimeRaceClassMenuHandler(implicit
     }
   }
 
-  @EventHandler
-  def on(event: InventoryCloseEvent): Unit =
-    if (inTutorial.contains(event.getPlayer.getUniqueId))
-      test(playerService.getPlayer(event.getPlayer.getUniqueId))
+  override def run(): Unit =
+    inTutorial.foreach { playerId =>
+      playerService.getPlayerOption(playerId) match {
+        case Some(player) =>
+          test(player)
+        case None => inTutorial -= playerId
+      }
+    }
 
   override def handle(event: Event): Unit = event match {
     case EntityTeamChangedEvent(player: Player, _, _) =>
