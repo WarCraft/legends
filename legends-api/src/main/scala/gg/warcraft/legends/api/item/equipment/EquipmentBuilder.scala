@@ -63,7 +63,9 @@ class EquipmentBuilder(
 
   def build(): Item = {
     val upgradedName = if (upgradeCount > 0) s"$name (+$upgradeCount)" else name
-    var item = itemService.create(typ).withName(s"${rarity.color}$upgradedName")
+    var item = itemService.create(typ)
+      .withName(s"${rarity.color}$upgradedName")
+      .withTooltip()
 
     // set type at top of tooltip
     item = item.addTooltip(s"${reset}Equipment")
