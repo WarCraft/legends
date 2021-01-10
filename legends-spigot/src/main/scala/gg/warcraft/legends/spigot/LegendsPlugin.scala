@@ -22,10 +22,10 @@ import gg.warcraft.legends.api.core.data.{
   LegendsServerDataRepository, PostgresLegendsServerDataRepository,
   SqliteLegendsServerDataRepository
 }
+import gg.warcraft.legends.api.core.game._
 import gg.warcraft.legends.api.core.game.handler.{
   DailySkirmishHandler, GameRewardHandler, GameTickHandler
 }
-import gg.warcraft.legends.api.core.game._
 import gg.warcraft.legends.api.core.handler._
 import gg.warcraft.legends.api.core.leaderboard.handler.{
   LeaderboardRewardHandler, LeaderboardUpdateHandler
@@ -334,6 +334,9 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
     val playtimeStatisticHandler = new PlaytimeStatisticHandler
     taskService.runTask(10.seconds, () => playtimeStatisticHandler.run())
+
+    val gameTickHandler = new GameTickHandler
+    taskService.runTask(1.seconds, () => gameTickHandler.run())
   }
 }
 
