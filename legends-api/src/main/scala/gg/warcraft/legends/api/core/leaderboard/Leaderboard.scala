@@ -26,10 +26,11 @@ class Leaderboard(
 
   private var _rankings: Array[(OfflinePlayer, Long)] = Array.ofDim(maxEntries)
   private var _rankingsCache: List[(OfflinePlayer, Long)] = _
-  def rankings: List[(OfflinePlayer, Long)] = {
-    if (_rankingsCache == null) _rankingsCache = _rankings.toList
-    _rankingsCache
-  }
+  def rankings: List[(OfflinePlayer, Long)] =
+    if (_rankingsCache == null) {
+      _rankingsCache = _rankings.iterator.filter { _ != null }.toList
+      _rankingsCache
+    } else _rankingsCache
 
   private var _players: Map[UUID, Int] = Map.empty
   def players: Map[UUID, Int] = _players
