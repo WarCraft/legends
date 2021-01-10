@@ -7,8 +7,10 @@
 package gg.warcraft.legends.api.menu.staff
 
 import gg.warcraft.combat.api.combatclass.CombatClassService
+import gg.warcraft.legends.api.item.crate.LootCrateService
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
+import gg.warcraft.monolith.api.block.variant.ChestVariant
 import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.item.ItemService
 import gg.warcraft.monolith.api.item.variant.ChestplateVariant
@@ -23,12 +25,27 @@ object StaffMenu {
       itemService: ItemService,
       equipmentConfigRepository: EquipmentConfigRepository,
       combatClassService: CombatClassService,
-      teamService: TeamService
+      teamService: TeamService,
+      lootCrateService: LootCrateService
   ): Button = Button(
     ChestplateVariant.DIAMOND,
     "Equipment Generator",
     Nil
   ) { _ => updateMenu(EquipmentGeneratorMenu.apply) }
+
+  def lootCrateGeneratorButton(implicit
+      menuService: MenuService,
+      playerService: PlayerService,
+      itemService: ItemService,
+      equipmentConfigRepository: EquipmentConfigRepository,
+      combatClassService: CombatClassService,
+      teamService: TeamService,
+      lootCrateService: LootCrateService
+  ): Button = Button(
+    ChestVariant.ENDER,
+    "Loot Crate Generator",
+    Nil
+  ) { _ => updateMenu(LootCrateGeneratorMenu.apply) }
 
   def apply(player: Player)(implicit
       menuService: MenuService,
@@ -36,14 +53,16 @@ object StaffMenu {
       itemService: ItemService,
       equipmentConfigRepository: EquipmentConfigRepository,
       combatClassService: CombatClassService,
-      teamService: TeamService
+      teamService: TeamService,
+      lootCrateService: LootCrateService
   ): Menu = {
     val generator = new EquipmentGenerator()
     Menu(
       "Staff Menu",
       MenuSize.ONE_ROW,
       Map(
-        0 -> equipmentGeneratorButton(generator)
+        0 -> equipmentGeneratorButton(generator),
+        1 -> lootCrateGeneratorButton
       )
     )
   }

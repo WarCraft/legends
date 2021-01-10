@@ -9,6 +9,7 @@ package gg.warcraft.legends.api.menu.staff
 import gg.warcraft.combat.api.combatclass.{CombatClass, CombatClassService}
 import gg.warcraft.legends.api.combat.LegendsCombatClass._
 import gg.warcraft.legends.api.entity.LegendsTeam
+import gg.warcraft.legends.api.item.crate.LootCrateService
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
 import gg.warcraft.monolith.api.entity.team.TeamService
@@ -46,7 +47,8 @@ object EquipmentGeneratorMenu {
       itemService: ItemService,
       equipmentConfigRepository: EquipmentConfigRepository,
       combatClassService: CombatClassService,
-      teamService: TeamService
+      teamService: TeamService,
+      lootCrateService: LootCrateService
   ): Menu = {
     implicit val generator: EquipmentGenerator = new EquipmentGenerator()
     Menu(
