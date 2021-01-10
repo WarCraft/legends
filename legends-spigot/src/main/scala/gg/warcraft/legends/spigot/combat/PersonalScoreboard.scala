@@ -33,7 +33,7 @@ class PersonalScoreboard(player: SpigotPlayer)(implicit
   import PersonalScoreboard._
 
   private val scoreboard = server.getScoreboardManager.getNewScoreboard
-  private val task = taskService.runTask(4.ticks, run)
+  private val task = taskService.runTask(4.ticks, () => run())
 
   private var cooldowns: Map[String, Long] = Map.empty
 

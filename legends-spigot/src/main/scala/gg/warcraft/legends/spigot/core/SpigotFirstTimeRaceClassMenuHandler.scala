@@ -31,9 +31,7 @@ import gg.warcraft.monolith.api.entity.{EntityService, EntityTeamChangedEvent}
 import gg.warcraft.monolith.api.item.ItemService
 import gg.warcraft.monolith.api.menu.MenuService
 import gg.warcraft.monolith.api.player.currency.CurrencyService
-import gg.warcraft.monolith.api.player.{Player, PlayerService}
-import org.bukkit.event.EventHandler
-import org.bukkit.event.player.PlayerJoinEvent
+import gg.warcraft.monolith.api.player.{Player, PlayerConnectEvent, PlayerService}
 
 import java.util.UUID
 
@@ -78,16 +76,6 @@ class SpigotFirstTimeRaceClassMenuHandler(implicit
     }
   }
 
-  @EventHandler
-  def on(event: PlayerJoinEvent): Unit = {
-    val player = playerService.getPlayer(event.getPlayer.getUniqueId)
-    if (player.team.isEmpty || player.combatClass.isEmpty) {
-      inTutorial += event.getPlayer.getUniqueId
-      entityService.freezeEntity(player.id, Integer.MAX_VALUE.ticks)
-      test(player)
-    }
-  }
-
   override def run(): Unit =
     inTutorial.foreach { playerId =>
       playerService.getPlayerOption(playerId) match {
@@ -98,6 +86,12 @@ class SpigotFirstTimeRaceClassMenuHandler(implicit
     }
 
   override def handle(event: Event): Unit = event match {
+    case PlayerConnectEvent(player) =>
+      if (player.team.isEmpty || player.combatClass.isEmpty) {
+        inTutorial += player.id
+        entityService.freezeEntity(player.id, Integer.MAX_VALUE.ticks)
+        test(player)
+      }
     case EntityTeamChangedEvent(player: Player, _, _) =>
       if (inTutorial.contains(player.id)) test(player)
     case PlayerCombatClassChangedEvent(player, _, _) =>
