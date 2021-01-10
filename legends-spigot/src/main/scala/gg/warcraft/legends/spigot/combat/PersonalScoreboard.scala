@@ -6,12 +6,12 @@
 
 package gg.warcraft.legends.spigot.combat
 
-import gg.warcraft.legends.api.entity.LegendsTeam._
 import gg.warcraft.monolith.api.core.Duration._
 import gg.warcraft.monolith.api.core.event.Event
 import gg.warcraft.monolith.api.core.task.TaskService
-import gg.warcraft.monolith.api.core.{Cancellable, Duration}
+import gg.warcraft.monolith.api.core.{Cancellable, Duration, FormatCode}
 import gg.warcraft.monolith.api.entity.EntityTeamChangedEvent
+import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.player.{
   Player, PlayerConnectEvent, PlayerDisconnectEvent, PlayerService
 }
@@ -26,7 +26,8 @@ class PersonalScoreboard(player: SpigotPlayer)(implicit
     server: Server,
     plugin: Plugin,
     taskService: TaskService,
-    playerService: PlayerService
+    playerService: PlayerService,
+    teamService: TeamService
 ) extends Event.Handler
     with Runnable
     with Cancellable {
@@ -42,18 +43,18 @@ class PersonalScoreboard(player: SpigotPlayer)(implicit
     player.setMetadata(metadataKey, scoreboardMetadata)
     player.setScoreboard(scoreboard)
 
-    initializeTeams()
-    // TODO initializeHealthDisplay()
+    initializeTeams
+    initializeHealthDisplay()
   }
 
-  private def initializeTeams(): Unit = {
-    (Humans :: Orcs :: Dwarves :: Elves :: Nil).foreach { team =>
-      val scoreboardTeam = scoreboard.registerNewTeam(team)
+  private def initializeTeams(implicit teamService: TeamService): Unit = {
+    teamService.teams.values.foreach { team =>
+      val scoreboardTeam = scoreboard.registerNewTeam(team.id)
       scoreboardTeam.setAllowFriendlyFire(false)
       scoreboardTeam.setNameTagVisibility(NameTagVisibility.NEVER)
-    //scoreboardTeam.setColor(ChatColor.getByChar(team.chatColor.code(1)))
-    //scoreboardTeam.setPrefix(team.chatColor.toString)
-    //scoreboardTeam.setSuffix(FormatCode.RESET.code)
+      scoreboardTeam.setColor(ChatColor.getByChar(team.chatColor.code(1)))
+      scoreboardTeam.setPrefix(team.chatColor.toString)
+      scoreboardTeam.setSuffix(FormatCode.RESET.code)
     }
 
     playerService.getOnlinePlayers.foreach { player =>
