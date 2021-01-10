@@ -17,6 +17,7 @@ import gg.warcraft.legends.api.player.data.LegendsPlayerDataService
 import gg.warcraft.legends.api.player.level.LevelService
 import gg.warcraft.legends.api.shop.profile.{ShopProfile, ShopProfileService}
 import gg.warcraft.legends.api.shop.{Decoration, DecorationPack, ShopService}
+import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
@@ -26,7 +27,6 @@ import gg.warcraft.monolith.api.menu.Button.noop
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
-import gg.warcraft.monolith.api.util.ConsoleColor.{GREEN, RED}
 
 import scala.util.chaining.scalaUtilChainingOps
 
