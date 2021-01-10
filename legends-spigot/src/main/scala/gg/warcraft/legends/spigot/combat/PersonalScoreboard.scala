@@ -7,20 +7,20 @@
 package gg.warcraft.legends.spigot.combat
 
 import gg.warcraft.legends.api.entity.LegendsTeam._
-import gg.warcraft.monolith.api.core.{Cancellable, Duration}
-import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.core.Duration._
 import gg.warcraft.monolith.api.core.event.Event
+import gg.warcraft.monolith.api.core.task.TaskService
+import gg.warcraft.monolith.api.core.{Cancellable, Duration}
 import gg.warcraft.monolith.api.entity.EntityTeamChangedEvent
 import gg.warcraft.monolith.api.player.{
   Player, PlayerConnectEvent, PlayerDisconnectEvent, PlayerService
 }
 import gg.warcraft.monolith.api.util.chaining._
 import gg.warcraft.monolith.spigot.player.SpigotPlayer
-import org.bukkit.{ChatColor, Server}
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.plugin.Plugin
 import org.bukkit.scoreboard.{DisplaySlot, NameTagVisibility}
+import org.bukkit.{ChatColor, Server}
 
 class PersonalScoreboard(player: SpigotPlayer)(implicit
     server: Server,
@@ -59,7 +59,7 @@ class PersonalScoreboard(player: SpigotPlayer)(implicit
     playerService.getOnlinePlayers.foreach { player =>
       player.team match {
         case Some(team) =>
-          val scoreboardTeam = scoreboard.getTeam(team.name)
+          val scoreboardTeam = scoreboard.getTeam(team.id)
           scoreboardTeam.addEntry(player.name)
         case None =>
       }
