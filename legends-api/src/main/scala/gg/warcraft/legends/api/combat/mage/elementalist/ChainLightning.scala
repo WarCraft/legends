@@ -67,7 +67,7 @@ object ChainLightning {
       taskService: TaskService
   ) extends RangedAbility.Factory {
     override val flags: Set[Flag] =
-      Set(RangedAbility.TARGET_REQUIRED)
+      Set(RangedAbility.ENTITY_TARGET_REQUIRED)
 
     override def create(
         caster: Entity,
