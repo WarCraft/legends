@@ -19,6 +19,7 @@ import gg.warcraft.legends.api.player.currency.LegendsCurrency._
 import gg.warcraft.legends.api.shop.profile.ShopProfileService
 import gg.warcraft.legends.api.shop.{DecorationPack, ShopItem, ShopService}
 import gg.warcraft.legends.api.util.combatclass.CombatClassOps
+import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.core.Message
 import gg.warcraft.monolith.api.core.event.EventService
 import gg.warcraft.monolith.api.item.{
@@ -79,36 +80,48 @@ class LootCrateService(implicit
       new LootCrate(id, name, rarity, chestVariant, dropTables, count)
     }.toList
 
-  private def notifyReceived(playerId: UUID, name: String): Unit = {
-    val strippedName = name.stripChatCodes
-    val prefix =
-      if (strippedName(0).isDigit) ""
-      else if (strippedName(0).isVowel) "an "
-      else "a "
-    val message = Message.server(s"You received $prefix$strippedName!")
+  private def notifyReceived(
+      playerId: UUID,
+      name: String,
+      rarity: ItemRarity
+  ): Unit = {
+    val prefix = if (name(0).isDigit) "" else if (name(0).isVowel) "an " else "a "
+    val message = Message.server(s"You received $prefix${rarity.color}$name$YELLOW!")
     playerService.sendMessage(playerId, message)
   }
 
-  private def notifyUnlocked(playerId: UUID, name: String, typed: String): Unit = {
-    val strippedName = name.stripChatCodes
-    val message = Message.server(s"You unlocked the $strippedName $typed!")
+  private def notifyUnlocked(
+      playerId: UUID,
+      name: String,
+      typ: String,
+      rarity: ItemRarity
+  ): Unit = {
+    val message =
+      Message.server(s"You unlocked the ${rarity.color}$name$YELLOW $typ!")
     playerService.sendMessage(playerId, message)
   }
 
-  private def notifyDuplicate(playerId: UUID, name: String, typed: String): Unit = {
-    val strippedName = name.stripChatCodes
-    val prefix = if (strippedName(0).isVowel) "an" else "a"
+  private def notifyDuplicate(
+      playerId: UUID,
+      name: String,
+      typ: String,
+      rarity: ItemRarity
+  ): Unit = {
+    val prefix = if (name(0).isVowel) "an" else "a"
     val message = Message.server(
-      s"You opened $prefix $strippedName $typed, but you already have this unlocked."
+      s"You opened $prefix ${rarity.color}$name$YELLOW $typ, but you already have this unlocked."
     )
     playerService.sendMessage(playerId, message)
   }
 
-  private def notifyDuplicatePack(playerId: UUID, name: String): Unit = {
-    val strippedName = name.stripChatCodes
-    val prefix = if (strippedName(0).isVowel) "an" else "a"
+  private def notifyDuplicatePack(
+      playerId: UUID,
+      name: String,
+      rarity: ItemRarity
+  ): Unit = {
+    val prefix = if (name(0).isVowel) "an" else "a"
     val message = Message.server(
-      s"You opened $prefix $strippedName Decoration Pack, but you already have some of its contents unlocked."
+      s"You opened $prefix ${rarity.color}$name$YELLOW Decoration Pack, but you already have some of its contents unlocked."
     )
     playerService.sendMessage(playerId, message)
   }
@@ -131,11 +144,11 @@ class LootCrateService(implicit
         if (profile.unlocked.contains(item.id)) {
           val reimbursement = (item.price * 0.33).toInt
           currencyService.addCurrency(Fragments, reimbursement, player.id)
-          notifyDuplicate(player.id, item.name, typName)
+          notifyDuplicate(player.id, item.name, typName, rarity)
           notifyReimbursement(player.id, reimbursement)
         } else {
           shopProfileService.unlock(item.id, player.id)
-          notifyUnlocked(player.id, item.name, typName)
+          notifyUnlocked(player.id, item.name, typName, rarity)
         }
         true
       case None =>
@@ -162,7 +175,7 @@ class LootCrateService(implicit
       item = item.asInstanceOf[GoldenApple].copy(enchanted = true)
 
     playerService.giveItem(playerId, item)
-    notifyReceived(playerId, item.name)
+    notifyReceived(playerId, item.name, rarity)
     true
   }
 
@@ -181,17 +194,17 @@ class LootCrateService(implicit
         ) {
           val reimbursement = (item.price * 0.33).toInt
           currencyService.addCurrency(Fragments, reimbursement, player.id)
-          notifyDuplicate(player.id, item.name, "Decoration Pack")
+          notifyDuplicate(player.id, item.name, "Decoration Pack", rarity)
           notifyReimbursement(player.id, reimbursement)
         } else {
           shopProfileService.unlock(item.id, player.id)
-          notifyUnlocked(player.id, item.name, "Decoration Pack")
+          notifyUnlocked(player.id, item.name, "Decoration Pack", rarity)
 
           if (duplicates > 0) {
             val reimbursement = ((item.price * 0.33).toInt *
               (duplicates.toFloat / item.decorations.size.toFloat)).toInt
             currencyService.addCurrency(Fragments, reimbursement, player.id)
-            notifyDuplicatePack(player.id, item.name)
+            notifyDuplicatePack(player.id, item.name, rarity)
             notifyReimbursement(player.id, reimbursement)
           }
         }
@@ -208,7 +221,7 @@ class LootCrateService(implicit
       case (Some(combatClass), Some(team)) =>
         val item = equipmentGenerator.generate(combatClass, team, rarity)
         itemService.giveTo(player.id, item)
-        notifyReceived(player.id, item.name)
+        notifyReceived(player.id, item.name, rarity)
         true
       case _ =>
         playerService.sendMessage(player.id, missingCombatClassOrTeam)
@@ -220,7 +233,7 @@ class LootCrateService(implicit
       case Some(combatClass) =>
         val upgrade = equipUpgradeGenerator.generate(combatClass.archetype, rarity)
         itemService.giveTo(player.id, upgrade)
-        notifyReceived(player.id, upgrade.name)
+        notifyReceived(player.id, upgrade.name, rarity)
         true
       case None =>
         playerService.sendMessage(player.id, missingCombatClassOrTeam)
@@ -235,7 +248,7 @@ class LootCrateService(implicit
       case _      => 600
     }
     currencyService.addCurrency(Gold, amount, playerId)
-    notifyReceived(playerId, s"$amount Gold")
+    notifyReceived(playerId, s"$amount Gold", rarity)
     true
   }
 
