@@ -171,7 +171,9 @@ class GameService(implicit
 
   def runScore(): Unit = _activeWar match {
     case Some(war) =>
-      val winningPoints = war.dailyPoints.maxBy { _._2 }._2
+      val winningPoints =
+        if (war.dailyPoints.isEmpty) 0
+        else war.dailyPoints.maxBy { _._2 }._2
       val winningTeams = war.dailyPoints.filter { _._2 == winningPoints }
       if (winningTeams.size == 1) {
         val updatedScore = war.monthlyScore.updatedWith(winningTeams.head._1) {
@@ -229,7 +231,9 @@ class GameService(implicit
 
   def endSkirmish(): Unit = _activeSkirmish match {
     case Some(skirmish) =>
-      val winningPoints = skirmish.dailyPoints.maxBy { _._2 }._2
+      val winningPoints =
+        if (skirmish.dailyPoints.isEmpty) 0
+        else skirmish.dailyPoints.maxBy { _._2 }._2
       val winningTeams = skirmish.dailyPoints.filter { _._2 == winningPoints }
       if (winningTeams.size == 1) {
         _activeWar match {
