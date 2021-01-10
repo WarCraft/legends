@@ -134,7 +134,10 @@ object LeaderboardsMenu {
     val cursor = page * 10
     val rankings = leaderboard.rankings
       .slice(cursor, cursor + 10)
-      .map { case (player, score) => s"$YELLOW$rank. ${player.name} $score" }
+      .map {
+        case null            => "$YELLOW$rank."
+        case (player, score) => s"$YELLOW$rank. ${player.name} $score"
+      }
     Button(
       icon,
       leaderboard.name,
