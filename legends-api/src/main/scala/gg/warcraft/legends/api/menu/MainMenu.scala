@@ -312,8 +312,7 @@ object MainMenu {
       List(
         s"You are fighting for the $YELLOW${team.name}",
         "",
-        s"${WHITE}Racial passive:",
-        s""
+        s"${WHITE}Racial passive:"
       ) ++ racialPassiveView(player, team, combatClass)
         ++ List("", "[Click] to change your race")
     ) { _ => updateMenu(FactionMenu.apply) }
