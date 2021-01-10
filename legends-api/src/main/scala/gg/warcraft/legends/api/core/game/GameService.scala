@@ -50,11 +50,11 @@ class GameService(implicit
 
   def readConfig(config: LegendsConfig): Unit = {
     _config = config
-    _activeWar = legendsServerDataService.data.activeWar match {
+    _activeWar = legendsServerDataService.data.activeWarId match {
       case -1 => None
       case id => gameRepository.load(id)
     }
-    _activeSkirmish = legendsServerDataService.data.activeSkirmish match {
+    _activeSkirmish = legendsServerDataService.data.activeSkirmishId match {
       case -1 => None
       case id => gameRepository.load(id)
     }

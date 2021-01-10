@@ -25,6 +25,6 @@
 package gg.warcraft.legends.api.core.data
 
 case class LegendsServerData(
-    activeWar: Long,
-    activeSkirmish: Long
+    activeWarId: Long,
+    activeSkirmishId: Long
 )

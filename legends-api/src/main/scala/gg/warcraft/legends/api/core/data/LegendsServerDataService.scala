@@ -49,13 +49,13 @@ class LegendsServerDataService(implicit
   }
 
   def setActiveWar(gameId: Long): Unit = {
-    val updated = data.copy(activeWar = gameId)
+    val updated = data.copy(activeWarId = gameId)
     _data = updated
     repository.save(updated)
   }
 
   def setActiveSkirmish(gameId: Long): Unit = {
-    val updated = data.copy(activeSkirmish = gameId)
+    val updated = data.copy(activeSkirmishId = gameId)
     _data = updated
     repository.save(updated)
   }
