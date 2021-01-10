@@ -47,7 +47,7 @@ class CaptureAndKillRewardHandler(config: LegendsConfig)(implicit
     case ObjectiveCaptureEvent(objective, _, attackers) =>
       lazy val attackerIds = attackers.iterator.map { _.id }.toList
 
-      val favor = config.objectiveTallyPoints(objective.id)
+      val favor = config.objectiveTallyPoints(objective.typ)
       if (favor > 0) {
         currencyService.addCurrency(LegendsCurrency.Favor, favor, attackerIds: _*)
         val message = Message.server(s"You gained $favor Favor.")
