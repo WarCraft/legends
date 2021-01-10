@@ -25,9 +25,7 @@ import gg.warcraft.legends.api.core.data.{
 import gg.warcraft.legends.api.core.game.handler.{
   DailySkirmishHandler, GameRewardHandler, GameTickHandler
 }
-import gg.warcraft.legends.api.core.game.{
-  GameRepository, PostgresGameRepository, SqliteGameRepository
-}
+import gg.warcraft.legends.api.core.game._
 import gg.warcraft.legends.api.core.handler._
 import gg.warcraft.legends.api.core.leaderboard.handler.{
   LeaderboardRewardHandler, LeaderboardUpdateHandler
@@ -193,6 +191,35 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     commandService.registerCommand(
       new RevokeCurrencyAdminCommand,
       currencyCommandHandler
+    )
+
+    // Game
+    val gameCommandHandler = new GameCommand.Handler
+    commandService.registerCommand(
+      new StartWarCommand,
+      gameCommandHandler
+    )
+    commandService.registerCommand(
+      new EndWarCommand,
+      gameCommandHandler
+    )
+
+    commandService.registerCommand(
+      new StartSkirmishCommand,
+      gameCommandHandler
+    )
+    commandService.registerCommand(
+      new EndSkirmishCommand,
+      gameCommandHandler
+    )
+
+    commandService.registerCommand(
+      new PauseGameCommand,
+      gameCommandHandler
+    )
+    commandService.registerCommand(
+      new ResumeGameCommand,
+      gameCommandHandler
     )
 
     // Player

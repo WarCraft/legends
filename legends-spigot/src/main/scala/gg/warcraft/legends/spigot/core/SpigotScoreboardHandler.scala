@@ -11,6 +11,7 @@ import gg.warcraft.legends.api.core.game.{Game, GameService}
 import gg.warcraft.legends.api.entity.LegendsTeam
 import gg.warcraft.legends.api.entity.LegendsTeam._
 import gg.warcraft.monolith.api.core.ColorCode._
+import gg.warcraft.monolith.api.core.Duration
 import gg.warcraft.monolith.api.core.FormatCode._
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.team.{Team, TeamService}
@@ -79,6 +80,13 @@ class SpigotScoreboardHandler(config: LegendsConfig)(implicit
        |The next game will start shortly!
        |""".stripMargin
 
+  private def formatTimer(timer: Duration): String = {
+    val minutes = timer.seconds / 60
+    val seconds = timer.seconds % 60
+    val paused = if (gameService.paused) " (Paused)" else ""
+    f"$minutes%2s:$seconds%2s$paused"
+  }
+
   private def formatSkirmishCountdown(): String = {
     val now = serverDataService.serverTime.withSecond(0).withNano(0)
     val nextSkirmish = config.skirmishTimes
@@ -135,7 +143,7 @@ class SpigotScoreboardHandler(config: LegendsConfig)(implicit
     val header = gameService.activeGame match {
       case Some(game) =>
         val points = formatPoints(game)
-        val timer = ""
+        val timer = formatTimer(game.timer)
         val objectives = formatObjectives(game)
         if (gameService.activeSkirmish.nonEmpty) {
           skirmishHeader.format(points, timer, objectives)

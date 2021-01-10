@@ -48,6 +48,11 @@ class GameService(implicit
     else _activeWar = game
   def activeGame: Option[Game] = _activeSkirmish.orElse(_activeWar)
 
+  private var _paused = false
+  def paused: Boolean = _paused
+  def pauseGame(): Unit = _paused = true
+  def resumeGame(): Unit = _paused = false
+
   def readConfig(config: LegendsConfig): Unit = {
     _config = config
     _activeWar = legendsServerDataService.data.activeWarId match {
@@ -109,14 +114,16 @@ class GameService(implicit
     }
 
   def tickActiveGame(): Unit =
-    activeGame match {
-      case Some(game) =>
-        if (game.timer.seconds > 0) {
-          activeGame = game.copy(timer = game.timer - 1.seconds)
-        } else if (_activeSkirmish.nonEmpty) {
-          endSkirmish()
-        } else runTally()
-      case None =>
+    if (!_paused) {
+      activeGame match {
+        case Some(game) =>
+          if (game.timer.seconds > 0) {
+            activeGame = game.copy(timer = game.timer - 1.seconds)
+          } else if (_activeSkirmish.nonEmpty) {
+            endSkirmish()
+          } else runTally()
+        case None =>
+      }
     }
 
   def startWar(): Unit = _activeWar match {
