@@ -32,7 +32,8 @@ class PlayerInspectHandler(implicit
         val combatClass = inspectedPlayer.combatClass
           .map { _.name }
           .getOrElse("Beginner")
-        val text = s"You are looking at $name, a level $level $team $combatClass."
+        val text =
+          s"You are looking at $name, a level ${level.value} $team $combatClass."
         val message = Message.server(text)
         playerService.sendMessage(inspectingPlayer.id, message)
       }
