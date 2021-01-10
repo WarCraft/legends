@@ -11,6 +11,7 @@ import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.legends.api.ai.MiniPetFactory
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
 import gg.warcraft.legends.api.core.spawn.SpawnService
+import gg.warcraft.legends.api.item.crate.LootCrateService
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
 import gg.warcraft.legends.api.menu.staff.StaffMenu
 import gg.warcraft.legends.api.player.calendar.LoginCalendarService
@@ -50,7 +51,8 @@ class MenuCommandHandler(implicit
     commandService: CommandService,
     spawnService: SpawnService,
     equipmentConfigRepository: EquipmentConfigRepository,
-    teamService: TeamService
+    teamService: TeamService,
+    lootCrateService: LootCrateService
 ) extends Command.Handler {
   override def handle(
       executor: Principal,
