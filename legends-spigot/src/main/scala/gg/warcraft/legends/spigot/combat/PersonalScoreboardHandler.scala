@@ -6,23 +6,25 @@
 
 package gg.warcraft.legends.spigot.combat
 
-import java.util.UUID
-
 import gg.warcraft.combat.api.ability.AbilityCastEvent
 import gg.warcraft.monolith.api.core.event.Event
 import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.entity.EntityTeamChangedEvent
+import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.player.{
   Player, PlayerConnectEvent, PlayerDisconnectEvent, PlayerService
 }
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 
+import java.util.UUID
+
 class PersonalScoreboardHandler(implicit
     server: Server,
     plugin: Plugin,
     taskService: TaskService,
-    playerService: PlayerService
+    playerService: PlayerService,
+    teamService: TeamService
 ) extends Event.Handler {
   private var scoreboards: Map[UUID, PersonalScoreboard] = Map.empty
 
