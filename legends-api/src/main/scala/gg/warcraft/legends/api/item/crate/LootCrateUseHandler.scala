@@ -11,7 +11,6 @@ import gg.warcraft.monolith.api.core.event.{Event, PreEvent}
 import gg.warcraft.monolith.api.entity.EntityPreInteractEvent
 import gg.warcraft.monolith.api.item.Item
 import gg.warcraft.monolith.api.player.{Player, PlayerPreInteractEvent}
-import gg.warcraft.monolith.api.util.string._
 
 class LootCrateUseHandler(implicit
     lootCrateService: LootCrateService
@@ -19,7 +18,7 @@ class LootCrateUseHandler(implicit
   private def onInteract(player: Player, item: Option[Item]): Boolean = item match {
     case Some(item) =>
       lootCrateService.crates.values.find { crate =>
-        item.name.stripChatCodes == crate.name &&
+        item.name == crate.name &&
         item.tooltip.headOption.contains(crate.tooltip.head)
       } match {
         case Some(crate) =>
