@@ -20,7 +20,7 @@ class LootCrateUseHandler(implicit
     case Some(item) =>
       lootCrateService.crates.values.find { crate =>
         item.name.stripChatCodes == crate.name &&
-        item.tooltip.headOption.map { _.stripChatCodes } == crate.tooltip.headOption
+        item.tooltip.headOption.contains(crate.tooltip.head)
       } match {
         case Some(crate) =>
           lootCrateService.openCrate(player, crate)
