@@ -9,7 +9,7 @@ package gg.warcraft.legends.api.item.crate
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.legends.api.item.ItemRarity._
 import gg.warcraft.monolith.api.block.variant.ChestVariant
-import gg.warcraft.monolith.api.core.FormatCode._
+import gg.warcraft.monolith.api.core.{ColorCode, FormatCode}
 import gg.warcraft.monolith.api.item.Chest
 
 import scala.collection.SortedMap
@@ -75,12 +75,13 @@ object LootCrate {
     }
   }
 
+  private final val reset = s"${FormatCode.RESET}${ColorCode.GRAY}"
   private[crate] final val tooltip: List[String] = List(
-    s"${RESET}Loot Crate",
+    s"${reset}Loot Crate",
     "",
-    s"$RESET[RIGHT CLICK] To open for a chance",
-    s"${RESET}at unlocking collectibles or receiving",
-    s"${RESET}random combat items."
+    s"$reset[RIGHT CLICK] To open for a chance",
+    s"${reset}at unlocking collectibles or receiving",
+    s"${reset}random combat items."
   )
 
   case class Config(
