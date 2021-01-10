@@ -38,14 +38,14 @@ class ChainLightning(
 
   private def chain(entity: Entity, count: Int = 1): Unit = {
     entityService.damageEntity(entity.id, snapshot.damage)
-    new ChainLightning.ParticleEffect(caster.location, target.location)
+    new ChainLightning.ParticleEffect(caster.eyeLocation, target.eyeLocation)
     worldService.playSound(caster.location, castSound, soundCategory)
 
     if (count < 3) {
       taskService.runLater(
         500.millis,
         () => {
-          hitbox.collideEntities(entity.location, entity.location)
+          hitbox.collideEntities(entity.eyeLocation, entity.eyeLocation)
             .filter { _.isGrounded }
             .foreach { chain(_, count + 1) }
         }
