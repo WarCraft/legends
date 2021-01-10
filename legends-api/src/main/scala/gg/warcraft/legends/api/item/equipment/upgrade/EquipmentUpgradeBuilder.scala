@@ -8,11 +8,14 @@ package gg.warcraft.legends.api.item.equipment.upgrade
 
 import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 import gg.warcraft.legends.api.item.ItemRarity
+import gg.warcraft.monolith.api.core.{ColorCode, FormatCode}
 import gg.warcraft.monolith.api.item.{Item, ItemService, ItemType}
 
 class EquipmentUpgradeBuilder(rarity: ItemRarity, name: String)(implicit
     itemService: ItemService
 ) {
+  private final val reset = s"${FormatCode.RESET}${ColorCode.GRAY}"
+
   private var attributes = Map.empty[LegendsAttribute, Int]
 
   def withAttribute(
@@ -34,15 +37,15 @@ class EquipmentUpgradeBuilder(rarity: ItemRarity, name: String)(implicit
     val item = itemService.create(ItemType.PAPER).withName(s"${rarity.color}$name")
 
     val tooltip: List[String] = List(
-      "Equipment Upgrade",
+      s"${reset}Equipment Upgrade",
       ""
     ) ++ attributes.map {
-      case (attribute, amount) => s"+$amount $attribute"
+      case (attribute, amount) => s"$reset+$amount $attribute"
     } ++ List(
       "",
-      "[Right Click] While holding a piece of equipment",
-      "in your main hand and this equipment upgrade in",
-      "your offhand to apply this upgrade to the item."
+      s"$reset[Right Click] While holding a piece of equipment",
+      s"${reset}in your main hand and this equipment upgrade in",
+      s"${reset}your offhand to apply this upgrade to the item."
     )
 
     item.withTooltip(tooltip: _*)
