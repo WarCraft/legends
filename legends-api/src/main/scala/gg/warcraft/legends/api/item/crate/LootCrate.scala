@@ -28,23 +28,22 @@ object LootCrate {
   type Id = String
 
   def apply(
-      id: String,
-      name: String,
-      rarity: ItemRarity,
-      chestVariant: ChestVariant,
-      dropTables: List[LootCrate.DropTable]
+      _id: String,
+      _name: String,
+      _rarity: ItemRarity,
+      _chestVariant: ChestVariant,
+      _dropTables: List[LootCrate.DropTable]
   ): LootCrate.Type = {
-    val _dropTables = dropTables
     new Chest(
-      chestVariant,
-      s"${rarity.color}$name",
+      _chestVariant,
+      s"${_rarity.color}${_name}",
       LootCrate.tooltip,
       1,
       Set.empty,
       true
     ) with LootCrate {
-      val id: String = id
-      val rarity: ItemRarity = rarity
+      val id: String = _id
+      val rarity: ItemRarity = _rarity
       val dropTables: SortedMap[Float, LootCrate.DropTable] = {
         var totalChance = 0f
         var map = TreeMap.empty[Float, LootCrate.DropTable]

@@ -61,16 +61,20 @@ class LootCrateService(implicit
 
   def readConfig(config: LegendsConfig): Unit =
     config.lootCrates
-      .map { _.parse() }
-      .foreach { crate =>
-        val totalDropChance = crate.dropTables.keys.sum
-        if (totalDropChance == 100f) {
-          val dropChances =
-            crate.dropTables.values.map { _.distribution.values.sum }.sum
-          if (dropChances == 100f * crate.dropTables.size) {
-            _crates += (crate.id -> crate)
-          } else logger.severe(s"One of ${crate.id}'s tables does not sum to 100%!'")
-        } else logger.severe(s"${crate.id}'s drop tables do not sum to 100%!'")
+      .map { config =>
+        val totalDropChance = config.dropTables.map { _.chance }.sum
+        if (totalDropChance != 100f) {
+          logger.severe(s"${config.id}'s drop tables do not sum to 100%!'")
+          None
+        } else Some(config.parse())
+      }
+      .filter { _.nonEmpty }
+      .foreach { case Some(crate) =>
+        val dropChances =
+          crate.dropTables.values.map { _.distribution.values.sum }.sum
+        if (dropChances == 100f * crate.dropTables.size) {
+          _crates += (crate.id -> crate)
+        } else logger.severe(s"One of ${crate.id}'s tables does not sum to 100%!'")
       }
 
   def parseRewards(config: LegendsConfig.RewardConfig): List[LootCrate.Type] =
