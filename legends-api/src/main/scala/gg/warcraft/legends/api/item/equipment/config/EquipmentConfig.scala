@@ -9,10 +9,7 @@ package gg.warcraft.legends.api.item.equipment.config
 import gg.warcraft.combat.api.combatclass.CombatClass
 import gg.warcraft.legends.api.combat.LegendsCombatArchetype
 import gg.warcraft.legends.api.item.ItemRarity
-import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig.{
-  AttributeDistributionConfig, CustomModelDataConfig, EquipmentItemTypeConfig,
-  RarityRollConfig
-}
+import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig._
 import gg.warcraft.legends.api.item.equipment.{AttributeDistribution, EquipmentType}
 import gg.warcraft.monolith.api.entity.team.Team
 import gg.warcraft.monolith.api.item.ItemTypeOrVariant
@@ -24,7 +21,8 @@ case class EquipmentConfig(
     validTypes: Map[LegendsCombatArchetype, List[EquipmentType]],
     offhandTypes: List[EquipmentType],
     dropRates: RarityRollConfig,
-    itemTypes: EquipmentItemTypeConfig,
+    armorTypes: EquipmentArmorTypeConfig,
+    weaponTypes: EquipmentWeaponTypeConfig,
     attributeRolls: Map[LegendsCombatArchetype, AttributeDistributionConfig],
     legendaryRolls: Map[LegendsCombatArchetype, AttributeDistributionConfig],
     offhandAttributeRolls: Map[LegendsCombatArchetype, AttributeDistributionConfig],
@@ -46,7 +44,9 @@ case class EquipmentConfig(
 object EquipmentConfig {
   type RarityRollConfig =
     Map[ItemRarity, Float]
-  type EquipmentItemTypeConfig =
+  type EquipmentArmorTypeConfig =
+    Map[LegendsCombatArchetype, Map[EquipmentType, ItemTypeOrVariant]]
+  type EquipmentWeaponTypeConfig =
     Map[EquipmentType, Map[ItemRarity, ItemTypeOrVariant]]
   type AttributeDistributionConfig =
     Map[AttributeDistribution, List[List[AttributeRollConfig]]]

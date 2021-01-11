@@ -67,13 +67,16 @@ class EquipmentGenerator(implicit
 
     val archetype = combatClass.archetype
     val attrDistro = randomAttributeDistribution
-    val itemType = config.itemTypes(typ)(rarity)
+    val itemType =
+      if (typ.isArmor) config.armorTypes(combatClass.archetype)(typ)
+      else config.weaponTypes(typ)(rarity)
 
     val tooltips = config.tooltips(archetype)(team)(attrDistro)(typ)
     val tooltip = rarity match {
       case ItemRarity.Legendary =>
         val legendaryTooltips = tooltips.special(rarity)
-        legendaryTooltips(Random.nextInt(legendaryTooltips.size))
+        if (legendaryTooltips.isEmpty) tooltips.default
+        else legendaryTooltips(Random.nextInt(legendaryTooltips.size))
       case _ => tooltips.default
     }
 
