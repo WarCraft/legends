@@ -84,8 +84,6 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
   override def onLoad(): Unit = {
     super.onLoad()
-    saveResource("equipment.yml", false)
-    saveResource("shop.yml", false)
     implicits.init()
   }
 
@@ -103,6 +101,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     // Config: equipment
     val equipConfigPath =
       new File(s"${getDataFolder.getAbsolutePath}${File.separator}equipment.yml")
+    if (!equipConfigPath.exists) saveResource("equipment.yml", false)
     val equipConfigFile = YamlConfiguration.loadConfiguration(equipConfigPath)
     val equipConfig = parseConfig[EquipmentConfig](equipConfigFile.saveToString())
 
@@ -112,6 +111,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
     val shopConfigPath =
       new File(s"${getDataFolder.getAbsolutePath}${File.separator}shop.yml")
+    if (!equipConfigPath.exists) saveResource("shop.yml", false)
     val shopConfigFile = YamlConfiguration.loadConfiguration(shopConfigPath)
     val shopConfig = parseConfig[ShopConfig](shopConfigFile.saveToString())
 
