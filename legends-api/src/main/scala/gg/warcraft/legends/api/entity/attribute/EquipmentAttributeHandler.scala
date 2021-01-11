@@ -6,16 +6,16 @@
 
 package gg.warcraft.legends.api.entity.attribute
 
-import java.util.UUID
-
 import gg.warcraft.legends.api.entity.attribute.LegendsAttribute._
 import gg.warcraft.legends.api.item.equipment.EquipmentReader
 import gg.warcraft.monolith.api.core.event.Event
-import gg.warcraft.monolith.api.entity.attribute.{Attribute, AttributeService}
 import gg.warcraft.monolith.api.entity.attribute.Attribute.Modifier._
+import gg.warcraft.monolith.api.entity.attribute.{Attribute, AttributeService}
 import gg.warcraft.monolith.api.player.{
   Player, PlayerConnectEvent, PlayerEquipmentChangedEvent
 }
+
+import java.util.UUID
 
 class EquipmentAttributeHandler(implicit
     attributeService: AttributeService

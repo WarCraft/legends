@@ -7,6 +7,7 @@
 package gg.warcraft.legends.api.combat.passive
 
 import gg.warcraft.combat.api.ability.AbilityPreCastEvent
+import gg.warcraft.combat.api.ability.config.AbilityAttribute
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.entity.EntityOps
 import gg.warcraft.legends.api.combat.LegendsCombatArchetype._
@@ -33,7 +34,7 @@ object AttributesPassive {
     override val duration: Option[Duration] = None
 
     override def reduce[T <: PreEvent](event: T): T = event match {
-      case event @ AbilityPreCastEvent(_, caster, damageModifiers, _, _) =>
+      case event @ AbilityPreCastEvent(_, caster, modifiers, _, _) =>
         playerService.getPlayerOption(caster.id) match {
           case Some(player) =>
             val modifierValue = player.combatClass.map { _.archetype } match {
@@ -43,8 +44,10 @@ object AttributesPassive {
               case _             => 0
             }
             if (modifierValue != 0) {
-              val damageModifier = CombatValue.Modifier.flat(source, modifierValue)
-              event.copy(damageModifiers = damageModifier :: damageModifiers).as[T]
+              val outdated = modifiers.getOrElse(AbilityAttribute.DAMAGE, Nil)
+              val modifier = CombatValue.Modifier.flat(source, modifierValue)
+              val updated = modifiers + (AbilityAttribute.DAMAGE -> (modifier :: outdated))
+              event.copy(modifiers = updated).as[T]
             } else event.as[T]
           case None => event.as[T]
         }

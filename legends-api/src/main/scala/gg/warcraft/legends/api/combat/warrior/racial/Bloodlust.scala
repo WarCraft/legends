@@ -7,12 +7,13 @@
 package gg.warcraft.legends.api.combat.warrior.racial
 
 import gg.warcraft.combat.api.ability.AbilityPreCastEvent
+import gg.warcraft.combat.api.ability.config.AbilityAttribute
 import gg.warcraft.monolith.api.combat.{CombatSource, CombatValue, PotionEffect}
 import gg.warcraft.monolith.api.core.Duration
 import gg.warcraft.monolith.api.core.Duration._
 import gg.warcraft.monolith.api.core.event.{Event, PreEvent}
-import gg.warcraft.monolith.api.entity.{EntityHealthChangedEvent, EntityService}
 import gg.warcraft.monolith.api.entity.status.Status
+import gg.warcraft.monolith.api.entity.{EntityHealthChangedEvent, EntityService}
 
 object Bloodlust {
   class StatusEffect(
@@ -46,10 +47,12 @@ object Bloodlust {
     }
 
     override def reduce[T <: PreEvent](event: T): T = event match {
-      case it: AbilityPreCastEvent =>
+      case it @ AbilityPreCastEvent(_, _, modifiers, _, _) =>
         if (active) {
-          val modifiers = damageModifier :: it.damageModifiers
-          it.copy(damageModifiers = modifiers).asInstanceOf[T]
+          val outdated = modifiers.getOrElse(AbilityAttribute.DAMAGE, Nil)
+          val updated = damageModifier :: outdated
+          it.copy(modifiers =
+            modifiers + (AbilityAttribute.DAMAGE -> updated)).asInstanceOf[T]
         } else event
       case _ => event
     }

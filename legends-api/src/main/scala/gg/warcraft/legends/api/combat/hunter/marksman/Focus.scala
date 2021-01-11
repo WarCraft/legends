@@ -6,19 +6,17 @@
 
 package gg.warcraft.legends.api.combat.hunter.marksman
 
-import gg.warcraft.combat.api.ability.{AbilityPreCastEvent, MeleeAbility}
-import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.Movement
+import gg.warcraft.combat.api.ability.config.{AbilityAttribute, AbilitySnapshot}
+import gg.warcraft.combat.api.ability.{AbilityPreCastEvent, MeleeAbility}
 import gg.warcraft.monolith.api.combat.{CombatSource, CombatValue}
-import gg.warcraft.monolith.api.core.{Cancellable, ColorCode, Duration, Message}
+import gg.warcraft.monolith.api.core.Duration._
 import gg.warcraft.monolith.api.core.event.PreEvent
 import gg.warcraft.monolith.api.core.task.TaskService
-import gg.warcraft.monolith.api.core.Duration._
-import gg.warcraft.monolith.api.effect.{
-  Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
-}
-import gg.warcraft.monolith.api.entity.{Entity, EntityService}
+import gg.warcraft.monolith.api.core.{Cancellable, ColorCode, Duration, Message}
+import gg.warcraft.monolith.api.effect._
 import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
+import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.player.PlayerService
 import gg.warcraft.monolith.api.world.Location
 
@@ -115,8 +113,10 @@ object Focus {
     private val modifier = CombatValue.Modifier.percent(source, modifierValue)
 
     override def reduce[T <: PreEvent](event: T): T = event match {
-      case event @ AbilityPreCastEvent(_, _, damageModifiers, _, _) =>
-        event.copy(damageModifiers = modifier :: damageModifiers).asInstanceOf[T]
+      case event @ AbilityPreCastEvent(_, _, modifiers, _, _) =>
+        val outdated = modifiers.getOrElse(AbilityAttribute.DAMAGE, Nil)
+        val updated = modifiers + (AbilityAttribute.DAMAGE -> (modifier :: outdated))
+        event.copy(modifiers = updated).asInstanceOf[T]
       case _ => event
     }
   }

@@ -7,6 +7,7 @@
 package gg.warcraft.legends.api.combat.passive
 
 import gg.warcraft.combat.api.ability.AbilityPreCastEvent
+import gg.warcraft.combat.api.ability.config.AbilityAttribute
 import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
 import gg.warcraft.monolith.api.combat.{CombatSource, CombatValue}
 import gg.warcraft.monolith.api.core.Duration
@@ -32,12 +33,14 @@ object CriticalPassive {
     override val duration: Option[Duration] = None
 
     override def reduce[T <: PreEvent](event: T): T = event match {
-      case event @ AbilityPreCastEvent(_, caster, damageModifiers, _, _) =>
+      case event @ AbilityPreCastEvent(_, caster, modifiers, _, _) =>
         val crit = caster.attributes.get(LegendsAttribute.Crit)
         val critChance = (crit + defaultCrit) * 0.1f
         if (random.nextFloat <= critChance) {
-          val damageModifier = CombatValue.Modifier.percent(source, critModifier)
-          event.copy(damageModifiers = damageModifier :: damageModifiers).as[T]
+          val outdated = modifiers.getOrElse(AbilityAttribute.DAMAGE, Nil)
+          val modifier = CombatValue.Modifier.percent(source, critModifier)
+          val updated = modifiers + (AbilityAttribute.DAMAGE -> (modifier :: outdated))
+          event.copy(modifiers = updated).as[T]
         } else event.as[T]
       case _ => event
     }
