@@ -23,8 +23,8 @@ class LoginCalendarService(implicit
     playerService: PlayerService,
     itemService: ItemService
 ) {
-  private var _rewards: Map[Int, List[LootCrate]] = Map.empty
-  def rewards: Map[Int, List[LootCrate]] = _rewards
+  private var _rewards: Map[Int, List[LootCrate.Type]] = Map.empty
+  def rewards: Map[Int, List[LootCrate.Type]] = _rewards
 
   private var _rewardsClaimed: Map[UUID, LoginCalendar] = Map.empty
   def rewardsClaimed: Map[UUID, LoginCalendar] = _rewardsClaimed

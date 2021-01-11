@@ -15,34 +15,65 @@ import gg.warcraft.monolith.api.item.Chest
 import scala.collection.SortedMap
 import scala.collection.immutable.TreeMap
 
-class LootCrate(
-    val id: String,
-    name: String,
-    val rarity: ItemRarity,
-    val chestVariant: ChestVariant,
-    val dropTables: List[LootCrate.DropTable],
-    count: Int = 1
-) extends Chest(
-      chestVariant,
-      s"${rarity.color}$name",
-      LootCrate.tooltip,
-      count,
-      Set.empty,
-      true
-    ) {
-  val dropTablesMap: SortedMap[Float, LootCrate.DropTable] = {
-    var totalChance = 0f
-    var map = TreeMap.empty[Float, LootCrate.DropTable]
-    dropTables.foreach { it =>
-      map += ((totalChance + it.chance) -> it)
-      totalChance += it.chance
-    }
-    map
-  }
+trait LootCrate {
+  this: Chest =>
+
+  val id: String
+  val rarity: ItemRarity
+  val dropTables: SortedMap[Float, LootCrate.DropTable]
 }
 
 object LootCrate {
+  type Type = Chest with LootCrate
   type Id = String
+
+  def apply(
+      id: String,
+      name: String,
+      rarity: ItemRarity,
+      chestVariant: ChestVariant,
+      dropTables: List[LootCrate.DropTable]
+  ): LootCrate.Type = {
+    val _dropTables = dropTables
+    new Chest(
+      chestVariant,
+      s"${rarity.color}$name",
+      LootCrate.tooltip,
+      1,
+      Set.empty,
+      true
+    ) with LootCrate {
+      val id: String = id
+      val rarity: ItemRarity = rarity
+      val dropTables: SortedMap[Float, LootCrate.DropTable] = {
+        var totalChance = 0f
+        var map = TreeMap.empty[Float, LootCrate.DropTable]
+        _dropTables.foreach { it =>
+          map += ((totalChance + it.chance) -> it)
+          totalChance += it.chance
+        }
+        map
+      }
+    }
+  }
+
+  def changeCount(
+      crate: LootCrate.Type,
+      count: Int
+  ): LootCrate.Type =
+    new Chest(
+      crate.variant,
+      crate.name,
+      crate.tooltip,
+      count,
+      crate.attributes,
+      crate.hideAttributes
+    ) with LootCrate {
+      val id: String = crate.id
+      val rarity: ItemRarity = crate.rarity
+      val dropTables: SortedMap[Float, LootCrate.DropTable] = crate.dropTables
+    }
+
   type DropType = String
   // gameplay categories
   final val Consumable: DropType = "CONSUMABLE"
@@ -91,12 +122,7 @@ object LootCrate {
       chestVariant: ChestVariant,
       dropTables: List[LootCrate.DropTable]
   ) {
-    def parse(): LootCrate = new LootCrate(
-      id,
-      name,
-      rarity,
-      chestVariant,
-      dropTables
-    )
+    def parse(): LootCrate.Type =
+      LootCrate(id, name, rarity, chestVariant, dropTables)
   }
 }

@@ -56,28 +56,26 @@ class LootCrateService(implicit
   private val equipmentGenerator = new EquipmentGenerator()
   private val equipUpgradeGenerator = new EquipmentUpgradeGenerator()
 
-  private var _crates: Map[String, LootCrate] = Map.empty
-  def crates: Map[String, LootCrate] = _crates
+  private var _crates: Map[String, LootCrate.Type] = Map.empty
+  def crates: Map[String, LootCrate.Type] = _crates
 
   def readConfig(config: LegendsConfig): Unit =
     config.lootCrates
       .map { _.parse() }
       .foreach { crate =>
-        val totalDropChance = crate.dropTables.map { _.chance }.sum
+        val totalDropChance = crate.dropTables.keys.sum
         if (totalDropChance == 100f) {
           val dropChances =
-            crate.dropTables.map { _.distribution.values.sum }.sum
+            crate.dropTables.values.map { _.distribution.values.sum }.sum
           if (dropChances == 100f * crate.dropTables.size) {
             _crates += (crate.id -> crate)
           } else logger.severe(s"One of ${crate.id}'s tables does not sum to 100%!'")
         } else logger.severe(s"${crate.id}'s drop tables do not sum to 100%!'")
       }
 
-  def parseRewards(config: LegendsConfig.RewardConfig): List[LootCrate] =
+  def parseRewards(config: LegendsConfig.RewardConfig): List[LootCrate.Type] =
     config.map { case (crateId, count) =>
-      val crate = _crates(crateId)
-      import crate.{count => _, _}
-      new LootCrate(id, name, rarity, chestVariant, dropTables, count)
+      LootCrate.changeCount(_crates(crateId), count)
     }.toList
 
   private def notifyReceived(
@@ -255,13 +253,14 @@ class LootCrateService(implicit
   private def awardMiniPet(player: Player, rarity: ItemRarity): Boolean =
     award(ShopItem.MiniPet, "Mini Pet", rarity, player)
 
-  def openCrate(player: Player, crate: LootCrate): Unit =
+  def openCrate(player: Player, crateId: LootCrate.Id): Unit = {
+    val crate = _crates(crateId)
     if (player.inventory.hasSpace(itemsPerCrate)) {
       if (itemService.takeFrom(player.id, crate)) {
         var i = 0
         while (i < 3) {
           val dropTableRoll = 100 * Random.nextFloat
-          val dropTable = crate.dropTablesMap.minAfter(dropTableRoll).get._2
+          val dropTable = crate.dropTables.minAfter(dropTableRoll).get._2
 
           val rarityRoll = 100 * Random.nextFloat
           val rarity = dropTable.distributionMap.minAfter(rarityRoll).get._2
@@ -285,4 +284,5 @@ class LootCrateService(implicit
         s"Failed to take $crate from ${player.id} after opening crate!"
       )
     } else playerService.sendMessage(player.id, noInventorySpace)
+  }
 }

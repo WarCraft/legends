@@ -17,11 +17,11 @@ import gg.warcraft.monolith.api.player.{Player, PlayerService}
 
 object LootCrateGeneratorMenu {
   private def lootCrateButton(
-      crate: LootCrate
+      crate: LootCrate.Type
   )(implicit
       playerService: PlayerService
   ): Button = Button(
-    crate.chestVariant,
+    crate.variant,
     crate.name,
     s"[Click] to generate a ${crate.name}"
   ) { click =>

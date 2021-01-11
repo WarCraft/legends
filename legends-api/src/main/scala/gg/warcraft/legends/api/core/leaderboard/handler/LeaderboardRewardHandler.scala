@@ -43,7 +43,7 @@ class LeaderboardRewardHandler(config: LegendsConfig)(implicit
 
   private def awardPrizes(
       leaderboard: Leaderboard,
-      prizes: List[List[LootCrate]]
+      prizes: List[List[LootCrate.Type]]
   ): Unit = {
     val rankings = leaderboard.rankings
     prizes.zipWithIndex.foreach {

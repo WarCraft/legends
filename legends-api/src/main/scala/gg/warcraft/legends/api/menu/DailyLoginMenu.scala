@@ -44,7 +44,7 @@ object DailyLoginMenu {
       player: Player,
       claimed: LoginCalendar,
       day: Int,
-      rewards: List[LootCrate]
+      rewards: List[LootCrate.Type]
   )(implicit
       loginRewardService: LoginCalendarService,
       serverDataService: ServerDataService
@@ -56,7 +56,7 @@ object DailyLoginMenu {
     val icon: ItemTypeOrVariant =
       if (claimed.day >= day) {
         if (day % 7 == 0) GlassVariant.BLACK else GlassVariant.BROWN
-      } else rewards.head.chestVariant
+      } else rewards.head.variant
     val canClaim = serverDataService.serverDate.isAfter(claimed.claimed) &&
       day == (claimed.day - 1)
     val claimText =

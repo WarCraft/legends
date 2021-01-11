@@ -17,12 +17,9 @@ class LootCrateUseHandler(implicit
 ) extends Event.Handler {
   private def onInteract(player: Player, item: Option[Item]): Boolean = item match {
     case Some(item) =>
-      lootCrateService.crates.values.find { crate =>
-        item.name.contains(crate.name) &&
-        item.tooltip.headOption.contains(crate.tooltip.head)
-      } match {
+      lootCrateService.crates.values.find { _ == item } match {
         case Some(crate) =>
-          lootCrateService.openCrate(player, crate)
+          lootCrateService.openCrate(player, crate.id)
           true
         case None => false
       }
