@@ -13,7 +13,9 @@ import gg.warcraft.combat.api.combatclass.{
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.entity._
 import gg.warcraft.legends.api.ai.CombatPetFactory
+import gg.warcraft.monolith.api.core.Duration.DurationOps
 import gg.warcraft.monolith.api.core.event.Event
+import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.core.{GameMode, ServerShutdownEvent}
 import gg.warcraft.monolith.api.entity.{
   EntityDeathEvent, EntityService, EntityTeamChangedEvent
@@ -28,7 +30,8 @@ class HunterCombatPetHandler(implicit
     combatPetFactory: CombatPetFactory,
     combatDataService: CombatDataService,
     entityService: EntityService,
-    abilityService: AbilityService
+    abilityService: AbilityService,
+    taskService: TaskService
 ) extends Event.Handler {
   private var ownersToPets: Map[UUID, UUID] = Map.empty
   private var petsToOwners: Map[UUID, UUID] = Map.empty
@@ -55,9 +58,15 @@ class HunterCombatPetHandler(implicit
       petsToOwners -= pet.id
       abilityService.castAbility("Pet Respawns", ownerId, None)
 
-    case AbilityCastEvent("Pet Respawns (Respawn)", caster, _) =>
-      removePet(caster.id)
-      spawnPet(caster, caster.combatClass)
+    case AbilityCastEvent("Pet Respawns", player: Player, snapshot) =>
+      def respawnTask(): Unit =
+        if (player.isOnline) {
+          if (player.isAlive) {
+            removePet(player.id)
+            spawnPet(player.id, player.combatClass)
+          } else taskService.runLater(3.seconds, () => respawnTask())
+        }
+      taskService.runLater(snapshot.cooldown, () => respawnTask())
 
     case PlayerDisconnectEvent(player) =>
       removePet(player.id)

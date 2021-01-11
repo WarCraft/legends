@@ -8,10 +8,8 @@ package gg.warcraft.legends.api.combat.hunter
 
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.ability.{AbilityService, MeleeAbility}
-import gg.warcraft.monolith.api.core.Duration.DurationOps
 import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.entity.Entity
-import gg.warcraft.monolith.api.player.Player
 
 class PetRespawns(
     override val caster: Entity,
@@ -19,18 +17,7 @@ class PetRespawns(
 )(implicit
     taskService: TaskService,
     abilityService: AbilityService
-) extends MeleeAbility {
-  taskService.runLater(snapshot.cooldown, () => respawn())
-
-  private def respawn(): Unit =
-    caster match {
-      case player: Player if player.isOnline =>
-        if (player.isAlive) {
-          abilityService.spawnChild("Respawn", this, Map.empty)
-        } else taskService.runLater(1.seconds, () => respawn())
-      case _ =>
-    }
-}
+) extends MeleeAbility
 
 object PetRespawns {
   class Factory(implicit
