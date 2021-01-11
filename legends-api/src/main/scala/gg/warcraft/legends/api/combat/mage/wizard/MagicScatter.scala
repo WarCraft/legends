@@ -6,16 +6,15 @@
 
 package gg.warcraft.legends.api.combat.mage.wizard
 
-import gg.warcraft.combat.api.{Hitbox, Movement}
-import gg.warcraft.combat.api.ability.{AbilityService, RangedAbility}
 import gg.warcraft.combat.api.ability.RangedAbility.Flag
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
+import gg.warcraft.combat.api.ability.{AbilityService, RangedAbility}
 import gg.warcraft.combat.api.projectile.ProjectileService
+import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.monolith.api.block.Block
+import gg.warcraft.monolith.api.core.Color
 import gg.warcraft.monolith.api.core.task.TaskService
-import gg.warcraft.monolith.api.effect.{
-  Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
-}
+import gg.warcraft.monolith.api.effect._
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
 
@@ -113,11 +112,11 @@ object MagicScatter {
     private final val radius = 0.1f
     private final val outerParticleCount = 3
 
-    private final val innerParticle = Particle.Redstone.color(Particle.Color.Purple)
+    private final val innerParticle = Particle.Redstone.color(Color.Purple)
     private final val innerVectors = EffectVectors.origin()
     private final val innerRenderer = EffectRenderer(innerParticle, innerVectors)
 
-    private final val outerParticle = Particle.Redstone.color(Particle.Color.Fuchsia)
+    private final val outerParticle = Particle.Redstone.color(Color.Fuchsia)
     private final val outerVectors = EffectVectors.sphere(radius, outerParticleCount)
     private final val outerRenderer = EffectRenderer(outerParticle, outerVectors)
 

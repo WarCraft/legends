@@ -6,15 +6,14 @@
 
 package gg.warcraft.legends.api.combat.mage.elementalist
 
-import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
+import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.monolith.api.block.Block
+import gg.warcraft.monolith.api.core.Color
 import gg.warcraft.monolith.api.core.task.TaskService
-import gg.warcraft.monolith.api.effect.{
-  Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
-}
+import gg.warcraft.monolith.api.effect._
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
 
@@ -84,7 +83,7 @@ object Fireball {
       val innerRenderer = EffectRenderer(innerParticle, innerVectors)
       addRenderer(innerRenderer)
 
-      val outerParticle = Particle.Redstone.color(Particle.Color.Orange)
+      val outerParticle = Particle.Redstone.color(Color.Orange)
       val outerVectors = EffectVectors.sphere(radius, particleCount)
       val outerRenderer = EffectRenderer(outerParticle, outerVectors)
       addRenderer(outerRenderer)

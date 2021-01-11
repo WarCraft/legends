@@ -6,15 +6,14 @@
 
 package gg.warcraft.legends.api.combat.mage.wizard
 
-import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
+import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.monolith.api.block.Block
+import gg.warcraft.monolith.api.core.Color
 import gg.warcraft.monolith.api.core.task.TaskService
-import gg.warcraft.monolith.api.effect.{
-  Effect, EffectRenderer, EffectVectors, Particle, ParticleAdapter
-}
+import gg.warcraft.monolith.api.effect._
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
 
@@ -75,7 +74,7 @@ object ArcaneFizzle {
     private final val radius = 0.12f
     private final val particleCount = 10
 
-    private final val particle = Particle.Redstone.color(Particle.Color.Fuchsia)
+    private final val particle = Particle.Redstone.color(Color.Fuchsia)
     private final val vectors = EffectVectors.sphere(radius, particleCount)
     private final val renderer = EffectRenderer(particle, vectors)
 

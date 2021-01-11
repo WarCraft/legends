@@ -11,9 +11,9 @@ import gg.warcraft.combat.api.ability.config.{AbilityAttribute, AbilitySnapshot}
 import gg.warcraft.combat.api.ability.{AbilityPreCastEvent, MeleeAbility}
 import gg.warcraft.monolith.api.combat.{CombatSource, CombatValue}
 import gg.warcraft.monolith.api.core.Duration._
+import gg.warcraft.monolith.api.core._
 import gg.warcraft.monolith.api.core.event.PreEvent
 import gg.warcraft.monolith.api.core.task.TaskService
-import gg.warcraft.monolith.api.core.{Cancellable, ColorCode, Duration, Message}
 import gg.warcraft.monolith.api.effect._
 import gg.warcraft.monolith.api.entity.status.{Status, StatusService}
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
@@ -88,7 +88,7 @@ object Focus {
     private final val radius = 0.5f
     private final val frames = 20
 
-    private final val particle = Particle.Redstone.color(Particle.Color.Red)
+    private final val particle = Particle.Redstone.color(Color.Red)
     private final val vectors = EffectVectors.ring(radius, frames)
 
     override protected val location: () => Location =

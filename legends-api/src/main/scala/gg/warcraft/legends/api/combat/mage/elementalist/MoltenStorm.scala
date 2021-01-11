@@ -6,15 +6,15 @@
 
 package gg.warcraft.legends.api.combat.mage.elementalist
 
-import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.RangedAbility
 import gg.warcraft.combat.api.ability.RangedAbility.Flag
 import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
+import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.monolith.api.block.Block
-import gg.warcraft.monolith.api.core.Duration
 import gg.warcraft.monolith.api.core.Duration._
 import gg.warcraft.monolith.api.core.task.TaskService
+import gg.warcraft.monolith.api.core.{Color, Duration}
 import gg.warcraft.monolith.api.effect._
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.math.Vector3f
@@ -118,7 +118,7 @@ object MoltenStorm {
     private final val radius = 7.5f
     private final val particleCount = 100
 
-    private final val particle = Particle.Redstone.color(Particle.Color.Orange)
+    private final val particle = Particle.Redstone.color(Color.Orange)
     private final val vectors = EffectVectors.ring(radius, particleCount)
     private final val renderer = EffectRenderer(particle, vectors)
 
