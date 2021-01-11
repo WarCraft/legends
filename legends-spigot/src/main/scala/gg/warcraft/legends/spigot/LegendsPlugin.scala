@@ -309,7 +309,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     subscribe(new SpigotDroppedItemHandler)
     subscribe(new SpigotFurnaceCoalHandler)
     // TODO subscribe(new SpigotKeepInventoryHandler)
-    subscribe(new TempArmorStandHandler)
+    subscribe(new SpigotHeadEquipHandler)
 
     if (_server.getPluginManager.isPluginEnabled("Votifier")) {
       subscribe(new SpigotVotifierEventHandler)
