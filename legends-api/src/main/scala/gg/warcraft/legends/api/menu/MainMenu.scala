@@ -214,10 +214,8 @@ object MainMenu {
   private def racialPassiveView(
       player: Player,
       team: Team,
-      combatClass: String
-  )(implicit
-      combatDataService: CombatDataService
-  ): List[String] = (team.id, combatClass) match {
+      combatClass: Option[CombatClass]
+  ): List[String] = (team.id, combatClass.map { _.id }.getOrElse("")) match {
     // Warrior
     case (Dwarves, Berserker | Guardian) => (
       s"${YELLOW}Sturdiness"
@@ -305,7 +303,7 @@ object MainMenu {
       teamService: TeamService
   ): Button = {
     val team = player.team.getOrElse(LegendsTeam.Wayfarers.instance)
-    val combatClass = player.combatClass.map { _.name }.getOrElse("Unarmed")
+    val combatClass = player.combatClass
     Button(
       ItemType.ARMOR_STAND,
       "Faction",
