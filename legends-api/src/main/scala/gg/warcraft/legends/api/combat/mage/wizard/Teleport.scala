@@ -6,11 +6,11 @@
 
 package gg.warcraft.legends.api.combat.mage.wizard
 
-import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.combat.api.ability.RangedAbility
-import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.ability.RangedAbility.Flag
+import gg.warcraft.combat.api.ability.config.AbilitySnapshot
 import gg.warcraft.combat.api.projectile.ProjectileService
+import gg.warcraft.combat.api.{Hitbox, Movement}
 import gg.warcraft.monolith.api.block.Block
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.math.Vector3f
@@ -27,7 +27,6 @@ class Teleport(
 ) extends RangedAbility {
   private final val soundCategory = SoundCategory.HOSTILE
   private final val castSound = Sound.ENTITY_ENDERMAN_TELEPORT
-  private final val hitSound = Sound.ENTITY_ENDERMAN_TELEPORT
 
   private val origin = caster.location
   private val yaw = caster.eyeLocation.rotation.toPitchYaw._2
@@ -46,8 +45,9 @@ class Teleport(
       caster.eyeLocation + caster.eyeLocation.rotation * snapshot.range.modified
   }
 
-  entityService.teleportEntity(caster.id, target, Vector3f(0, yaw))
   worldService.playSound(origin, castSound, soundCategory)
+  entityService.teleportEntity(caster.id, target, Vector3f(0, yaw))
+  worldService.playSound(target, castSound, soundCategory)
 
   private val movement = Movement.oneOff(target)
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
@@ -56,7 +56,6 @@ class Teleport(
   override def onHit(entity: Entity): Boolean = {
     entityService.damageEntity(entity.id, snapshot.damage)
     entityService.addPotionEffect(entity.id, snapshot.slow)
-    worldService.playSound(entity.location, hitSound, soundCategory)
     false
   }
 
