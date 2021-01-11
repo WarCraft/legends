@@ -59,7 +59,7 @@ class ChainLightning(
     }
     entityService.damageEntity(entity.id, damage)
 
-    new ChainLightning.ParticleEffect(previousTarget.eyeLocation, target.eyeLocation)
+    new ChainLightning.ParticleEffect(previousTarget.eyeLocation, entity.eyeLocation)
     worldService.playSound(caster.location, castSound, soundCategory)
 
     if (count < 3) {
