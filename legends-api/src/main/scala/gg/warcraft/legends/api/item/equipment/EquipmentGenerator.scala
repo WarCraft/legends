@@ -68,7 +68,7 @@ class EquipmentGenerator(implicit
     val archetype = combatClass.archetype
     val attrDistro = randomAttributeDistribution
     val itemType =
-      if (typ.isArmor) config.armorTypes(combatClass.archetype)(typ)
+      if (typ.isArmor) config.armorTypes(combatClass.archetype)(team)(typ)
       else config.weaponTypes(typ)(rarity)
 
     val tooltips = config.tooltips(archetype)(team)(attrDistro)(typ)

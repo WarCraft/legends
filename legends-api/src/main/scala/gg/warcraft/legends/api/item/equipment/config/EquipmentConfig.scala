@@ -45,7 +45,7 @@ object EquipmentConfig {
   type RarityRollConfig =
     Map[ItemRarity, Float]
   type EquipmentArmorTypeConfig =
-    Map[LegendsCombatArchetype, Map[EquipmentType, ItemTypeOrVariant]]
+    Map[LegendsCombatArchetype, Map[Team, Map[EquipmentType, ItemTypeOrVariant]]]
   type EquipmentWeaponTypeConfig =
     Map[EquipmentType, Map[ItemRarity, ItemTypeOrVariant]]
   type AttributeDistributionConfig =
