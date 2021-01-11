@@ -23,7 +23,7 @@ class HunterOnlyBowHandler(implicit
   private final val bowClasses: List[String] =
     LegendsCombatClass.Ranger :: LegendsCombatClass.Marksman :: Nil
   private final val message = Message.server(
-    "You clumsily attempt to fire the bow, but failed (Bows can only be used by Ranger classes)."
+    "You clumsily attempt to fire the bow, but failed (Bows can only be used by Hunter classes)."
   )
 
   @EventHandler
@@ -31,7 +31,7 @@ class HunterOnlyBowHandler(implicit
     case spigotPlayer: SpigotPlayer =>
       val player = playerService.getPlayer(spigotPlayer.getUniqueId)
       player.combatClass match {
-        case Some(combatClass) if bowClasses.contains(combatClass.name) => // allowed
+        case Some(combatClass) if bowClasses.contains(combatClass.id) => // allowed
         case _ =>
           playerService.sendMessage(player.id, message)
           spigotPlayer.getInventory.remove(Material.ARROW)
