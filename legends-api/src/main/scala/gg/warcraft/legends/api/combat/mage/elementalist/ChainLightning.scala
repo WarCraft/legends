@@ -20,8 +20,6 @@ import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.util.option._
 import gg.warcraft.monolith.api.world.{Location, Sound, SoundCategory, WorldService}
 
-import java.util.UUID
-
 class ChainLightning(
     override val caster: Entity,
     override val snapshot: AbilitySnapshot,
@@ -44,12 +42,12 @@ class ChainLightning(
     CombatValue.Modifier.percent(jumpModifierSource, -0.75f)
   private val hitbox = Hitbox.sphere(snapshot.radius.modified, _.team != caster.team)
 
-  private var hasHit: Set[UUID] = Set.empty
+  private var hasHit: List[Entity] = Nil
 
   chain(target)
 
   private def chain(entity: Entity, count: Int = 1): Unit = {
-    hasHit += entity.id
+    hasHit += entity
 
     val damage = count match {
       case 1 => snapshot.damage
@@ -60,7 +58,8 @@ class ChainLightning(
     }
     entityService.damageEntity(entity.id, damage)
 
-    new ChainLightning.ParticleEffect(caster.eyeLocation, target.eyeLocation)
+    val previousTarget = if (hasHit.isEmpty) caster else hasHit.last
+    new ChainLightning.ParticleEffect(previousTarget.eyeLocation, target.eyeLocation)
     worldService.playSound(caster.location, castSound, soundCategory)
 
     if (count < 3) {
@@ -69,7 +68,7 @@ class ChainLightning(
         () => {
           hitbox.collideEntities(entity.eyeLocation, entity.eyeLocation)
             .filter { _.isGrounded }
-            .find { !hasHit.contains(_) }
+            .find { target => !hasHit.exists { _.id == target.id } }
             .foreach { chain(_, count + 1) }
         }
       )
