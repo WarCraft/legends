@@ -12,6 +12,7 @@ import gg.warcraft.monolith.api.combat.ProjectilePreHitEvent
 import gg.warcraft.monolith.api.core.event.{Event, PreEvent}
 import gg.warcraft.monolith.api.entity.EntityService
 
+// TODO move to Combat?
 class ArrowFriendlyFireHandler(implicit
     logger: Logger,
     entityService: EntityService
