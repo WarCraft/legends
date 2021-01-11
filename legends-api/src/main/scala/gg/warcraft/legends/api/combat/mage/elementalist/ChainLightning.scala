@@ -47,7 +47,7 @@ class ChainLightning(
   chain(target)
 
   private def chain(entity: Entity, count: Int = 1): Unit = {
-    hasHit += entity
+    hasHit ::= entity
 
     val damage = count match {
       case 1 => snapshot.damage
