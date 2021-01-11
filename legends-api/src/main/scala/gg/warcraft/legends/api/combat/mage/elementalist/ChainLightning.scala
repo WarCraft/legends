@@ -47,6 +47,7 @@ class ChainLightning(
   chain(target)
 
   private def chain(entity: Entity, count: Int = 1): Unit = {
+    val previousTarget = if (hasHit.isEmpty) caster else hasHit.last
     hasHit ::= entity
 
     val damage = count match {
@@ -58,7 +59,6 @@ class ChainLightning(
     }
     entityService.damageEntity(entity.id, damage)
 
-    val previousTarget = if (hasHit.isEmpty) caster else hasHit.last
     new ChainLightning.ParticleEffect(previousTarget.eyeLocation, target.eyeLocation)
     worldService.playSound(caster.location, castSound, soundCategory)
 
