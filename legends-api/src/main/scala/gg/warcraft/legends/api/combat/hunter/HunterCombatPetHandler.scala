@@ -6,6 +6,7 @@
 
 package gg.warcraft.legends.api.combat.hunter
 
+import gg.warcraft.combat.api.ability.{AbilityCastEvent, AbilityService}
 import gg.warcraft.combat.api.combatclass.{
   CombatClass, PlayerCombatClassChangedEvent
 }
@@ -26,7 +27,8 @@ import java.util.UUID
 class HunterCombatPetHandler(implicit
     combatPetFactory: CombatPetFactory,
     combatDataService: CombatDataService,
-    entityService: EntityService
+    entityService: EntityService,
+    abilityService: AbilityService
 ) extends Event.Handler {
   private var ownersToPets: Map[UUID, UUID] = Map.empty
   private var petsToOwners: Map[UUID, UUID] = Map.empty
@@ -51,7 +53,11 @@ class HunterCombatPetHandler(implicit
       val ownerId = petsToOwners(pet.id)
       ownersToPets -= ownerId
       petsToOwners -= pet.id
-    // TODO 30 sec pet cooldown
+      abilityService.castAbility("Pet Respawns", ownerId, None)
+
+    case AbilityCastEvent("Pet Respawns (Respawn)", caster, _) =>
+      removePet(caster.id)
+      spawnPet(caster, caster.combatClass)
 
     case PlayerDisconnectEvent(player) =>
       removePet(player.id)

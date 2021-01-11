@@ -10,6 +10,7 @@ import gg.warcraft.combat.api.ability.AbilityService
 import gg.warcraft.combat.api.projectile.ProjectileService
 import gg.warcraft.legends.api.combat.hunter.marksman._
 import gg.warcraft.legends.api.combat.hunter.ranger.{Disengage, ToxicArrow, Trap}
+import gg.warcraft.legends.api.combat.hunter.{PetRespawns, PetRespawnsRespawn}
 import gg.warcraft.legends.api.combat.mage.elementalist.{
   ChainLightning, Fireball, HailBlast, MoltenStorm
 }
@@ -78,6 +79,8 @@ class CombatConfig(implicit
   }
 
   private def registerRangerAbilities(): Unit = {
+    registerAbility("Pet Respawns", new PetRespawns.Factory())
+    registerAbility("Pet Respawns (Respawn)", new PetRespawnsRespawn.Factory())
     // Hunter
     registerAbility("Disengage", new Disengage.Factory())
     registerAbility("Toxic Arrow", new ToxicArrow.Factory())
