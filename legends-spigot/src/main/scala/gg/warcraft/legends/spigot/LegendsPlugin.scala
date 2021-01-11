@@ -13,8 +13,7 @@ import gg.warcraft.legends.api.combat.hunter.marksman.{
   FocusCancelHandler, SneakCancelHandler
 }
 import gg.warcraft.legends.api.combat.hunter.{
-  ArrowDistributionHandler, ArrowFriendlyFireHandler, ArrowPickUpHandler,
-  HunterCombatPetHandler
+  ArrowDistributionHandler, ArrowPickUpHandler, HunterCombatPetHandler
 }
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.combat.passive.PassiveAssignmentHandler
@@ -256,7 +255,6 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     eventService.subscribe(new PersonalScoreboardHandler)
     // Hunter
     eventService.subscribe(new ArrowDistributionHandler)
-    eventService.subscribe(new ArrowFriendlyFireHandler)
     eventService.subscribe(new ArrowPickUpHandler)
     eventService.subscribe(new HunterCombatPetHandler)
     eventService.subscribe(new FocusCancelHandler)
