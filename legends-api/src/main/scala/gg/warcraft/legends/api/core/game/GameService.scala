@@ -77,7 +77,7 @@ class GameService(implicit
         var updatedGame = activeGame.get.copy(objectives = updatedObjectives)
 
         if (_activeSkirmish.nonEmpty) {
-          val objectivePoints = _config.objectiveTallyPoints(objective.id)
+          val objectivePoints = _config.objectiveTallyPoints(objective.typ)
           val updatedPoints = updatedGame.dailyPoints.updatedWith(team) {
             case Some(points) => points + objectivePoints
             case None         => objectivePoints
@@ -150,7 +150,7 @@ class GameService(implicit
         .foldLeft(Map.empty[Team, Int]) { case (accumulator, (_, objective)) =>
           objective.occupiers match {
             case Some(team) =>
-              val objectivePoints = _config.objectiveTallyPoints(objective.id)
+              val objectivePoints = _config.objectiveTallyPoints(objective.typ)
               accumulator.updatedWith(team) {
                 case Some(points) => points + objectivePoints
                 case None         => objectivePoints
