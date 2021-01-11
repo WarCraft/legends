@@ -27,8 +27,8 @@ class SpigotScoreboardHandler(config: LegendsConfig)(implicit
     objectiveService: ObjectiveService,
     serverDataService: ServerDataService
 ) extends Runnable {
-  private final val footer =
-    "\\nJoin your team on the WarCraft: Discord at discord.warcraft.gg!"
+  private final val footer = """
+      |Join your team on the WarCraft: Discord at discord.warcraft.gg!""".stripMargin
   private final val textJson = "{\"text\": \"%s\"}"
 
   private val dwarves = LegendsTeam.Dwarves.instanceOption
@@ -47,8 +47,7 @@ class SpigotScoreboardHandler(config: LegendsConfig)(implicit
   }
 
   private val warHeader =
-    s"""
-      |${GOLD}WarCraft: War
+    s"""${GOLD}WarCraft: War
       |Next skirmish in %s
       |$factionsHeader
       |
@@ -63,8 +62,7 @@ class SpigotScoreboardHandler(config: LegendsConfig)(implicit
       |""".stripMargin
 
   private val skirmishHeader =
-    s"""
-       |${YELLOW}WarCraft: Skirmish
+    s"""${YELLOW}WarCraft: Skirmish
        |$factionsHeader
        |
        |Points
@@ -75,8 +73,7 @@ class SpigotScoreboardHandler(config: LegendsConfig)(implicit
        |""".stripMargin
 
   private val noGameHeader =
-    s"""
-       |${GOLD}WarCraft
+    s"""${GOLD}WarCraft
        |The next game will start shortly!
        |""".stripMargin
 
