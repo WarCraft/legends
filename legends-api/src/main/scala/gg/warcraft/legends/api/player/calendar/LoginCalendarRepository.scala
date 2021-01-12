@@ -8,11 +8,13 @@ package gg.warcraft.legends.api.player.calendar
 
 import com.typesafe.config.Config
 import gg.warcraft.monolith.api.util.codecs.quill._
+import gg.warcraft.monolith.api.util.future.FutureOps
 import io.getquill._
 import io.getquill.context.jdbc.JdbcContext
 import io.getquill.context.sql.idiom.SqlIdiom
 
 import java.util.UUID
+import java.util.logging.Logger
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -25,12 +27,12 @@ trait LoginRewardRepository {
 private trait PlayerDataContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
-  def loadData = quote {
+  def queryById = quote {
     (q: Query[LoginCalendar], playerId: UUID) =>
       q.filter { _.playerId == playerId }
   }
 
-  def upsertData = quote {
+  def upsert = quote {
     (q: EntityQuery[LoginCalendar], data: LoginCalendar) =>
       q.insert(data).onConflictUpdate(_.playerId)(
         (t, e) => t.day -> e.day,
@@ -41,30 +43,34 @@ private trait PlayerDataContext[I <: SqlIdiom, N <: NamingStrategy] {
 
 private[legends] class PostgresLoginRewardRepository(
     config: Config
+)(implicit
+    logger: Logger
 ) extends LoginRewardRepository {
   private val database = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
     with PlayerDataContext[PostgresDialect, SnakeCase]
   import database._
 
   override def load(playerId: UUID): Option[LoginCalendar] =
-    run { loadData(query[LoginCalendar], lift(playerId)) }.headOption
+    run { queryById(query[LoginCalendar], lift(playerId)) }.headOption
 
-  override def save(data: LoginCalendar): Future[Unit] = Future {
-    run { upsertData(query[LoginCalendar], lift(data)) }
-  }
+  override def save(data: LoginCalendar) = Future[Unit] {
+    run { upsert(query[LoginCalendar], lift(data)) }
+  }.andThenLog("LoginRewardRepository", "upsert", data)
 }
 
 private[legends] class SqliteLoginRewardRepository(
     config: Config
+)(implicit
+    logger: Logger
 ) extends LoginRewardRepository {
   private val database = new SqliteJdbcContext[SnakeCase](SnakeCase, config)
     with PlayerDataContext[SqliteDialect, SnakeCase]
   import database._
 
   override def load(playerId: UUID): Option[LoginCalendar] =
-    run { loadData(query[LoginCalendar], lift(playerId)) }.headOption
+    run { queryById(query[LoginCalendar], lift(playerId)) }.headOption
 
-  override def save(data: LoginCalendar): Future[Unit] = Future {
-    run { upsertData(query[LoginCalendar], lift(data)) }
-  }
+  override def save(data: LoginCalendar) = Future[Unit] {
+    run { upsert(query[LoginCalendar], lift(data)) }
+  }.andThenLog("LoginRewardRepository", "upsert", data)
 }

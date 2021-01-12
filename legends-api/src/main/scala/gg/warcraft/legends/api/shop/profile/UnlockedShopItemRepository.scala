@@ -7,6 +7,7 @@
 package gg.warcraft.legends.api.shop.profile
 
 import com.typesafe.config.Config
+import gg.warcraft.monolith.api.util.future.FutureOps
 import io.getquill._
 import io.getquill.context.jdbc.JdbcContext
 import io.getquill.context.sql.idiom.SqlIdiom
@@ -14,24 +15,23 @@ import io.getquill.context.sql.idiom.SqlIdiom
 import java.util.UUID
 import java.util.logging.Logger
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.concurrent.Future
 
 trait UnlockedShopItemRepository {
-  def loadItems(playerId: UUID): Set[String]
+  def load(playerId: UUID): Set[String]
 
-  def saveItem(id: String, playerId: UUID): Future[Unit]
+  def save(id: String, playerId: UUID): Future[Unit]
 }
 
 private trait UnlockedShopItemContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
-  def queryItems = quote {
+  def queryById = quote {
     (q: EntityQuery[UnlockedShopItem], playerId: UUID) =>
       q.filter { _.playerId == playerId }.map { _.id }
   }
 
-  def insertItem = quote {
+  def insert = quote {
     (q: EntityQuery[UnlockedShopItem], item: UnlockedShopItem) => q.insert(item)
   }
 }
@@ -45,33 +45,29 @@ private[legends] class PostgresUnlockedShopItemRepository(
     with UnlockedShopItemContext[PostgresDialect, SnakeCase]
   import database._
 
-  override def loadItems(playerId: UUID): Set[String] =
-    run { queryItems(query[UnlockedShopItem], lift(playerId)) }.toSet
+  override def load(playerId: UUID): Set[String] =
+    run { queryById(query[UnlockedShopItem], lift(playerId)) }.toSet
 
-  override def saveItem(id: String, playerId: UUID): Future[Unit] = Future {
+  override def save(id: String, playerId: UUID) = Future[Unit] {
     val item = UnlockedShopItem(id, playerId)
-    run { insertItem(query[UnlockedShopItem], lift(item)) }
-  }
-//    .andThen { TODO explore database error reporting
-//    case Failure(exception) =>
-//      logger.severe(exception.getMessage)
-//      logger.severe(s"Failed to persist UnlockedShopItemRepository::saveItem($id, $playerId)")
-//    case Success(value)     =>
-//  }.asInstanceOf[Future[Unit]]
+    run { insert(query[UnlockedShopItem], lift(item)) }
+  }.andThenLog("UnlockedShopItemRepository", "insert", id, playerId)
 }
 
 private[legends] class SqliteUnlockedShopItemRepository(
     config: Config
+)(implicit
+    logger: Logger
 ) extends UnlockedShopItemRepository {
   private val database = new SqliteJdbcContext[SnakeCase](SnakeCase, config)
     with UnlockedShopItemContext[SqliteDialect, SnakeCase]
   import database._
 
-  override def loadItems(playerId: UUID): Set[String] =
-    run { queryItems(query[UnlockedShopItem], lift(playerId)) }.toSet
+  override def load(playerId: UUID): Set[String] =
+    run { queryById(query[UnlockedShopItem], lift(playerId)) }.toSet
 
-  override def saveItem(id: String, playerId: UUID): Future[Unit] = Future {
+  override def save(id: String, playerId: UUID) = Future[Unit] {
     val item = UnlockedShopItem(id, playerId)
-    run { insertItem(query[UnlockedShopItem], lift(item)) }
-  }
+    run { insert(query[UnlockedShopItem], lift(item)) }
+  }.andThenLog("UnlockedShopItemRepository", "insert", id, playerId)
 }

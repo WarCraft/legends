@@ -26,10 +26,12 @@ package gg.warcraft.legends.api.core.data
 
 import com.typesafe.config.Config
 import gg.warcraft.monolith.api.util.codecs.quill._
+import gg.warcraft.monolith.api.util.future.FutureOps
 import io.getquill._
 import io.getquill.context.jdbc.JdbcContext
 import io.getquill.context.sql.idiom.SqlIdiom
 
+import java.util.logging.Logger
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -41,41 +43,45 @@ trait LegendsServerDataRepository {
 private trait LegendsServerDataContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
-  def queryData = quote {
+  def queryAll = quote {
     (q: EntityQuery[LegendsServerData]) => q
   }
 
-  def upsertData = quote {
+  def update = quote {
     (q: EntityQuery[LegendsServerData], data: LegendsServerData) => q.update(data)
   }
 }
 
 private[legends] class PostgresLegendsServerDataRepository(
     config: Config
+)(implicit
+    logger: Logger
 ) extends LegendsServerDataRepository {
   private val database = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
     with LegendsServerDataContext[PostgresDialect, SnakeCase]
   import database._
 
   override def load: Option[LegendsServerData] =
-    run { queryData(query[LegendsServerData]) }.headOption
+    run { queryAll(query[LegendsServerData]) }.headOption
 
-  override def save(data: LegendsServerData): Future[Unit] = Future {
-    run { upsertData(query[LegendsServerData], lift(data)) }
-  }
+  override def save(data: LegendsServerData) = Future[Unit] {
+    run { update(query[LegendsServerData], lift(data)) }
+  }.andThenLog("LegendsServerDataRepository", "update", data)
 }
 
 private[legends] class SqliteLegendsServerDataRepository(
     config: Config
+)(implicit
+    logger: Logger
 ) extends LegendsServerDataRepository {
   private val database = new SqliteJdbcContext[SnakeCase](SnakeCase, config)
     with LegendsServerDataContext[SqliteDialect, SnakeCase]
   import database._
 
   override def load: Option[LegendsServerData] =
-    run { queryData(query[LegendsServerData]) }.headOption
+    run { queryAll(query[LegendsServerData]) }.headOption
 
-  override def save(data: LegendsServerData): Future[Unit] = Future {
-    run { upsertData(query[LegendsServerData], lift(data)) }
-  }
+  override def save(data: LegendsServerData) = Future[Unit] {
+    run { update(query[LegendsServerData], lift(data)) }
+  }.andThenLog("LegendsServerDataRepository", "update", data)
 }
