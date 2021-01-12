@@ -127,22 +127,23 @@ object LeaderboardsMenu {
       case _                          => BannerVariant.RED
     }
     val pages = leaderboard.players.size / 10
-    val rank = leaderboard.players.get(player.id)
+    val playerRank = leaderboard.players.get(player.id)
       .map { it => f"${it + 1}%3s" }
       .getOrElse("???")
     val score = player.statistics.get(leaderboard.statistic)
     val cursor = page * 10
     val rankings = leaderboard.rankings
       .slice(cursor, cursor + 10)
+      .zipWithIndex
       .map {
-        case null            => "$YELLOW$rank."
-        case (player, score) => s"$YELLOW$rank. ${player.name} $score"
+        case (null, _)            => ""
+        case ((player, score), i) => s"$YELLOW${cursor + i}. ${player.name} $score"
       }
     Button(
       icon,
       leaderboard.name,
       List(
-        s"$YELLOW$rank. ${player.name} $score",
+        s"$YELLOW$playerRank. ${player.name} $score",
         ""
       ) ++ rankings ++ List(
         "",
