@@ -9,11 +9,10 @@ package gg.warcraft.legends.api.combat.warrior.racial
 import gg.warcraft.monolith.api.combat.{CombatSource, CombatValue}
 import gg.warcraft.monolith.api.core.Duration
 import gg.warcraft.monolith.api.core.event.{Event, PreEvent}
+import gg.warcraft.monolith.api.entity.status.Status
 import gg.warcraft.monolith.api.entity.{
   EntityHealthChangedEvent, EntityPreDamageEvent
 }
-import gg.warcraft.monolith.api.entity.status.Status
-import gg.warcraft.monolith.api.util.typing._
 
 object Sturdiness {
   class StatusEffect(
@@ -36,7 +35,9 @@ object Sturdiness {
         // TODO add modifier to config
         val modifierValue = -0.25f * (1 - percentHealth)
         val modifier = CombatValue.Modifier.percent(source, modifierValue)
-        it.copy(damage = damage.copy(modifiers = modifier :: damage.modifiers)).as[T]
+        it.copy(damage =
+          damage.copy(modifiers = modifier :: damage.modifiers)
+        ).asInstanceOf[T]
       case _ => event
     }
   }

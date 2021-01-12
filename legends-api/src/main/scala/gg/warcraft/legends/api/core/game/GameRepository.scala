@@ -11,11 +11,13 @@ import gg.warcraft.legends.api.entity.LegendsTeam._
 import gg.warcraft.monolith.api.core.Duration.DurationOps
 import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.util.codecs.quill._
+import gg.warcraft.monolith.api.util.future.FutureOps
 import gg.warcraft.monolith.api.util.types._
 import io.getquill._
 import io.getquill.context.jdbc.JdbcContext
 import io.getquill.context.sql.idiom.SqlIdiom
 
+import java.util.logging.Logger
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -73,11 +75,11 @@ private object _Game {
 private trait GameContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
-  def queryGame = quote {
+  def queryById = quote {
     (q: EntityQuery[_Game], id: Long) => q.filter { _.id == id }
   }
 
-  def upsertGame = quote {
+  def upsert = quote {
     (q: EntityQuery[_Game], game: _Game) =>
       q.insert(game).onConflictUpdate(_.id)(
         (t, e) => t.endTime -> e.endTime,
@@ -91,6 +93,8 @@ private trait GameContext[I <: SqlIdiom, N <: NamingStrategy] {
 
 private[legends] class PostgresGameRepository(
     config: Config
+)(implicit
+    logger: Logger
 ) extends GameRepository {
   private val database = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
     with GameContext[PostgresDialect, SnakeCase]
@@ -99,18 +103,20 @@ private[legends] class PostgresGameRepository(
   override def load(id: Long)(implicit
       teamService: TeamService
   ): Option[Game] =
-    run { queryGame(querySchema[_Game]("game"), lift(id)) }
+    run { queryById(querySchema[_Game]("game"), lift(id)) }
       .headOption
       .map { _.toGame }
 
-  override def save(game: Game): Future[Long] = Future {
+  override def save(game: Game) = Future[Long] {
     val _game = _Game(game)
-    run { upsertGame(querySchema[_Game]("game"), lift(_game)) }
-  }
+    run { upsert(querySchema[_Game]("game"), lift(_game)) }
+  }.andThenLog("GameRepository", "upsert", game)
 }
 
 private[legends] class SqliteGameRepository(
     config: Config
+)(implicit
+    logger: Logger
 ) extends GameRepository {
   private val database = new SqliteJdbcContext[SnakeCase](SnakeCase, config)
     with GameContext[SqliteDialect, SnakeCase]
@@ -119,12 +125,12 @@ private[legends] class SqliteGameRepository(
   override def load(id: Long)(implicit
       teamService: TeamService
   ): Option[Game] =
-    run { queryGame(querySchema[_Game]("game"), lift(id)) }
+    run { queryById(querySchema[_Game]("game"), lift(id)) }
       .headOption
       .map { _.toGame }
 
-  override def save(game: Game): Future[Long] = Future {
+  override def save(game: Game) = Future[Long] {
     val _game = _Game(game)
-    run { upsertGame(querySchema[_Game]("game"), lift(_game)) }
-  }
+    run { upsert(querySchema[_Game]("game"), lift(_game)) }
+  }.andThenLog("GameRepository", "upsert", game)
 }

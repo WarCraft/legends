@@ -34,7 +34,7 @@ class ShopProfileService(implicit
     if (!requiresPayment || takePayment(id, outdated)) {
       val updated = outdated.copy(unlocked = outdated.unlocked + id)
       profiles += (playerId -> updated)
-      unlockedShopItemRepository.saveItem(id, playerId)
+      unlockedShopItemRepository.save(id, playerId)
       true
     } else false
   }
@@ -57,7 +57,7 @@ class ShopProfileService(implicit
   }
 
   private[shop] def loadProfile(playerId: UUID): Unit =
-    unlockedShopItemRepository.loadItems(playerId)
+    unlockedShopItemRepository.load(playerId)
       .pipe { ShopProfile(playerId, _) }
       .tap { it => profiles += (playerId -> it) }
 

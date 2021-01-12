@@ -21,7 +21,6 @@ import gg.warcraft.monolith.api.effect.{
 }
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.math.Vector3f
-import gg.warcraft.monolith.api.util.typing._
 import gg.warcraft.monolith.api.world.{Location, WorldService}
 
 class MassBamboozle(
@@ -117,8 +116,8 @@ object MassBamboozle {
   class Handler(implicit repository: Repository) extends Event.Handler {
     override def reduce[T <: PreEvent](event: T): T = event match {
       case event @ AbilityPreCastEvent(_, caster, _, _, _) =>
-        if (!repository.bamboozled.contains(caster.id)) event.as[T]
-        else event.copy(cancelled = true).as[T]
+        if (!repository.bamboozled.contains(caster.id)) event.asInstanceOf[T]
+        else event.copy(cancelled = true).asInstanceOf[T]
       case _ => event
     }
   }

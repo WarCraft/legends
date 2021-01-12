@@ -6,11 +6,10 @@
 
 package gg.warcraft.legends.spigot.core
 
-import gg.warcraft.monolith.api.util.typing._
-import org.bukkit.event.{EventHandler, Listener}
-import org.bukkit.event.inventory.{FurnaceBurnEvent, InventoryMoveItemEvent}
-import org.bukkit.inventory.FurnaceInventory
 import org.bukkit.Material
+import org.bukkit.event.inventory.{FurnaceBurnEvent, InventoryMoveItemEvent}
+import org.bukkit.event.{EventHandler, Listener}
+import org.bukkit.inventory.FurnaceInventory
 
 class SpigotFurnaceCoalHandler extends Listener {
   @EventHandler
@@ -19,8 +18,8 @@ class SpigotFurnaceCoalHandler extends Listener {
 
   @EventHandler
   def on(event: InventoryMoveItemEvent): Unit = {
-    val isFurnaceEvent = event.getSource.is[FurnaceInventory] ||
-      event.getDestination.is[FurnaceInventory]
+    val isFurnaceEvent = event.getSource.isInstanceOf[FurnaceInventory] ||
+      event.getDestination.isInstanceOf[FurnaceInventory]
     if (isFurnaceEvent && event.getItem.getType == Material.COAL)
       event.setCancelled(true)
   }

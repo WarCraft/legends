@@ -18,7 +18,6 @@ import gg.warcraft.monolith.api.core.Duration
 import gg.warcraft.monolith.api.core.event.PreEvent
 import gg.warcraft.monolith.api.entity.status.Status
 import gg.warcraft.monolith.api.player.PlayerService
-import gg.warcraft.monolith.api.util.typing._
 
 object AttributesPassive {
   class StatusEffect(
@@ -46,10 +45,11 @@ object AttributesPassive {
             if (modifierValue != 0) {
               val outdated = modifiers.getOrElse(AbilityAttribute.DAMAGE, Nil)
               val modifier = CombatValue.Modifier.flat(source, modifierValue)
-              val updated = modifiers + (AbilityAttribute.DAMAGE -> (modifier :: outdated))
-              event.copy(modifiers = updated).as[T]
-            } else event.as[T]
-          case None => event.as[T]
+              val updated =
+                modifiers + (AbilityAttribute.DAMAGE -> (modifier :: outdated))
+              event.copy(modifiers = updated).asInstanceOf[T]
+            } else event.asInstanceOf[T]
+          case None => event.asInstanceOf[T]
         }
       case _ => event
     }

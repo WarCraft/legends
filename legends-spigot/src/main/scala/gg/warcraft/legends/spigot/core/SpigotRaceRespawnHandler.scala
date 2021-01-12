@@ -11,7 +11,6 @@ import gg.warcraft.monolith.api.core.event.{Event, PreEvent}
 import gg.warcraft.monolith.api.entity.team.Team
 import gg.warcraft.monolith.api.math.Vector3f
 import gg.warcraft.monolith.api.player.PlayerPreRespawnEvent
-import gg.warcraft.monolith.api.util.typing._
 
 class SpigotRaceRespawnHandler extends Event.Handler {
   import SpigotRaceRespawnHandler.getSpawn
@@ -22,7 +21,7 @@ class SpigotRaceRespawnHandler extends Event.Handler {
         case None       => event.location
         case Some(team) => event.location.copy(translation = getSpawn(team))
       }
-      event.copy(location = spawnLocation).as[T]
+      event.copy(location = spawnLocation).asInstanceOf[T]
 
     case _ => event
   }

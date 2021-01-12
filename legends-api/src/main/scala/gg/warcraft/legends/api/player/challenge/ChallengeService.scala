@@ -46,7 +46,7 @@ class ChallengeService(implicit
       }
     }
 
-    val activeChallenges = repository.loadActive()(this)
+    val activeChallenges = repository.loadAllActive()(this)
     _activeDailies = activeChallenges.filter { _.isDaily }
     if (_activeDailies.size != 3) rotateDailies()
     _activeMonthlies = activeChallenges.filter { _.isMonthly }
@@ -60,7 +60,7 @@ class ChallengeService(implicit
     }
 
     _activeDailies = Nil
-    repository.deleteActiveDailies().onComplete {
+    repository.deleteAllActiveDailies().onComplete {
       case Success(_) =>
         _activeDailies = Random.shuffle(dailies).take(3)
         repository.saveActive(_activeDailies)
@@ -78,7 +78,7 @@ class ChallengeService(implicit
     }
 
     _activeMonthlies = Nil
-    repository.deleteActiveMonthlies().onComplete {
+    repository.deleteAllActiveMonthlies().onComplete {
       case Success(_) =>
         _activeMonthlies = Random.shuffle(monthlies).take(10)
         repository.saveActive(_activeMonthlies)

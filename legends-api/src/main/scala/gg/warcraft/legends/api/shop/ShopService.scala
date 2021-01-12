@@ -59,7 +59,7 @@ class ShopService(implicit
 
     _priceByTypeAndRarity = config.prices
 
-    _availableItems = availableShopItemRepository.loadAvailable()(this)
+    _availableItems = availableShopItemRepository.loadAll()(this)
     if (availableItems == Nil) rotateAvailable()
   }
 
@@ -77,8 +77,8 @@ class ShopService(implicit
     }.toList
     _availableItems = filler ++ premium
 
-    availableShopItemRepository.deleteAvailable().onComplete { _ =>
-      availableShopItemRepository.saveAvailable(_availableItems)
+    availableShopItemRepository.deleteAll().onComplete { _ =>
+      availableShopItemRepository.save(_availableItems)
     }
   }
 
