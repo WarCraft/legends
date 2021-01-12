@@ -90,7 +90,7 @@ class PersonalScoreboard(player: SpigotPlayer)(implicit
       case (ability, cooldown) =>
         val remainingCooldown = cooldown - System.currentTimeMillis
         if (remainingCooldown > 0)
-          currentCooldowns += (ability -> (remainingCooldown / 1000).toInt)
+          currentCooldowns += (ability -> ((remainingCooldown / 1000).toInt + 1))
     }
 
     if (currentCooldowns.nonEmpty) {
