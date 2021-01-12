@@ -110,7 +110,9 @@ object ChallengesMenu {
       serverDataService: ServerDataService
   ): String = {
     val serverTime = serverDataService.serverTime
-    val until = serverTime.plusMonths(1).truncatedTo(ChronoUnit.MONTHS)
+    val until = serverTime.plusMonths(1)
+      .truncatedTo(ChronoUnit.DAYS)
+      .withDayOfMonth(1)
     val daysLeft = serverTime.until(until, ChronoUnit.DAYS)
     if (daysLeft > 0) s"$daysLeft days"
     else dailyChallengesTimeLeft
