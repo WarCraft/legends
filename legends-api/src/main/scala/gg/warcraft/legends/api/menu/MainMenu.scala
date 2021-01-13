@@ -312,7 +312,7 @@ object MainMenu {
         "",
         s"${WHITE}Racial passive:"
       ) ++ racialPassiveView(player, team, combatClass)
-        ++ List("", "[Click] to change your race")
+        ++ List("", "[Click] to change factions")
     ) { _ => updateMenu(FactionMenu.apply) }
   }
 
@@ -401,8 +401,9 @@ object MainMenu {
   ): Button = Button(
     ItemType.BOOK,
     "Help Menu",
-    "Read the Server Manual or contact a member",
-    "of staff if you have any more questions.",
+    "Read the Server Manual or",
+    "contact a member of staff",
+    "if you have any more questions.",
     "",
     "[Click] To open the Help Menu"
   ) { _ => updateMenu(HelpMenu.apply) }
@@ -430,10 +431,12 @@ object MainMenu {
   ): Button = Button(
     ItemType.CLOCK,
     "Daily Login",
-    "Every day you get a reward just for",
-    "logging in! The more often you log in, the",
-    "greater the rewards. And don't worry; missing",
-    "a day or two does not reset your progress.",
+    "Every day you get a reward",
+    "just for logging in! The more",
+    "often you log in, the greater",
+    "the rewards. And don't worry;",
+    "missing a day or two does not",
+    "reset your progress.",
     "",
     "[Click] To view your reward calendar"
   ) { _ => updateMenu(DailyLoginMenu.apply) }
@@ -502,8 +505,9 @@ object MainMenu {
   ): Button = Button(
     ItemType.TNT,
     "Challenges",
-    "Repeatable tasks that reward you for helping",
-    "your faction increase their influence on Aldmore.",
+    "Repeatable tasks that reward",
+    "you for helping your faction's",
+    "efforts on Aldmore.",
     "",
     "[Click] To view your challenges"
   ) { _ => updateMenu(ChallengesMenu.apply) }
@@ -531,8 +535,9 @@ object MainMenu {
   ): Button = Button(
     ItemType.BOOKSHELF,
     "Collectibles",
-    "From house decorations to mini pets, there's a lot",
-    "to collect on Aldmore. Can you collect it all?",
+    "From house decorations to",
+    "mini pets, there's a lot",
+    "to collect on Aldmore.",
     "",
     "[Click] To view your collectibles"
   ) { _ => updateMenu(CollectiblesMenu.apply) }
@@ -560,9 +565,11 @@ object MainMenu {
   ): Button = Button(
     ItemType.BANNER,
     "Leaderboards",
-    "Your actions on the server do not go unnoticed.",
-    "The Titans keep track of all the legends forged",
-    "on Aldmore and reward those that are the greatest!",
+    "Your actions on the server do",
+    "not go unnoticed. The Titans keep",
+    "keep records of all the legends",
+    "forged on Aldmore and reward those",
+    "that are the greatest!",
     "",
     "[Click] To view the leaderboards"
   ) { _ => updateMenu(LeaderboardsMenu.apply) }

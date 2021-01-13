@@ -33,9 +33,11 @@ object LeaderboardsMenu {
   private final val infoButton = Button.noop(
     ItemType.BOOK,
     "Leaderboards",
-    "Your actions on the server do not go unnoticed.",
-    "The Titans keep track of all the legends forged",
-    "on Aldmore and reward those that are the greatest!"
+    "Your actions on the server do",
+    "not go unnoticed. The Titans keep",
+    "keep records of all the legends",
+    "forged on Aldmore and reward those",
+    "that are the greatest!"
   )
 
   private def dailyLeaderboardsButton(implicit

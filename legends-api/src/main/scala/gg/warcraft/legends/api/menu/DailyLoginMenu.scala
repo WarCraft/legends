@@ -34,10 +34,12 @@ object DailyLoginMenu {
   private final val infoButton = Button.noop(
     ItemType.BOOK,
     "Daily Login",
-    "Every day you get a reward just for",
-    "logging in! The more often you log in, the",
-    "greater the rewards. And don't worry; missing",
-    "a day or two does not reset your progress."
+    "Every day you get a reward",
+    "just for logging in! The more",
+    "often you log in, the greater",
+    "the rewards. And don't worry;",
+    "missing a day or two does not",
+    "reset your progress."
   )
 
   private def rewardButton(

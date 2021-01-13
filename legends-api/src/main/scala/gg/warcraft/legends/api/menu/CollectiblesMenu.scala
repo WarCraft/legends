@@ -32,8 +32,9 @@ object CollectiblesMenu {
   private final val infoButton = Button.noop(
     ItemType.BOOK,
     "Collectibles",
-    "From house decorations to mini pets, there's a lot",
-    "to collect on Aldmore. Can you collect it all?"
+    "From house decorations to",
+    "mini pets, there's a lot",
+    "to collect on Aldmore."
   )
 
   private def decorationsButton(implicit

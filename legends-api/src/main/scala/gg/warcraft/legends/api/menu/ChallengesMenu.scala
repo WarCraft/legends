@@ -34,8 +34,9 @@ object ChallengesMenu {
   private final val infoButton = Button.noop(
     ItemType.BOOK,
     "Challenges",
-    "Repeatable tasks that reward you for helping",
-    "your faction increase their influence on Aldmore."
+    "Repeatable tasks that reward",
+    "you for helping your faction's",
+    "efforts on Aldmore."
   )
 
   private def dailyChallengesButton(implicit

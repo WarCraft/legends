@@ -31,10 +31,6 @@ object HelpMenu {
   private final val infoButton = Button.noop(
     ItemType.BOOK,
     "Help Menu",
-    "This is the Help Menu. In here we've compiled",
-    "a list of all the things you need to know to",
-    "start playing on the server.",
-    "",
     "Think of it as the Server Manual. If after",
     "reading this menu you still have more questions",
     "do not hesitate to contact a member of staff!"
