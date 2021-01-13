@@ -52,10 +52,11 @@ private[legends] class PostgresAvailableShopItemRepository(
   override def loadAll()(implicit
       shopService: ShopService
   ): List[ShopItem] =
-    run { queryAll(query[AvailableShopItem]).map { _.item } }
+    run { queryAll(query[AvailableShopItem]) }
+      .map { it => shopService.itemsById(it.id) }
 
   override def save(items: List[ShopItem]) = Future[Unit] {
-    val availableItems = items.map(AvailableShopItem)
+    val availableItems = items.map { _.id }.map(AvailableShopItem)
     run { liftQuery(availableItems).foreach { insert(query[AvailableShopItem], _) } }
   }.andThenLog("AvailableShopItemRepository", "insert", items)
 
@@ -76,10 +77,11 @@ private[legends] class SqliteAvailableShopItemRepository(
   override def loadAll()(implicit
       shopService: ShopService
   ): List[ShopItem] =
-    run { queryAll(query[AvailableShopItem]).map { _.item } }
+    run { queryAll(query[AvailableShopItem]) }
+      .map { it => shopService.itemsById(it.id) }
 
   override def save(items: List[ShopItem]) = Future[Unit] {
-    val availableItems = items.map(AvailableShopItem)
+    val availableItems = items.map { _.id }.map(AvailableShopItem)
     run { liftQuery(availableItems).foreach { insert(query[AvailableShopItem], _) } }
   }.andThenLog("AvailableShopItemRepository", "insert", items)
 

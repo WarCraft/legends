@@ -7,5 +7,5 @@
 package gg.warcraft.legends.api.shop
 
 case class AvailableShopItem(
-    item: ShopItem
+    id: String
 )
