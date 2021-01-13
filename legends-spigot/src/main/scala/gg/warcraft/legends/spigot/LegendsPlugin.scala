@@ -145,6 +145,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
   private def configureRepositories(config: DatabaseConfig): (
       GameRepository,
+      DailyPointsArchiveRepository,
       ChallengeRepository,
       LoginCalendarRepository,
       LegendsPlayerDataRepository,
@@ -156,6 +157,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
       val sqliteConfig = parseDatabaseConfig(config, getDataFolder)
       (
         new SqliteGameRepository(sqliteConfig),
+        new SqliteDailyPointsArchiveRepository(sqliteConfig),
         new SqliteChallengeRepository(sqliteConfig),
         new SqliteLoginCalendarRepository(sqliteConfig),
         new SqliteLegendsPlayerDataRepository(sqliteConfig),
@@ -167,6 +169,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
       val postgresConfig = parseDatabaseConfig(config, getDataFolder)
       (
         new PostgresGameRepository(postgresConfig),
+        new PostgresDailyPointsArchiveRepository(postgresConfig),
         new PostgresChallengeRepository(postgresConfig),
         new PostgresLoginCalendarRepository(postgresConfig),
         new PostgresLegendsPlayerDataRepository(postgresConfig),

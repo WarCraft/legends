@@ -26,7 +26,8 @@ class GameService(implicit
     gameRepository: GameRepository,
     taskService: TaskService,
     teamService: TeamService,
-    objectiveService: ObjectiveService
+    objectiveService: ObjectiveService,
+    dailyPointsArchiveRepository: DailyPointsArchiveRepository
 ) {
   private final val active_war_data = "active_war"
   private final val active_skirmish_data = "active_skirmish"
@@ -181,7 +182,7 @@ class GameService(implicit
           case None        => dailyWinnerMonthlyScore
         }
 
-        // TODO archive daily points?
+        dailyPointsArchiveRepository.archive(war, serverDataService.yesterday)
 
         val updatedWar =
           war.copy(dailyPoints = Map.empty, monthlyScore = updatedScore)

@@ -16,7 +16,9 @@ import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.core.data.{
   LegendsServerDataRepository, LegendsServerDataService
 }
-import gg.warcraft.legends.api.core.game.{GameRepository, GameService}
+import gg.warcraft.legends.api.core.game.{
+  DailyPointsArchiveRepository, GameRepository, GameService
+}
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
 import gg.warcraft.legends.api.core.spawn.SpawnService
 import gg.warcraft.legends.api.item.crate.LootCrateService
@@ -77,6 +79,7 @@ object implicits {
   }
 
   private var _gameRepository: GameRepository = _
+  private var _dailyPointsRepository: DailyPointsArchiveRepository = _
   private var _challengeRepository: ChallengeRepository = _
   private var _loginRewardRepository: LoginCalendarRepository = _
   private var _legendsPlayerDataRepository: LegendsPlayerDataRepository = _
@@ -88,6 +91,7 @@ object implicits {
       config: LegendsConfig,
       repositories: (
           GameRepository,
+          DailyPointsArchiveRepository,
           ChallengeRepository,
           LoginCalendarRepository,
           LegendsPlayerDataRepository,
@@ -98,12 +102,13 @@ object implicits {
   ): Unit = {
     _config = config
     _gameRepository = repositories._1
-    _challengeRepository = repositories._2
-    _loginRewardRepository = repositories._3
-    _legendsPlayerDataRepository = repositories._4
-    _availableShopItemRepository = repositories._5
-    _unlockedShopItemRepository = repositories._6
-    _legendsServerDataRepository = repositories._7
+    _dailyPointsRepository = repositories._2
+    _challengeRepository = repositories._3
+    _loginRewardRepository = repositories._4
+    _legendsPlayerDataRepository = repositories._5
+    _availableShopItemRepository = repositories._6
+    _unlockedShopItemRepository = repositories._7
+    _legendsServerDataRepository = repositories._8
   }
 
   // Spigot
@@ -119,6 +124,8 @@ object implicits {
   // Persistence
   private implicit lazy val gameRepository: GameRepository =
     _gameRepository
+  private implicit lazy val dailyPointsRepository: DailyPointsArchiveRepository =
+    _dailyPointsRepository
   private implicit lazy val challengeRepository: ChallengeRepository =
     _challengeRepository
   private implicit lazy val loginRewardRepository: LoginCalendarRepository =
