@@ -463,7 +463,7 @@ object MainMenu {
     "Daily Votes",
     "Get even more daily rewards by voting",
     "for WarCraft! For every vote cast you",
-    s"get a ${YELLOW}Vote Crate${FormatCode.RESET}.",
+    s"receive a ${YELLOW}Vote Crate${FormatCode.RESET}.",
     "",
     "You can vote on:",
     "minecraft-server-list.com",
@@ -472,7 +472,7 @@ object MainMenu {
     "minecraft-mp.com",
     "minecraftservers.biz",
     "",
-    "[Click] To paste the vote links in your chat",
+    "[Click] To paste the links in your chat",
     s"or execute the $YELLOW/vote ${FormatCode.RESET}command"
   ) { click =>
     commandService.executeCommand(click.player.id, "vote")

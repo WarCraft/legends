@@ -18,13 +18,13 @@ import java.util.logging.Logger
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait LoginRewardRepository {
+trait LoginCalendarRepository {
   def load(playerId: UUID): Option[LoginCalendar]
 
   def save(data: LoginCalendar): Future[Unit]
 }
 
-private trait PlayerDataContext[I <: SqlIdiom, N <: NamingStrategy] {
+private trait LoginCalendarContext[I <: SqlIdiom, N <: NamingStrategy] {
   this: JdbcContext[I, N] =>
 
   def queryById = quote {
@@ -41,13 +41,13 @@ private trait PlayerDataContext[I <: SqlIdiom, N <: NamingStrategy] {
   }
 }
 
-private[legends] class PostgresLoginRewardRepository(
+private[legends] class PostgresLoginCalendarRepository(
     config: Config
 )(implicit
     logger: Logger
-) extends LoginRewardRepository {
+) extends LoginCalendarRepository {
   private val database = new PostgresJdbcContext[SnakeCase](SnakeCase, config)
-    with PlayerDataContext[PostgresDialect, SnakeCase]
+    with LoginCalendarContext[PostgresDialect, SnakeCase]
   import database._
 
   override def load(playerId: UUID): Option[LoginCalendar] =
@@ -58,13 +58,13 @@ private[legends] class PostgresLoginRewardRepository(
   }.andThenLog("LoginRewardRepository", "upsert", data)
 }
 
-private[legends] class SqliteLoginRewardRepository(
+private[legends] class SqliteLoginCalendarRepository(
     config: Config
 )(implicit
     logger: Logger
-) extends LoginRewardRepository {
+) extends LoginCalendarRepository {
   private val database = new SqliteJdbcContext[SnakeCase](SnakeCase, config)
-    with PlayerDataContext[SqliteDialect, SnakeCase]
+    with LoginCalendarContext[SqliteDialect, SnakeCase]
   import database._
 
   override def load(playerId: UUID): Option[LoginCalendar] =

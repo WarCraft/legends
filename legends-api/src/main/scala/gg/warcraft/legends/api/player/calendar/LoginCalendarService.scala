@@ -17,7 +17,7 @@ import java.util.UUID
 import scala.util.chaining._
 
 class LoginCalendarService(implicit
-    repository: LoginRewardRepository,
+    repository: LoginCalendarRepository,
     lootCrateService: LootCrateService,
     serverDataService: ServerDataService,
     playerService: PlayerService,

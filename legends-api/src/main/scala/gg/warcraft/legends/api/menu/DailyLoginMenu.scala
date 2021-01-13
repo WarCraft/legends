@@ -51,7 +51,7 @@ object DailyLoginMenu {
   ): Button = {
     val rewardLines = rewards.map { it =>
       val plural = if (it.count > 1) "s" else ""
-      s"${it.count} ${it.name}$plural"
+      s"${it.rarity}${it.count} ${it.name}$plural"
     }
     val icon: ItemTypeOrVariant =
       if (claimed.day >= day) {
@@ -60,12 +60,17 @@ object DailyLoginMenu {
     val canClaim = serverDataService.serverDate.isAfter(claimed.claimed) &&
       day == (claimed.day - 1)
     val claimText =
-      if (canClaim) s"${ColorCode.GREEN}[Click] To claim today's reward!"
-      else s"${ColorCode.GOLD}Come back tomorrow for another reward."
+      if (canClaim) List("", s"${ColorCode.GREEN}[Click] To claim today's reward!")
+      else List(
+        "",
+        s"${ColorCode.GOLD}You have already claimed",
+        s"${ColorCode.GOLD}today's reward, come back",
+        s"${ColorCode.GOLD}tomorrow for another one."
+      )
     Button(
       icon,
       s"Day $day",
-      rewardLines ++ List("", claimText)
+      rewardLines ++ claimText
     ) { _ => if (canClaim) loginRewardService.claimReward(player); noop }
   }
 

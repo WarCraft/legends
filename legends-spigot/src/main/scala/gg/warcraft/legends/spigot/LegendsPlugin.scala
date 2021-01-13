@@ -36,8 +36,8 @@ import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeUseHandler
 import gg.warcraft.legends.api.menu.MenuConfig
 import gg.warcraft.legends.api.player.calendar.{
-  LoginCalendarHandler, LoginRewardRepository, PostgresLoginRewardRepository,
-  SqliteLoginRewardRepository
+  LoginCalendarHandler, LoginCalendarRepository, PostgresLoginCalendarRepository,
+  SqliteLoginCalendarRepository
 }
 import gg.warcraft.legends.api.player.challenge.handler.{
   ChallengeCompletionHandler, ChallengeRotateHandler
@@ -146,7 +146,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
   private def configureRepositories(config: DatabaseConfig): (
       GameRepository,
       ChallengeRepository,
-      LoginRewardRepository,
+      LoginCalendarRepository,
       LegendsPlayerDataRepository,
       AvailableShopItemRepository,
       UnlockedShopItemRepository,
@@ -157,7 +157,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
       (
         new SqliteGameRepository(sqliteConfig),
         new SqliteChallengeRepository(sqliteConfig),
-        new SqliteLoginRewardRepository(sqliteConfig),
+        new SqliteLoginCalendarRepository(sqliteConfig),
         new SqliteLegendsPlayerDataRepository(sqliteConfig),
         new SqliteAvailableShopItemRepository(sqliteConfig),
         new SqliteUnlockedShopItemRepository(sqliteConfig),
@@ -168,7 +168,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
       (
         new PostgresGameRepository(postgresConfig),
         new PostgresChallengeRepository(postgresConfig),
-        new PostgresLoginRewardRepository(postgresConfig),
+        new PostgresLoginCalendarRepository(postgresConfig),
         new PostgresLegendsPlayerDataRepository(postgresConfig),
         new PostgresAvailableShopItemRepository(postgresConfig),
         new PostgresUnlockedShopItemRepository(postgresConfig),
