@@ -26,7 +26,7 @@ class SpawnService(implicit
   private final val warpEffect = PotionEffect(CONFUSION, 0, warpDuration + 4.seconds)
   private final val warpCooldown = (20 * 60).seconds
   private final val warpMessage = Message.server(
-    "You can feel The Monolith's energy reaching out as it pulls you into The Realm's Weave."
+    "You feel The Monolith's energy reaching out as it pulls you into The Realm's Weave."
   )
 
   private var _cooldowns: Map[UUID, Long] = Map.empty
@@ -44,10 +44,10 @@ class SpawnService(implicit
       _cooldowns += (playerId -> cooldown)
       true
     } else {
-      val delta = cooldown - System.currentTimeMillis
+      val deltaSeconds = (cooldown - System.currentTimeMillis) / 1000
       val cooldownText =
-        if (delta < 60_000) s"$RED${delta % 60} seconds"
-        else s"$RED${delta % 60_000} minutes"
+        if (deltaSeconds < 60) s"$RED$deltaSeconds seconds"
+        else s"$RED${deltaSeconds / 60} minutes"
       val message = Message.server(s"You can warp to spawn in $cooldownText")
       playerService.sendMessage(playerId, message)
       false
