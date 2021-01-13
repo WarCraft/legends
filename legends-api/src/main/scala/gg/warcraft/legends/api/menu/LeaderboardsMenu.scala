@@ -119,19 +119,19 @@ object LeaderboardsMenu {
   private[menu] def leaderboardButton(
       leaderboard: Leaderboard,
       player: Player,
-      page: Int
+      page: Int = 1
   ): Button = {
     val icon = leaderboard match {
       case _ if leaderboard.isDaily   => BannerVariant.YELLOW
       case _ if leaderboard.isMonthly => BannerVariant.ORANGE
       case _                          => BannerVariant.RED
     }
-    val pages = leaderboard.players.size / 10
+    val pages = Math.ceil(leaderboard.players.size / 10f)
     val playerRank = leaderboard.players.get(player.id)
       .map { it => f"${it + 1}%3s" }
       .getOrElse("???")
     val score = player.statistics.get(leaderboard.statistic)
-    val cursor = page * 10
+    val cursor = (page - 1) * 10
     val rankings = leaderboard.rankings
       .slice(cursor, cursor + 10)
       .zipWithIndex
@@ -147,13 +147,15 @@ object LeaderboardsMenu {
         ""
       ) ++ rankings ++ List(
         "",
-        s"[Click] Previous  (Page ${page + 1}/${pages + 1})  Next [Right Click]"
+        s"Page $page/$pages",
+        s"${if (page == 0) s"$DARK_GRAY" else ""}[Click] Previous page",
+        s"${if (page == pages) s"$DARK_GRAY" else ""}[Right Click] Next page"
       )
     ) { click =>
-      if (click.isLeft && page > 0) {
-        updateButton(leaderboardButton(leaderboard, player, page + 1))
-      } else if (click.isRight && page < pages) {
+      if (click.isLeft && page > 1) {
         updateButton(leaderboardButton(leaderboard, player, page - 1))
+      } else if (click.isRight && page < pages) {
+        updateButton(leaderboardButton(leaderboard, player, page + 1))
       } else noop
     }
   }
@@ -188,7 +190,7 @@ object LeaderboardsMenu {
       .zipWithIndex
       .map { case (leaderboard, index) =>
         val slot = index + (1 + index / 7) * 2
-        slot -> LeaderboardsMenu.leaderboardButton(leaderboard, player, 0)
+        slot -> LeaderboardsMenu.leaderboardButton(leaderboard, player)
       }
     Menu(
       name,
