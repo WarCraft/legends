@@ -69,13 +69,8 @@ class ShopService(implicit
       return
     }
 
-
-    val filler = (1 to 6).map { _ =>
-      randomItem(randomFillerType, randomFillerRarity)
-    }.toList
-    val premium = (1 to 6).map { _ =>
-      randomItem(randomPremiumType, randomPremiumRarity)
-    }.toList
+    val filler = randomItems({ randomFillerType _ }, { randomFillerRarity _ })
+    val premium = randomItems({ randomPremiumType _ }, { randomPremiumRarity _ })
     _availableItems = filler ++ premium
 
     availableShopItemRepository.deleteAll().onComplete { _ =>
@@ -98,15 +93,22 @@ class ShopService(implicit
     if (Random.nextFloat < 0.2) ItemRarity.Legendary
     else ItemRarity.Epic
 
-  private def randomItem(
-      randomType: => ShopItem.Type,
-      randomRarity: => ItemRarity
-  ): ShopItem = {
+  private def randomItems(
+      randomType: () => ShopItem.Type,
+      randomRarity: () => ItemRarity
+  ): List[ShopItem] = {
     var items: List[ShopItem] = Nil
-    while (items == Nil) {
-      try { items = itemsByRarity(randomType)(randomRarity) }
-      catch { case _: Exception => }
+    while (items.length != 7) {
+      val item = {
+        var itemPool: List[ShopItem] = Nil
+        while (itemPool == Nil) {
+          try { itemPool = itemsByRarity(randomType())(randomRarity()) }
+          catch { case _: Exception => }
+        }
+        itemPool(Random.nextInt(itemPool.size))
+      }
+      items = if (!items.contains(item)) item :: items else items
     }
-    items(Random.nextInt(items.size))
+    items
   }
 }

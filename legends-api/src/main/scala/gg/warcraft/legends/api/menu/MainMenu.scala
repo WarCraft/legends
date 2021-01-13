@@ -597,7 +597,7 @@ object MainMenu {
     ItemType.GOLDEN_APPLE,
     "WarCraft: Shop",
     "To go even further beyond in supporting the",
-    "server the WarCraft: Shop has 12 different",
+    "server the WarCraft: Shop has 14 different",
     "items for sale every day. These items can",
     "be bought with Fragments which are available",
     s"from the web shop at ${YELLOW}shop.warcraft.gg",
