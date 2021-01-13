@@ -35,9 +35,9 @@ object LeaderboardsMenu {
     "Leaderboards",
     "Your actions on the server do",
     "not go unnoticed. The Titans keep",
-    "keep records of all the legends",
-    "forged on Aldmore and reward those",
-    "that are the greatest!"
+    "records of all the legends",
+    "forged on Aldmore and reward",
+    "those that are the greatest!"
   )
 
   private def dailyLeaderboardsButton(implicit

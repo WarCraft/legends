@@ -69,6 +69,7 @@ class ShopService(implicit
       return
     }
 
+
     val filler = (1 to 6).map { _ =>
       randomItem(randomFillerType, randomFillerRarity)
     }.toList

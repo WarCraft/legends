@@ -33,8 +33,8 @@ object CollectiblesMenu {
     ItemType.BOOK,
     "Collectibles",
     "From house decorations to",
-    "mini pets, there's a lot",
-    "to collect on Aldmore."
+    "mini pets, there's a lot to collect",
+    "on Aldmore."
   )
 
   private def decorationsButton(implicit

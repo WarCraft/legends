@@ -431,12 +431,11 @@ object MainMenu {
   ): Button = Button(
     ItemType.CLOCK,
     "Daily Login",
-    "Every day you get a reward",
-    "just for logging in! The more",
-    "often you log in, the greater",
-    "the rewards. And don't worry;",
-    "missing a day or two does not",
-    "reset your progress.",
+    "Every day you get a reward just for",
+    "logging in! The more often you log in,",
+    "the greater the rewards.",
+    "And don't worry; missing a day or two",
+    "does not reset your progress.",
     "",
     "[Click] To view your reward calendar"
   ) { _ => updateMenu(DailyLoginMenu.apply) }
@@ -536,8 +535,8 @@ object MainMenu {
     ItemType.BOOKSHELF,
     "Collectibles",
     "From house decorations to",
-    "mini pets, there's a lot",
-    "to collect on Aldmore.",
+    "mini pets, there's a lot to collect",
+    "on Aldmore.",
     "",
     "[Click] To view your collectibles"
   ) { _ => updateMenu(CollectiblesMenu.apply) }
@@ -567,9 +566,9 @@ object MainMenu {
     "Leaderboards",
     "Your actions on the server do",
     "not go unnoticed. The Titans keep",
-    "keep records of all the legends",
-    "forged on Aldmore and reward those",
-    "that are the greatest!",
+    "records of all the legends",
+    "forged on Aldmore and reward",
+    "those that are the greatest!",
     "",
     "[Click] To view the leaderboards"
   ) { _ => updateMenu(LeaderboardsMenu.apply) }
