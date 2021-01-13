@@ -16,9 +16,6 @@ class ShopService(implicit
     availableShopItemRepository: AvailableShopItemRepository,
     logger: Logger
 ) {
-  private final val premiumTypes: List[ShopItem.Type] =
-    ShopItem.CombatClass :: ShopItem.DecorationPack :: ShopItem.MiniPet :: Nil
-
   private var _itemsById: Map[String, ShopItem] = Map.empty
   def itemsById: Map[String, ShopItem] = _itemsById
 
@@ -84,14 +81,24 @@ class ShopService(implicit
   private def randomFillerRarity: ItemRarity =
     ItemRarity.Rare
 
-  private def randomPremiumType: ShopItem.Type =
-    if (Random.nextFloat < 0.8) {
-      premiumTypes(Random.nextInt(premiumTypes.size))
-    } else ShopItem.Decoration
+  private def randomPremiumType: ShopItem.Type = {
+    val premiumTypes = List(
+      ShopItem.CombatClass,
+      ShopItem.Decoration,
+      ShopItem.DecorationPack,
+      ShopItem.MiniPet
+    )
+    premiumTypes(Random.nextInt(premiumTypes.size))
+  }
 
-  private def randomPremiumRarity: ItemRarity =
-    if (Random.nextFloat < 0.2) ItemRarity.Legendary
-    else ItemRarity.Epic
+  private def randomPremiumRarity: ItemRarity = {
+    val premiumRarities = List(
+      ItemRarity.Rare,
+      ItemRarity.Epic,
+      ItemRarity.Legendary
+    )
+    premiumRarities(Random.nextInt(premiumRarities.size))
+  }
 
   private def randomItems(
       randomType: () => ShopItem.Type,
