@@ -352,11 +352,11 @@ object MainMenu {
       spawnService: SpawnService
   ): Button = {
     val cooldown = spawnService.cooldowns.getOrElse(player.id, 0L)
-    val delta = cooldown - System.currentTimeMillis
+    val deltaSeconds = (cooldown - System.currentTimeMillis) / 1000
     val cooldownText =
-      if (delta > 0) {
-        if (delta < 60_000) s"$RED${delta % 60} seconds cooldown remaining" :: Nil
-        else s"$RED${delta % 60_000} minutes cooldown remaining" :: Nil
+      if (deltaSeconds > 0) {
+        if (deltaSeconds < 60) s"$RED$deltaSeconds seconds" :: Nil
+        else s"$RED${deltaSeconds / 60} minutes" :: Nil
       } else List(
         "[Click] To warp to your spawn",
         s"or execute the $YELLOW/warp ${FormatCode.RESET}command"
