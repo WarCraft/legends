@@ -247,7 +247,7 @@ object MonthlyChallengesMenu {
     }
     Menu(
       "Monthly Challenges",
-      MenuSize.ONE_ROW,
+      MenuSize.TWO_ROWS,
       Map(
         0 -> infoButton,
         9 -> Button.back(ChallengesMenu.apply)
