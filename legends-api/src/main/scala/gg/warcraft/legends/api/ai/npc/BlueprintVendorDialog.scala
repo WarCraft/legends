@@ -1,28 +1,17 @@
-package gg.warcraft.legends.app.ai.npc.menu;
+/*
+ * All rights reserved
+ *
+ * Copyright (c) 2021 WarCraft <https://github.com/WarCraft>
+ */
 
-import com.google.inject.Inject;
-import gg.warcraft.legends.api.ai.npc.menu.BlueprintVendorDialogFactory;
-import gg.warcraft.legends.api.entity.player.LegendsCurrency;
-import gg.warcraft.legends.api.entity.player.LegendsPlayer;
-import gg.warcraft.legends.api.entity.player.service.LegendsPlayerQueryService;
-import gg.warcraft.legends.api.item.BlueprintBuilderFactory;
-import gg.warcraft.legends.api.item.ItemRarity;
-import gg.warcraft.monolith.api.entity.player.service.PlayerCommandService;
-import gg.warcraft.monolith.api.menu.AbstractMenuFactory;
-import gg.warcraft.monolith.api.menu.Button;
-import gg.warcraft.monolith.api.menu.ButtonBuilder;
-import gg.warcraft.monolith.api.menu.ButtonBuilderFactory;
-import gg.warcraft.monolith.api.menu.Menu;
-import gg.warcraft.monolith.api.menu.MenuBuilder;
-import gg.warcraft.monolith.api.menu.MenuBuilderFactory;
-import gg.warcraft.monolith.api.menu.MenuSize;
-import gg.warcraft.monolith.api.menu.service.MenuCommandService;
-import gg.warcraft.monolith.api.util.ColorCode;
-import gg.warcraft.monolith.api.world.item.Item;
-import gg.warcraft.monolith.api.world.item.ItemType;
+package gg.warcraft.legends.api.ai.npc
 
-import java.util.UUID;
+object BlueprintVendorDialog {
 
+}
+
+
+/*
 public class DefaultBlueprintVendorDialogFactory extends AbstractMenuFactory implements BlueprintVendorDialogFactory {
     private static final String BLUE = ColorCode.AQUA.toString();
 
@@ -95,3 +84,5 @@ public class DefaultBlueprintVendorDialogFactory extends AbstractMenuFactory imp
         return builder.build();
     }
 }
+
+ */

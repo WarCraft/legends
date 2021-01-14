@@ -6,12 +6,15 @@
 
 package gg.warcraft.legends.api
 
+import gg.warcraft.legends.api.ai.npc.Npc
 import gg.warcraft.legends.api.item.crate.LootCrate
 import gg.warcraft.legends.api.player.challenge.Challenge
 import gg.warcraft.legends.api.player.level.Level
 import gg.warcraft.legends.api.player.statistic.LegendsStatistic.LegendsStatistic
 import gg.warcraft.monolith.api.core.DatabaseConfig
+import gg.warcraft.monolith.api.entity.Entity
 import gg.warcraft.monolith.api.entity.team.Team
+import gg.warcraft.monolith.api.world.Location
 
 case class LegendsConfig(
     // Core
@@ -22,6 +25,7 @@ case class LegendsConfig(
     leaderboards: LeaderboardsConfig,
     levels: List[Level],
     lootCrates: List[LootCrate.Config],
+    npcs: List[NpcConfig],
     // Siege
     objectiveCaptureRewards: Map[String, LegendsConfig.RewardConfig],
     objectiveDefaultOccupiers: Map[String, Team],
@@ -42,6 +46,14 @@ case class LeaderboardConfig(
     statistic: LegendsStatistic,
     name: String,
     description: String
+)
+
+case class NpcConfig(
+    typ: Npc.Type,
+    team: Option[Team],
+    name: String,
+    entityType: Entity.Type,
+    location: Location
 )
 
 object LegendsConfig {

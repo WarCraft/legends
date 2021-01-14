@@ -8,7 +8,8 @@ package gg.warcraft.legends.spigot
 
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.LegendsConfig
-import gg.warcraft.legends.api.ai.{CombatPetFactory, MiniPetFactory}
+import gg.warcraft.legends.api.ai.npc.NpcService
+import gg.warcraft.legends.api.ai.{CombatPetFactory, MiniPetFactory, NpcFactory}
 import gg.warcraft.legends.api.combat.hunter.marksman.{
   FocusRepository, SneakRepository
 }
@@ -39,7 +40,9 @@ import gg.warcraft.legends.api.shop.profile.{
   ShopProfileService, UnlockedShopItemRepository
 }
 import gg.warcraft.legends.api.shop.{AvailableShopItemRepository, ShopService}
-import gg.warcraft.legends.spigot.ai.{SpigotCombatPetFactory, SpigotMiniPetFactory}
+import gg.warcraft.legends.spigot.ai.{
+  SpigotCombatPetFactory, SpigotMiniPetFactory, SpigotNpcFactory
+}
 import gg.warcraft.legends.spigot.combat.mage.wizard.MassBamboozleAdapter
 import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.event.EventService
@@ -145,6 +148,10 @@ object implicits {
     new SpigotCombatPetFactory
   implicit lazy val miniPetFactory: MiniPetFactory =
     new SpigotMiniPetFactory
+  implicit lazy val npcFactory: NpcFactory =
+    new SpigotNpcFactory
+  implicit lazy val npcService: NpcService =
+    new NpcService
 
   // Combat
   implicit lazy val focusRepository: FocusRepository =

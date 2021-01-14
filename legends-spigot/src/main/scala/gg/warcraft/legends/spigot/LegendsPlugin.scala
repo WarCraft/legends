@@ -8,6 +8,7 @@ package gg.warcraft.legends.spigot
 
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.LegendsConfig
+import gg.warcraft.legends.api.ai.npc.{NpcInteractHandler, NpcPersistenceHandler}
 import gg.warcraft.legends.api.combat.CombatConfig
 import gg.warcraft.legends.api.combat.hunter.marksman.{
   FocusCancelHandler, SneakCancelHandler
@@ -279,6 +280,10 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     // Item
     eventService.subscribe(new EquipmentAttributeHandler)
     eventService.subscribe(new EquipmentUpgradeUseHandler)
+
+    // NPC
+    eventService.subscribe(new NpcInteractHandler)
+    eventService.subscribe(new NpcPersistenceHandler(config))
 
     // Player
     eventService.subscribe(new PlayerInspectHandler)
