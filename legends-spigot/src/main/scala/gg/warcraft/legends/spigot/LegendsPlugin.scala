@@ -64,6 +64,7 @@ import gg.warcraft.legends.api.shop.profile.{
   PostgresUnlockedShopItemRepository, ShopProfileCacheHandler,
   SqliteUnlockedShopItemRepository, UnlockedShopItemRepository
 }
+import gg.warcraft.legends.spigot.ai.handler.SpigotNpcPathfindingHandler
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
 import gg.warcraft.legends.spigot.core._
@@ -319,6 +320,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     subscribe(new SpigotFurnaceCoalHandler)
     // TODO subscribe(new SpigotKeepInventoryHandler)
     subscribe(new SpigotHeadEquipHandler)
+    subscribe(new SpigotNpcPathfindingHandler)
 
     if (_server.getPluginManager.isPluginEnabled("Votifier")) {
       subscribe(new SpigotVotifierEventHandler)

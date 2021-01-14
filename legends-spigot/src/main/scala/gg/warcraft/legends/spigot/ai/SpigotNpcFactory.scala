@@ -27,7 +27,6 @@ class SpigotNpcFactory(implicit
     val npcId = entityService.spawnEntity(Entity.Type.VILLAGER, location, team)
 
     val spigotNPC = server.getEntity(npcId).asInstanceOf[Villager]
-    spigotNPC.getPathfinder.stopPathfinding()
     spigotNPC.setRemoveWhenFarAway(false)
     spigotNPC.setInvulnerable(true)
     spigotNPC.setAgeLock(true)
