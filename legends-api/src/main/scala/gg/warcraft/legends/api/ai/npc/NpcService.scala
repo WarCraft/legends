@@ -10,8 +10,10 @@ import gg.warcraft.legends.api.ai.NpcFactory
 import gg.warcraft.legends.api.{LegendsConfig, NpcConfig}
 import gg.warcraft.monolith.api.core.Message
 import gg.warcraft.monolith.api.entity.EntityService
+import gg.warcraft.monolith.api.item.ItemService
 import gg.warcraft.monolith.api.menu.MenuService
 import gg.warcraft.monolith.api.player.PlayerService
+import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.siege.api.objective.ObjectiveService
 
 import java.util.UUID
@@ -21,7 +23,9 @@ class NpcService(implicit
     menuService: MenuService,
     entityService: EntityService,
     objectiveService: ObjectiveService,
-    npcFactory: NpcFactory
+    npcFactory: NpcFactory,
+    currencyService: CurrencyService,
+    itemService: ItemService
 ) {
   private final val MSG_NPC_UNINTERESTED =
     Message.server("This NPC is not interested in you.")
@@ -54,7 +58,7 @@ class NpcService(implicit
     if (npc.team == player.team) {
       npc.typ match {
         case Npc.Type.BLUEPRINT_VENDOR =>
-          val menu = BlueprintVendorMenu(player)
+          val menu = BlueprintVendorDialog(player)
           menuService.showMenu(player.id, menu)
         /*
           case CLASS_TRAINER:

@@ -6,83 +6,65 @@
 
 package gg.warcraft.legends.api.ai.npc
 
+import gg.warcraft.legends.api.player.currency.LegendsCurrency
+import gg.warcraft.legends.api.util.player._
+import gg.warcraft.monolith.api.core.{ColorCode, Message}
+import gg.warcraft.monolith.api.item.{ItemService, ItemType}
+import gg.warcraft.monolith.api.menu.Button.noop
+import gg.warcraft.monolith.api.menu.{Button, Menu, MenuSize}
+import gg.warcraft.monolith.api.player.Player
+import gg.warcraft.monolith.api.player.currency.CurrencyService
+import gg.warcraft.siege.api.plot.item.SiegePlotBlueprintFactory
+
 object BlueprintVendorDialog {
+  private final val infoButton: Button = Button.noop(
+    ItemType.BOOK,
+    "Blueprint Vendor",
+    "Blueprints are schematics that allow",
+    "you to place siege plots. Once placed",
+    "a siege plot requires certain resources",
+    "to build the weapon of the blueprint."
+  )
 
+  private def blueprintButton(player: Player)(implicit
+      currencyService: CurrencyService,
+      itemService: ItemService
+  ): Button = Button(
+    ItemType.PAPER,
+    "Trebuchet Blueprint",
+    "This blueprint allows you to place a",
+    "trebuchet plot. The trebuchet is a long",
+    "distance siege weapon that can destroy",
+    "enemy fortifications with ease.",
+    "",
+    s"${ColorCode.AQUA}[Shift Right Click] To buy a trebuchet",
+    s"${ColorCode.AQUA}blueprint for 0 favor"
+  ) { click =>
+    if (click.isShiftRight) {
+      if (player.favor < 0) {
+        val message =
+          Message.server("You need at least 0 favor to purchase this item.")
+        player.sendMessage(message)
+      } else if (!player.inventory.hasSpace(1)) {
+        val message =
+          Message.server("Please make sure you have at least 1 free inventory slot.")
+        player.sendMessage(message)
+      } else {
+        currencyService.removeCurrency(LegendsCurrency.Favor, 0, player.id)
+        val blueprint = SiegePlotBlueprintFactory("Trebuchet Blueprint")
+        itemService.giveTo(player.id, blueprint)
+      }
+    }
+    noop
+  }
+
+  def apply(player: Player)(implicit
+      currencyService: CurrencyService,
+      itemService: ItemService
+  ): Menu = Menu(
+    "Blueprint Vendor",
+    MenuSize.ONE_ROW,
+    0 -> infoButton,
+    2 -> blueprintButton(player)
+  )
 }
-
-
-/*
-public class DefaultBlueprintVendorDialogFactory extends AbstractMenuFactory implements BlueprintVendorDialogFactory {
-    private static final String BLUE = ColorCode.AQUA.toString();
-
-    private final LegendsPlayerQueryService playerQueryService;
-    private final PlayerCommandService playerCommandService;
-    private final BlueprintBuilderFactory blueprintBuilderFactory;
-
-    @Inject
-    public DefaultBlueprintVendorDialogFactory(MenuCommandService menuCommandService,
-                                               LegendsPlayerQueryService playerQueryService,
-                                               PlayerCommandService playerCommandService,
-                                               MenuBuilderFactory menuBuilderFactory,
-                                               ButtonBuilderFactory buttonBuilderFactory,
-                                               BlueprintBuilderFactory blueprintBuilderFactory) {
-        super(menuCommandService, menuBuilderFactory, buttonBuilderFactory);
-        this.playerQueryService = playerQueryService;
-        this.playerCommandService = playerCommandService;
-        this.blueprintBuilderFactory = blueprintBuilderFactory;
-    }
-
-    private Button createInfoButton() {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.BOOK, "Blueprint Vendors");
-        builder.addTooltip("Blueprints are schematics that allow");
-        builder.addTooltip("you to place siege plots. Once placed");
-        builder.addTooltip("a siege plot requires certain resources");
-        builder.addTooltip("to build the weapon of the blueprint.");
-        return builder.build();
-    }
-
-    private Button createBlueprintButton(UUID playerId) {
-        ButtonBuilder builder = createSimpleButtonBuilder(ItemType.PAPER, "Trebuchet Blueprint");
-        builder.addTooltip("This blueprint allows you to place a");
-        builder.addTooltip("trebuchet plot. The trebuchet is a long");
-        builder.addTooltip("distance siege weapon that can destroy");
-        builder.addTooltip("enemy fortifications with ease.");
-        builder.addTooltip("");
-        builder.addTooltip(BLUE + "[SHIFT RIGHT CLICK] to purchase a trebuchet");
-        builder.addTooltip(BLUE + "blueprint for 50 favor.");
-
-        builder.withAction(click -> {
-            if (click.isShiftRightClick()) {
-                LegendsPlayer player = playerQueryService.getPlayer(playerId);
-                if (player.getFavor() < 50) {
-                    playerCommandService.sendNotification(playerId, "You need at least 50 favor to purchase this item.");
-                    closeMenu(playerId);
-                    return;
-                }
-
-                if (!player.getInventory().hasSpace(1)) {
-                    playerCommandService.sendNotification(playerId, "Please make sure you have at least 1 free inventory slot.");
-                    closeMenu(playerId);
-                    return;
-                }
-
-                playerCommandService.removeCurrency(playerId, LegendsCurrency.FAVOR, 50);
-                Item blueprint = blueprintBuilderFactory
-                        .createBlueprintBuilder("Trebuchet Blueprint", ItemRarity.COMMON)
-                        .build();
-                playerCommandService.giveItem(playerId, blueprint, false);
-            }
-        });
-        return builder.build();
-    }
-
-    @Override
-    public Menu createBlueprintVendorDialog(UUID playerId) {
-        MenuBuilder builder = createMenuBuilder("Blueprint Vendor", MenuSize.ONE_ROW);
-        builder.addButton(0, createInfoButton());
-        builder.addButton(2, createBlueprintButton(playerId));
-        return builder.build();
-    }
-}
-
- */
