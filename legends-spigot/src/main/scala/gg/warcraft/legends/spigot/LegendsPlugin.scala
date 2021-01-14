@@ -135,6 +135,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     levelService.readConfig(config)
     loginRewardService.readConfig(config)
     challengeService.readConfig(config)
+    npcService.readConfig(config)
 
     new CombatConfig().writeConfig()
     new MenuConfig().writeConfig()
