@@ -93,7 +93,10 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     import gg.warcraft.legends.api.util.codecs.legends.{challengeDecoder => _, _}
     import gg.warcraft.monolith.api.util.codecs.circe._
     import gg.warcraft.monolith.api.util.codecs.monolith._
+
     // Config
+    implicit val entityTypeDecoder: String => Entity.Type = Entity.Type.withName
+
     val config = {
       implicit val chestDecoder: String => ChestVariant = ChestVariant.valueOf
       parseConfig[LegendsConfig](getConfig.saveToString())
@@ -107,7 +110,6 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     val equipConfig = parseConfig[EquipmentConfig](equipConfigFile.saveToString())
 
     // Config: shop
-    implicit val entityTypeDecoder: String => Entity.Type = Entity.Type.withName
     implicit val equipSlotDecoder: String => Equipment.Slot = Equipment.withName
 
     val shopConfigPath =
