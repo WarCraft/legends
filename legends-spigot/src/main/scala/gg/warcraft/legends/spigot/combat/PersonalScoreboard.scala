@@ -111,22 +111,22 @@ class PersonalScoreboard(player: SpigotPlayer)(implicit
 
   override def handle(event: Event): Unit = event match {
     case PlayerConnectEvent(player) => player.team match {
-        case Some(team) => scoreboard.getTeam(team.name) ?? { _.addEntry(player) }
+        case Some(team) => scoreboard.getTeam(team.id) ?? { _.addEntry(player) }
         case None       =>
       }
 
     case PlayerDisconnectEvent(player) => player.team match {
-        case Some(team) => scoreboard.getTeam(team.name) ?? { _.removeEntry(player) }
+        case Some(team) => scoreboard.getTeam(team.id) ?? { _.removeEntry(player) }
         case None       =>
       }
 
     case EntityTeamChangedEvent(entity: Player, oldTeam, newTeam) =>
       oldTeam match {
-        case Some(team) => scoreboard.getTeam(team.name) ?? { _.removeEntry(entity) }
+        case Some(team) => scoreboard.getTeam(team.id) ?? { _.removeEntry(entity) }
         case None       =>
       }
       newTeam match {
-        case Some(team) => scoreboard.getTeam(team.name) ?? { _.addEntry(entity) }
+        case Some(team) => scoreboard.getTeam(team.id) ?? { _.addEntry(entity) }
         case None       =>
       }
 
