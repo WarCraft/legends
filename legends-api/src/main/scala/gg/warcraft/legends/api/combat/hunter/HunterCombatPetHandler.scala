@@ -52,11 +52,17 @@ class HunterCombatPetHandler(implicit
     case EntityTeamChangedEvent(player: Player, _, _) =>
       if (removePet(player.id)) spawnPet(player, player.combatClass)
 
-    case EntityDeathEvent(pet, _) if petsToOwners.contains(pet.id) =>
-      val ownerId = petsToOwners(pet.id)
-      ownersToPets -= ownerId
-      petsToOwners -= pet.id
-      abilityService.castAbility("Pet Respawns", ownerId, None)
+    case EntityDeathEvent(entity, _) =>
+      petsToOwners.get(entity.id) match {
+        case Some(ownerId) => // pet died
+          petsToOwners -= entity.id
+          ownersToPets -= ownerId
+          abilityService.castAbility("Pet Respawns", ownerId, None)
+        case None => // maybe owner died
+          if (removePet(entity.id)) {
+            abilityService.castAbility("Pet Respawns", entity.id, None)
+          }
+      }
 
     case AbilityCastEvent("Pet Respawns", player: Player, snapshot) =>
       def respawnTask(): Unit =
