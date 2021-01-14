@@ -20,7 +20,7 @@ import java.util.UUID
 class EquipmentAttributeHandler(implicit
     attributeService: AttributeService
 ) extends Event.Handler {
-  private var modifiers: Map[UUID, List[Attribute.Modifier]] = Map.empty
+  private var equipmentModifiers: Map[UUID, List[Attribute.Modifier]] = Map.empty
 
   override def handle(event: Event): Unit = event match {
     case PlayerConnectEvent(player)          => updateModifiers(player)
@@ -29,7 +29,7 @@ class EquipmentAttributeHandler(implicit
   }
 
   private def updateModifiers(player: Player): Unit = {
-    val currentModifiers = modifiers.getOrElse(player.id, Nil)
+    val currentModifiers = equipmentModifiers.getOrElse(player.id, Nil)
     attributeService.removeModifier(player.id, currentModifiers: _*)
 
     val (strength, dexterity, intellect, vitality, crit) =
@@ -57,6 +57,6 @@ class EquipmentAttributeHandler(implicit
     )
 
     attributeService.addModifier(player.id, newModifiers: _*)
-    modifiers += (player.id -> newModifiers)
+    equipmentModifiers += (player.id -> newModifiers)
   }
 }
