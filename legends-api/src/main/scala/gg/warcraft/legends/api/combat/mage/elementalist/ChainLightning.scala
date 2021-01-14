@@ -47,7 +47,7 @@ class ChainLightning(
   chain(target)
 
   private def chain(entity: Entity, count: Int = 1): Unit = {
-    val previousTarget = if (hasHit.isEmpty) caster else hasHit.last
+    val previousTarget = if (hasHit.isEmpty) caster else hasHit.head
     hasHit ::= entity
 
     val damage = count match {
