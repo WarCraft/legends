@@ -1,6 +1,6 @@
 lazy val commonSettings = Seq(
   organization := "gg.warcraft",
-  version := "15.0.0-SNAPSHOT",
+  version := "16.0.0-SNAPSHOT",
   scalaVersion := "2.13.4",
   scalacOptions ++= Seq(
     "-language:implicitConversions"
@@ -26,11 +26,11 @@ lazy val api = (project in file("legends-api"))
     name := "legends-api",
     commonSettings,
     libraryDependencies ++= Seq(
-      "gg.warcraft" %% "monolith-api" % "15.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "chat-api" % "15.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "monolith-api" % "16.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "chat-api" % "16.0.0-SNAPSHOT" % Provided,
       // "gg.warcraft" %% "gathering-api" % "15.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "combat-api" % "15.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "siege-api" % "15.0.0-SNAPSHOT" % Provided
+      "gg.warcraft" %% "combat-api" % "16.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "siege-api" % "16.0.0-SNAPSHOT" % Provided
     ) ++ Seq(
       "org.scalatest" %% "scalatest" % "3.2.+" % Test
     )
@@ -48,11 +48,11 @@ lazy val spigot = (project in file("legends-spigot"))
       "Votifier" at "https://dl.bintray.com/ichbinjoe/public/"
     ),
     libraryDependencies ++= Seq(
-      "com.destroystokyo.paper" % "paper-api" % "1.15.2-R0.1-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "monolith-spigot" % "15.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "chat-spigot" % "15.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "combat-spigot" % "15.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "siege-spigot" % "15.0.0-SNAPSHOT" % Provided,
+      "com.destroystokyo.paper" % "paper-api" % "1.16.4-R0.1-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "monolith-spigot" % "16.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "chat-spigot" % "16.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "combat-spigot" % "16.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "siege-spigot" % "16.0.0-SNAPSHOT" % Provided,
       "LibsDisguises" % "LibsDisguises" % "10.0.+" % Provided intransitive (),
       "com.vexsoftware" % "nuvotifier-universal" % "2.6.+" % Provided
     )
