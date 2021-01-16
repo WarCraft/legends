@@ -244,6 +244,16 @@ class LegendsPlugin extends SpigotMonolithPlugin {
       new CycleShopItemsCommand,
       new CycleShopItemsCommand.Handler
     )
+
+    val spigotAttributeCommandHandler = new SpigotAttributeCommand.Handler
+    commandService.registerCommand(
+      new PrintAttributesCommand,
+      spigotAttributeCommandHandler
+    )
+    commandService.registerCommand(
+      new ClearAttributesCommand,
+      spigotAttributeCommandHandler
+    )
   }
 
   private def enableHandlers(
