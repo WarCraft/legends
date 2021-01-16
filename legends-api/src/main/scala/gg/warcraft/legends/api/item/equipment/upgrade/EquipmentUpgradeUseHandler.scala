@@ -16,6 +16,7 @@ import gg.warcraft.monolith.api.item.StackableItem
 import gg.warcraft.monolith.api.player.{
   Player, PlayerPreInteractEvent, PlayerService
 }
+import gg.warcraft.monolith.api.util.option._
 
 class EquipmentUpgradeUseHandler(implicit
     playerService: PlayerService
@@ -58,9 +59,7 @@ class EquipmentUpgradeUseHandler(implicit
             }
 
             val upgradedMainHand = mainHand.withName(name).withTooltip(tooltip: _*)
-            val reducedOffHand = offHand match {
-              case it: StackableItem => it.withCount(it.count - 1)
-            }
+            val reducedOffHand = offHand.asInstanceOf[StackableItem].oneLessOrNone
             playerService.setEquipment(player.id, MAIN_HAND, upgradedMainHand, true)
             playerService.setEquipment(player.id, OFF_HAND, reducedOffHand, true)
           } else false
@@ -70,13 +69,13 @@ class EquipmentUpgradeUseHandler(implicit
   }
 
   override def reduce[T <: PreEvent](event: T): T = event match {
-    case event @ BlockPreInteractEvent(_, _, player, false, _) =>
+    case event @ BlockPreInteractEvent(_, _, player, _, _) =>
       if (onInteract(player)) event.copy(cancelled = true).asInstanceOf[T]
       else event.asInstanceOf[T]
-    case event @ EntityPreInteractEvent(_, player, _, false, _) =>
+    case event @ EntityPreInteractEvent(_, player, _, _, _) =>
       if (onInteract(player)) event.copy(cancelled = true).asInstanceOf[T]
       else event.asInstanceOf[T]
-    case event @ PlayerPreInteractEvent(player, false, _) =>
+    case event @ PlayerPreInteractEvent(player, _, _) =>
       if (onInteract(player)) event.copy(cancelled = true).asInstanceOf[T]
       else event.asInstanceOf[T]
     case _ => event

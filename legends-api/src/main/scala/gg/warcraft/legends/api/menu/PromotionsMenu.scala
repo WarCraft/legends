@@ -29,6 +29,7 @@ import gg.warcraft.monolith.api.menu.Button.{closeMenu, noop}
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
+import gg.warcraft.monolith.api.util.option._
 
 object PromotionsMenu {
   private final val infoButton = Button.noop(
