@@ -29,6 +29,7 @@ import gg.warcraft.monolith.api.menu.Button.{closeMenu, noop, updateMenu}
 import gg.warcraft.monolith.api.menu._
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.monolith.api.player.{Player, PlayerService}
+import gg.warcraft.monolith.api.util.string._
 
 object ShopMenu {
   private final val purchaseFailureMessage = Message.server(
@@ -81,7 +82,7 @@ object ShopMenu {
       shopProfileService.calculateDiscount(item, profile)
     lazy val canBuy = player.fragments >= discountedPrice
 
-    var tooltip = item.typ :: "" :: (
+    var tooltip = item.typ.beautify :: "" :: (
       if (unlocked) "You have unlocked this item"
       else if (!canBuy) s"$RED$discountedPrice Fragments"
       else s"$GREEN[Shift Right Click 2x] To unlock for $discountedPrice Fragments"
