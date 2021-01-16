@@ -48,7 +48,7 @@ class SpigotCombatPetFactory(implicit
   private lazy val combatPetSkins = Map[Option[Team], MobDisguise](
     Some(Dwarves.instance) -> new MobDisguise(DisguiseType.POLAR_BEAR),
     Some(Elves.instance) -> new MobDisguise(DisguiseType.OCELOT),
-    Some(Orcs.instance) -> new MobDisguise(DisguiseType.PIG)
+    Some(Orcs.instance) -> new MobDisguise(DisguiseType.HOGLIN)
   )
 
   override def create(ownerId: UUID): UUID = {
