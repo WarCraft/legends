@@ -23,12 +23,15 @@ class EquipmentAttributeHandler(implicit
   private var equipmentModifiers: Map[UUID, List[Attribute.Modifier]] = Map.empty
 
   override def handle(event: Event): Unit = event match {
-    case PlayerConnectEvent(player)          => updateModifiers(player)
+    case PlayerConnectEvent(player)          => updateModifiers(player, ignoreGeneric = true)
     case PlayerEquipmentChangedEvent(player) => updateModifiers(player)
     case _                                   =>
   }
 
-  private def updateModifiers(player: Player): Unit = {
+  private def updateModifiers(
+      player: Player,
+      ignoreGeneric: Boolean = false
+  ): Unit = {
     val currentModifiers = equipmentModifiers.getOrElse(player.id, Nil)
     attributeService.removeModifier(player.id, currentModifiers: _*)
 
@@ -46,15 +49,21 @@ class EquipmentAttributeHandler(implicit
         else stats
       }
 
-    val newModifiers = (
+    val monolithModifiers = (
       Attribute.Modifier(Strength, FLAT, strength)
         :: Attribute.Modifier(Dexterity, FLAT, dexterity)
         :: Attribute.Modifier(Intellect, FLAT, intellect)
         :: Attribute.Modifier(Vitality, FLAT, vitality)
-        :: Attribute.Modifier(Attribute.Generic.MAX_HEALTH, FLAT, vitality)
         :: Attribute.Modifier(Crit, FLAT, crit)
         :: Nil
     )
+
+    val genericModifiers =
+      if (!ignoreGeneric) {
+        List(Attribute.Modifier(Attribute.Generic.MAX_HEALTH, FLAT, vitality))
+      } else Nil
+
+    val newModifiers = monolithModifiers ++ genericModifiers
 
     attributeService.addModifier(player.id, newModifiers: _*)
     equipmentModifiers += (player.id -> newModifiers)
