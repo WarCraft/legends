@@ -107,9 +107,10 @@ class ShopService(implicit
     var items: List[ShopItem] = Nil
     while (items.length != 7) {
       val item = {
+        val typ = randomType()
         var itemPool: List[ShopItem] = Nil
         while (itemPool == Nil) {
-          try { itemPool = itemsByRarity(randomType())(randomRarity()) }
+          try { itemPool = itemsByRarity(typ)(randomRarity()) }
           catch { case _: Exception => }
         }
         itemPool(Random.nextInt(itemPool.size))
