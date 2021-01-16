@@ -51,16 +51,12 @@ class NpcService(implicit
     val npc = _npcsById(npcId)
     val player = playerService.getPlayer(playerId)
     if (npc.team == player.team) {
-      npc.typ match {
-        case Npc.Type.BLUEPRINT_VENDOR =>
-          val menu = BlueprintVendorDialog(player)
-          menuService.showMenu(player.id, menu)
-        /*
-          case CLASS_TRAINER:
-                  Menu classTrainerMenu = classTrainerDialogFactory.createClassTrainerDialog(playerId, npc.getName());
-                  menuCommandService.showMenu(classTrainerMenu, playerId);
-         */
+      val menu = npc.typ match {
+        case Npc.Type.BLUEPRINT_VENDOR => BlueprintVendorDialog(player)
+        case Npc.Type.FOOD_VENDOR      => FoodVendorDialog(player)
+        case Npc.Type.TOOL_VENDOR      => ToolVendorDialog(player)
       }
+      menuService.showMenu(player.id, menu)
     } else player.sendMessage(MSG_NPC_UNINTERESTED)
   }
 }
