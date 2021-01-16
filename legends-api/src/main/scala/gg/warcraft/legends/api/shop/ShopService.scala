@@ -33,7 +33,7 @@ class ShopService(implicit
     _priceByTypeAndRarity
 
   private var _availableItems: List[ShopItem] = Nil
-  def availableItems: List[ShopItem] = Nil
+  def availableItems: List[ShopItem] = _availableItems
 
   def readConfig(config: ShopConfig): Unit = {
     import config._
