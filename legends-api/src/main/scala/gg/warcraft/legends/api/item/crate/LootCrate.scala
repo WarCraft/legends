@@ -109,7 +109,7 @@ object LootCrate {
   private[crate] final val tooltip: List[String] = List(
     s"${reset}Loot Crate",
     "",
-    s"$reset[RIGHT CLICK] To open for a chance",
+    s"$reset[Right Click] To open for a chance",
     s"${reset}at unlocking collectibles or receiving",
     s"${reset}random combat items."
   )
