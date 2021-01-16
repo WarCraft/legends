@@ -21,7 +21,9 @@ object Npc {
   type Type = String
 
   object Type {
-    final val BLUEPRINT_VENDOR: Npc.Type = "BLUEPRINT_VENDOR"
+    final val BLUEPRINT_VENDOR: Type = "BLUEPRINT_VENDOR"
+    final val FOOD_VENDOR: Type = "FOOD_VENDOR"
+    final val TOOL_VENDOR: Type = "TOOL_VENDOR"
     // CLASS_TRAINER, TARGET_DUMMY
   }
 }

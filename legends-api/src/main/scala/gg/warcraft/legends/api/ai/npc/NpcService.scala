@@ -34,12 +34,7 @@ class NpcService(implicit
   def npcsById: Map[UUID, Npc] = _npcsById
 
   def readConfig(config: LegendsConfig): Unit =
-    config.npcs.foreach { npc =>
-      objectiveService.objectives.values.find { _.occupiers == npc.team } match {
-        case Some(_) => spawnNpc(npc)
-        case None    =>
-      }
-    }
+    config.npcs.foreach(spawnNpc)
 
   def spawnNpc(config: NpcConfig): Unit = {
     val npcId = npcFactory.create(config)
