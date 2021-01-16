@@ -17,9 +17,11 @@ import gg.warcraft.monolith.api.player.{
   Player, PlayerPreInteractEvent, PlayerService
 }
 import gg.warcraft.monolith.api.util.option._
+import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 class EquipmentUpgradeUseHandler(implicit
-    playerService: PlayerService
+    playerService: PlayerService,
+    worldService: WorldService
 ) extends Event.Handler {
   private def onInteract(player: Player): Boolean = {
     val equipment = player.equipment
@@ -62,6 +64,14 @@ class EquipmentUpgradeUseHandler(implicit
             val reducedOffHand = offHand.asInstanceOf[StackableItem].oneLessOrNone
             playerService.setEquipment(player.id, MAIN_HAND, upgradedMainHand, true)
             playerService.setEquipment(player.id, OFF_HAND, reducedOffHand, true)
+
+            worldService.playSound(
+              player.location,
+              Sound.ENTITY_PLAYER_LEVELUP,
+              SoundCategory.NEUTRAL
+            )
+
+            true
           } else false
         } else false
       case _ => false
