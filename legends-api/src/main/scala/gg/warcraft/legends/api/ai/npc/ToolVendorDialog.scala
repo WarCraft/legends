@@ -8,7 +8,7 @@ package gg.warcraft.legends.api.ai.npc
 
 import gg.warcraft.legends.api.player.currency.LegendsCurrency
 import gg.warcraft.legends.api.util.player._
-import gg.warcraft.monolith.api.core.{ColorCode, Message}
+import gg.warcraft.monolith.api.core.{ColorCode, FormatCode, Message}
 import gg.warcraft.monolith.api.item.variant.{AxeVariant, PickaxeVariant}
 import gg.warcraft.monolith.api.item.{ItemService, ItemType, ItemTypeOrVariant}
 import gg.warcraft.monolith.api.menu.Button.noop
@@ -27,6 +27,7 @@ object ToolVendorDialog {
       itemService: ItemService
   ): Button = {
     val item = itemService.create(typ)
+      .withTooltip(s"s${FormatCode.RESET}${ColorCode.GRAY}Tool")
     Button(
       typ,
       item.name,

@@ -8,7 +8,7 @@ package gg.warcraft.legends.api.ai.npc
 
 import gg.warcraft.legends.api.player.currency.LegendsCurrency
 import gg.warcraft.legends.api.util.player._
-import gg.warcraft.monolith.api.core.{ColorCode, Message}
+import gg.warcraft.monolith.api.core.{ColorCode, FormatCode, Message}
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
 import gg.warcraft.monolith.api.menu.Button.noop
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuSize}
@@ -42,6 +42,7 @@ object FoodVendorDialog {
       } else {
         currencyService.removeCurrency(LegendsCurrency.Gold, 3, player.id)
         val bread = itemService.create(ItemType.BREAD)
+          .withTooltip(s"s${FormatCode.RESET}${ColorCode.GRAY}Consumable")
         itemService.giveTo(player.id, bread)
       }
     }

@@ -15,7 +15,7 @@ class SpigotDroppedItemHandler(implicit
     playerService: PlayerService
 ) extends Listener {
   private final val allowed: List[String] =
-    "Equipment" :: "Blueprint" :: "Consumable" :: "Resource" :: Nil
+    "Blueprint" :: "Consumable" :: "Equipment" :: "Resource" :: "Tool" :: Nil
 
   private final val disallowedMessage = Message.server("You can't drop this item.")
 
