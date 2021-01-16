@@ -65,7 +65,7 @@ class EquipmentReader(item: Item) {
   private def findUpgradeCount(): Int = {
     val plusIndex = item.name.indexOf("(+")
     if (plusIndex >= 0) {
-      val upgradeCount = item.name.substring(0, plusIndex)
+      val upgradeCount = item.name.substring(plusIndex + 1, item.name.length)
       upgradeCount.toInt
     } else 0
   }
