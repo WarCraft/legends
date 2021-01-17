@@ -29,6 +29,7 @@ lazy val api = (project in file("legends-api"))
       "gg.warcraft" %% "monolith-api" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "chat-api" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "gathering-api" % "16.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "housing-api" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "combat-api" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "siege-api" % "16.0.0-SNAPSHOT" % Provided
     ) ++ Seq(
@@ -51,6 +52,8 @@ lazy val spigot = (project in file("legends-spigot"))
       "com.destroystokyo.paper" % "paper-api" % "1.16.4-R0.1-SNAPSHOT" % Provided,
       "gg.warcraft" %% "monolith-spigot" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "chat-spigot" % "16.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "gathering-spigot" % "16.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "housing-spigot" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "combat-spigot" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "siege-spigot" % "16.0.0-SNAPSHOT" % Provided,
       "LibsDisguises" % "LibsDisguises" % "10.0.+" % Provided intransitive (),

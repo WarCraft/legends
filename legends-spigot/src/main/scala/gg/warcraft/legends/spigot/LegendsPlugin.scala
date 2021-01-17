@@ -81,6 +81,7 @@ import java.io.File
 
 class LegendsPlugin extends SpigotMonolithPlugin {
   import gg.warcraft.chat.spigot.implicits._
+  import gg.warcraft.housing.spigot.implicits._
   import gg.warcraft.siege.spigot.implicits._
   import implicits._
 
@@ -318,6 +319,9 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     eventService.subscribe(new KillStatisticHandler)
     eventService.subscribe(new ObjectiveStatisticHandler)
     eventService.subscribe(new ResourceStatisticHandler)
+
+    // Gathering
+    eventService.subscribe(new GatheringBlacklistHandler)
 
     // Spigot
     subscribe(new OnePointEightPvPInitHandler)
