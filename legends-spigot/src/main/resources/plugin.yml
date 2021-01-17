@@ -6,5 +6,5 @@ author: fishb6nes
 website: http://warcraft.gg
 
 main: gg.warcraft.legends.spigot.LegendsPlugin
-depend: [ Monolith, Combat, Siege, Chat, ProtocolLib, LibsDisguises ] # TODO MythicMobs
+depend: [ Monolith, Combat, Siege, Chat, Gathering, ProtocolLib, LibsDisguises ] # TODO MythicMobs
 softdepend: [ Votifier ]
