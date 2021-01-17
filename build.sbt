@@ -28,7 +28,7 @@ lazy val api = (project in file("legends-api"))
     libraryDependencies ++= Seq(
       "gg.warcraft" %% "monolith-api" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "chat-api" % "16.0.0-SNAPSHOT" % Provided,
-      // "gg.warcraft" %% "gathering-api" % "15.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "gathering-api" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "combat-api" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "siege-api" % "16.0.0-SNAPSHOT" % Provided
     ) ++ Seq(
