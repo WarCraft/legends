@@ -7,9 +7,12 @@
 package gg.warcraft.legends.api.item.equipment
 
 import gg.warcraft.legends.api.entity.attribute.LegendsAttribute
+import gg.warcraft.legends.api.entity.attribute.LegendsAttribute._
 import gg.warcraft.legends.api.item.ItemRarity
 import gg.warcraft.monolith.api.core.{ColorCode, FormatCode}
 import gg.warcraft.monolith.api.item.{Item, ItemService, ItemTypeOrVariant}
+
+import scala.collection.immutable.ListMap
 
 class EquipmentBuilder(
     typ: ItemTypeOrVariant,
@@ -20,7 +23,7 @@ class EquipmentBuilder(
 ) {
   private final val reset = s"${FormatCode.RESET}${ColorCode.GRAY}"
 
-  private var attributes: Map[LegendsAttribute, Int] = Map.empty
+  private var attributes: ListMap[LegendsAttribute, Int] = ListMap.empty
   private var availableUpgrades = 0
   private var upgradeCount = 0
   private var customModelData = 0
@@ -32,7 +35,20 @@ class EquipmentBuilder(
   }
 
   def withAttributes(attributes: Map[LegendsAttribute, Int]): EquipmentBuilder = {
-    this.attributes = attributes
+    var sortedAttributes: ListMap[LegendsAttribute, Int] = ListMap.empty
+
+    if (attributes.contains(Strength))
+      sortedAttributes += (Strength -> attributes(Strength))
+    if (attributes.contains(Dexterity))
+      sortedAttributes += (Dexterity -> attributes(Dexterity))
+    if (attributes.contains(Intellect))
+      sortedAttributes += (Intellect -> attributes(Intellect))
+    if (attributes.contains(Vitality))
+      sortedAttributes += (Vitality -> attributes(Vitality))
+    if (attributes.contains(Crit))
+      sortedAttributes += (Crit -> attributes(Crit))
+
+    this.attributes = sortedAttributes
     this
   }
 

@@ -7,12 +7,12 @@
 package gg.warcraft.legends.api.item.equipment.upgrade
 
 import gg.warcraft.legends.api.entity.attribute.LegendsAttribute._
-import gg.warcraft.legends.api.item.equipment.EquipmentReader
+import gg.warcraft.legends.api.item.equipment.{EquipmentBuilder, EquipmentReader}
 import gg.warcraft.monolith.api.block.BlockPreInteractEvent
 import gg.warcraft.monolith.api.core.event.{Event, PreEvent}
 import gg.warcraft.monolith.api.entity.EntityPreInteractEvent
 import gg.warcraft.monolith.api.entity.Equipment._
-import gg.warcraft.monolith.api.item.StackableItem
+import gg.warcraft.monolith.api.item.{ItemService, StackableItem}
 import gg.warcraft.monolith.api.player.{
   Player, PlayerPreInteractEvent, PlayerService
 }
@@ -21,46 +21,43 @@ import gg.warcraft.monolith.api.world.{Sound, SoundCategory, WorldService}
 
 class EquipmentUpgradeUseHandler(implicit
     playerService: PlayerService,
-    worldService: WorldService
+    worldService: WorldService,
+    itemService: ItemService
 ) extends Event.Handler {
   private def onInteract(player: Player): Boolean = {
     val equipment = player.equipment
     (equipment.mainHand, equipment.offHand) match {
       case (Some(mainHand), Some(offHand)) =>
-        val equipmentReader = new EquipmentReader(mainHand)
+        val itemReader = new EquipmentReader(mainHand)
         val upgradeReader = new EquipmentReader(offHand)
-        if (equipmentReader.isEquipment && upgradeReader.isEquipmentUpgrade) {
-          val availableUpgrades = equipmentReader.availableUpgrades
+        if (itemReader.isEquipment && upgradeReader.isEquipmentUpgrade) {
+          val availableUpgrades = itemReader.availableUpgrades
           if (availableUpgrades > 0) {
-            // TODO move this logic into separate equipment modifier class?
-            val name = {
-              val upgrades = equipmentReader.upgradeCount
-              if (upgrades == 0) s"${mainHand.name} (+1)"
-              else mainHand.name.replace(s"(+$upgrades)", s"(+${upgrades + 1})")
+            val cleanedName = itemReader.name.indexOf(" (+") match {
+              case -1           => itemReader.name
+              case upgradeIndex => itemReader.name.substring(0, upgradeIndex)
             }
+            val builder =
+              new EquipmentBuilder(mainHand.data, itemReader.rarity, cleanedName)
 
-            val str = equipmentReader.strength + upgradeReader.strength
-            val dex = equipmentReader.dexterity + upgradeReader.dexterity
-            val int = equipmentReader.intellect + upgradeReader.intellect
-            val vit = equipmentReader.vitality + upgradeReader.vitality
-            val crit = equipmentReader.crit + upgradeReader.crit
+            builder.withUpgradeCount(itemReader.upgradeCount + 1)
 
-            val tooltip = mainHand.tooltip.map {
-              case it if it.contains(Strength.name)  => s"+$str ${Strength.name}"
-              case it if it.contains(Dexterity.name) => s"+$dex ${Dexterity.name}"
-              case it if it.contains(Intellect.name) => s"+$int ${Intellect.name}"
-              case it if it.contains(Vitality.name)  => s"+$vit ${Vitality.name}"
-              case it if it.contains(Crit.name)      => s"+$crit ${Crit.name}"
+            val updatedStrength = itemReader.strength + upgradeReader.strength
+            builder.addAttribute(Strength, updatedStrength)
+            val updatedDexterity = itemReader.dexterity + upgradeReader.dexterity
+            builder.addAttribute(Dexterity, updatedDexterity)
+            val updatedIntellect = itemReader.intellect + upgradeReader.intellect
+            builder.addAttribute(Intellect, updatedIntellect)
+            val updatedVitality = itemReader.vitality + upgradeReader.vitality
+            builder.addAttribute(Vitality, updatedVitality)
+            val updatedCrit = itemReader.crit + upgradeReader.crit
+            builder.addAttribute(Crit, updatedCrit)
 
-              case it if it.contains("Upgrades Available") =>
-                if (availableUpgrades == 1) "No Available Upgrades"
-                else if (availableUpgrades == 2) "1 Available Upgrade"
-                else s"${availableUpgrades - 1} Available Upgrades"
+            builder.withAvailableUpgrades(availableUpgrades - 1)
 
-              case it => it
-            }
+            builder.withFlavorText(itemReader.flavorText)
 
-            val upgradedMainHand = mainHand.withName(name).withTooltip(tooltip: _*)
+            val upgradedMainHand = builder.build()
             val reducedOffHand = offHand.asInstanceOf[StackableItem].oneLessOrNone
             playerService.setEquipment(player.id, MAIN_HAND, upgradedMainHand, true)
             playerService.setEquipment(player.id, OFF_HAND, reducedOffHand, true)
