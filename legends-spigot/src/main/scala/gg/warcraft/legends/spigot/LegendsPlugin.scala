@@ -71,7 +71,7 @@ import gg.warcraft.legends.spigot.core._
 import gg.warcraft.monolith.api.block.variant.ChestVariant
 import gg.warcraft.monolith.api.core.DatabaseConfig
 import gg.warcraft.monolith.api.core.Duration.DurationOps
-import gg.warcraft.monolith.api.entity.{Entity, Equipment}
+import gg.warcraft.monolith.api.entity.Equipment
 import gg.warcraft.monolith.spigot.SpigotMonolithPlugin
 import gg.warcraft.monolith.spigot.implicits._
 import io.circe.generic.auto._
@@ -96,8 +96,6 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     import gg.warcraft.monolith.api.util.codecs.monolith._
 
     // Config
-    implicit val entityTypeDecoder: String => Entity.Type = Entity.Type.withName
-
     val config = {
       implicit val chestDecoder: String => ChestVariant = ChestVariant.valueOf
       parseConfig[LegendsConfig](getConfig.saveToString())
