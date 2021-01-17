@@ -64,9 +64,9 @@ class SpigotFirstTimeRaceClassMenuHandler(implicit
 
   private def test(player: Player): Unit = {
     if (player.team.isEmpty) {
-      menuService.showMenu(player.id, FactionMenu(player))
+      menuService.showMenu(player.id, FactionMenu.firstTimeLogin(player))
     } else if (player.combatClass.isEmpty) {
-      menuService.showMenu(player.id, CombatClassMenu(player))
+      menuService.showMenu(player.id, CombatClassMenu.firstTimeLogin(player))
     } else {
       inTutorial -= player.id
       entityService.freezeEntity(player.id, 0.ticks)

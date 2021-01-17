@@ -22,7 +22,7 @@ import gg.warcraft.monolith.api.core.ColorCode._
 import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
-import gg.warcraft.monolith.api.entity.team.TeamService
+import gg.warcraft.monolith.api.entity.team.{Team, TeamService}
 import gg.warcraft.monolith.api.item.{ItemService, ItemType}
 import gg.warcraft.monolith.api.menu.Button.noop
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuService, MenuSize}
@@ -57,69 +57,25 @@ object FactionMenu {
             builder.addTooltip(ORANGE + "Changing teams at this time costs 800 Fragments");
         }
      */
-
-    /*
-        List<String> createSwitchView(Team team, boolean canSwitch, String cooldown) {
-        List<String> view = new ArrayList<>();
-        if (canSwitch) {
-            if (cooldown == null) {
-                view.add(GREEN + "[SHIFT RIGHT CLICK] To switch to the " + ((LegendsTeam) team).getPlural());
-            } else {
-                view.add(RED + "You can change teams in " + cooldown);
-            }
-        } else {
-            view.add("This is your current team");
-        }
-        return view;
-    }
-     */
   }
 
-  private def humanButton(player: Player)(implicit
-      playerService: PlayerService,
-      teamService: TeamService
-  ): Button = Button.skull(
-    "fishb6nes",
-    Humans.instance.name,
-    "[Shift Right Click] To fight for the Humans"
-  ) { click =>
-    if (click.isShiftRight) playerService.setTeam(player.id, Humans.instance)
-    noop
-  }
+  private final val firstTimeLoginInfoButton = Button.noop(
+    ItemType.BOOK,
+    "Choosing a faction",
+    "Welcome to WarCraft! Before you can",
+    "start forging your legend on Aldmore",
+    "you need to align yourself with one",
+    "of its four factions."
+  )
 
-  private def orcButton(player: Player)(implicit
-      playerService: PlayerService,
-      teamService: TeamService
+  private def teamButton(player: Player, team: Team, skull: String)(implicit
+      playerService: PlayerService
   ): Button = Button.skull(
-    "fishb6nes",
-    Orcs.instance.name,
-    "[Shift Right Click] To fight for the Orcs"
+    skull,
+    team.name,
+    s"[Shift Right Click] To fight for the s${team.name}"
   ) { click =>
-    if (click.isShiftRight) playerService.setTeam(player.id, Orcs.instance)
-    noop
-  }
-
-  private def dwarfButton(player: Player)(implicit
-      playerService: PlayerService,
-      teamService: TeamService
-  ): Button = Button.skull(
-    "fishb6nes",
-    Dwarves.instance.name,
-    "[Shift Right Click] To fight for the Dwarves"
-  ) { click =>
-    if (click.isShiftRight) playerService.setTeam(player.id, Dwarves.instance)
-    noop
-  }
-
-  private def elfButton(player: Player)(implicit
-      playerService: PlayerService,
-      teamService: TeamService
-  ): Button = Button.skull(
-    "fishb6nes",
-    Elves.instance.name,
-    "[Shift Right Click] To fight for the Elves"
-  ) { click =>
-    if (click.isShiftRight) playerService.setTeam(player.id, Elves.instance)
+    if (click.isShiftRight) playerService.setTeam(player.id, team)
     noop
   }
 
@@ -152,10 +108,24 @@ object FactionMenu {
       0 -> infoButton(player),
       8 -> Button.back(MainMenu.apply),
       // 1st row
-      2 -> humanButton(player),
-      3 -> orcButton(player),
-      4 -> dwarfButton(player),
-      5 -> elfButton(player)
+      2 -> teamButton(player, Dwarves.instance, "fishb6nes"),
+      3 -> teamButton(player, Elves.instance, "fishb6nes"),
+      4 -> teamButton(player, Humans.instance, "fishb6nes"),
+      5 -> teamButton(player, Orcs.instance, "fishb6nes")
     )
   }
+
+  def firstTimeLogin(player: Player)(implicit
+      playerService: PlayerService,
+      teamService: TeamService
+  ): Menu = Menu(
+    "Welcome to WarCraft!",
+    MenuSize.ONE_ROW,
+    0 -> firstTimeLoginInfoButton,
+    // 1st row
+    2 -> teamButton(player, Dwarves.instance, "fishb6nes"),
+    3 -> teamButton(player, Elves.instance, "fishb6nes"),
+    4 -> teamButton(player, Humans.instance, "fishb6nes"),
+    5 -> teamButton(player, Orcs.instance, "fishb6nes")
+  )
 }

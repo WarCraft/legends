@@ -49,6 +49,14 @@ object CombatClassMenu {
     )
   }
 
+  private final val firstTimeLoginInfoButton = Button.noop(
+    ItemType.BOOK,
+    "Choosing a combat class",
+    "One more thing before you're on your",
+    "way. What combat class are you going",
+    "to play as?"
+  )
+
   def switchView(
       combatClass: CombatClass,
       isLocked: Boolean,
@@ -68,7 +76,7 @@ object CombatClassMenu {
 
   private def combatClassButton(
       player: Player,
-      shopProfile: ShopProfile,
+      hasUnlocked: Boolean,
       combatClass: CombatClass,
       icon: ItemTypeOrVariant,
       cooldown: Option[String],
@@ -76,19 +84,18 @@ object CombatClassMenu {
   )(implicit
       combatDataService: CombatDataService
   ): Button = {
-    val isLocked = shopProfile.unlocked.contains(combatClass.id)
     val canSwitch = player.combatClass match {
       case Some(playerCombatClass) => playerCombatClass != combatClass
       case None                    => true
     }
     val tooltip =
-      lore ++ List("") ++ switchView(combatClass, isLocked, canSwitch, cooldown)
+      lore ++ List("") ++ switchView(combatClass, !hasUnlocked, canSwitch, cooldown)
     Button(
       icon,
       combatClass.name,
       tooltip.toList
     ) { click =>
-      if (!isLocked && cooldown.isEmpty && click.isShiftRight) {
+      if (hasUnlocked && cooldown.isEmpty && click.isShiftRight) {
         combatDataService.setCombatClass(player.id, Some(combatClass))
         closeMenu
       } else noop
@@ -98,13 +105,14 @@ object CombatClassMenu {
   def guardianButton(
       player: Player,
       shopProfile: ShopProfile,
-      cooldown: Option[String]
+      cooldown: Option[String],
+      forceUnlock: Boolean = false
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    shopProfile,
+    forceUnlock || shopProfile.unlocked.contains(Guardian),
     combatClassService.combatClasses(Guardian),
     ItemType.SHIELD,
     cooldown,
@@ -128,13 +136,14 @@ object CombatClassMenu {
   def berserkerButton(
       player: Player,
       shopProfile: ShopProfile,
-      cooldown: Option[String]
+      cooldown: Option[String],
+      forceUnlock: Boolean = false
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    shopProfile,
+    forceUnlock || shopProfile.unlocked.contains(Berserker),
     combatClassService.combatClasses(Berserker),
     AxeVariant.STONE,
     cooldown,
@@ -160,13 +169,14 @@ object CombatClassMenu {
   def marksmanButton(
       player: Player,
       shopProfile: ShopProfile,
-      cooldown: Option[String]
+      cooldown: Option[String],
+      forceUnlock: Boolean = false
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    shopProfile,
+    forceUnlock || shopProfile.unlocked.contains(Marksman),
     combatClassService.combatClasses(Marksman),
     ItemType.CROSSBOW,
     cooldown,
@@ -190,13 +200,14 @@ object CombatClassMenu {
   def rangerButton(
       player: Player,
       shopProfile: ShopProfile,
-      cooldown: Option[String]
+      cooldown: Option[String],
+      forceUnlock: Boolean = false
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    shopProfile,
+    forceUnlock || shopProfile.unlocked.contains(Ranger),
     combatClassService.combatClasses(Ranger),
     ItemType.BOW,
     cooldown,
@@ -218,13 +229,14 @@ object CombatClassMenu {
   def elementalistButton(
       player: Player,
       shopProfile: ShopProfile,
-      cooldown: Option[String]
+      cooldown: Option[String],
+      forceUnlock: Boolean = false
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    shopProfile,
+    forceUnlock || shopProfile.unlocked.contains(Elementalist),
     combatClassService.combatClasses(Elementalist),
     ItemType.HOE,
     cooldown,
@@ -249,13 +261,14 @@ object CombatClassMenu {
   def wizardButton(
       player: Player,
       shopProfile: ShopProfile,
-      cooldown: Option[String]
+      cooldown: Option[String],
+      forceUnlock: Boolean = false
   )(implicit
       combatDataService: CombatDataService,
       combatClassService: CombatClassService
   ): Button = combatClassButton(
     player,
-    shopProfile,
+    forceUnlock || shopProfile.unlocked.contains(Wizard),
     combatClassService.combatClasses(Wizard),
     ItemType.STICK,
     cooldown,
@@ -319,6 +332,26 @@ object CombatClassMenu {
       5 -> rangerButton(player, shopProfile, cooldownText),
       6 -> elementalistButton(player, shopProfile, cooldownText),
       7 -> wizardButton(player, shopProfile, cooldownText)
+    )
+  }
+
+  def firstTimeLogin(player: Player)(implicit
+      shopProfileService: ShopProfileService,
+      combatDataService: CombatDataService,
+      combatClassService: CombatClassService
+  ): Menu = {
+    val shopProfile = shopProfileService.profile(player.id)
+    Menu(
+      "Welcome to WarCraft!",
+      MenuSize.ONE_ROW,
+      0 -> firstTimeLoginInfoButton,
+      // 1st row
+      2 -> guardianButton(player, shopProfile, None, forceUnlock = true),
+      3 -> berserkerButton(player, shopProfile, None, forceUnlock = true),
+      4 -> marksmanButton(player, shopProfile, None, forceUnlock = true),
+      5 -> rangerButton(player, shopProfile, None, forceUnlock = true),
+      6 -> elementalistButton(player, shopProfile, None, forceUnlock = true),
+      7 -> wizardButton(player, shopProfile, None, forceUnlock = true)
     )
   }
 }
