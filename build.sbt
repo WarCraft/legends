@@ -49,7 +49,7 @@ lazy val spigot = (project in file("legends-spigot"))
       "Votifier" at "https://dl.bintray.com/ichbinjoe/public/"
     ),
     libraryDependencies ++= Seq(
-      "com.destroystokyo.paper" % "paper-api" % "1.16.4-R0.1-SNAPSHOT" % Provided,
+      "com.destroystokyo.paper" % "paper-api" % "1.16.5-R0.1-SNAPSHOT" % Provided,
       "gg.warcraft" %% "monolith-spigot" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "chat-spigot" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "gathering-spigot" % "16.0.0-SNAPSHOT" % Provided,
