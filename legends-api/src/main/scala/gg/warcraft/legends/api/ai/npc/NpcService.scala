@@ -8,7 +8,10 @@ package gg.warcraft.legends.api.ai.npc
 
 import gg.warcraft.legends.api.ai.NpcFactory
 import gg.warcraft.legends.api.{LegendsConfig, NpcConfig}
+import gg.warcraft.monolith.api.core.Duration.DurationOps
 import gg.warcraft.monolith.api.core.Message
+import gg.warcraft.monolith.api.core.command.CommandService
+import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.entity.EntityService
 import gg.warcraft.monolith.api.item.ItemService
 import gg.warcraft.monolith.api.menu.MenuService
@@ -25,7 +28,9 @@ class NpcService(implicit
     objectiveService: ObjectiveService,
     npcFactory: NpcFactory,
     currencyService: CurrencyService,
-    itemService: ItemService
+    itemService: ItemService,
+    commandService: CommandService,
+    taskService: TaskService
 ) {
   private final val MSG_NPC_UNINTERESTED =
     Message.server("This NPC is not interested in you.")
@@ -33,13 +38,20 @@ class NpcService(implicit
   private var _npcsById: Map[UUID, Npc] = Map.empty
   def npcsById: Map[UUID, Npc] = _npcsById
 
-  def readConfig(config: LegendsConfig): Unit =
+  private var _npcNames: Set[String] = Set.empty
+  def npcNames: Set[String] = _npcNames
+
+  def readConfig(config: LegendsConfig): Unit = {
     config.npcs.foreach(spawnNpc)
+    taskService.evalLater(1.seconds, commandService.executeCommand("clean-npcs"))
+  }
 
   def spawnNpc(config: NpcConfig): Unit = {
     val npcId = npcFactory.create(config)
     val npc = Npc(npcId, config.typ, config.team, config.name)
     _npcsById += (npcId -> npc)
+
+    _npcNames += config.name
   }
 
   def despawnNpc(npcId: UUID): Unit = {

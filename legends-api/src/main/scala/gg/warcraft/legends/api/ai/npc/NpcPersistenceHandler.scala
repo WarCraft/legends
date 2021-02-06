@@ -8,7 +8,8 @@ package gg.warcraft.legends.api.ai.npc
 
 import gg.warcraft.legends.api.LegendsConfig
 import gg.warcraft.monolith.api.core.ServerShutdownEvent
-import gg.warcraft.monolith.api.core.event.Event
+import gg.warcraft.monolith.api.core.event.{Event, PreEvent}
+import gg.warcraft.monolith.api.entity.EntityPreRespawnEvent
 
 class NpcPersistenceHandler(config: LegendsConfig)(implicit
     npcService: NpcService
@@ -17,5 +18,13 @@ class NpcPersistenceHandler(config: LegendsConfig)(implicit
     case ServerShutdownEvent() =>
       npcService.npcsById.keys.foreach(npcService.despawnNpc)
     case _ =>
+  }
+
+  override def reduce[T <: PreEvent](event: T): T = event match {
+    case event @ EntityPreRespawnEvent(entity, _, _, _) =>
+      if (npcService.npcNames.contains(entity.name)) {
+        event.copy(cancelled = true).asInstanceOf[T]
+      } else event.asInstanceOf[T]
+    case _ => event
   }
 }

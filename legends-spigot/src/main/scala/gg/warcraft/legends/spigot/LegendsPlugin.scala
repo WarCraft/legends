@@ -8,7 +8,9 @@ package gg.warcraft.legends.spigot
 
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.LegendsConfig
-import gg.warcraft.legends.api.ai.npc.{NpcInteractHandler, NpcPersistenceHandler}
+import gg.warcraft.legends.api.ai.npc.{
+  NpcCleanUpCommand, NpcInteractHandler, NpcPersistenceHandler
+}
 import gg.warcraft.legends.api.combat.CombatConfig
 import gg.warcraft.legends.api.combat.hunter.marksman.{
   FocusCancelHandler, SneakCancelHandler
@@ -64,7 +66,9 @@ import gg.warcraft.legends.api.shop.profile.{
   PostgresUnlockedShopItemRepository, ShopProfileCacheHandler,
   SqliteUnlockedShopItemRepository, UnlockedShopItemRepository
 }
-import gg.warcraft.legends.spigot.ai.handler.SpigotNpcPathfindingHandler
+import gg.warcraft.legends.spigot.ai.handler.{
+  SpigotNpcCleanUpHandler, SpigotNpcPathfindingHandler
+}
 import gg.warcraft.legends.spigot.combat.PersonalScoreboardHandler
 import gg.warcraft.legends.spigot.combat.hunter.HunterOnlyBowHandler
 import gg.warcraft.legends.spigot.core._
@@ -252,6 +256,12 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     commandService.registerCommand(
       new ClearAttributesCommand,
       spigotAttributeCommandHandler
+    )
+
+    // NPCs
+    commandService.registerCommand(
+      new NpcCleanUpCommand,
+      new SpigotNpcCleanUpHandler
     )
   }
 
