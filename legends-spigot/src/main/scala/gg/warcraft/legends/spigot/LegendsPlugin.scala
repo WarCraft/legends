@@ -8,6 +8,7 @@ package gg.warcraft.legends.spigot
 
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.LegendsConfig
+import gg.warcraft.legends.api.ai.AiConfig
 import gg.warcraft.legends.api.ai.npc.{
   NpcCleanUpCommand, NpcInteractHandler, NpcPersistenceHandler
 }
@@ -113,6 +114,13 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     val equipConfigFile = YamlConfiguration.loadConfiguration(equipConfigPath)
     val equipConfig = parseConfig[EquipmentConfig](equipConfigFile.saveToString())
 
+    // Config: ai
+    val aiConfigPath =
+      new File(s"${getDataFolder.getAbsolutePath}${File.separator}ai.yml")
+    if (!aiConfigPath.exists) saveResource("ai.yml", false)
+    val aiConfigFile = YamlConfiguration.loadConfiguration(aiConfigPath)
+    val aiConfig = parseConfig[AiConfig](aiConfigFile.saveToString())
+
     // Config: shop
     implicit val equipSlotDecoder: String => Equipment.Slot = Equipment.withName
 
@@ -139,7 +147,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     levelService.readConfig(config)
     loginRewardService.readConfig(config)
     challengeService.readConfig(config)
-    npcService.readConfig(config)
+    npcService.readConfig(aiConfig)
 
     new CombatConfig().writeConfig()
     new MenuConfig().writeConfig()

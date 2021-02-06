@@ -6,8 +6,7 @@
 
 package gg.warcraft.legends.api.ai.npc
 
-import gg.warcraft.legends.api.ai.NpcFactory
-import gg.warcraft.legends.api.{LegendsConfig, NpcConfig}
+import gg.warcraft.legends.api.ai.{AiConfig, NpcConfig, NpcFactory}
 import gg.warcraft.monolith.api.core.Duration.DurationOps
 import gg.warcraft.monolith.api.core.Message
 import gg.warcraft.monolith.api.core.command.CommandService
@@ -41,7 +40,7 @@ class NpcService(implicit
   private var _npcNames: Set[String] = Set.empty
   def npcNames: Set[String] = _npcNames
 
-  def readConfig(config: LegendsConfig): Unit = {
+  def readConfig(config: AiConfig): Unit = {
     config.npcs.foreach(spawnNpc)
     taskService.evalLater(1.seconds, commandService.executeCommand("clean-npcs"))
   }
