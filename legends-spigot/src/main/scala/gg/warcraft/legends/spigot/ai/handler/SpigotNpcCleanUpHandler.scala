@@ -28,10 +28,11 @@ class SpigotNpcCleanUpHandler(implicit
   ): Command.Result = executor match {
     case it if authService.isAdmin(it) =>
       val names = npcService.npcNames
+      val ids = npcService.npcsById
       server.getWorlds.asScala
         .flatMap { _.getLivingEntities.asScala }
         .filter { it => names.contains(it.getCustomName) }
-        .filter { it => !npcService.npcsById.contains(it.getUniqueId) }
+        .filter { it => !ids.contains(it.getUniqueId) }
         .foreach { it => entityService.removeEntity(it.getUniqueId) }
       Command.success
     case _ => Command.invalid
