@@ -6,8 +6,7 @@
 
 package gg.warcraft.legends.spigot.ai
 
-import gg.warcraft.legends.api.NpcConfig
-import gg.warcraft.legends.api.ai.NpcFactory
+import gg.warcraft.legends.api.ai.{NpcConfig, NpcFactory}
 import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.entity.{Entity, EntityService}
 import gg.warcraft.monolith.api.player.PlayerService

@@ -6,8 +6,6 @@
 
 package gg.warcraft.legends.api.ai
 
-import gg.warcraft.legends.api.NpcConfig
-
 import java.util.UUID
 
 trait NpcFactory {
