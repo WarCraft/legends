@@ -35,6 +35,7 @@ import gg.warcraft.legends.api.core.leaderboard.handler.{
 }
 import gg.warcraft.legends.api.core.spawn.ReturnToSpawnCommand
 import gg.warcraft.legends.api.entity.attribute.EquipmentAttributeHandler
+import gg.warcraft.legends.api.item.DropLootCommand
 import gg.warcraft.legends.api.item.crate.LootCrateUseHandler
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeUseHandler
@@ -152,10 +153,11 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     new CombatConfig().writeConfig()
     new MenuConfig().writeConfig()
 
-    val firstTimeRaceClassMenuHandler = new SpigotFirstTimeRaceClassMenuHandler()
+    val firstTimeRaceClassMenuHandler = new SpigotFirstTimeRaceClassMenuHandler
+    val dropLootHandler = new DropLootCommand.Handler
 
-    enableHandlers(config, firstTimeRaceClassMenuHandler)
-    enableCommands()
+    enableHandlers(config, firstTimeRaceClassMenuHandler, dropLootHandler)
+    enableCommands(dropLootHandler)
     enableTasks(config, firstTimeRaceClassMenuHandler)
   }
 
@@ -195,7 +197,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
       )
     }
 
-  private def enableCommands(): Unit = {
+  private def enableCommands(dropLootHandler: DropLootCommand.Handler): Unit = {
     // Currency
     val currencyCommandHandler = new CurrencyAdminCommand.Handler
     commandService.registerCommand(
@@ -271,11 +273,17 @@ class LegendsPlugin extends SpigotMonolithPlugin {
       new NpcCleanUpCommand,
       new SpigotNpcCleanUpHandler
     )
+
+    commandService.registerCommand(
+      new DropLootCommand,
+      dropLootHandler
+    )
   }
 
   private def enableHandlers(
       config: LegendsConfig,
-      firstTimeRaceClassMenuHandler: SpigotFirstTimeRaceClassMenuHandler
+      firstTimeRaceClassMenuHandler: SpigotFirstTimeRaceClassMenuHandler,
+      dropLootHandler: DropLootCommand.Handler
   ): Unit = {
     // Core
     eventService.subscribe(firstTimeRaceClassMenuHandler)
@@ -315,6 +323,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     // NPC
     eventService.subscribe(new NpcInteractHandler)
     eventService.subscribe(new NpcPersistenceHandler(config))
+    eventService.subscribe(dropLootHandler)
 
     // Player
     eventService.subscribe(new PlayerInspectHandler)
