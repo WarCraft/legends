@@ -29,11 +29,11 @@ object ToolVendorDialog {
       itemService: ItemService
   ): Button = {
     val item = itemService.create(typ)
-      .withTooltip(s"s${FormatCode.RESET}${ColorCode.GRAY}Tool")
+      .withTooltip(s"${FormatCode.RESET}${ColorCode.GRAY}Tool")
     Button(
       typ,
       item.name,
-      s"${ColorCode.AQUA}[Shift Right Click] To buy a s${item.name}",
+      s"${ColorCode.AQUA}[Shift Right Click] To buy a ${item.name}",
       s"${ColorCode.AQUA}for $price gold"
     ) { click =>
       if (click.isShiftRight) {

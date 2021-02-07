@@ -44,7 +44,7 @@ object FoodVendorDialog {
       } else {
         currencyService.removeCurrency(LegendsCurrency.Gold, price, player.id)
         val bread = itemService.create(ItemType.BREAD)
-          .withTooltip(s"s${FormatCode.RESET}${ColorCode.GRAY}Consumable")
+          .withTooltip(s"${FormatCode.RESET}${ColorCode.GRAY}Consumable")
         itemService.giveTo(player.id, bread)
       }
     }

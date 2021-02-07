@@ -24,6 +24,7 @@ object Npc {
     final val BLUEPRINT_VENDOR: Type = "BLUEPRINT_VENDOR"
     final val FOOD_VENDOR: Type = "FOOD_VENDOR"
     final val TOOL_VENDOR: Type = "TOOL_VENDOR"
+    final val WEAPON_VENDOR: Type = "WEAPON_VENDOR"
     // CLASS_TRAINER, TARGET_DUMMY
   }
 }
