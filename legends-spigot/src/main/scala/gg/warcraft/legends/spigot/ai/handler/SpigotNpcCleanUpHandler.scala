@@ -9,7 +9,6 @@ package gg.warcraft.legends.spigot.ai.handler
 import gg.warcraft.legends.api.ai.npc.NpcService
 import gg.warcraft.monolith.api.core.auth.{AuthService, Principal}
 import gg.warcraft.monolith.api.core.command.{Command, CommandService}
-import gg.warcraft.monolith.api.entity.EntityService
 import org.bukkit.Server
 
 import scala.jdk.CollectionConverters.CollectionHasAsScala
@@ -18,8 +17,7 @@ class SpigotNpcCleanUpHandler(implicit
     server: Server,
     authService: AuthService,
     commandService: CommandService,
-    npcService: NpcService,
-    entityService: EntityService
+    npcService: NpcService
 ) extends Command.Handler {
   override def handle(
       executor: Principal,
@@ -33,7 +31,7 @@ class SpigotNpcCleanUpHandler(implicit
         .flatMap { _.getLivingEntities.asScala }
         .filter { it => names.exists(it.getName.endsWith) }
         .filter { it => !ids.contains(it.getUniqueId) }
-        .foreach { it => entityService.removeEntity(it.getUniqueId) }
+        .foreach { it => npcService.despawnNpc(it.getUniqueId) }
       Command.success
     case _ => Command.invalid
   }

@@ -22,7 +22,7 @@ class NpcPersistenceHandler(config: LegendsConfig)(implicit
 
   override def reduce[T <: PreEvent](event: T): T = event match {
     case event @ EntityPreRespawnEvent(entity, _, _, _) =>
-      if (npcService.npcNames.contains(entity.name)) {
+      if (npcService.npcNames.exists(entity.name.endsWith)) {
         event.copy(cancelled = true).asInstanceOf[T]
       } else event.asInstanceOf[T]
     case _ => event
