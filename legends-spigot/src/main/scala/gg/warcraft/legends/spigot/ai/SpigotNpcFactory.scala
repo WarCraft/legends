@@ -29,6 +29,7 @@ class SpigotNpcFactory(implicit
     spigotNPC.setRemoveWhenFarAway(false)
     spigotNPC.setInvulnerable(true)
     spigotNPC.setAgeLock(true)
+    spigotNPC.setCollidable(false)
 
     val nameColor = team.map { _.chatColor.toString }.getOrElse("")
     spigotNPC.setCustomName(s"$nameColor$name")
