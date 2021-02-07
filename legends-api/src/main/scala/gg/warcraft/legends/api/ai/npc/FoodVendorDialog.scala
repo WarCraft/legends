@@ -16,6 +16,8 @@ import gg.warcraft.monolith.api.player.Player
 import gg.warcraft.monolith.api.player.currency.CurrencyService
 
 object FoodVendorDialog {
+  private final val price = 0
+
   private final val infoButton: Button = Button.noop(
     ItemType.BOOK,
     "Food Vendor"
@@ -28,19 +30,19 @@ object FoodVendorDialog {
     ItemType.BREAD,
     "Bread",
     s"${ColorCode.AQUA}[Shift Right Click] To buy 1 bread",
-    s"${ColorCode.AQUA}for 3 gold"
+    s"${ColorCode.AQUA}for $price gold"
   ) { click =>
     if (click.isShiftRight) {
-      if (player.gold < 3) {
+      if (player.gold < price) {
         val message =
-          Message.server("You need at least 3 gold to purchase this item.")
+          Message.server(s"You need at least $price gold to purchase this item.")
         player.sendMessage(message)
       } else if (!player.inventory.hasSpace(1)) {
         val message =
           Message.server("Please make sure you have at least 1 free inventory slot.")
         player.sendMessage(message)
       } else {
-        currencyService.removeCurrency(LegendsCurrency.Gold, 3, player.id)
+        currencyService.removeCurrency(LegendsCurrency.Gold, price, player.id)
         val bread = itemService.create(ItemType.BREAD)
           .withTooltip(s"s${FormatCode.RESET}${ColorCode.GRAY}Consumable")
         itemService.giveTo(player.id, bread)

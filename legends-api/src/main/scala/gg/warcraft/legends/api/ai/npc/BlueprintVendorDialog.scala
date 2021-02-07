@@ -17,6 +17,8 @@ import gg.warcraft.monolith.api.player.currency.CurrencyService
 import gg.warcraft.siege.api.plot.item.SiegePlotBlueprintFactory
 
 object BlueprintVendorDialog {
+  private final val price = 0
+
   private final val infoButton: Button = Button.noop(
     ItemType.BOOK,
     "Blueprint Vendor",
@@ -38,19 +40,19 @@ object BlueprintVendorDialog {
     "enemy fortifications with ease.",
     "",
     s"${ColorCode.AQUA}[Shift Right Click] To buy a trebuchet",
-    s"${ColorCode.AQUA}blueprint for 0 favor"
+    s"${ColorCode.AQUA}blueprint for $price favor"
   ) { click =>
     if (click.isShiftRight) {
-      if (player.favor < 0) {
+      if (player.favor < price) {
         val message =
-          Message.server("You need at least 0 favor to purchase this item.")
+          Message.server(s"You need at least $price favor to purchase this item.")
         player.sendMessage(message)
       } else if (!player.inventory.hasSpace(1)) {
         val message =
           Message.server("Please make sure you have at least 1 free inventory slot.")
         player.sendMessage(message)
       } else {
-        currencyService.removeCurrency(LegendsCurrency.Favor, 0, player.id)
+        currencyService.removeCurrency(LegendsCurrency.Favor, price, player.id)
         val blueprint = SiegePlotBlueprintFactory("Trebuchet Blueprint")
         itemService.giveTo(player.id, blueprint)
       }
