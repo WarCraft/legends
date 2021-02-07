@@ -19,7 +19,8 @@ import gg.warcraft.legends.api.item.equipment.EquipmentBuilder
 import gg.warcraft.legends.api.player.currency.LegendsCurrency
 import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.core.{ColorCode, Message}
-import gg.warcraft.monolith.api.item.{Item, ItemService, ItemType}
+import gg.warcraft.monolith.api.item.ItemType._
+import gg.warcraft.monolith.api.item.{Item, ItemService}
 import gg.warcraft.monolith.api.menu.Button.noop
 import gg.warcraft.monolith.api.menu.{Button, Menu, MenuSize}
 import gg.warcraft.monolith.api.player.currency.CurrencyService
@@ -29,7 +30,7 @@ object WeaponVendorDialog {
   private final val price = 0
 
   private final val infoButton: Button = Button.noop(
-    ItemType.BOOK,
+    BOOK,
     "Weapon Vendor"
   )
 
@@ -70,12 +71,12 @@ object WeaponVendorDialog {
     val data = player.combatClass match {
       case Some(combatClass) =>
         combatClass.id match {
-          case Berserker    => Some((ItemType.AXE, "Basic Axe", Strength))
-          case Guardian     => Some((ItemType.SWORD, "Basic Sword", Strength))
-          case Marksman     => Some((ItemType.BOW, "Basic Bow", Dexterity))
-          case Ranger       => Some((ItemType.BOW, "Basic Bow", Dexterity))
-          case Elementalist => Some((ItemType.HOE, "Basic Staff", Intellect))
-          case Wizard       => Some((ItemType.STICK, "Basic Wand", Intellect))
+          case Berserker    => Some((AXE, "Basic Axe", Strength, 1))
+          case Guardian     => Some((SWORD, "Basic Sword", Strength, 1))
+          case Marksman     => Some((CROSSBOW, "Basic Crossbow", Dexterity, 100))
+          case Ranger       => Some((BOW, "Basic Bow", Dexterity, 100))
+          case Elementalist => Some((HOE, "Basic Staff", Intellect, 1))
+          case Wizard       => Some((STICK, "Basic Wand", Intellect, 1))
           case _            => None
         }
       case _ => None
@@ -84,7 +85,9 @@ object WeaponVendorDialog {
     var weaponButtons = Map.empty[Int, Button]
     val weapon = data.map { data =>
       val builder = new EquipmentBuilder(data._1, ItemRarity.Common, data._2)
-      builder.addAttribute(data._3, 1).build()
+      builder.addAttribute(data._3, 1)
+        .withCustomModelData(data._4)
+        .build()
     }
     weapon.foreach { it => weaponButtons += (2 -> weaponButton(it, player)) }
 
