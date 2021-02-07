@@ -76,7 +76,7 @@ object WeaponVendorDialog {
           case Marksman     => Some((CROSSBOW, "Basic Crossbow", Dexterity, 100))
           case Ranger       => Some((BOW, "Basic Bow", Dexterity, 100))
           case Elementalist => Some((HOE, "Basic Staff", Intellect, 1))
-          case Wizard       => Some((STICK, "Basic Wand", Intellect, 1))
+          case Wizard       => Some((STICK, "Basic Wand", Intellect, 100))
           case _            => None
         }
       case _ => None
