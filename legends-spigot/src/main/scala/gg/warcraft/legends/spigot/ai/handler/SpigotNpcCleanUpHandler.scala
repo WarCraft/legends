@@ -31,7 +31,7 @@ class SpigotNpcCleanUpHandler(implicit
       val ids = npcService.npcsById
       server.getWorlds.asScala
         .flatMap { _.getLivingEntities.asScala }
-        .filter { it => names.exists(it.getName.startsWith) }
+        .filter { it => names.exists(it.getName.endsWith) }
         .filter { it => !ids.contains(it.getUniqueId) }
         .foreach { it => entityService.removeEntity(it.getUniqueId) }
       Command.success
