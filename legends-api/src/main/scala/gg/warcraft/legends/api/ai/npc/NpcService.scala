@@ -6,6 +6,7 @@
 
 package gg.warcraft.legends.api.ai.npc
 
+import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.legends.api.ai.{AiConfig, NpcConfig, NpcFactory}
 import gg.warcraft.monolith.api.core.Duration.DurationOps
 import gg.warcraft.monolith.api.core.Message
@@ -29,7 +30,8 @@ class NpcService(implicit
     currencyService: CurrencyService,
     itemService: ItemService,
     commandService: CommandService,
-    taskService: TaskService
+    taskService: TaskService,
+    combatDataService: CombatDataService
 ) {
   private final val MSG_NPC_UNINTERESTED =
     Message.server("This NPC is not interested in you.")
@@ -66,6 +68,7 @@ class NpcService(implicit
         case Npc.Type.BLUEPRINT_VENDOR => BlueprintVendorDialog(player)
         case Npc.Type.FOOD_VENDOR      => FoodVendorDialog(player)
         case Npc.Type.TOOL_VENDOR      => ToolVendorDialog(player)
+        case Npc.Type.WEAPON_VENDOR    => WeaponVendorDialog(player)
       }
       menuService.showMenu(player.id, menu)
     } else player.sendMessage(MSG_NPC_UNINTERESTED)
