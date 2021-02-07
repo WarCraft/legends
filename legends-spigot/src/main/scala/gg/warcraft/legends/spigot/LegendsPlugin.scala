@@ -8,10 +8,8 @@ package gg.warcraft.legends.spigot
 
 import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.LegendsConfig
-import gg.warcraft.legends.api.ai.AiConfig
-import gg.warcraft.legends.api.ai.npc.{
-  NpcCleanUpCommand, NpcInteractHandler, NpcPersistenceHandler
-}
+import gg.warcraft.legends.api.ai.npc.{NpcCleanUpCommand, NpcInteractHandler}
+import gg.warcraft.legends.api.ai.{AiConfig, AiPersistenceHandler}
 import gg.warcraft.legends.api.combat.CombatConfig
 import gg.warcraft.legends.api.combat.hunter.marksman.{
   FocusCancelHandler, SneakCancelHandler
@@ -159,6 +157,8 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     enableHandlers(config, firstTimeRaceClassMenuHandler, dropLootHandler)
     enableCommands(dropLootHandler)
     enableTasks(config, firstTimeRaceClassMenuHandler)
+
+    commandService.executeCommand("clean-npcs")
   }
 
   private def configureRepositories(config: DatabaseConfig): (
@@ -322,7 +322,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
     // NPC
     eventService.subscribe(new NpcInteractHandler)
-    eventService.subscribe(new NpcPersistenceHandler(config))
+    eventService.subscribe(new AiPersistenceHandler)
     eventService.subscribe(dropLootHandler)
 
     // Player

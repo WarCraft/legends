@@ -8,10 +8,8 @@ package gg.warcraft.legends.api.ai.npc
 
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.legends.api.ai.{AiConfig, NpcConfig, NpcFactory}
-import gg.warcraft.monolith.api.core.Duration.DurationOps
 import gg.warcraft.monolith.api.core.Message
 import gg.warcraft.monolith.api.core.command.CommandService
-import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.entity.EntityService
 import gg.warcraft.monolith.api.item.ItemService
 import gg.warcraft.monolith.api.menu.MenuService
@@ -30,7 +28,6 @@ class NpcService(implicit
     currencyService: CurrencyService,
     itemService: ItemService,
     commandService: CommandService,
-    taskService: TaskService,
     combatDataService: CombatDataService
 ) {
   private final val MSG_NPC_UNINTERESTED =
@@ -42,10 +39,8 @@ class NpcService(implicit
   private var _npcNames: Set[String] = Set.empty
   def npcNames: Set[String] = _npcNames
 
-  def readConfig(config: AiConfig): Unit = {
+  def readConfig(config: AiConfig): Unit =
     config.npcs.foreach(spawnNpc)
-    taskService.evalLater(6.seconds, commandService.executeCommand("clean-npcs"))
-  }
 
   def spawnNpc(config: NpcConfig): Unit = {
     val npcId = npcFactory.create(config)

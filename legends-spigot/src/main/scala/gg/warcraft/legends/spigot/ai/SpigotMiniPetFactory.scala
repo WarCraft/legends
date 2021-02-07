@@ -58,6 +58,7 @@ class SpigotMiniPetFactory(implicit
     spigotWolf.setBaby()
     spigotWolf.setAgeLock(true)
     spigotWolf.setInvulnerable(true)
+    spigotWolf.setCustomName("Mini Pet")
     spigotWolf.setCustomNameVisible(false)
 
     val goals = server.getMobGoals.getAllGoals(spigotWolf)
