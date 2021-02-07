@@ -42,7 +42,7 @@ class NpcService(implicit
 
   def readConfig(config: AiConfig): Unit = {
     config.npcs.foreach(spawnNpc)
-    taskService.evalLater(1.seconds, commandService.executeCommand("clean-npcs"))
+    taskService.evalLater(6.seconds, commandService.executeCommand("clean-npcs"))
   }
 
   def spawnNpc(config: NpcConfig): Unit = {
