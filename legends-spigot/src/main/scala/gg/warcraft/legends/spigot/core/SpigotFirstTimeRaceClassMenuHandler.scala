@@ -58,7 +58,6 @@ class SpigotFirstTimeRaceClassMenuHandler(implicit
     teamService: TeamService
 ) extends Event.Handler
     with Runnable {
-  import SpigotRaceRespawnHandler.getSpawn
 
   private var inTutorial: Set[UUID] = Set.empty
 
@@ -71,7 +70,7 @@ class SpigotFirstTimeRaceClassMenuHandler(implicit
       inTutorial -= player.id
       entityService.freezeEntity(player.id, 0.ticks)
       val spawnLocation =
-        player.location.copy(translation = getSpawn(player.team.get))
+        player.location.copy(translation = player.team.get.spawn)
       entityService.teleportEntity(player.id, spawnLocation)
     }
   }
