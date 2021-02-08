@@ -290,7 +290,6 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     eventService.subscribe(new BlockBreakPlaceHandler)
     eventService.subscribe(new LaunchRewardsDistributionHandler)
     eventService.subscribe(new SpigotRaceRespawnHandler)
-    eventService.subscribe(new TutorialPvpHandler)
 
     // Combat
     eventService.subscribe(new CombatLoggingHandler)

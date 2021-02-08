@@ -54,17 +54,17 @@ object DropLootCommand {
         command: Command,
         args: String*
     ): Command.Result = executor match {
-      case _: Player           => Command.consoleOnly
-      case _ if args.size != 6 => Command.invalid
+      case _: Player          => Command.consoleOnly
+      case _ if args.size < 6 => Command.invalid
       case _ =>
         try {
-          val mobType = args(0)
-          val mobId = UUID.fromString(args(1))
+          val mobType = args.slice(0, args.size - 5).mkString(" ")
+          val mobId = UUID.fromString(args(args.size - 5))
           val mob = entityService.getEntity(mobId)
-          val world = args(2)
-          val x = args(3).toFloat
-          val y = args(4).toFloat
-          val z = args(5).toFloat
+          val world = args(args.size - 4)
+          val x = args(args.size - 3).toFloat
+          val y = args(args.size - 2).toFloat
+          val z = args(args.size - 1).toFloat
 
           mob.combatData.attackedBy.foreach { attackerId =>
             playerService.getPlayerOption(attackerId).foreach { player =>
@@ -126,10 +126,6 @@ object DropLootCommand {
             }
           }
           Command.success
-        } catch {
-          case ex: Exception =>
-            println(s"Failed to drop items for $args: ${ex.getMessage}")
-            Command.invalid
         }
     }
 
