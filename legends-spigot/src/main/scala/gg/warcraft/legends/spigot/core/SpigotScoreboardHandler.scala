@@ -41,7 +41,7 @@ class SpigotScoreboardHandler(config: LegendsConfig)(implicit
       s"${dwarves.chatColor}${dwarves.name} $RESET| " +
         s"${elves.chatColor}${elves.name} $RESET| " +
         s"${humans.chatColor}${humans.name} $RESET| " +
-        s"${orcs.chatColor}${orcs.name}"
+        s"${orcs.chatColor}${orcs.name}$RESET"
 
     case _ => "Factions not configured"
   }
@@ -109,7 +109,7 @@ class SpigotScoreboardHandler(config: LegendsConfig)(implicit
         s"${dwarves.chatColor}$dwarvesNumbers $RESET| " +
           s"${elves.chatColor}$elvesNumbers $RESET| " +
           s"${humans.chatColor}$humansNumbers $RESET| " +
-          s"${orcs.chatColor}$orcsNumbers"
+          s"${orcs.chatColor}$orcsNumbers$RESET"
 
       case _ => "Factions not configured"
     }
@@ -130,7 +130,7 @@ class SpigotScoreboardHandler(config: LegendsConfig)(implicit
         s"${dwarvesFort.occupiers.map { _.chatColor }.getOrElse(WHITE)}F $RESET| " +
           s"${elvesFort.occupiers.map { _.chatColor }.getOrElse(WHITE)}F $RESET| " +
           s"${humansFort.occupiers.map { _.chatColor }.getOrElse(WHITE)}F $RESET| " +
-          s"${orcsFort.occupiers.map { _.chatColor }.getOrElse(WHITE)}F"
+          s"${orcsFort.occupiers.map { _.chatColor }.getOrElse(WHITE)}F$RESET"
 
       case _ => "Objectives not configured"
     }
