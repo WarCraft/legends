@@ -25,6 +25,7 @@ import gg.warcraft.monolith.api.core.Duration._
 import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.data.ServerDataService
 import gg.warcraft.monolith.api.core.event.Event
+import gg.warcraft.monolith.api.core.task.TaskService
 import gg.warcraft.monolith.api.entity.attribute.AttributeService
 import gg.warcraft.monolith.api.entity.team.TeamService
 import gg.warcraft.monolith.api.entity.{EntityService, EntityTeamChangedEvent}
@@ -55,7 +56,8 @@ class SpigotFirstTimeRaceClassMenuHandler(implicit
     miniPetFactory: MiniPetFactory,
     commandService: CommandService,
     spawnService: SpawnService,
-    teamService: TeamService
+    teamService: TeamService,
+    taskService: TaskService
 ) extends Event.Handler
     with Runnable {
 
@@ -86,11 +88,16 @@ class SpigotFirstTimeRaceClassMenuHandler(implicit
 
   override def handle(event: Event): Unit = event match {
     case PlayerConnectEvent(player) =>
-      if (player.team.isEmpty || player.combatClass.isEmpty) {
-        inTutorial += player.id
-        entityService.freezeEntity(player.id, Integer.MAX_VALUE.ticks)
-        test(player)
-      }
+      taskService.runLater(
+        10.seconds,
+        () => {
+          if (player.team.isEmpty || player.combatClass.isEmpty) {
+            inTutorial += player.id
+            entityService.freezeEntity(player.id, Integer.MAX_VALUE.ticks)
+            test(player)
+          }
+        }
+      )
     case EntityTeamChangedEvent(player: Player, _, _) =>
       if (inTutorial.contains(player.id)) test(player)
     case PlayerCombatClassChangedEvent(player, _, _) =>
