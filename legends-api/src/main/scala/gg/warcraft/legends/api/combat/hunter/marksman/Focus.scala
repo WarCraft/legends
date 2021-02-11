@@ -42,7 +42,7 @@ class Focus(
   repository.remove(caster.id) match {
     case Some(focus) => focus.cancel()
     case None =>
-      entityService.freezeEntity(caster.id, maxDuration)
+      entityService.crippleEntity(caster.id, maxDuration)
 
       val source = CombatSource(caster.name, Some(caster.id))
       val modifier = snapshot.combatValue("damage-modifier").modified
@@ -59,7 +59,7 @@ class Focus(
   }
 
   override def cancel(): Unit = {
-    entityService.freezeEntity(caster.id, 0.ticks)
+    entityService.crippleEntity(caster.id, 0.ticks)
     statusService.removeEffect(caster.id, status)
     effect.stop()
   }
