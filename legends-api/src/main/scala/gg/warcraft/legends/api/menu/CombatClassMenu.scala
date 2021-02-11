@@ -326,12 +326,12 @@ object CombatClassMenu {
       0 -> infoButton(player.combatClass),
       9 -> Button.back(MainMenu.apply),
       // 1st row
-      2 -> guardianButton(player, shopProfile, cooldownText),
-      3 -> berserkerButton(player, shopProfile, cooldownText),
-      4 -> marksmanButton(player, shopProfile, cooldownText),
-      5 -> rangerButton(player, shopProfile, cooldownText),
-      6 -> elementalistButton(player, shopProfile, cooldownText),
-      7 -> wizardButton(player, shopProfile, cooldownText)
+      2 -> guardianButton(player, shopProfile, cooldownText, forceUnlock = true),
+      3 -> berserkerButton(player, shopProfile, cooldownText, forceUnlock = true),
+      4 -> marksmanButton(player, shopProfile, cooldownText, forceUnlock = true),
+      5 -> rangerButton(player, shopProfile, cooldownText, forceUnlock = true),
+      6 -> elementalistButton(player, shopProfile, cooldownText, forceUnlock = true),
+      7 -> wizardButton(player, shopProfile, cooldownText, forceUnlock = true)
     )
   }
 
