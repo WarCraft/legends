@@ -35,6 +35,7 @@ import gg.warcraft.legends.api.core.spawn.ReturnToSpawnCommand
 import gg.warcraft.legends.api.entity.attribute.EquipmentAttributeHandler
 import gg.warcraft.legends.api.item.DropLootCommand
 import gg.warcraft.legends.api.item.crate.LootCrateUseHandler
+import gg.warcraft.legends.api.item.equipment.basic.BasicEquipmentHandler
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfig
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeUseHandler
 import gg.warcraft.legends.api.menu.MenuConfig
@@ -289,6 +290,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     eventService.subscribe(firstTimeRaceClassMenuHandler)
     eventService.subscribe(new BlockBreakPlaceHandler)
     eventService.subscribe(new LaunchRewardsDistributionHandler)
+    eventService.subscribe(new SpawnProtection.Handler)
 
     // Combat
     eventService.subscribe(new CombatLoggingHandler)
@@ -317,6 +319,7 @@ class LegendsPlugin extends SpigotMonolithPlugin {
     // Item
     eventService.subscribe(new EquipmentAttributeHandler)
     eventService.subscribe(new EquipmentUpgradeUseHandler)
+    eventService.subscribe(new BasicEquipmentHandler)
 
     // NPC
     eventService.subscribe(new NpcInteractHandler)

@@ -8,14 +8,7 @@ package gg.warcraft.legends.api.ai.npc
 
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.combat.api.util.entity.EntityOps
-import gg.warcraft.legends.api.combat.LegendsCombatClass.{
-  Berserker, Elementalist, Guardian, Marksman, Ranger, Wizard
-}
-import gg.warcraft.legends.api.entity.attribute.LegendsAttribute.{
-  Dexterity, Intellect, Strength
-}
-import gg.warcraft.legends.api.item.ItemRarity
-import gg.warcraft.legends.api.item.equipment.EquipmentBuilder
+import gg.warcraft.legends.api.item.equipment.basic.BasicEquipmentFactory
 import gg.warcraft.legends.api.player.currency.LegendsCurrency
 import gg.warcraft.legends.api.util.player._
 import gg.warcraft.monolith.api.core.{ColorCode, Message}
@@ -68,27 +61,9 @@ object WeaponVendorDialog {
       playerService: PlayerService,
       combatDataService: CombatDataService
   ): Menu = {
-    val data = player.combatClass match {
-      case Some(combatClass) =>
-        combatClass.id match {
-          case Berserker    => Some((AXE, "Basic Axe", Strength, 1))
-          case Guardian     => Some((SWORD, "Basic Sword", Strength, 1))
-          case Marksman     => Some((CROSSBOW, "Basic Crossbow", Dexterity, 100))
-          case Ranger       => Some((BOW, "Basic Bow", Dexterity, 100))
-          case Elementalist => Some((HOE, "Basic Staff", Intellect, 1))
-          case Wizard       => Some((STICK, "Basic Wand", Intellect, 100))
-          case _            => None
-        }
-      case _ => None
-    }
-
+    val factory = new BasicEquipmentFactory
+    val weapon = factory.create(player.combatClass)
     var weaponButtons = Map.empty[Int, Button]
-    val weapon = data.map { data =>
-      val builder = new EquipmentBuilder(data._1, ItemRarity.Common, data._2)
-      builder.addAttribute(data._3, 1)
-        .withCustomModelData(data._4)
-        .build()
-    }
     weapon.foreach { it => weaponButtons += (2 -> weaponButton(it, player)) }
 
     Menu(
