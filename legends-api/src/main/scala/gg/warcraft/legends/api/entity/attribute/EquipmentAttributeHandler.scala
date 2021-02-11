@@ -12,7 +12,7 @@ import gg.warcraft.monolith.api.core.event.Event
 import gg.warcraft.monolith.api.entity.attribute.Attribute.Modifier._
 import gg.warcraft.monolith.api.entity.attribute.{Attribute, AttributeService}
 import gg.warcraft.monolith.api.player.{
-  Player, PlayerConnectEvent, PlayerEquipmentChangedEvent
+  Player, PlayerConnectEvent, PlayerEquipmentChangedEvent, PlayerRespawnEvent
 }
 
 import java.util.UUID
@@ -25,6 +25,7 @@ class EquipmentAttributeHandler(implicit
   override def handle(event: Event): Unit = event match {
     case PlayerConnectEvent(player)          => updateModifiers(player, ignoreGeneric = true)
     case PlayerEquipmentChangedEvent(player) => updateModifiers(player)
+    case PlayerRespawnEvent(player, _)       => updateModifiers(player)
     case _                                   =>
   }
 
