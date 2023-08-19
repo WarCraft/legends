@@ -1,7 +1,7 @@
 lazy val commonSettings = Seq(
   organization := "gg.warcraft",
   version := "16.0.0-SNAPSHOT",
-  scalaVersion := "2.13.4",
+  scalaVersion := "2.13.11",
   scalacOptions ++= Seq(
     "-language:implicitConversions"
   ),
@@ -11,13 +11,12 @@ lazy val commonSettings = Seq(
 )
 
 lazy val assemblySettings = Seq(
-  assemblyJarName in assembly := s"${name.value}-${version.value}-all.jar",
-  assemblyOption in assembly :=
-    (assemblyOption in assembly).value.copy(includeScala = false),
-  assemblyMergeStrategy in assembly := {
+  assembly / assemblyJarName := s"${name.value}-${version.value}-all.jar",
+  assembly / assemblyOption ~= { _.withIncludeScala(false) },
+  assembly / assemblyMergeStrategy := {
     case PathList("META-INF", _ @_*) => MergeStrategy.discard
     case "module-info.class"         => MergeStrategy.discard
-    case it                          => (assemblyMergeStrategy in assembly).value(it)
+    case it                          => (assembly / assemblyMergeStrategy).value(it)
   }
 )
 
@@ -46,18 +45,18 @@ lazy val spigot = (project in file("legends-spigot"))
       "PaperMC" at "https://papermc.io/repo/repository/maven-public/",
       "SpigotMC" at "https://repo.md-5.net/content/groups/public/",
       "ProtocolLib" at "https://repo.dmulloy2.net/nexus/repository/public/",
-      "Votifier" at "https://dl.bintray.com/ichbinjoe/public/"
+      "Votifier" at "https://jitpack.io"
     ),
     libraryDependencies ++= Seq(
       "com.destroystokyo.paper" % "paper-api" % "1.16.5-R0.1-SNAPSHOT" % Provided,
+      "com.github.NuVotifier" % "NuVotifier" % "2.6.+" % Provided,
       "gg.warcraft" %% "monolith-spigot" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "chat-spigot" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "gathering-spigot" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "housing-spigot" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "combat-spigot" % "16.0.0-SNAPSHOT" % Provided,
       "gg.warcraft" %% "siege-spigot" % "16.0.0-SNAPSHOT" % Provided,
-      "LibsDisguises" % "LibsDisguises" % "10.0.+" % Provided intransitive (),
-      "com.vexsoftware" % "nuvotifier-universal" % "2.6.+" % Provided
+      "LibsDisguises" % "LibsDisguises" % "10.0.+" % Provided intransitive ()
     )
   )
   .dependsOn(api)
