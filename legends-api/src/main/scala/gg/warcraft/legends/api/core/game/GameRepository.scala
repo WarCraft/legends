@@ -81,7 +81,7 @@ private trait GameContext[I <: SqlIdiom, N <: NamingStrategy] {
 
   def upsert = quote {
     (q: EntityQuery[_Game], game: _Game) =>
-      q.insert(game).onConflictUpdate(_.id)(
+      q.insertValue(game).onConflictUpdate(_.id)(
         (t, e) => t.endTime -> e.endTime,
         (t, e) => t.timer -> e.timer,
         (t, e) => t.objectives -> e.objectives,

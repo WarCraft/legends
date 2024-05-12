@@ -36,7 +36,7 @@ private trait AvailableShopItemContext[I <: SqlIdiom, N <: NamingStrategy] {
 
   def insert =
     quote { (q: EntityQuery[AvailableShopItem], item: AvailableShopItem) =>
-      q.insert(item)
+      q.insertValue(item)
     }
 }
 

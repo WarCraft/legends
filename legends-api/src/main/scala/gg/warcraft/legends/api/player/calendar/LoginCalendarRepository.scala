@@ -34,7 +34,7 @@ private trait LoginCalendarContext[I <: SqlIdiom, N <: NamingStrategy] {
 
   def upsert = quote {
     (q: EntityQuery[LoginCalendar], data: LoginCalendar) =>
-      q.insert(data).onConflictUpdate(_.playerId)(
+      q.insertValue(data).onConflictUpdate(_.playerId)(
         (t, e) => t.day -> e.day,
         (t, e) => t.claimed -> e.claimed
       )

@@ -10,39 +10,24 @@ import gg.warcraft.combat.spigot.implicits._
 import gg.warcraft.legends.api.LegendsConfig
 import gg.warcraft.legends.api.ai.npc.NpcService
 import gg.warcraft.legends.api.ai.{CombatPetFactory, MiniPetFactory, NpcFactory}
-import gg.warcraft.legends.api.combat.hunter.marksman.{
-  FocusRepository, SneakRepository
-}
+import gg.warcraft.legends.api.combat.hunter.marksman.{FocusRepository, SneakRepository}
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
-import gg.warcraft.legends.api.core.data.{
-  LegendsServerDataRepository, LegendsServerDataService
-}
-import gg.warcraft.legends.api.core.game.{
-  DailyPointsArchiveRepository, GameRepository, GameService
-}
+import gg.warcraft.legends.api.core.arena.ArenaService
+import gg.warcraft.legends.api.core.data.{LegendsServerDataRepository, LegendsServerDataService}
+import gg.warcraft.legends.api.core.game.{DailyPointsArchiveRepository, GameRepository, GameService}
 import gg.warcraft.legends.api.core.leaderboard.LeaderboardService
 import gg.warcraft.legends.api.core.spawn.SpawnService
 import gg.warcraft.legends.api.item.crate.LootCrateService
 import gg.warcraft.legends.api.item.equipment.EquipmentGenerator
 import gg.warcraft.legends.api.item.equipment.config.EquipmentConfigRepository
 import gg.warcraft.legends.api.item.equipment.upgrade.EquipmentUpgradeGenerator
-import gg.warcraft.legends.api.player.calendar.{
-  LoginCalendarRepository, LoginCalendarService
-}
-import gg.warcraft.legends.api.player.challenge.{
-  ChallengeRepository, ChallengeService
-}
-import gg.warcraft.legends.api.player.data.{
-  LegendsPlayerDataRepository, LegendsPlayerDataService
-}
+import gg.warcraft.legends.api.player.calendar.{LoginCalendarRepository, LoginCalendarService}
+import gg.warcraft.legends.api.player.challenge.{ChallengeRepository, ChallengeService}
+import gg.warcraft.legends.api.player.data.{LegendsPlayerDataRepository, LegendsPlayerDataService}
 import gg.warcraft.legends.api.player.level.LevelService
-import gg.warcraft.legends.api.shop.profile.{
-  ShopProfileService, UnlockedShopItemRepository
-}
+import gg.warcraft.legends.api.shop.profile.{ShopProfileService, UnlockedShopItemRepository}
 import gg.warcraft.legends.api.shop.{AvailableShopItemRepository, ShopService}
-import gg.warcraft.legends.spigot.ai.{
-  SpigotCombatPetFactory, SpigotMiniPetFactory, SpigotNpcFactory
-}
+import gg.warcraft.legends.spigot.ai.{SpigotCombatPetFactory, SpigotMiniPetFactory, SpigotNpcFactory}
 import gg.warcraft.legends.spigot.combat.mage.wizard.MassBamboozleAdapter
 import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.core.event.EventService
@@ -199,4 +184,8 @@ object implicits {
     new ShopService
   implicit lazy val shopProfileService: ShopProfileService =
     new ShopProfileService
+
+  // Arena
+  implicit lazy val arenaService: ArenaService =
+    new ArenaService
 }

@@ -8,6 +8,7 @@ package gg.warcraft.legends.api.ai.npc
 
 import gg.warcraft.combat.api.data.CombatDataService
 import gg.warcraft.legends.api.ai.{AiConfig, NpcConfig, NpcFactory}
+import gg.warcraft.legends.api.core.arena.ArenaService
 import gg.warcraft.monolith.api.core.Message
 import gg.warcraft.monolith.api.core.command.CommandService
 import gg.warcraft.monolith.api.entity.EntityService
@@ -28,7 +29,8 @@ class NpcService(implicit
     currencyService: CurrencyService,
     itemService: ItemService,
     commandService: CommandService,
-    combatDataService: CombatDataService
+    combatDataService: CombatDataService,
+    arenaService: ArenaService
 ) {
   private final val MSG_NPC_UNINTERESTED =
     Message.server("This NPC is not interested in you.")
@@ -58,12 +60,13 @@ class NpcService(implicit
   def openDialog(npcId: UUID, playerId: UUID): Unit = {
     val npc = _npcsById(npcId)
     val player = playerService.getPlayer(playerId)
-    if (npc.team == player.team) {
+    if (npc.team.isEmpty || npc.team == player.team) {
       val menu = npc.typ match {
-        case Npc.Type.BLUEPRINT_VENDOR => BlueprintVendorDialog(player)
-        case Npc.Type.FOOD_VENDOR      => FoodVendorDialog(player)
-        case Npc.Type.TOOL_VENDOR      => ToolVendorDialog(player)
-        case Npc.Type.WEAPON_VENDOR    => WeaponVendorDialog(player)
+        case Npc.Type.ARENA_BATTLE_MASTER => BattleMasterDialog(player)
+        case Npc.Type.VENDOR_BLUEPRINT    => BlueprintVendorDialog(player)
+        case Npc.Type.VENDOR_FOOD         => FoodVendorDialog(player)
+        case Npc.Type.VENDOR_TOOL         => ToolVendorDialog(player)
+        case Npc.Type.VENDOR_WEAPON       => WeaponVendorDialog(player)
       }
       menuService.showMenu(player.id, menu)
     } else player.sendMessage(MSG_NPC_UNINTERESTED)

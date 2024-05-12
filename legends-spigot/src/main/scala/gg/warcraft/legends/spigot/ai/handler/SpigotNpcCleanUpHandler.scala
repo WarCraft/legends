@@ -27,17 +27,15 @@ class SpigotNpcCleanUpHandler(implicit
       args: String*
   ): Command.Result = executor match {
     case it if authService.isAdmin(it) =>
-      // NPCs
-      val names = npcService.npcNames
-      val ids = npcService.npcsById
-      server.getWorlds.asScala
+      val entities = server.getWorlds.asScala
         .flatMap { _.getLivingEntities.asScala }
-        .filter { it => names.exists(it.getName.endsWith) }
-        .filter { it => !ids.contains(it.getUniqueId) }
+      // NPCs
+      entities
+        .filter { it => npcService.npcNames.exists(it.getName.endsWith) }
+        .filter { it => !npcService.npcsById.contains(it.getUniqueId) }
         .foreach { it => npcService.despawnNpc(it.getUniqueId) }
       // Pets
-      server.getWorlds.asScala
-        .flatMap { _.getLivingEntities.asScala }
+      entities
         .filter { _.getName.endsWith(" Pet") }
         .foreach { it => entityService.removeEntity(it.getUniqueId) }
       Command.success

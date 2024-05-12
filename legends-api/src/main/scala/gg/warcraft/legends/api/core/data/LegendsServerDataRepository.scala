@@ -25,7 +25,6 @@
 package gg.warcraft.legends.api.core.data
 
 import com.typesafe.config.Config
-import gg.warcraft.monolith.api.util.codecs.quill._
 import gg.warcraft.monolith.api.util.future.FutureOps
 import io.getquill._
 import io.getquill.context.jdbc.JdbcContext
@@ -48,7 +47,8 @@ private trait LegendsServerDataContext[I <: SqlIdiom, N <: NamingStrategy] {
   }
 
   def update = quote {
-    (q: EntityQuery[LegendsServerData], data: LegendsServerData) => q.update(data)
+    (q: EntityQuery[LegendsServerData], data: LegendsServerData) =>
+      q.updateValue(data)
   }
 }
 

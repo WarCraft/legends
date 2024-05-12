@@ -1,7 +1,7 @@
 lazy val commonSettings = Seq(
   organization := "gg.warcraft",
-  version := "16.0.0-SNAPSHOT",
-  scalaVersion := "2.13.11",
+  version := "20.2.4-SNAPSHOT",
+  scalaVersion := "2.13.12",
   scalacOptions ++= Seq(
     "-language:implicitConversions"
   ),
@@ -25,12 +25,12 @@ lazy val api = (project in file("legends-api"))
     name := "legends-api",
     commonSettings,
     libraryDependencies ++= Seq(
-      "gg.warcraft" %% "monolith-api" % "16.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "chat-api" % "16.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "gathering-api" % "16.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "housing-api" % "16.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "combat-api" % "16.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "siege-api" % "16.0.0-SNAPSHOT" % Provided
+      "gg.warcraft" %% "monolith-api" % "20.2.4-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "chat-api" % "20.2.4-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "gathering-api" % "20.2.4-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "housing-api" % "20.2.4-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "combat-api" % "20.2.4-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "siege-api" % "20.2.4-SNAPSHOT" % Provided
     ) ++ Seq(
       "org.scalatest" %% "scalatest" % "3.2.+" % Test
     )
@@ -48,14 +48,14 @@ lazy val spigot = (project in file("legends-spigot"))
       "Votifier" at "https://jitpack.io"
     ),
     libraryDependencies ++= Seq(
-      "com.destroystokyo.paper" % "paper-api" % "1.16.5-R0.1-SNAPSHOT" % Provided,
+      "io.papermc.paper" % "paper-api" % "1.20.2-R0.1-SNAPSHOT" % Provided,
       "com.github.NuVotifier" % "NuVotifier" % "2.6.+" % Provided,
-      "gg.warcraft" %% "monolith-spigot" % "16.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "chat-spigot" % "16.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "gathering-spigot" % "16.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "housing-spigot" % "16.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "combat-spigot" % "16.0.0-SNAPSHOT" % Provided,
-      "gg.warcraft" %% "siege-spigot" % "16.0.0-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "monolith-spigot" % "20.2.4-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "chat-spigot" % "20.2.4-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "gathering-spigot" % "20.2.4-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "housing-spigot" % "20.2.4-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "combat-spigot" % "20.2.4-SNAPSHOT" % Provided,
+      "gg.warcraft" %% "siege-spigot" % "20.2.4-SNAPSHOT" % Provided,
       "LibsDisguises" % "LibsDisguises" % "10.0.+" % Provided intransitive ()
     )
   )

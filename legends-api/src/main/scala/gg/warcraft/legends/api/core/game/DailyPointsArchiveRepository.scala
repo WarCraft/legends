@@ -27,7 +27,7 @@ private trait DailyPointsArchiveContext[I <: SqlIdiom, N <: NamingStrategy] {
 
   def insert = quote {
     (q: EntityQuery[DailyPointsArchive], archive: DailyPointsArchive) =>
-      q.insert(archive)
+      q.insertValue(archive)
   }
 }
 

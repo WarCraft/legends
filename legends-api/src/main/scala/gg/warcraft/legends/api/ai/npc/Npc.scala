@@ -21,10 +21,13 @@ object Npc {
   type Type = String
 
   object Type {
-    final val BLUEPRINT_VENDOR: Type = "BLUEPRINT_VENDOR"
-    final val FOOD_VENDOR: Type = "FOOD_VENDOR"
-    final val TOOL_VENDOR: Type = "TOOL_VENDOR"
-    final val WEAPON_VENDOR: Type = "WEAPON_VENDOR"
+    final val ARENA_BATTLE_MASTER: Type = "BATTLE_MASTER"
+    final val ARENA_BETTING_GOBLIN: Type = "BETTING_GOBLIN"
+
+    final val VENDOR_BLUEPRINT: Type = "BLUEPRINT_VENDOR"
+    final val VENDOR_FOOD: Type = "FOOD_VENDOR"
+    final val VENDOR_TOOL: Type = "TOOL_VENDOR"
+    final val VENDOR_WEAPON: Type = "WEAPON_VENDOR"
     // CLASS_TRAINER, TARGET_DUMMY
   }
 }

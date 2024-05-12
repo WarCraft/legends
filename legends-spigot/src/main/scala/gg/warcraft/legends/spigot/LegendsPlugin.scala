@@ -19,10 +19,14 @@ import gg.warcraft.legends.api.combat.hunter.{
 }
 import gg.warcraft.legends.api.combat.mage.wizard.MassBamboozle
 import gg.warcraft.legends.api.combat.passive.PassiveAssignmentHandler
+import gg.warcraft.legends.api.core.arena.{
+  ArenaGameEndHandler, ArenaGameStartHandler
+}
 import gg.warcraft.legends.api.core.data.{
   LegendsServerDataRepository, PostgresLegendsServerDataRepository,
   SqliteLegendsServerDataRepository
 }
+import gg.warcraft.legends.api.core.debug.PrintRotationCommand
 import gg.warcraft.legends.api.core.game._
 import gg.warcraft.legends.api.core.game.handler.{
   DailySkirmishHandler, GameRewardHandler, GameTickHandler
@@ -154,10 +158,16 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
     val firstTimeRaceClassMenuHandler = new SpigotFirstTimeRaceClassMenuHandler
     val dropLootHandler = new DropLootCommand.Handler
+    val arenaEndHandler = new ArenaGameEndHandler(config)
 
-    enableHandlers(config, firstTimeRaceClassMenuHandler, dropLootHandler)
+    enableHandlers(
+      config,
+      firstTimeRaceClassMenuHandler,
+      dropLootHandler,
+      arenaEndHandler
+    )
     enableCommands(dropLootHandler)
-    enableTasks(config, firstTimeRaceClassMenuHandler)
+    enableTasks(config, firstTimeRaceClassMenuHandler, arenaEndHandler)
 
     commandService.executeCommand("clean-npcs")
   }
@@ -279,18 +289,28 @@ class LegendsPlugin extends SpigotMonolithPlugin {
       new DropLootCommand,
       dropLootHandler
     )
+
+    // Debug
+    commandService.registerCommand(
+      new PrintRotationCommand,
+      new PrintRotationCommand.Handler
+    )
   }
 
   private def enableHandlers(
       config: LegendsConfig,
       firstTimeRaceClassMenuHandler: SpigotFirstTimeRaceClassMenuHandler,
-      dropLootHandler: DropLootCommand.Handler
+      dropLootHandler: DropLootCommand.Handler,
+      arenaEndHandler: ArenaGameEndHandler
   ): Unit = {
     // Core
     eventService.subscribe(firstTimeRaceClassMenuHandler)
     eventService.subscribe(new BlockBreakPlaceHandler)
     eventService.subscribe(new LaunchRewardsDistributionHandler)
     eventService.subscribe(new SpawnProtection.Handler)
+
+    // Arena
+    eventService.subscribe(arenaEndHandler)
 
     // Combat
     eventService.subscribe(new CombatLoggingHandler)
@@ -373,9 +393,14 @@ class LegendsPlugin extends SpigotMonolithPlugin {
 
   private def enableTasks(
       config: LegendsConfig,
-      firstTimeRaceClassMenuHandler: SpigotFirstTimeRaceClassMenuHandler
+      firstTimeRaceClassMenuHandler: SpigotFirstTimeRaceClassMenuHandler,
+      arenaEndHandler: ArenaGameEndHandler
   ): Unit = {
     taskService.runTask(6.seconds, () => firstTimeRaceClassMenuHandler.run())
+    taskService.runTask(10.ticks, () => arenaEndHandler.run())
+
+    val arenaStartHandler = new ArenaGameStartHandler(config)
+    taskService.runTask(1.seconds, () => arenaStartHandler.run())
 
     val scoreboardHandler = new SpigotScoreboardHandler(config)
     taskService.runTask(1.seconds, () => scoreboardHandler.run())

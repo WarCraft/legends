@@ -54,7 +54,7 @@ private trait ChallengeContext[I <: SqlIdiom, N <: NamingStrategy] {
 
   def insertActive = quote {
     (q: EntityQuery[ActiveChallenge], challenge: ActiveChallenge) =>
-      q.insert(challenge)
+      q.insertValue(challenge)
   }
 
   def queryCompletedById = quote {
@@ -64,7 +64,7 @@ private trait ChallengeContext[I <: SqlIdiom, N <: NamingStrategy] {
 
   def insertCompleted = quote {
     (q: EntityQuery[CompletedChallenge], challenge: CompletedChallenge) =>
-      q.insert(challenge)
+      q.insertValue(challenge)
   }
 
   def queryAllCompletedLike = quote {

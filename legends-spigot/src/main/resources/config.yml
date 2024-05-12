@@ -41,3 +41,7 @@ mobKillFavor: 0
 eliteMobKillFavor: 0
 
 skirmishTimes: []
+
+arenaGameArea: {}
+arenaSpawnPlayer1: {}
+arenaSpawnPlayer2: {}

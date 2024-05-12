@@ -10,8 +10,10 @@ import gg.warcraft.legends.api.item.crate.LootCrate
 import gg.warcraft.legends.api.player.challenge.Challenge
 import gg.warcraft.legends.api.player.level.Level
 import gg.warcraft.legends.api.player.statistic.LegendsStatistic.LegendsStatistic
+import gg.warcraft.monolith.api.block.box.BlockBox
 import gg.warcraft.monolith.api.core.DatabaseConfig
 import gg.warcraft.monolith.api.entity.team.Team
+import gg.warcraft.monolith.api.world.Location
 
 case class LegendsConfig(
     // Core
@@ -29,7 +31,12 @@ case class LegendsConfig(
     playerKillFavor: Int,
     mobKillFavor: Int,
     eliteMobKillFavor: Int,
-    skirmishTimes: List[Int]
+    skirmishTimes: List[Int],
+    // Arena
+    arenaGameArea: BlockBox,
+    arenaSpawnLocation: Location,
+    arenaSpawnPlayer1: Location,
+    arenaSpawnPlayer2: Location
 )
 
 case class LeaderboardsConfig(

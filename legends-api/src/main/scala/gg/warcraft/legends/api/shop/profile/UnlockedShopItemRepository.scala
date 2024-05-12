@@ -32,7 +32,7 @@ private trait UnlockedShopItemContext[I <: SqlIdiom, N <: NamingStrategy] {
   }
 
   def insert = quote {
-    (q: EntityQuery[UnlockedShopItem], item: UnlockedShopItem) => q.insert(item)
+    (q: EntityQuery[UnlockedShopItem], item: UnlockedShopItem) => q.insertValue(item)
   }
 }
 

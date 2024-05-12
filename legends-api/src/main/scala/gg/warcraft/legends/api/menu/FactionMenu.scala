@@ -73,7 +73,7 @@ object FactionMenu {
   ): Button = Button.skull(
     skull,
     team.name,
-    s"[Shift Right Click] To fight for the s${team.name}"
+    s"[Shift Right Click] To fight for the ${team.name}"
   ) { click =>
     if (click.isShiftRight) playerService.setTeam(player.id, team)
     noop
